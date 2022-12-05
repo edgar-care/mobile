@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'screens/home_page.dart';
 
 Future main() async {
   // To load the .env file contents into dotenv.
@@ -21,29 +22,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/images/logo/logo-full-color.png',
-          height: 40,
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text(dotenv.env['APP_NAME']!,
-            style: const TextStyle(color: Colors.black, fontFamily: 'Raleway')),
-      ),
+      home: const MyHomePage(title: 'home'),
     );
   }
 }
