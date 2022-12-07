@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:prototype_1/screens/info_page.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
 import '../widget/button.dart';
@@ -80,7 +81,7 @@ class MyHomePage extends StatelessWidget {
             ),
             PrimaryButton(
                 'Commencer mon analyse',
-                'home',
+                'info',
                 const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,

@@ -8,8 +8,8 @@ class PrimaryButton extends ElevatedButton {
           onPressed: () {},
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
-            primary: const Color.fromRGBO(73, 101, 242, 1),
-            onPrimary: Colors.white,
+            backgroundColor: const Color.fromRGBO(73, 101, 242, 1),
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

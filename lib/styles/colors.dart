@@ -48,4 +48,7 @@ class AppColors {
   static const Color grey700 = Color.fromRGBO(62, 67, 89, 1);
   static const Color grey800 = Color.fromRGBO(44, 48, 64, 1);
   static const Color grey900 = Color.fromRGBO(26, 28, 38, 1);
+
+  Color enableColor = const Color.fromRGBO(73, 101, 242, 1);
+  Color disableColor = Colors.grey;
 }
