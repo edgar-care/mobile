@@ -4,7 +4,6 @@ import 'package:prototype_1/widget/cards.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
 import '../widget/button.dart';
-import '../widget/cards.dart';
 import '../styles/colors.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -83,13 +82,14 @@ class MyHomePage extends StatelessWidget {
             ),
             PrimaryCard(
                 const [
-                  'Cete sessionn n\'a pas pour but de diagnostiquer une maladie',
+                  'Cete sessionn n\'a pas pour but de',
+                  'diagnostiquer une maladie',
                   'A l\'issue de votre session, votre prédiagnosic sera',
                   'transmis à votre médecin'
                 ],
                 const TextStyle(
                     color: Colors.black,
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600)),
             const SizedBox(
               height: 45,

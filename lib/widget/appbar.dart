@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../styles/colors.dart';
 
 class AppBarCustom extends AppBar {
   AppBarCustom(String title, {super.key})
@@ -10,9 +12,8 @@ class AppBarCustom extends AppBar {
           centerTitle: true,
           leading: title == 'home'
               ? null
-              : IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.arrow_back_ios,
-                      color: Color.fromRGBO(206, 13, 13, 1))),
+              : const Center(
+                  child: FaIcon(FontAwesomeIcons.circleArrowLeft,
+                      color: AppColors.blue700, size: 24)),
         );
 }

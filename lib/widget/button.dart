@@ -7,8 +7,8 @@ class PrimaryButton extends ElevatedButton {
           onPressed: () {},
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
-            primary: AppColors.blue300,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white,
+            backgroundColor: AppColors.blue300,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -22,8 +22,8 @@ class SecondaryButton extends ElevatedButton {
           onPressed: () {},
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
-            primary: AppColors.white,
-            onPrimary: AppColors.purple600,
+            foregroundColor: AppColors.purple600,
+            backgroundColor: AppColors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
