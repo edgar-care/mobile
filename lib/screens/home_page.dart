@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:prototype_1/screens/info_page.dart';
 import 'package:prototype_1/widget/cards.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';

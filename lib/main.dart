@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:prototype_1/screens/info_page.dart';
 import 'screens/home_page.dart';
 
 Future main() async {
@@ -22,7 +23,14 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      home: const MyHomePage(title: 'home'),
+      home: const InfoPage(title: 'info'),
+      //home: const MyHomePage(title: 'home'),
+      routes: {
+        '/home': (context) => const MyHomePage(title: 'home'),
+        '/info': (context) => const InfoPage(
+              title: 'info',
+            ),
+      },
     );
   }
 }
