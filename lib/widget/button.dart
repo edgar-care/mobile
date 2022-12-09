@@ -8,7 +8,7 @@ class PrimaryButton extends ElevatedButton {
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
-            backgroundColor: AppColors.blue300,
+            backgroundColor: AppColors.blue400,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -26,6 +26,7 @@ class SecondaryButton extends ElevatedButton {
             backgroundColor: AppColors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(color: AppColors.blue200, width: 2),
             ),
           ),
         );
