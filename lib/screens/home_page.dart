@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/screens/info_page.dart';
+import 'package:prototype_1/widget/cards.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
 import '../widget/button.dart';
+import '../styles/colors.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -36,8 +38,8 @@ class MyHomePage extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.w700),
                   colors: const [
-                    Color.fromRGBO(22, 54, 217, 1),
-                    Color.fromRGBO(217, 22, 186, 1),
+                    AppColors.blue500,
+                    AppColors.pink500,
                   ],
                 ),
               ],
@@ -70,8 +72,8 @@ class MyHomePage extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.w700),
                   colors: const [
-                    Color.fromRGBO(22, 54, 217, 1),
-                    Color.fromRGBO(217, 22, 186, 1),
+                    AppColors.blue500,
+                    AppColors.pink500,
                   ],
                 ),
               ],
@@ -79,10 +81,25 @@ class MyHomePage extends StatelessWidget {
             const SizedBox(
               height: 65,
             ),
+            PrimaryCard(
+                const [
+                  'Cete sessionn n\'a pas pour but de',
+                  'diagnostiquer une maladie',
+                  'A l\'issue de votre session, votre prédiagnosic sera',
+                  'transmis à votre médecin'
+                ],
+                const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600)),
+            const SizedBox(
+              height: 45,
+            ),
             PrimaryButton(
-                'Commencer mon analyse',
+                'Commencez mon analyse',
                 'info',
                 const TextStyle(
+                  color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
                 )),
