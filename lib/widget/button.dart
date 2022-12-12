@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 
 class PrimaryButton extends ElevatedButton {
-  PrimaryButton(String text, String page, TextStyle textstyle, {super.key})
+  PrimaryButton(
+      String text, String page, TextStyle textstyle, BuildContext context,
+      {super.key})
       : super(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/$page');
+          },
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
@@ -17,9 +21,13 @@ class PrimaryButton extends ElevatedButton {
 }
 
 class SecondaryButton extends ElevatedButton {
-  SecondaryButton(String text, String page, TextStyle textstyle, {super.key})
+  SecondaryButton(
+      String text, String page, TextStyle textstyle, BuildContext context,
+      {super.key})
       : super(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/$page');
+          },
           child: Text(text, style: textstyle),
           style: ElevatedButton.styleFrom(
             foregroundColor: AppColors.purple600,

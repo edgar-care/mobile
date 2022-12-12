@@ -1,11 +1,6 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:prototype_1/widget/cards.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
-import '../widget/button.dart';
 import '../styles/colors.dart';
 
 class DoctorsListPage extends StatelessWidget {
@@ -15,7 +10,7 @@ class DoctorsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarCustom(title),
+      appBar: AppBarCustom(title, context),
       body: _ChildBody(),
       backgroundColor: AppColors.blue100,
     );
@@ -56,7 +51,7 @@ class _ChildBody extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              print('taped');
+              Navigator.pushNamed(context, '/home');
             },
             child: SizedBox(
               width: 300,
@@ -64,15 +59,15 @@ class _ChildBody extends StatelessWidget {
               child: Container(
                 color: Colors.white,
                 child: Row(
-                  children: [
-                    const Text(
+                  children: const [
+                    Text(
                       "Dr A.",
                       style: TextStyle(fontSize: 20),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 10,
                     ),
-                    const Text(
+                    Text(
                       "x km de votre position",
                       style: TextStyle(fontSize: 20),
                     ),
@@ -90,15 +85,15 @@ class _ChildBody extends StatelessWidget {
             child: Container(
               color: Colors.white,
               child: Row(
-                children: [
-                  const Text(
+                children: const [
+                  Text(
                     "Dr A.",
                     style: TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 10,
                   ),
-                  const Text(
+                  Text(
                     "x km de votre position",
                     style: TextStyle(fontSize: 20),
                   ),
@@ -110,22 +105,24 @@ class _ChildBody extends StatelessWidget {
             height: 20,
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/home');
+            },
             child: SizedBox(
               width: 300,
               height: 30,
               child: Container(
                 color: Colors.white,
                 child: Row(
-                  children: [
-                    const Text(
+                  children: const [
+                    Text(
                       "Dr A.",
                       style: TextStyle(fontSize: 20),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 10,
                     ),
-                    const Text(
+                    Text(
                       "x km de votre position",
                       style: TextStyle(fontSize: 20),
                     ),
@@ -138,22 +135,24 @@ class _ChildBody extends StatelessWidget {
             height: 20,
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/home');
+            },
             child: SizedBox(
               width: 300,
               height: 30,
               child: Container(
                 color: Colors.white,
                 child: Row(
-                  children: [
-                    const Text(
+                  children: const [
+                    Text(
                       "Dr A.",
                       style: TextStyle(fontSize: 20),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 10,
                     ),
-                    const Text(
+                    Text(
                       "x km de votre position",
                       style: TextStyle(fontSize: 20),
                     ),
