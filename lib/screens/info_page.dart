@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
@@ -21,7 +20,7 @@ class InfoPage extends StatelessWidget {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
               const Text(
                 'Avant de commencer, j\'ai besoin de',
@@ -40,7 +39,7 @@ class InfoPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
               const Text('Quel est votre sexe ?',
                   style: TextStyle(
@@ -81,16 +80,18 @@ class InfoPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(
-                height: 50,
+                height: 35,
               ),
               const Text('Quel est votre âge ?',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 200,
                 child: TextFormField(
+                  validator: ValidatorHelper.mandatoryField(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     filled: true,
@@ -108,17 +109,18 @@ class InfoPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 35,
               ),
               const Text('Quel est votre taille ? (en cm)',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 200,
                 child: TextFormField(
-                  //  textInputAction: TextInputAction.next,
+                  validator: ValidatorHelper.mandatoryField(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     filled: true,
@@ -136,16 +138,18 @@ class InfoPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 35,
               ),
               const Text('Quel est votre poids ?',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 200,
                 child: TextFormField(
+                  validator: ValidatorHelper.mandatoryField(),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     filled: true,
@@ -163,7 +167,7 @@ class InfoPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 35,
               ),
               PrimaryButton(
                   'Valider mes informations',
@@ -179,11 +183,15 @@ class InfoPage extends StatelessWidget {
   }
 }
 
-class SexButton {
-  bool isSelected;
-  SexButton({required this.isSelected});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
+
+class ValidatorHelper {
+  static String? Function(String?) mandatoryField() {
+    return (String? text) {
+      if (text != null && text.isNotEmpty) {
+        return null;
+      } else {
+        return "required";
+      }
+    };
   }
 }
