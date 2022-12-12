@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:prototype_1/styles/colors.dart';
@@ -86,21 +88,21 @@ class InfoPage extends StatelessWidget {
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
-              Container(
-                color: Colors.grey,
-                child: SizedBox(
-                  width: 200,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: AppColors.blue100,
-                      border: InputBorder.none,
-                      hintText: 'Votre âge',
-                      hintStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
+              SizedBox(
+                width: 200,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.blue100,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            BorderSide(width: 0, style: BorderStyle.none)),
+                    hintText: 'Votre âge',
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -113,21 +115,22 @@ class InfoPage extends StatelessWidget {
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
-              Container(
-                color: Colors.grey,
-                child: SizedBox(
-                  width: 200,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: AppColors.blue100,
-                      border: InputBorder.none,
-                      hintText: 'Votre taille',
-                      hintStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
+              SizedBox(
+                width: 200,
+                child: TextFormField(
+                  //  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.blue100,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            BorderSide(width: 0, style: BorderStyle.none)),
+                    hintText: 'Votre taille',
+                    hintStyle: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -140,21 +143,21 @@ class InfoPage extends StatelessWidget {
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                   )),
-              Container(
-                color: Colors.grey,
-                child: SizedBox(
-                  width: 200,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: AppColors.blue100,
-                      border: InputBorder.none,
-                      hintText: 'Votre poids',
-                      hintStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
+              SizedBox(
+                width: 200,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.blue100,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            BorderSide(width: 0, style: BorderStyle.none)),
+                    hintText: 'Votre poids',
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
