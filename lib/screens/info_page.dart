@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:prototype_1/styles/colors.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
 import '../widget/button.dart';
@@ -23,7 +25,7 @@ class InfoPage extends StatelessWidget {
                 'Avant de commencer, j\'ai besoin de',
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               GradientText(
@@ -38,38 +40,42 @@ class InfoPage extends StatelessWidget {
               const SizedBox(
                 height: 50,
               ),
-              const Text('Je suis un.e',
+              const Text('Quel est votre sexe ?',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
                   )),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                      onPressed: () {
-                        setState(() {
-                          index = 0;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            index == 0 ? enableColor : disableColor,
+                  GestureDetector(
+                    onTap: () {},
+                    child: SizedBox(
+                      height: 61,
+                      width: 100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.blue100),
+                        child: Image.asset("assets/images/utils/male.png"),
                       ),
-                      child: const Text('Homme')),
-                  const SizedBox(width: 10),
-                  TextButton(
-                      onPressed: () {
-                        setState(() {
-                          index = 1;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            index == 0 ? enableColor : disableColor,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {},
+                    child: SizedBox(
+                      height: 61,
+                      width: 100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.blue100),
+                        child: Image.asset("assets/images/utils/female.png"),
                       ),
-                      child: const Text('Femme'))
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -77,8 +83,8 @@ class InfoPage extends StatelessWidget {
               ),
               const Text('Quel est votre âge ?',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
                   )),
               Container(
                 color: Colors.grey,
@@ -87,11 +93,13 @@ class InfoPage extends StatelessWidget {
                   child: TextFormField(
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.blue100,
                       border: InputBorder.none,
                       hintText: 'Votre âge',
                       hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -100,10 +108,10 @@ class InfoPage extends StatelessWidget {
               const SizedBox(
                 height: 50,
               ),
-              const Text('Quel est votre taille ? (en cm))',
+              const Text('Quel est votre taille ? (en cm)',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
                   )),
               Container(
                 color: Colors.grey,
@@ -112,11 +120,13 @@ class InfoPage extends StatelessWidget {
                   child: TextFormField(
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.blue100,
                       border: InputBorder.none,
                       hintText: 'Votre taille',
                       hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -127,8 +137,8 @@ class InfoPage extends StatelessWidget {
               ),
               const Text('Quel est votre poids ?',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
                   )),
               Container(
                 color: Colors.grey,
@@ -137,11 +147,13 @@ class InfoPage extends StatelessWidget {
                   child: TextFormField(
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.blue100,
                       border: InputBorder.none,
                       hintText: 'Votre poids',
                       hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -164,8 +176,11 @@ class InfoPage extends StatelessWidget {
   }
 }
 
-void setState(Null Function() param0) {}
-
-Color disableColor = Colors.red;
-Color enableColor = const Color.fromRGBO(73, 101, 242, 1);
-int index = -1;
+class SexButton {
+  bool isSelected;
+  SexButton({required this.isSelected});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
+}
