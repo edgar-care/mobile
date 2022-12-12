@@ -46,7 +46,7 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBarCustom(widget.title),
+      appBar: AppBarCustom(widget.title, context),
       body: SingleChildScrollView(
         dragStartBehavior: DragStartBehavior.down,
         physics: const BouncingScrollPhysics(),
@@ -92,6 +92,9 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   suffixIcon: IconButton(
                     onPressed: () {
+                      if (msg == 'end') {
+                        Navigator.pushNamed(context, '/login');
+                      }
                       if (msg.isNotEmpty) {
                         addMessage(Message(text: msg, isSender: true));
                       }

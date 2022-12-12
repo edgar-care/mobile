@@ -48,7 +48,7 @@ class _LoginHintPageState extends State<LoginHintPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBarCustom(widget.title),
+      appBar: AppBarCustom(widget.title, context),
       body: SingleChildScrollView(
         dragStartBehavior: DragStartBehavior.down,
         physics: const BouncingScrollPhysics(),
@@ -259,11 +259,12 @@ class _LoginHintPageState extends State<LoginHintPage> {
                       )),
                   PrimaryButton(
                       'Valider',
-                      'rdv',
+                      'doctors',
                       const TextStyle(
                           color: AppColors.white,
                           fontSize: 20,
-                          fontWeight: FontWeight.bold))
+                          fontWeight: FontWeight.bold),
+                      context)
                 ],
               ),
             ]

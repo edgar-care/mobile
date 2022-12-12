@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
 import '../widget/button.dart';
@@ -11,7 +10,7 @@ class InfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarCustom(title),
+        appBar: AppBarCustom(title, context),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Center(
@@ -58,7 +57,7 @@ class InfoPage extends StatelessWidget {
                         backgroundColor:
                             index == 0 ? enableColor : disableColor,
                       ),
-                      child: Text('Homme')),
+                      child: const Text('Homme')),
                   const SizedBox(width: 10),
                   TextButton(
                       onPressed: () {
@@ -70,7 +69,7 @@ class InfoPage extends StatelessWidget {
                         backgroundColor:
                             index == 0 ? enableColor : disableColor,
                       ),
-                      child: Text('Femme'))
+                      child: const Text('Femme'))
                 ],
               ),
               const SizedBox(
@@ -153,21 +152,20 @@ class InfoPage extends StatelessWidget {
               ),
               PrimaryButton(
                   'Valider mes informations',
-                  'info',
+                  'chat',
                   const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
-                  )),
+                  ),
+                  context),
             ]),
           ),
         ));
   }
-
 }
 
-void setState(Null Function() param0) {
-}
+void setState(Null Function() param0) {}
 
 Color disableColor = Colors.red;
-Color enableColor = Color.fromRGBO(73, 101, 242, 1);
+Color enableColor = const Color.fromRGBO(73, 101, 242, 1);
 int index = -1;
