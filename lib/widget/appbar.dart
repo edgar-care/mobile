@@ -61,7 +61,7 @@ class AppbarCustomLoged extends AppBar {
               ),
               IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/LogedUserPage');
+                    Navigator.pushNamed(context, '/user');
                   },
                   icon: localisation == 'user'
                       ? const FaIcon(
@@ -91,9 +91,9 @@ class AppbarCustomLoged extends AppBar {
                         )),
               IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/LogedFilePage');
+                    Navigator.pushNamed(context, '/documents');
                   },
-                  icon: localisation == 'file'
+                  icon: localisation == 'documents'
                       ? const FaIcon(
                           FontAwesomeIcons.fileAlt,
                           color: AppColors.blue700,
