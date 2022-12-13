@@ -26,7 +26,13 @@ class _ChildBody extends StatefulWidget {
 
 class _ChildBodyState extends State<_ChildBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isSelected = false;
+  int selectedButtonIndex = 0;
+  void onButtonPressed(int index) {
+    setState(() {
+      selectedButtonIndex = index;
+    });
+  }
+
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
@@ -70,9 +76,7 @@ class _ChildBodyState extends State<_ChildBody> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isSelected = !isSelected;
-                    });
+                    onButtonPressed(0);
                   },
                   child: SizedBox(
                     height: 48,
@@ -80,9 +84,9 @@ class _ChildBodyState extends State<_ChildBody> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: !isSelected == false
-                              ? AppColors.blue100
-                              : AppColors.blue300),
+                          color: selectedButtonIndex == 0
+                              ? AppColors.blue300
+                              : AppColors.blue100),
                       child: Image.asset("assets/images/utils/male.png"),
                     ),
                   ),
@@ -90,9 +94,7 @@ class _ChildBodyState extends State<_ChildBody> {
                 const SizedBox(width: 20),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isSelected = !isSelected;
-                    });
+                    onButtonPressed(1);
                   },
                   child: SizedBox(
                     height: 48,
@@ -100,9 +102,9 @@ class _ChildBodyState extends State<_ChildBody> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: isSelected == false
-                              ? AppColors.blue100
-                              : AppColors.blue300),
+                          color: selectedButtonIndex == 1
+                              ? AppColors.blue300
+                              : AppColors.blue100),
                       child: Image.asset("assets/images/utils/female.png"),
                     ),
                   ),
