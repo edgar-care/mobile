@@ -1,4 +1,4 @@
-#Mon Dec 12 09:32:31 CET 2022
+#Tue Dec 13 11:01:14 CET 2022
 base.0=C\:\\Users\\marvi\\OneDrive\\Documents\\Cours\\Mobile\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

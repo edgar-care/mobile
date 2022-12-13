@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/screens/info_page.dart';
+import 'screens/loged_documents_page.dart';
 import 'screens/loged_home_page.dart';
 import 'screens/chat_box_page.dart';
 import 'screens/login_hint_page.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginHintPage(title: 'login'),
         '/info': (context) => const InfoPage(title: 'info'),
         '/doctors': (context) => const DoctorsListPage(title: 'doctors'),
+        '/documents': (context) => const LogedDocumentPage(title: 'documents'),
       },
     );
   }
