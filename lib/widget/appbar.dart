@@ -65,6 +65,7 @@ class AppbarCustomLoged extends AppBar {
                   },
                   icon: localisation == 'user'
                       ? const FaIcon(
+                          // ignore: deprecated_member_use
                           FontAwesomeIcons.userAlt,
                           color: AppColors.blue700,
                           size: 24,
@@ -80,6 +81,7 @@ class AppbarCustomLoged extends AppBar {
                   },
                   icon: localisation == 'calendar'
                       ? const FaIcon(
+                          // ignore: deprecated_member_use
                           FontAwesomeIcons.calendarAlt,
                           color: AppColors.blue700,
                           size: 24,
@@ -95,6 +97,7 @@ class AppbarCustomLoged extends AppBar {
                   },
                   icon: localisation == 'documents'
                       ? const FaIcon(
+                          // ignore: deprecated_member_use
                           FontAwesomeIcons.fileAlt,
                           color: AppColors.blue700,
                           size: 24,

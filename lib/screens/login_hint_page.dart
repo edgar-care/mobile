@@ -17,7 +17,9 @@ class LoginHintPage extends StatefulWidget {
 class _LoginHintPageState extends State<LoginHintPage> {
   bool _isLogin = false;
   bool _isRegister = false;
+  // ignore: unused_field
   String _email = '';
+  // ignore: unused_field
   String _password = '';
 
   @override
