@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:prototype_1/screens/chat_box_page.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
-import '../widget/button.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({Key? key, required this.title}) : super(key: key);
@@ -20,11 +19,17 @@ class InfoPage extends StatelessWidget {
   }
 }
 
-class _ChildBody extends StatelessWidget {
+class _ChildBody extends StatefulWidget {
+  @override
+  State<_ChildBody> createState() => _ChildBodyState();
+}
+
+class _ChildBodyState extends State<_ChildBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _ageController = TextEditingController();
-  TextEditingController _heightController = TextEditingController();
-  TextEditingController _weightController = TextEditingController();
+  bool isSelected = false;
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -52,11 +57,11 @@ class _ChildBody extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 30,
+              height: 28,
             ),
             const Text('Quel est votre sexe ?',
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 )),
             const SizedBox(height: 10),
@@ -64,28 +69,40 @@ class _ChildBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      isSelected = !isSelected;
+                    });
+                  },
                   child: SizedBox(
-                    height: 61,
-                    width: 100,
+                    height: 48,
+                    width: 76,
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: AppColors.blue100),
+                          color: !isSelected == false
+                              ? AppColors.blue100
+                              : AppColors.blue300),
                       child: Image.asset("assets/images/utils/male.png"),
                     ),
                   ),
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      isSelected = !isSelected;
+                    });
+                  },
                   child: SizedBox(
-                    height: 61,
-                    width: 100,
+                    height: 48,
+                    width: 76,
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: AppColors.blue100),
+                          color: isSelected == false
+                              ? AppColors.blue100
+                              : AppColors.blue300),
                       child: Image.asset("assets/images/utils/female.png"),
                     ),
                   ),
@@ -93,16 +110,16 @@ class _ChildBody extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 35,
+              height: 28,
             ),
             const Text('Quel est votre âge ?',
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 )),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 200,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
               child: TextFormField(
                 validator: ValidatorHelper.mandatoryField(),
                 controller: _ageController,
@@ -123,16 +140,16 @@ class _ChildBody extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 35,
+              height: 28,
             ),
             const Text('Quel est votre taille ? (en cm)',
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 )),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 200,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
               child: TextFormField(
                 validator: ValidatorHelper.mandatoryField(),
                 controller: _heightController,
@@ -153,16 +170,16 @@ class _ChildBody extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 35,
+              height: 28,
             ),
             const Text('Quel est votre poids ?',
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                 )),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 200,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
               child: TextFormField(
                 validator: ValidatorHelper.mandatoryField(),
                 controller: _weightController,
@@ -183,7 +200,7 @@ class _ChildBody extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 35,
+              height: 28,
             ),
             ElevatedButton(
               onPressed: () {
@@ -192,12 +209,18 @@ class _ChildBody extends StatelessWidget {
                       builder: (_) => ChatBoxPage(title: 'chat')));
                 }
               },
-              child: Text("Valider mes informations"),
               style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: AppColors.blue400,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
+              child: Text(
+                "Valider mes informations",
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
             )
           ]),
         ),
