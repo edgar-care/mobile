@@ -61,7 +61,7 @@ class AppbarCustomLoged extends AppBar {
               ),
               IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/LogedUserPage');
+                    Navigator.pushNamed(context, '/user');
                   },
                   icon: localisation == 'user'
                       ? const FaIcon(
