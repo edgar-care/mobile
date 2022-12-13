@@ -15,15 +15,8 @@ class LogedHomePage extends StatefulWidget {
 }
 
 class _LogedHomePageState extends State<LogedHomePage> {
-  List<RendezVous> listRdv = [
-    RendezVous(
-        nameDoc: 'Dr.Robert',
-        date: DateTime(12, 12, 13, 12, 54, 10),
-        isDrRdvRappel: false),
-    RendezVous(
-        nameDoc: 'Dr.RAOULD',
-        date: DateTime(12, 12, 13, 17, 32, 10),
-        isDrRdvRappel: true),
+  List<RenezVousMedecin> rdvList = [
+    RenezVousMedecin('Dr.Raould', DateTime(1999, 12, 12, 12, 40), true)
   ];
 
   @override
@@ -32,9 +25,8 @@ class _LogedHomePageState extends State<LogedHomePage> {
         backgroundColor: Colors.white,
         appBar: AppbarCustomLoged('home', context),
         body: SingleChildScrollView(
-          controller: ScrollController(),
+          dragStartBehavior: DragStartBehavior.down,
           physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
           child: Column(
             children: [
               const SizedBox(height: 10),
@@ -42,7 +34,7 @@ class _LogedHomePageState extends State<LogedHomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Container(
                   height: 1.0,
-                  width: 380.0,
+                  width: 360.0,
                   color: AppColors.blue700,
                 ),
               ),
@@ -64,7 +56,6 @@ class _LogedHomePageState extends State<LogedHomePage> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
                   height: 60,
                   width: 360.0,
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -72,7 +63,7 @@ class _LogedHomePageState extends State<LogedHomePage> {
                       [
                         TextGradiant('Vous avez'),
                         TextGradiant('0', isGrandiant: true),
-                        TextGradiant('diagnostique en cours')
+                        TextGradiant('analyse(s) en cours')
                       ],
                       const TextStyle(
                         color: AppColors.black,
@@ -81,77 +72,74 @@ class _LogedHomePageState extends State<LogedHomePage> {
                       )),
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
               const Text(
-                'Vos rendez-vous de la journée :',
+                'Vos evènements du jour',
                 style: TextStyle(
                   color: AppColors.black,
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
-              for (var rdv in listRdv) ...[
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 10.0, vertical: 10.0),
-                  height: 72,
-                  width: 360.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                    border: Border.all(
-                      color: AppColors.blue700,
-                      width: 1.0,
+              const SizedBox(height: 24),
+              for (var rdv in rdvList) ...[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 60,
+                    width: 360.0,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.blue700),
+                      borderRadius: BorderRadius.circular(24.0),
                     ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextWhithGradiant(
-                          [
-                            TextGradiant('${rdv.nameDoc} à'),
-                            TextGradiant(
-                                '${rdv.date.hour} h ${rdv.date.minute}',
-                                isGrandiant: true),
-                          ],
-                          const TextStyle(
-                            color: AppColors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextWhithGradiant(
+                            [
+                              TextGradiant('${rdv.medecins} à '),
+                              TextGradiant(
+                                  '${rdv.date.hour} h ${rdv.date.minute}',
+                                  isGrandiant: true),
+                            ],
+                            const TextStyle(
+                              color: AppColors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              rdv.isDrRdvRappel = !rdv.isDrRdvRappel;
-                            });
-                          },
-                          icon: rdv.isDrRdvRappel == false
-                              ? const FaIcon(FontAwesomeIcons.bell)
-                              : const FaIcon(FontAwesomeIcons.bellSlash),
-                        )
-                      ],
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  rdv.notif = !rdv.notif;
+                                });
+                              },
+                              icon: rdv.notif == true
+                                  ? const FaIcon(FontAwesomeIcons.bell,
+                                      color: AppColors.blue700)
+                                  : const FaIcon(FontAwesomeIcons.bellSlash,
+                                      color: AppColors.blue700))
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                )
+              ]
             ],
           ),
         ),
-        resizeToAvoidBottomInset: false,
         bottomSheet: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
           child: PrimaryButton(
-              'Commmercer un nouveau diagnostique',
+              'Commencez un diagnostique',
               'info',
               const TextStyle(
-                  color: AppColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                color: AppColors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
               context),
         ));
   }

@@ -1,8 +1,7 @@
-class RendezVous {
-  final String nameDoc;
+class RenezVousMedecin {
+  final String medecins;
   final DateTime date;
-  late final bool isDrRdvRappel;
+  late bool notif;
 
-  RendezVous(
-      {required this.nameDoc, required this.date, required this.isDrRdvRappel});
+  RenezVousMedecin(this.medecins, this.date, this.notif);
 }
