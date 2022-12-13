@@ -26,16 +26,11 @@ class _ChildBody extends StatefulWidget {
 
 class _ChildBodyState extends State<_ChildBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  int selectedButtonIndex = 0;
-  void onButtonPressed(int index) {
-    setState(() {
-      selectedButtonIndex = index;
-    });
-  }
-
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
+  int selectedButtonIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -228,6 +223,12 @@ class _ChildBodyState extends State<_ChildBody> {
         ),
       ),
     );
+  }
+
+  void onButtonPressed(int index) {
+    setState(() {
+      selectedButtonIndex = index;
+    });
   }
 }
 
