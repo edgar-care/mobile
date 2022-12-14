@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:prototype_1/widget/text.dart';
 import '../widget/appbar.dart';
-import '../styles/colors.dart';
+import '../widget/cards.dart';
+
+class DocotorsDistance {
+  final String name;
+  final String distance;
+
+  DocotorsDistance(this.name, this.distance);
+}
 
 class DoctorsListPage extends StatelessWidget {
   const DoctorsListPage({Key? key, required this.title}) : super(key: key);
@@ -12,155 +19,64 @@ class DoctorsListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBarCustom(title, context),
       body: _ChildBody(),
-      backgroundColor: AppColors.blue100,
+      backgroundColor: Colors.white,
     );
   }
 }
 
 class _ChildBody extends StatelessWidget {
+  List<DocotorsDistance> doctors = [
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              const Text("Merci pour cet",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-              const SizedBox(width: 5),
-              GradientText(
-                "échange",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                colors: const [
-                  AppColors.blue500,
-                  AppColors.pink500,
-                ],
-              ),
+          TextWhithGradiant(
+            [
+              TextGradiant('Merci pour cet'),
+              TextGradiant('échange.', isGrandiant: true),
             ],
+            const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(
             height: 20,
           ),
           const Text(
-              "Nous avons besoin d'un médecin, pour examiner votre analyse :",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              "Nous avons besoin d'un médecin pour examiner votre analyse :",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
           const SizedBox(
             height: 20,
           ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/home');
-            },
-            child: SizedBox(
-              width: 300,
-              height: 30,
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  children: const [
-                    Text(
-                      "Dr A.",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "x km de votre position",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 300,
-            height: 30,
-            child: Container(
-              color: Colors.white,
-              child: Row(
-                children: const [
-                  Text(
-                    "Dr A.",
-                    style: TextStyle(fontSize: 20),
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: <Widget>[
+                for (var doctor in doctors) ...[
+                  MedecinBlock(
+                    drName: doctor.name,
+                    distance: '${doctor.distance} km',
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "x km de votre position",
-                    style: TextStyle(fontSize: 20),
+                  const SizedBox(
+                    height: 20,
                   ),
                 ],
-              ),
+              ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/home');
-            },
-            child: SizedBox(
-              width: 300,
-              height: 30,
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  children: const [
-                    Text(
-                      "Dr A.",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "x km de votre position",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/home');
-            },
-            child: SizedBox(
-              width: 300,
-              height: 30,
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  children: const [
-                    Text(
-                      "Dr A.",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "x km de votre position",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

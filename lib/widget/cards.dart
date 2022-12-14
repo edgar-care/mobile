@@ -25,3 +25,61 @@ class PrimaryCard extends Card {
           ),
         );
 }
+
+class MedecinBlock extends StatefulWidget {
+  const MedecinBlock({Key? key, required this.drName, required this.distance})
+      : super(key: key);
+  final String drName;
+  final String distance;
+
+  @override
+  State<MedecinBlock> createState() => _MedecinBlockState();
+}
+
+class _MedecinBlockState extends State<MedecinBlock> {
+  int selectedButton = 0;
+
+  void onButtonPressed(int index) {
+    setState(() {
+      selectedButton = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, '/home');
+      },
+      child: Container(
+        height: 48,
+        width: 360,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+            border: Border.all(color: AppColors.blue200, width: 2)),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Text(
+                widget.drName,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Text(
+                widget.distance,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
