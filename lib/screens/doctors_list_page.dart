@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/widget/text.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../widget/appbar.dart';
-import '../styles/colors.dart';
+import '../widget/cards.dart';
+
+class DocotorsDistance {
+  final String name;
+  final String distance;
+
+  DocotorsDistance(this.name, this.distance);
+}
 
 class DoctorsListPage extends StatelessWidget {
   const DoctorsListPage({Key? key, required this.title}) : super(key: key);
@@ -19,6 +25,14 @@ class DoctorsListPage extends StatelessWidget {
 }
 
 class _ChildBody extends StatelessWidget {
+  List<DocotorsDistance> doctors = [
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+    DocotorsDistance('Dr. Raould', '1.2'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -44,75 +58,26 @@ class _ChildBody extends StatelessWidget {
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               )),
-          const SizedBox(height: 64),
-          const MedecinBlock(drName: 'Dr.', distance: ' km de votre position'),
-          const SizedBox(height: 20),
-          const MedecinBlock(drName: 'Dr.', distance: ' km de votre position'),
-          const SizedBox(height: 20),
-          const MedecinBlock(drName: 'Dr.', distance: ' km de votre position'),
-          const SizedBox(height: 20),
-          const MedecinBlock(drName: 'Dr.', distance: ' km de votre position'),
-          const SizedBox(height: 20),
-          const MedecinBlock(drName: 'Dr.', distance: ' km de votre position'),
+          const SizedBox(
+            height: 20,
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: <Widget>[
+                for (var doctor in doctors) ...[
+                  MedecinBlock(
+                    drName: doctor.name,
+                    distance: '${doctor.distance} km',
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class MedecinBlock extends StatefulWidget {
-  const MedecinBlock({Key? key, required this.drName, required this.distance})
-      : super(key: key);
-  final String drName;
-  final String distance;
-
-  @override
-  State<MedecinBlock> createState() => _MedecinBlockState();
-}
-
-class _MedecinBlockState extends State<MedecinBlock> {
-  int selectedButton = 0;
-
-  void onButtonPressed(int index) {
-    setState(() {
-      selectedButton = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, '/home');
-      },
-      child: Container(
-        height: 48,
-        width: 360,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-            border: Border.all(color: AppColors.blue200, width: 2)),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(
-                widget.drName,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: Text(
-                widget.distance,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
