@@ -47,3 +47,10 @@ app.*.map.json
 
 
 .fvm/flutter_sdk
+
+# IDE files
+.idea/
+.vscode/
+
+# Environment files
+*.env
