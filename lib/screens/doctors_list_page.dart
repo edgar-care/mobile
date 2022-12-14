@@ -24,7 +24,12 @@ class DoctorsListPage extends StatelessWidget {
   }
 }
 
-class _ChildBody extends StatelessWidget {
+class _ChildBody extends StatefulWidget {
+  @override
+  State<_ChildBody> createState() => _ChildBodyState();
+}
+
+class _ChildBodyState extends State<_ChildBody> {
   List<DocotorsDistance> doctors = [
     DocotorsDistance('Dr. Raould', '1.2'),
     DocotorsDistance('Dr. Raould', '1.2'),
