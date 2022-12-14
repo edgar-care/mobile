@@ -16,8 +16,8 @@ class LogedHomePage extends StatefulWidget {
 }
 
 class _LogedHomePageState extends State<LogedHomePage> {
-  List<RenezVousMedecin> rdvList = [
-    RenezVousMedecin('Dr.Raould', DateTime(1999, 12, 12, 12, 40), true)
+  List<RendezVousMedecin> rdvList = [
+    RendezVousMedecin('Dr.Raould', DateTime(1999, 12, 12, 12, 40), true)
   ];
 
   @override

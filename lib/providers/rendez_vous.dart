@@ -1,7 +1,7 @@
-class RenezVousMedecin {
+class RendezVousMedecin {
   final String medecins;
   final DateTime date;
   late bool notif;
 
-  RenezVousMedecin(this.medecins, this.date, this.notif);
+  RendezVousMedecin(this.medecins, this.date, this.notif);
 }
