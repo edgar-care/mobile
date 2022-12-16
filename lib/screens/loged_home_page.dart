@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prototype_1/styles/colors.dart';
@@ -15,8 +16,8 @@ class LogedHomePage extends StatefulWidget {
 }
 
 class _LogedHomePageState extends State<LogedHomePage> {
-  List<RenezVousMedecin> rdvList = [
-    RenezVousMedecin('Dr.Raould', DateTime(1999, 12, 12, 12, 40), true)
+  List<RendezVousMedecin> rdvList = [
+    RendezVousMedecin('Dr.Raould', DateTime(1999, 12, 12, 12, 40), true)
   ];
 
   @override
