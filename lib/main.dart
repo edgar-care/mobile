@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
         '/help': (context) => const HelpScreen(),
-        '/annuaire-medecin': (context) => const AnnuaireMedecin(),
+        '/annuaire-medecin': (context) => AnnuaireMedecin(),
         '/': (context) => const LandingPage(),
         //'/': (context) => const LandingPage(),
         // '/info': ,

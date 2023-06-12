@@ -19,12 +19,10 @@ class _ChildBody extends StatelessWidget {
   const _ChildBody({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return  SingleChildScrollView(
-      child:  Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return SingleChildScrollView(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Padding(
-          padding: EdgeInsets.only(left:24.0, top: 30),
+          padding: EdgeInsets.only(left: 24.0, top: 30),
           child: Text("Adresse mail :",
               style: TextStyle(
                   color: AppColors.blue700,
@@ -46,7 +44,7 @@ class _ChildBody extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         const Padding(
-          padding: EdgeInsets.only(left:24.0),
+          padding: EdgeInsets.only(left: 24.0),
           child: Text("Question :",
               style: TextStyle(
                   color: AppColors.blue700,
@@ -70,29 +68,33 @@ class _ChildBody extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Padding(
-          padding: const EdgeInsets.only(left:24.0),
-          child: PlainButton(text: "Envoyer", onPressed: (){}),
+          padding: const EdgeInsets.only(left: 24.0),
+          child: PlainButton(text: "Envoyer", onPressed: () {}),
         ),
         const SizedBox(height: 20),
         SizedBox(
           height: 240,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: [
+            children: const [
               SizedBox(width: 20),
               QuestionsCard(
-                question: "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
-                answer: "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes",
+                question:
+                    "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
+                answer:
+                    "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes",
               ),
               SizedBox(width: 20),
               QuestionsCard(
-                question: "Donc edgar c'est juste une application de prise de rendez-vous ?",
-                answer: "Oui, c'est une application de prise de rendez-vous médicaux mais pas seulement. Le but d'edgar est de pouvoir centraliser l'entièreté de votre santé, pour vous et votre médecins. Vous pourrez retrouver l'ensemble de vos informations de santé à un seul et unique endroit",
+                question:
+                    "Donc edgar c'est juste une application de prise de rendez-vous ?",
+                answer:
+                    "Oui, c'est une application de prise de rendez-vous médicaux mais pas seulement. Le but d'edgar est de pouvoir centraliser l'entièreté de votre santé, pour vous et votre médecins. Vous pourrez retrouver l'ensemble de vos informations de santé à un seul et unique endroit",
               ),
               SizedBox(width: 20),
             ],
           ),
-          )
+        )
       ]),
     );
   }
@@ -101,7 +103,8 @@ class _ChildBody extends StatelessWidget {
 class QuestionsCard extends StatelessWidget {
   final String question;
   final String answer;
-  const QuestionsCard({required this.question, required this.answer});
+  const QuestionsCard(
+      {super.key, required this.question, required this.answer});
 
   @override
   Widget build(BuildContext context) {
@@ -113,25 +116,31 @@ class QuestionsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         color: AppColors.blue700,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-              child: Text(
-            question,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          )),
-          const SizedBox(height: 10),
-          Center(
-              child: Text(
-            answer,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          )),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+                child: Text(
+              question,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            )),
+            const SizedBox(height: 10),
+            Center(
+                child: Text(
+              answer,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            )),
+          ],
+        ),
       ),
     );
   }

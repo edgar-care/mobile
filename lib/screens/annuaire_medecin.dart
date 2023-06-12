@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:prototype_1/styles/colors.dart';
@@ -5,11 +6,20 @@ import 'package:prototype_1/widget/navbar.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 
 class AnnuaireMedecin extends StatelessWidget {
-  const AnnuaireMedecin({Key? key}) : super(key: key);
+  AnnuaireMedecin({Key? key}) : super(key: key);
+
+  final Completer<GoogleMapController> _controller = Completer();
 
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> medecins = [
+      {
+        'nom': 'Dr. Dupont',
+        'distance': 14,
+        'adresse': '12 Rue des Fleurs',
+        'telephone': '01 23 45 67 89',
+        'photo': 'url_de_la_photo_du_medecin_1'
+      },
       {
         'nom': 'Dr. Dupont',
         'distance': 14,
@@ -54,39 +64,40 @@ class AnnuaireMedecin extends StatelessWidget {
                       indent: 8,
                       endIndent: 8,
                     ),
+                    const SizedBox(height: 16),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(latitude, longitude),
-                              zoom: 14,
+                          height: 90,
+                          width: 90,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Colors
+                                  .grey, // Choisissez la couleur de fond souhaitée
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            markers: {
-                              Marker(
-                                markerId: const MarkerId('medecin'),
-                                position: LatLng(latitude, longitude),
-                              ),
-                            },
-                            myLocationEnabled: false,
-                            zoomControlsEnabled: false,
-                            scrollGesturesEnabled: false,
-                            tiltGesturesEnabled: false,
-                            rotateGesturesEnabled: false,
-                            myLocationButtonEnabled: false,
-                            mapToolbarEnabled: false,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Téléphone: ${medecin['telephone']}"),
-                            Text("Adresse: ${medecin['adresse']}"),
-                          ],
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          width: 150,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Téléphone: ${medecin['telephone']}",
+                                overflow: TextOverflow.clip,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Adresse: ${medecin['adresse']}",
+                                overflow: TextOverflow.clip,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -165,9 +176,13 @@ class AnnuaireMedecin extends StatelessWidget {
               height: 20,
             ),
             Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ListView(
-              children: medecinCards,
-            ))
+                  children: medecinCards,
+                ),
+              ),
+            )
           ])),
     );
   }
