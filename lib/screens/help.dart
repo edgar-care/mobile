@@ -43,31 +43,34 @@ class HelpScreen extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(left:10.0),
               child: PageView.builder(
                 itemCount: 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return QuestionsCard(
-                        question:
-                            "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
-                        answer:
-                            "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes");
+                    return Row(
+                      children: [
+                        QuestionsCard(
+                            question:
+                                "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
+                            answer:
+                                "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
+                        const SizedBox(width: 10),
+                      ],
+                    );
                   } else {
-                    return QuestionsCard(
-                        question:
-                            "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
-                        answer:
-                            "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes");
+                    return Row(
+                      children: [
+                        QuestionsCard(
+                            question:
+                                "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
+                            answer:
+                                "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
+                        const SizedBox(width: 10),
+                      ],
+                    );
                   }
                 },
-                // child: Row(
-                //   children: [
-                //     const QuestionsCard(question: "Que ce passe-t-il si le rendez-vous n'est pas utile ?", answer: "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
-                //     const SizedBox(width: 5),
-                //     const QuestionsCard(question: "Que ce passe-t-il si le rendez-vous n'est pas utile ?", answer: "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
-                //   ],
-                // ),
               ),
             ),
           )
