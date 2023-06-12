@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/widget/plain_button.dart';
 import 'package:prototype_1/widget/navbar.dart';
+import 'package:prototype_1/widget/plain_button.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -43,30 +43,30 @@ class HelpScreen extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(left:10.0),
+              padding: const EdgeInsets.only(left: 10.0),
               child: PageView.builder(
                 itemCount: 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return Row(
+                    return const Row(
                       children: [
                         QuestionsCard(
                             question:
                                 "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
                             answer:
                                 "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10),
                       ],
                     );
                   } else {
-                    return Row(
+                    return const Row(
                       children: [
                         QuestionsCard(
                             question:
                                 "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
                             answer:
                                 "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10),
                       ],
                     );
                   }
@@ -82,7 +82,7 @@ class HelpScreen extends StatelessWidget {
 
 class TextFieldBlock extends StatelessWidget {
   final List<Widget> children;
-  const TextFieldBlock({required this.children});
+  const TextFieldBlock({super.key, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,8 @@ class TextFieldBlock extends StatelessWidget {
 class QuestionsCard extends StatelessWidget {
   final String question;
   final String answer;
-  const QuestionsCard({required this.question, required this.answer});
+  const QuestionsCard(
+      {super.key, required this.question, required this.answer});
 
   @override
   Widget build(BuildContext context) {

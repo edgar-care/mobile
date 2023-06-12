@@ -12,7 +12,7 @@ class LandingPage extends StatelessWidget {
       appBar: const Navbar(),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 30),
@@ -55,15 +55,20 @@ class LandingPage extends StatelessWidget {
                   Navigator.pushNamed(context, '/login');
                 }),
             const SizedBox(height: 20),
-            const Text(
-              "Liste des Médecins Généralistes",
-              style: TextStyle(
-                fontSize: 15,
-                fontFamily: 'Poppins',
-                color: Colors.black,
-                decoration: TextDecoration.underline,
-                leadingDistribution: TextLeadingDistribution.proportional,
-                overflow: TextOverflow.visible,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/annuaire-medecin');
+              },
+              child: const Text(
+                "Liste des Médecins Généralistes",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                  decoration: TextDecoration.underline,
+                  leadingDistribution: TextLeadingDistribution.proportional,
+                  overflow: TextOverflow.visible,
+                ),
               ),
             ),
             const SizedBox(height: 30),

@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/screens/auth.dart';
 import 'package:prototype_1/screens/help.dart';
 import 'package:prototype_1/screens/login.dart';
+
+import 'screens/annuaire_medecin.dart';
 import 'screens/landing_page.dart';
 
 Future main() async {
@@ -27,7 +29,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
         '/help': (context) => const HelpScreen(),
+        '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/': (context) => const LandingPage(),
+        //'/': (context) => const LandingPage(),
         // '/info': ,
         // '/login': ,
         // '/auth': ,

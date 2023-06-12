@@ -19,9 +19,13 @@ class AuthScreen extends StatelessWidget {
             const SizedBox(height: 100),
             EmptyButton(text: "Enregistrez-vous", onPressed: () {}),
             const SizedBox(height: 20),
-            const Text("ou\nconnectez-vous avec", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text("ou\nconnectez-vous avec",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
-            
           ],
         ),
       ),
@@ -32,7 +36,7 @@ class AuthScreen extends StatelessWidget {
 class EmptyButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const EmptyButton({required this.text, required this.onPressed});
+  const EmptyButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +52,7 @@ class EmptyButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(text,
           style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold)),
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
     );
   }
 }
