@@ -19,11 +19,15 @@ class Login extends StatelessWidget {
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.darkBlue, width: 2.0),
+                    borderSide:
+                        BorderSide(color: AppColors.darkBlue, width: 2.0),
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Adresse mail',
-                  labelStyle: TextStyle(color: AppColors.textBlue, fontSize: 16, fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(
+                      color: AppColors.textBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ]),
@@ -33,22 +37,36 @@ class Login extends StatelessWidget {
                 obscureText: true,
                 decoration: const InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.darkBlue, width: 2.0),
+                    borderSide:
+                        BorderSide(color: AppColors.darkBlue, width: 2.0),
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Mot de passe',
-                  labelStyle: TextStyle(color: AppColors.textBlue, fontSize: 16, fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(
+                      color: AppColors.textBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ]),
             const SizedBox(height: 20),
-            PlainButton(text: "Connexion", onPressed: () {}),
+            PlainButton(
+                text: "Connexion",
+                onPressed: () {
+                  Navigator.pushNamed(context, '/help');
+                }),
             const SizedBox(height: 20),
-            const Text("Pas encore inscrit ?", style: TextStyle(color: AppColors.textBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text("Pas encore inscrit ?",
+                style: TextStyle(
+                    color: AppColors.textBlue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
-            EmptyButton(text: "Enregistrez-vous", onPressed: () {
-              Navigator.pushNamed(context, '/auth');
-            }),
+            EmptyButton(
+                text: "Enregistrez-vous",
+                onPressed: () {
+                  Navigator.pushNamed(context, '/auth');
+                }),
           ],
         ),
       ),
@@ -93,7 +111,9 @@ class PlainButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+      child: Text(text,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
     );
   }
 }
@@ -116,7 +136,11 @@ class EmptyButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(text, style: const TextStyle(color: AppColors.textBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text(text,
+          style: const TextStyle(
+              color: AppColors.textBlue,
+              fontSize: 16,
+              fontWeight: FontWeight.bold)),
     );
   }
 }

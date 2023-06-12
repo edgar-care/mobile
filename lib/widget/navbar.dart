@@ -13,7 +13,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppColors.blue700,
       title: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/landing');
+          Navigator.pushNamed(context, '/');
         },
         child: Container(
           margin: const EdgeInsets.only(left: 42),

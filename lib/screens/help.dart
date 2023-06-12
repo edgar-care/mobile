@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
+import 'package:prototype_1/widget/plain_button.dart';
+import 'package:prototype_1/widget/navbar.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -7,76 +9,69 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Aide")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Une question ? Besoin d'aide ?",
+      appBar: const Navbar(),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text("Adresse mail :",
+              style: TextStyle(
+                  color: AppColors.blue700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold)),
+          TextFieldBlock(children: [
+            const TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Entrez votre adresse mail',
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text("Question :",
                 style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            const Text("Contactez-nous via le formulaire ci-dessous",
-                style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.blue700,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            TextFieldBlock(children: [
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.lightBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  labelText: 'Votre nom complet',
-                  labelStyle: TextStyle(
-                      color: AppColors.textBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
+            const SizedBox(height: 10),
+            const TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Entrez votre question',
               ),
-            ]),
-            const SizedBox(height: 20),
-            TextFieldBlock(children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.lightBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  labelText: 'Votre adresse mail',
-                  labelStyle: TextStyle(
-                      color: AppColors.textBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
+            ),
+            PlainButton(text: "Envoyer", onPressed: () {}),
+          ]),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: PageView.builder(
+                itemCount: 2,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return QuestionsCard(
+                        question:
+                            "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
+                        answer:
+                            "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes");
+                  } else {
+                    return QuestionsCard(
+                        question:
+                            "Que ce passe-t-il si le rendez-vous n'est pas utile ?",
+                        answer:
+                            "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes");
+                  }
+                },
+                // child: Row(
+                //   children: [
+                //     const QuestionsCard(question: "Que ce passe-t-il si le rendez-vous n'est pas utile ?", answer: "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
+                //     const SizedBox(width: 5),
+                //     const QuestionsCard(question: "Que ce passe-t-il si le rendez-vous n'est pas utile ?", answer: "Si le médecin juge que le rendez-vous n'est pas utile, le rendez-vous sera annulé et vous recevrez un message avec toutes les informations liées à l'annulation avec un motif et une solution pour calmer vos symptômes"),
+                //   ],
+                // ),
               ),
-            ]),
-            const SizedBox(height: 20),
-            TextFieldBlock(children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.lightBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  labelText: 'Votre message',
-                  labelStyle: TextStyle(
-                      color: AppColors.textBlue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ]),
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -97,6 +92,45 @@ class TextFieldBlock extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: children,
+      ),
+    );
+  }
+}
+
+class QuestionsCard extends StatelessWidget {
+  final String question;
+  final String answer;
+  const QuestionsCard({required this.question, required this.answer});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 201,
+      height: 240,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.blue700,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Center(
+              child: Text(
+            question,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          )),
+          const SizedBox(height: 10),
+          Center(
+              child: Text(
+            answer,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          )),
+        ],
       ),
     );
   }
