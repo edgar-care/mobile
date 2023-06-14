@@ -25,6 +25,6 @@ void main() {
     expect(find.text("Liste des Médecins Généralistes"), findsOneWidget);
 
     // Vérifiez si le texte "Avez des questions ?" est présent
-    expect(find.text("Avez des questions ?"), findsOneWidget);
+    expect(find.text("Avez-vous des questions ?"), findsOneWidget);
   });
 }
