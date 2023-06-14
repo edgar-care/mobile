@@ -37,7 +37,7 @@ class Register extends StatelessWidget {
             PlainButton(
                 text: "Inscrivez-vous",
                 onPressed: () {
-                  Navigator.pushNamed(context, '/help');
+                  Navigator.pushNamed(context, '/');
                 }),
             const SizedBox(height: 20),
             const Text("Déjà inscrit ?",
