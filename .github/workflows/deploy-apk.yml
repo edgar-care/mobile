@@ -25,7 +25,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_API_URL: ${{ secrets.API_URL }}
-          envkey_APP_NAME: edgar.care
+          envkey_APP_NAME: edgar
           directory: .
           file_name: .env
           fail_on_empty: false
@@ -64,11 +64,11 @@ jobs:
 
       - name: Rename Production Apk
         if: ${{ needs.build.outputs.branch == 'main' }}
-        run: mv ./app-release.apk ./edgar.care.apk
+        run: mv ./app-release.apk ./edgar.apk
 
       - name: Rename Dev Apk
         if: ${{ needs.build.outputs.branch  != 'main' }}
-        run: mv ./app-release.apk ./dev-edgar.care.apk
+        run: mv ./app-release.apk ./dev-edgar.apk
 
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

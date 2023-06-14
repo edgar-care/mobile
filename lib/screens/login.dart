@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
+
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +39,11 @@ class Login extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    email = value;
+                  });
+                },
               ),
             ]),
             const SizedBox(height: 20),
@@ -47,13 +62,33 @@ class Login extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
               ),
             ]),
             const SizedBox(height: 20),
             PlainButton(
                 text: "Connexion",
-                onPressed: () {
-                  Navigator.pushNamed(context, '/help');
+                onPressed: () async {
+                  const url =
+                      'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/auth/p/login';
+                  final response = await http.post(
+                    Uri.parse(url),
+                    headers: {'Content-Type': 'application/json'},
+                    body: jsonEncode({'email': email, 'password': password}),
+                  );
+                  if (response.statusCode == 200) {
+                    Navigator.pushNamed(context, '/connexion-validate');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Identifiants incorrects'),
+                      ),
+                    );
+                  }
                 }),
             const SizedBox(height: 20),
             const Text("Pas encore inscrit ?",
@@ -76,7 +111,7 @@ class Login extends StatelessWidget {
 
 class TextFieldBlock extends StatelessWidget {
   final List<Widget> children;
-  const TextFieldBlock({required this.children});
+  const TextFieldBlock({super.key, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +132,7 @@ class TextFieldBlock extends StatelessWidget {
 class PlainButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const PlainButton({required this.text, required this.onPressed});
+  const PlainButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +156,7 @@ class PlainButton extends StatelessWidget {
 class EmptyButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const EmptyButton({required this.text, required this.onPressed});
+  const EmptyButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
