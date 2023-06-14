@@ -6,9 +6,7 @@ import 'package:prototype_1/widget/navbar.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 
 class AnnuaireMedecin extends StatelessWidget {
-  AnnuaireMedecin({Key? key}) : super(key: key);
-
-  final Completer<GoogleMapController> _controller = Completer();
+  const AnnuaireMedecin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +32,6 @@ class AnnuaireMedecin extends StatelessWidget {
     List<Widget> medecinCards = medecins.map((medecin) {
       return GestureDetector(
         onTap: () async {
-          double latitude = 48.8534;
-          double longitude = 2.3488;
           showDialog(
             context: context,
             builder: (BuildContext context) {

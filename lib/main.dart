@@ -6,6 +6,7 @@ import 'package:prototype_1/screens/login.dart';
 
 import 'screens/annuaire_medecin.dart';
 import 'screens/landing_page.dart';
+import 'screens/connexion_validate.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -26,17 +27,12 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Raleway'),
       initialRoute: "/",
       routes: {
+        '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
         '/help': (context) => const HelpScreen(),
         '/annuaire-medecin': (context) => AnnuaireMedecin(),
-        '/': (context) => const LandingPage(),
-        //'/': (context) => const LandingPage(),
-        // '/info': ,
-        // '/login': ,
-        // '/auth': ,
-        // '/register': ,
-        // '/register_validate': ,
+        '/connexion-validate': (context) => const ConnexionValidate(),
       },
     );
   }
