@@ -17,14 +17,10 @@ class AuthScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Image.asset("assets/images/logo/edgar-high-five.png", width: 82),
             const SizedBox(height: 100),
-            EmptyButton(text: "Enregistrez-vous", onPressed: () {}),
-            const SizedBox(height: 20),
-            const Text("ou\nconnectez-vous avec",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold)),
+            EmptyButton(text: "Enregistrez-vous", onPressed: () {
+              Navigator.pushNamed(context, '/register');
+            
+            }),
             const SizedBox(height: 20),
           ],
         ),

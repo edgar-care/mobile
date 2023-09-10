@@ -4,6 +4,7 @@ import 'package:prototype_1/screens/auth.dart';
 import 'package:prototype_1/screens/help.dart';
 import 'package:prototype_1/screens/login.dart';
 import 'package:prototype_1/screens/accueil_page.dart';
+import 'package:prototype_1/screens/register.dart';
 
 import 'screens/annuaire_medecin.dart';
 import 'screens/landing_page.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
+        '/register': (context) => const Register(),
         '/help': (context) => const HelpScreen(),
         '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/connexion-validate': (context) => const ConnexionValidate(),

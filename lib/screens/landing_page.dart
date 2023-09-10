@@ -84,7 +84,7 @@ class LandingPage extends StatelessWidget {
                     width: 40,
                   ),
                   const Text(
-                    "Avez des questions ?",
+                    "Avez-vous des questions ?",
                     style: TextStyle(
                       fontSize: 12,
                       fontFamily: 'Poppins',

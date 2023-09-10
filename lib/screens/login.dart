@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
             EmptyButton(
                 text: "Enregistrez-vous",
                 onPressed: () {
-                  Navigator.pushNamed(context, '/auth');
+                  Navigator.pushNamed(context, '/register');
                 }),
           ],
         ),
