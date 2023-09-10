@@ -16,6 +16,8 @@ dependencies:
   flutter_svg: ^1.1.6
   google_maps_flutter: ^2.1.1
   http: ^0.13.3
+  path_provider: ^2.0.5
+  flutter_pdfview: ^1.0.0
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
@@ -32,6 +34,7 @@ flutter_launcher_icons:
 environment:
   sdk: '>=2.18.4 <3.0.0'
 flutter:
+  uses-material-design: true
   fonts:
     - family: Raleway
       fonts:

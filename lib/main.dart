@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/screens/auth.dart';
 import 'package:prototype_1/screens/help.dart';
 import 'package:prototype_1/screens/login.dart';
+import 'package:prototype_1/screens/accueil_page.dart';
 
 import 'screens/annuaire_medecin.dart';
 import 'screens/landing_page.dart';
@@ -25,14 +26,15 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      initialRoute: "/",
-      routes: {
+      initialRoute: "/accueil-page",
+      routes: { 
         '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
         '/help': (context) => const HelpScreen(),
-        '/annuaire-medecin': (context) => AnnuaireMedecin(),
+        '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/connexion-validate': (context) => const ConnexionValidate(),
+        '/accueil-page': (context) => const HomePage(),
       },
     );
   }

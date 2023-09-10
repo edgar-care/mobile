@@ -51,3 +51,30 @@ class PlainBorderButton extends StatelessWidget {
     );
   }
 }
+
+class GreenPlainButton extends StatelessWidget {
+  final String text;
+  final Function() onPressed;
+  const GreenPlainButton(
+      {super.key, required this.text, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        backgroundColor: AppColors.green500,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(width: 2, color: AppColors.green200),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Text(text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+    );
+  }
+}
