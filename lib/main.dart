@@ -5,6 +5,9 @@ import 'package:prototype_1/screens/help.dart';
 import 'package:prototype_1/screens/login.dart';
 import 'package:prototype_1/screens/accueil_page.dart';
 import 'package:prototype_1/screens/register.dart';
+import 'package:prototype_1/screens/information_personnel.dart';
+import 'package:prototype_1/screens/warning_page.dart';
+import 'package:prototype_1/screens/chat_page.dart';
 
 import 'screens/annuaire_medecin.dart';
 import 'screens/landing_page.dart';
@@ -27,7 +30,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      initialRoute: "/accueil-page",
+    initialRoute: "/home",
       routes: { 
         '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
@@ -36,7 +39,10 @@ class MyApp extends StatelessWidget {
         '/help': (context) => const HelpScreen(),
         '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/connexion-validate': (context) => const ConnexionValidate(),
-        '/accueil-page': (context) => const HomePage(),
+        '/home': (context) => const HomePage(),
+        '/person': (context) => const InformationPersonnel(),
+        '/warning': (context) => const WarningPage(),
+        '/chat': (context) => const ChatPage(),
       },
     );
   }

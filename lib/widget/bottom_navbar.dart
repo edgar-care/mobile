@@ -3,8 +3,8 @@ import 'package:prototype_1/styles/colors.dart';
 
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
-
+  final int index;
+  const BottomNavBar({Key? key, this.index = 0}) : super(key: key);
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
@@ -12,10 +12,36 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _currentIndex = 0;
 
-  void _onItemTapped(int index) {
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.index;
+  }
+
+    void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+
+    // Navigate to the corresponding page
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/calendar');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/file');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/person');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/settings');
+        break;
+      // Add more cases for additional pages
+    }
   }
 
   @override
@@ -80,102 +106,3 @@ class _BottomNavBarState extends State<BottomNavBar> {
     );
   }
 }
-
-
-// class BottomNavBar extends StatelessWidget {
-//   const BottomNavBar({Key? key}) : super(key: key);
-
-//    void index(int index, BuildContext context) {
-//     switch (index) {
-//       case 0:
-//         Navigator.pushNamed(context, '/accueil-page');
-//         break;
-//       case 1:
-//         Navigator.pushNamed(context, '/agenda');
-//         break;
-//       case 2:
-//         Navigator.pushNamed(context, '/file');
-//         break;
-//       case 3:
-//         Navigator.pushNamed(context, '/persona');
-//         break;
-//       case 4:
-//         Navigator.pushNamed(context, '/parametre');
-//         break;
-//     }
-//   }
-
-//  @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.only(bottom: 14.0, left: 14.0, right: 14.0),
-//       child: Container(
-//         width: MediaQuery.of(context).size.width * 0.80, // 95% de la largeur de l'écran
-//         height: 70,
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(50), // rayon de la bordure
-//           boxShadow: [
-//             BoxShadow(
-//               color: Colors.black.withOpacity(0.1),
-//               spreadRadius: 2,
-//               blurRadius: 4,
-//               offset: const Offset(0, 0), // change la position de l'ombre
-//             ),
-//           ],
-//         ),
-//         child: BottomNavigationBar(
-//           elevation: 30,
-//           type: BottomNavigationBarType.fixed,
-//           currentIndex: 0,
-//           onTap: (int index) => this.index(index, context),
-//           backgroundColor: Colors.transparent, // le rend transparent
-//           items: const  <BottomNavigationBarItem>[
-//               BottomNavigationBarItem(
-//               icon: SizedBox(
-//                 width: 50,
-//                 height: 60,
-//                 child: Icon(Icons.home, color: AppColors.blue700),
-//               ),
-//               label: '',
-//             ),
-//             BottomNavigationBarItem(
-//               icon:  SizedBox(
-//                 width: 50,
-//                 height: 60,
-//                 child: Icon(Icons.calendar_today, color: AppColors.blue700),
-//               ),
-//               label: '',
-//             ),
-//             BottomNavigationBarItem(
-//               icon: SizedBox(
-//                 width: 50,
-//                 height: 60,
-//                 child: Icon(Icons.file_copy, color: AppColors.blue700),
-//               ),
-//               label: '',
-//             ),
-//             BottomNavigationBarItem(
-//               icon: SizedBox(
-//                 width: 50,
-//                 height: 60,
-//                 child:  Icon(Icons.person_outline, color: AppColors.blue700),
-//               ),
-//               label: '',
-//             ),
-//             BottomNavigationBarItem(
-//               icon: SizedBox(
-//                 width: 50,
-//                 height: 60,
-//                 child: Icon(Icons.settings, color: AppColors.blue700),
-//               ),
-//               label: '',
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-

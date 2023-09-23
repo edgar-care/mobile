@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class Login extends StatefulWidget {
@@ -71,25 +72,29 @@ class _LoginState extends State<Login> {
             ]),
             const SizedBox(height: 20),
             PlainButton(
-                text: "Connexion",
-                onPressed: () async {
-                  const url =
-                      'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/auth/p/login';
-                  final response = await http.post(
-                    Uri.parse(url),
-                    headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode({'email': email, 'password': password}),
+              text: "Connexion",
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                const url =
+                    'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/auth/p/login';
+                final response = await http.post(
+                  Uri.parse(url),
+                  headers: {'Content-Type': 'application/json'},
+                  body: jsonEncode({'email': email, 'password': password}),
+                );
+                if (response.statusCode == 200) {
+                  final token = jsonDecode(response.body)['token'];
+                  prefs.setString('token', token);
+                  Navigator.pushNamed(context, '/home');
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Identifiants incorrects'),
+                    ),
                   );
-                  if (response.statusCode == 200) {
-                    Navigator.pushNamed(context, '/connexion-validate');
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Identifiants incorrects'),
-                      ),
-                    );
-                  }
-                }),
+                }
+              },
+            ),
             const SizedBox(height: 20),
             const Text("Pas encore inscrit ?",
                 style: TextStyle(

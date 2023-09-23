@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavBar(
+        index: 0,
       ),
       body: Center(
           child: Column(
@@ -137,7 +138,9 @@ class _HomePageState extends State<HomePage>
               ),
               GreenPlainButton(
                 text: 'Prendre un rendez-vous',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/warning');
+                },
               ),
               const Text(
                 'Vos dernier documents recu',
