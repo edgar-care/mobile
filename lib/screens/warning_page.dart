@@ -38,7 +38,8 @@ class _WarningPageState extends State<WarningPage> with SingleTickerProviderStat
             ),
             const SizedBox(height: 50),
             const Card(
-              color: Color.fromRGBO(232, 218 , 242 , 1),
+              color: AppColors.blue100,
+              elevation: 0,
               child : Padding(  
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(

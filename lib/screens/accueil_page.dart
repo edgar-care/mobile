@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
 
   Map<String, Object> info = {
-        'nom': 'Michel',
+        'nom': 'Noé',
         'next_rdv_date': '7 mai 2022',
         'next_rdv_horraire': '14 h 15',
         'd': ''

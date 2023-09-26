@@ -4,6 +4,8 @@ import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/bottom_navbar.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 class InformationPersonnel extends StatefulWidget {
   const InformationPersonnel({Key? key}) : super(key: key);
@@ -15,38 +17,104 @@ class InformationPersonnel extends StatefulWidget {
 class _InformationPersonnelState extends State<InformationPersonnel> with SingleTickerProviderStateMixin {
   List<bool> isSelected = [true, false];
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData(context);
+  }
 
+  Map<String, dynamic> dataInfo = {};
+  Map<String, dynamic> dataHealth = {};
+
+  Future<void> fetchDatas(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    const url =
+        'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/onboarding/grapghql';
+    final token = prefs.getString('token');
+    final uncodeToken = JWT.decode(token!);
+    final id = uncodeToken.payload['id'];
+    const headers = {
+    'Content-Type': 'application/json',
+    'User-Agent': 'insomnia/2023.5.8',
+    'Edgar-Auth-Key': 'TWFydmluTGVQbHVzQmVhdURlTGFUZXJyZTwz',
+    };
+    final body = '{"query":"query getInfoBNyId($id: String!) {\\n\\tgetInfoById(id: $id) {\\n\\t\\tid\\n\\t\\tsurname\\n\\t\\tbirthdate\\n\\t\\tsex\\n\\t\\tweight\\n\\t\\theight\\n\\t}\\n}","operationName":"getInfoBNyId","variables":{"id":"6511f3c6455f0ef1c6312084"}}';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+  }
 
   Future<void> fetchData(BuildContext context) async {
-    const url =
-        'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/patient';
-
-    final response = await http.get(
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final uncodeToken = JWT.decode(token!);
+    final payload = uncodeToken.payload;
+    final id = payload['patient']['id'];
+    const url = 'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/graphql';
+    const headers = {
+      'Content-Type': 'application/json',
+      'Edgar-Auth-Key': 'TWFydmluTGVQbHVzQmVhdURlTGFUZXJyZTwz',
+    };
+    const query = 'query getInfoById(\$id: String!) { getInfoById(id: \$id) { id surname birthdate sex weight height } }';
+    const operationName = 'getInfoById';
+    final variables = jsonEncode({'id': '6511f3c6455f0ef1c6312084'});
+    const queryHealth = 'query getHealthById(\$id: String!) { getHealthById(id: \$id) { id patients_treatments patients_allergies patients_illness } }';
+    const operationNameHealth = 'getHealthById';
+    final variablesHealth = jsonEncode({'id': '6511f44505a62680a7e63a78'});
+    final response = await http.post(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
+      body: jsonEncode({
+        'query': query,
+        'operationName': operationName,
+        'variables': jsonDecode(variables),
+      }),
     );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    final responseHealth = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode({
+        'query': queryHealth,
+        'operationName': operationNameHealth,
+        'variables': jsonDecode(variablesHealth),
+      }),
+    );
+
+    if (response.statusCode == 200 && responseHealth.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      setState(() {
+        dataInfo = responseData['data']['getInfoById'];
+        dataHealth = jsonDecode(responseHealth.body)['data']['getHealthById'];
+        populateInfoMedical();
+      });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Error occurred while fetching data'),
+          content: Text('Failed to fetch data'),
         ),
       );
     }
   }
 
-  Map<String, Object> infoMedical= {
-    'nom': 'Michel',
-    'sexe': 'male',
-    'Age': '22 ans',
-    'taille': '182 cm',
-    'poids': '63 kg',
-    'medecin_traitant': 'Dr.Robert',
-    'traitement_en_cours': 'Aucun',
-    'allergies': 'Aucun',
-    'Maladies': 'Aucune'
-  };
+  Map<String, Object> infoMedical = {};
+
+  void populateInfoMedical() {
+    infoMedical = {
+      'Nom': dataInfo['surname'] ?? 'Inconnu',
+      'Sex': dataInfo['sex'].toString() ?? 'Inconnu',
+      'Anniversaire': dataInfo['birthdate'] ?? 'Inconnu',
+      'Taille': dataInfo['height'] ?? 'Inconnu',
+      'Poids': dataInfo['weight'] ?? 'Inconnu',
+      'Medecin_traitant': dataHealth['patients_primary_doctor'] ?? 'Inconnu',
+      'Traitement_en_cours': 'Aucun',
+      'Allergies': 'Aucune',
+      'Maladies':  'Aucune',
+    };
+  }
 
     
     @override
@@ -66,7 +134,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
                     child: Row(
                       children: <Widget>[
                         Text(
-                          entry.key,
+                          entry.key.replaceAll('_', ' '),
                           style: const TextStyle(color: Colors.white),
                         ),
                         const Text(
@@ -120,8 +188,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
               hoverColor: AppColors.blue700,
 
               fillColor: AppColors.blue700,
-              onPressed: (int index) async {
-                fetchData(context);
+              onPressed: (int index) {
                 setState(() {
                   for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
                     if (buttonIndex == index) {

@@ -17,6 +17,9 @@ class _ChatPageState extends State<ChatPage> {
     'Bonjour, je suis Edgar, votre assistant médical. Comment puis-je vous aider ?',
     false,
   ]];
+
+  Map<String, dynamic> dataSymptom = {};
+
   TextEditingController messageController = TextEditingController(); // Controller for the text input field
   @override
   Widget build(BuildContext context) {
