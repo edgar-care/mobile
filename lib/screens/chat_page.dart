@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/widget/bottom_navbar.dart';
-import 'package:prototype_1/widget/plain_button.dart';
 import 'package:http/http.dart' as http;
 
 class ChatPage extends StatefulWidget {

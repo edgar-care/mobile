@@ -6,6 +6,7 @@ import 'package:prototype_1/widget/plain_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class InformationPersonnel extends StatefulWidget {
   const InformationPersonnel({Key? key}) : super(key: key);
@@ -26,39 +27,15 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
   Map<String, dynamic> dataInfo = {};
   Map<String, dynamic> dataHealth = {};
 
-  Future<void> fetchDatas(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    const url =
-        'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/onboarding/grapghql';
-    final token = prefs.getString('token');
-    final uncodeToken = JWT.decode(token!);
-    final id = uncodeToken.payload['id'];
-    const headers = {
-    'Content-Type': 'application/json',
-    'User-Agent': 'insomnia/2023.5.8',
-    'Edgar-Auth-Key': 'TWFydmluTGVQbHVzQmVhdURlTGFUZXJyZTwz',
-    };
-    final body = '{"query":"query getInfoBNyId($id: String!) {\\n\\tgetInfoById(id: $id) {\\n\\t\\tid\\n\\t\\tsurname\\n\\t\\tbirthdate\\n\\t\\tsex\\n\\t\\tweight\\n\\t\\theight\\n\\t}\\n}","operationName":"getInfoBNyId","variables":{"id":"6511f3c6455f0ef1c6312084"}}';
-
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: body,
-    );
-
-  }
-
   Future<void> fetchData(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await dotenv.load();
     final token = prefs.getString('token');
     final uncodeToken = JWT.decode(token!);
     final payload = uncodeToken.payload;
     final id = payload['patient']['id'];
-    const url = 'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/graphql';
-    const headers = {
-      'Content-Type': 'application/json',
-      'Edgar-Auth-Key': 'TWFydmluTGVQbHVzQmVhdURlTGFUZXJyZTwz',
-    };
+    final url = '${dotenv.env['URL']}graphql';
+    final edgarAuthKey = dotenv.env['EDGAR_AUTH_KEY'];
     const query = 'query getInfoById(\$id: String!) { getInfoById(id: \$id) { id surname birthdate sex weight height } }';
     const operationName = 'getInfoById';
     final variables = jsonEncode({'id': '6511f3c6455f0ef1c6312084'});
@@ -67,7 +44,10 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
     final variablesHealth = jsonEncode({'id': '6511f44505a62680a7e63a78'});
     final response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Edgar-Auth-Key': edgarAuthKey!,
+      },
       body: jsonEncode({
         'query': query,
         'operationName': operationName,
@@ -76,7 +56,10 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
     );
     final responseHealth = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'Edgar-Auth-Key': edgarAuthKey,
+      },
       body: jsonEncode({
         'query': queryHealth,
         'operationName': operationNameHealth,
