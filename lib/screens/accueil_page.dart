@@ -21,11 +21,20 @@ class _HomePageState extends State<HomePage>
         'd': ''
     };
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavBar(
-        index: 0,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
       body: Center(
           child: Column(

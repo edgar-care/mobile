@@ -136,7 +136,8 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
                 const SizedBox(height: 20),
                 GreenPlainButton(
                   text: 'Modifier',
-                  onPressed: () {},
+                  onPressed: () {
+                  },
                 ),
                 const SizedBox(height: 20),
               ],
@@ -145,11 +146,20 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
         : Container();
     }
 
+  int _selectedIndex = 3;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
    Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavBar(
-        index: 3,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
       body: Center(
         child: Column(
