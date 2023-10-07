@@ -17,6 +17,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> with TickerProviderStateMixin{
   AnimationController? _animationController;
+  // ignore: unused_field
   Animation<double>? _animation;
   final icons = [
     const Icon(Icons.home),

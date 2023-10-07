@@ -8,6 +8,7 @@ class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
@@ -85,9 +86,12 @@ class _LoginState extends State<Login> {
                 if (response.statusCode == 200) {
                   final token = jsonDecode(response.body)['token'];
                   prefs.setString('token', token);
+                  // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, '/home');
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  final scaffoldContext = context;
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                     const SnackBar(
                       content: Text('Identifiants incorrects'),
                     ),

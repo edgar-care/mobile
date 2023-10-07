@@ -33,6 +33,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
     final token = prefs.getString('token');
     final uncodeToken = JWT.decode(token!);
     final payload = uncodeToken.payload;
+    // ignore: unused_local_variable
     final id = payload['patient']['id'];
     final url = '${dotenv.env['URL']}graphql';
     final edgarAuthKey = dotenv.env['EDGAR_AUTH_KEY'];
@@ -75,6 +76,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
         populateInfoMedical();
       });
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to fetch data'),
@@ -88,7 +90,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
   void populateInfoMedical() {
     infoMedical = {
       'Nom': dataInfo['surname'] ?? 'Inconnu',
-      'Sex': dataInfo['sex'].toString() ?? 'Inconnu',
+      'Sex': dataInfo['sex'].toString(),
       'Anniversaire': dataInfo['birthdate'] ?? 'Inconnu',
       'Taille': dataInfo['height'] ?? 'Inconnu',
       'Poids': dataInfo['weight'] ?? 'Inconnu',
@@ -100,7 +102,6 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
   }
 
     
-    @override
     Widget cardInformation(BuildContext context) {
       return isSelected[1] 
         ? Card(

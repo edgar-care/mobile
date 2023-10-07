@@ -43,14 +43,13 @@ class PDFCard extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.download_rounded),
                     onPressed: () async {
-                      File file = await downloadPDF(pdfUrl, 'my-pdf.pdf');
-                      print('PDF Downloaded to ${file.path}');
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.remove_red_eye),
                     onPressed: () async {
                       File file = await downloadPDF(pdfUrl, 'my-pdf.pdf');
+                      // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
                         MaterialPageRoute(

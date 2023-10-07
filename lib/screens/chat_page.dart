@@ -35,6 +35,7 @@ class _ChatPageState extends State<ChatPage> {
     final token = prefs.getString('token');
     final uncodeToken = JWT.decode(token!);
     final payload = uncodeToken.payload;
+    // ignore: unused_local_variable
     final id = payload['patient']['id'];
     final url = '${dotenv.env['URL']}/nlp';
     final urlexam = '${dotenv.env['URL']}/exam';
@@ -66,6 +67,7 @@ class _ChatPageState extends State<ChatPage> {
       if (responseExam.statusCode == 200) {
       final examData = jsonDecode(responseExam.body);
       final nextQuestion = examData['question'];
+      // ignore: unused_local_variable
       final symptoms = examData['symptoms'];
       final done = examData['done'];
 
