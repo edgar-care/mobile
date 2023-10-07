@@ -52,12 +52,12 @@ class _ChildBody extends StatelessWidget {
                   fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 5),
-        Padding(
-          padding: const EdgeInsets.only(left: 24.0),
-          child: Container(
+        const Padding(
+          padding: EdgeInsets.only(left: 24.0),
+          child: SizedBox(
             width: 337,
             height: 175,
-            child: const TextField(
+            child: TextField(
               maxLines: null,
               expands: true,
               decoration: InputDecoration(
