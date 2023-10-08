@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,9 +76,9 @@ class _LoginState extends State<Login> {
             PlainButton(
               text: "Connexion",
               onPressed: () async {
+                await dotenv.load();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                const url =
-                    'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/auth/p/login';
+                String url = '${dotenv.env['URL']}auth/p/login';
                 final response = await http.post(
                   Uri.parse(url),
                   headers: {'Content-Type': 'application/json'},
@@ -87,7 +88,7 @@ class _LoginState extends State<Login> {
                   final token = jsonDecode(response.body)['token'];
                   prefs.setString('token', token);
                   // ignore: use_build_context_synchronously
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamed(context, '/dashboard');
                 } else {
                   final scaffoldContext = context;
                   // ignore: use_build_context_synchronously

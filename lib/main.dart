@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/screens/auth.dart';
-import 'package:prototype_1/screens/help.dart';
+import 'package:prototype_1/screens/LandingPage/help.dart';
 import 'package:prototype_1/screens/login.dart';
-import 'package:prototype_1/screens/accueil_page.dart';
 import 'package:prototype_1/screens/register.dart';
-import 'package:prototype_1/screens/information_personnel.dart';
-import 'package:prototype_1/screens/warning_page.dart';
-import 'package:prototype_1/screens/chat_page.dart';
+import 'package:prototype_1/screens/simulation/warning_page.dart';
+import 'package:prototype_1/screens/simulation/chat_page.dart';
+import 'package:prototype_1/models/dashboard.dart';
 
-import 'screens/annuaire_medecin.dart';
-import 'screens/landing_page.dart';
-import 'screens/connexion_validate.dart';
+import 'screens/LandingPage/annuaire_medecin.dart';
+import 'screens/LandingPage/landing_page.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -38,11 +36,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const Register(),
         '/help': (context) => const HelpScreen(),
         '/annuaire-medecin': (context) => const AnnuaireMedecin(),
-        '/connexion-validate': (context) => const ConnexionValidate(),
-        '/home': (context) => const HomePage(),
-        '/person': (context) => const InformationPersonnel(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
+        '/dashboard': (context) =>  const DashBoardPage(),
       },
     );
   }
