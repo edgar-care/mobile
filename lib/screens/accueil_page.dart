@@ -15,16 +15,26 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
 
   Map<String, Object> info = {
-        'nom': 'Michel',
+        'nom': 'Noé',
         'next_rdv_date': '7 mai 2022',
         'next_rdv_horraire': '14 h 15',
         'd': ''
     };
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavBar(
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
       body: Center(
           child: Column(
@@ -137,7 +147,9 @@ class _HomePageState extends State<HomePage>
               ),
               GreenPlainButton(
                 text: 'Prendre un rendez-vous',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/warning');
+                },
               ),
               const Text(
                 'Vos dernier documents recu',

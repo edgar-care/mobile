@@ -5,7 +5,7 @@ import 'package:prototype_1/screens/register.dart';
 void main() {
   testWidgets('Test fonctionnel pour lib/screens/register.dart', (WidgetTester tester) async {
     // Créez l'instance de l'application et ajoutez la page Register
-    await tester.pumpWidget(MaterialApp(home: Register()));
+    await tester.pumpWidget( const MaterialApp(home: Register()));
 
     // Vérifiez si le logo est présent
     expect(find.byType(Image), findsOneWidget);

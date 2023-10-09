@@ -15,23 +15,26 @@ class LandingPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 30),
-            const Text(
-              "Gagne du temps avec l’assistant\n virtuel du pré-diagnostic",
-              style: TextStyle(
-                fontSize: 24,
-                fontFamily: 'Poppins',
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                leadingDistribution: TextLeadingDistribution.proportional,
-                overflow: TextOverflow.visible,
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3.0),
+              child: Text(
+                "Gagne du temps avec l’assistant\n virtuel du pré-diagnostic",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'Poppins',
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  leadingDistribution: TextLeadingDistribution.proportional,
+                  overflow: TextOverflow.visible,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
             Image.asset(
               'assets/images/logo/edgar-high-five.png',
-              width: 120,
+              width: 110,
             ),
             const SizedBox(height: 30),
             const SizedBox(
@@ -96,6 +99,7 @@ class LandingPage extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 10),
           ],
         ),
       ),

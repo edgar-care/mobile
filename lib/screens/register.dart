@@ -32,7 +32,7 @@ class Register extends StatelessWidget {
               ),
             ]),
             const SizedBox(height: 20),
-            PasswordTextFieldBlock(),
+            const PasswordTextFieldBlock(),
             const SizedBox(height: 20),
             PlainButton(
                 text: "Inscrivez-vous",
@@ -59,7 +59,10 @@ class Register extends StatelessWidget {
 }
 
 class PasswordTextFieldBlock extends StatefulWidget {
+  const PasswordTextFieldBlock({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _PasswordTextFieldBlockState createState() => _PasswordTextFieldBlockState();
 }
 
@@ -80,12 +83,12 @@ class _PasswordTextFieldBlockState extends State<PasswordTextFieldBlock> {
           TextFormField(
             obscureText: _obscureText,
             decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
+              enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: AppColors.darkBlue, width: 2.0),
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               labelText: 'Mot de passe',
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                   color: AppColors.textBlue,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
@@ -110,7 +113,7 @@ class _PasswordTextFieldBlockState extends State<PasswordTextFieldBlock> {
 
 class TextFieldBlock extends StatelessWidget {
   final List<Widget> children;
-  const TextFieldBlock({required this.children});
+  const TextFieldBlock({super.key, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +134,7 @@ class TextFieldBlock extends StatelessWidget {
 class PlainButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const PlainButton({required this.text, required this.onPressed});
+  const PlainButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +158,7 @@ class PlainButton extends StatelessWidget {
 class EmptyButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
-  const EmptyButton({required this.text, required this.onPressed});
+  const EmptyButton({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
