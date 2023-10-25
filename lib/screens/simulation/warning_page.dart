@@ -43,7 +43,7 @@ class _WarningPageState extends State<WarningPage> with SingleTickerProviderStat
               child : Padding(  
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                    'Cette session, n’a pas pour but de\ndiagnostiquer une maladie. À l’issue de\nla session, votre pré-diagnostic sera\ntransmis à un médecin pour être\nexaminé.ne réponse vous sera fournie\ndans un délai maximum de 48h',
+                    'Cette session, n’a pas pour but de\ndiagnostiquer une maladie. À l’issue de\nla session, votre pré-diagnostic sera\ntransmis à un médecin pour être\nexaminé. Une réponse vous sera fournie\ndans un délai maximum de 48h',
                     style: TextStyle(
                       color: AppColors.grey950,
                       fontSize: 12,

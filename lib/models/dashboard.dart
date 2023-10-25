@@ -35,15 +35,15 @@ class _DashBoardPageState extends State<DashBoardPage> with TickerProviderStateM
       bottomNavigationBar: CustomBottomNavigationBars(
         selectedIndex: _selectedIndex,
         onTap: (index) {
-          if (mounted) {
-            try {
-              setState(() {
-                _selectedIndex = index;
-              });
-            } catch (e) {
-              // ignore: avoid_print
-              print(e);
-            }
+          if (index == 4) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            
+          } else {
+            setState(() {
+              _selectedIndex = index;
+            });
           }
         },
       ),

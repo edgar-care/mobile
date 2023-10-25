@@ -1,6 +1,15 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
+import 'package:prototype_1/services/getAppointement.dart';
+
+enum RdvFilter {
+  aVenir,
+  passes,
+  annules,
+}
 
 class GestionRendezVous extends StatefulWidget {
   const GestionRendezVous({Key? key}) : super(key: key);
@@ -9,33 +18,67 @@ class GestionRendezVous extends StatefulWidget {
   State<GestionRendezVous> createState() => _GestionRendezVousPageState();
 }
 
+
 class _GestionRendezVousPageState extends State<GestionRendezVous> {
 
-    final List<Map<String, String>> rdv = [
-    {
-      'date': '10/18/2023',
-      'heure': '23:59:59',
-      'medecin': 'Dr. Dupont',
-      'adresse': '123 Rue de la Santé, Paris'
-    },
-    {
-      'date': '10/20/2023',
-      'heure': '23:59:59',
-      'medecin': 'Dr. Dupont',
-      'adresse': '123 Rue de la Santé, Paris'
-    },
-    {
-      'date': '17/09/2023',
-      'heure': '23:59:59',
-      'medecin': 'Dr. Dupont',
-      'adresse': '123 Rue de la Santé, Paris'
-    },
+
+  final List<Map<String, String>> rdv = [
+
   ];
 
   final currentDate = DateTime.now();
 
+  RdvFilter rdvFilter = RdvFilter.aVenir;
+
   @override
   Widget build(BuildContext context) {
+  final Future<Map<String, dynamic>?> rdvs = getAppointement(context);
+  rdvs.then((rdvs) {
+    if (rdvs != null) {
+      final uniqueRdv = <Map<String, String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+      rdvs['rdv'].forEach((dynamic rdv) {
+        final rendezVous = {
+          'date': DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+          'heure': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+          'fin': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
+          'medecin': 'Dr. ${rdv['doctor_id'] as String}',
+          'adresse': '123 Rue de la Santé, Paris',
+        };
+        uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
+      });
+      rdv.addAll(uniqueRdv.toList()); // Convertir le Set en une liste et l'ajouter à rdv
+    }
+  });
+  
+  print(rdv);
+
+  List<Map<String, String>> filteredRdv = rdv;
+
+  switch (rdvFilter) {
+  case RdvFilter.aVenir:
+    filteredRdv = rdv.where((element) {
+      final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
+      return rdvDate.isAfter(DateTime.now());
+    }).toList();
+    break;
+  case RdvFilter.passes:
+    filteredRdv = rdv.where((element) {
+      final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
+      return rdvDate.isBefore(DateTime.now());
+    }).toList();
+    break;
+  case RdvFilter.annules:
+    filteredRdv = rdv;
+    break;
+  }
+   
+
+  rdv.sort((a, b) => DateFormat('dd/MM/yyyy').parse(a['date']!).compareTo(DateFormat('dd/MM/yyyy').parse(b['date']!)));
+
+  if (rdv.any((element) => element['date'] == DateFormat.yMd().format(currentDate))) {
+    rdv.sort((a, b) => DateFormat('HH:mm:ss').parse(a['heure']!).compareTo(DateFormat('HH:mm:ss').parse(b['heure']!)));
+  }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -49,15 +92,21 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
         const SizedBox(height: 30),
         DateSlider(rdv: rdv),
         const SizedBox(height: 30),
-        const SwitchThreeElements(),
+        SwitchThreeElements(
+          onValueChanged: (RdvFilter value) {
+            setState(() {
+              rdvFilter = value;
+            });
+          },
+        ),
         const SizedBox(height: 10),
         Expanded(
           child: ListView.builder(
-            itemCount: rdv.length,
+            itemCount: filteredRdv.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              final filteredRdv = rdv.where((element) => element['date'] != null && element['date']!.isNotEmpty && DateTime.parse(element['date']!).isAfter(DateTime.now())).toList();
-              return CardRdv(rdv: filteredRdv[index % filteredRdv.length]);
+              final appointment = filteredRdv[index];
+              return CardRdv(rdv: appointment);
             },
           ),
         ),
@@ -95,7 +144,7 @@ class DateSlider extends StatelessWidget {
                       width: 70, // Largeur fixe pour chaque carte
                       height: 90,
                       child: DateCard(
-                        month: DateFormat.MMMM().format(currentDate),
+                        month: DateFormat.MMMM().format(currentDate).substring(0, 3),
                         date: DateFormat.d().format(currentDate),
                         isRdv: isRdv,
                         isToday: isToday,
@@ -122,6 +171,7 @@ class DateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       width: 70,
       height: 90,
@@ -166,22 +216,22 @@ class DateCard extends StatelessWidget {
 }
 
 class SwitchThreeElements extends StatefulWidget {
-  const SwitchThreeElements({super.key});
+  final ValueChanged<RdvFilter> onValueChanged;
+  const SwitchThreeElements({Key? key, required this.onValueChanged}) : super(key: key);
 
- @override
- // ignore: library_private_types_in_public_api
- _SwitchThreeElementsState createState() => _SwitchThreeElementsState();
+  @override
+  // ignore: library_private_types_in_public_api
+  _SwitchThreeElementsState createState() => _SwitchThreeElementsState();
 }
 
 class _SwitchThreeElementsState extends State<SwitchThreeElements> {
- int _selectedIndex = 0;
+  RdvFilter selectedFilter = RdvFilter.aVenir;
 
- @override
- Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: 
-      Container(
+      child: Container(
         height: 60.0,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -197,24 +247,25 @@ class _SwitchThreeElementsState extends State<SwitchThreeElements> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            for (int i = 0; i < 3; i++)
+            for (RdvFilter filter in RdvFilter.values)
               InkWell(
                 onTap: () {
-                setState(() {
-                    _selectedIndex = i;
-                });
+                  setState(() {
+                    selectedFilter = filter;
+                  });
+                  widget.onValueChanged(selectedFilter);
                 },
                 child: Container(
-                width: MediaQuery.of(context).size.width / 3 - 12.0,
+                  width: MediaQuery.of(context).size.width / 3 - 12.0,
                   height: 100.0,
                   alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: _selectedIndex == i ? AppColors.blue700 : Colors.white,
+                  decoration: BoxDecoration(
+                    color: selectedFilter == filter ? AppColors.blue700 : Colors.white,
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                   child: Text(
-                    ['A venir', 'Passés', 'Annuler'][i],
-                    style: TextStyle(fontSize: 16.0, color: _selectedIndex == i ? Colors.white : AppColors.blue950),
+                    filterToString(filter),
+                    style: TextStyle(fontSize: 16.0, color: selectedFilter == filter ? Colors.white : AppColors.blue950),
                   ),
                 ),
               ),
@@ -223,7 +274,21 @@ class _SwitchThreeElementsState extends State<SwitchThreeElements> {
       ),
     );
   }
+
+  String filterToString(RdvFilter filter) {
+    switch (filter) {
+      case RdvFilter.aVenir:
+        return 'A venir';
+      case RdvFilter.passes:
+        return 'Passés';
+      case RdvFilter.annules:
+        return 'Annulés';
+      default:
+        return '';
+    }
+  }
 }
+
 
 class CardRdv extends StatefulWidget {
   final Map<String, String> rdv;
@@ -236,43 +301,85 @@ class CardRdv extends StatefulWidget {
 }
 
 class _CardRdvState extends State<CardRdv> {
+  
   @override
   Widget build(BuildContext context) {
     var currenDate = DateTime.now();
+
+    GlobalKey key = GlobalKey(); 
+    bool isVisible = false;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
+          Stack(
             children: [
-              Text(
-                widget.rdv['date'] == DateFormat.yMd().format(currenDate) ? 'Aujourd\'hui' : widget.rdv['date'] ?? '',
-                style: const TextStyle(
-                  color: AppColors.green500,
-                  fontFamily: 'Poppins',
-                  fontSize: 16.0,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w600,
-                  height: null,
+              Visibility(
+            visible: isVisible,
+            child: Positioned(
+              left: key.currentContext?.size?.width ?? 0,
+              right: key.currentContext?.size?.height ?? 0,
+              child: Container(
+                width: 200,
+                height: 100,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green,
+                  borderRadius: null,
                 ),
+                child: const Text('Test'),
               ),
-              Text(
-                widget.rdv['heure']?.replaceAll(':', 'h').substring(0, 5) ?? '',
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16.0,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+            ),
+          ),
             ],
+          ),
+          SizedBox(
+            width: 100   ,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.rdv['date'] ==  DateFormat('dd/MM/yyyy').format(currenDate) ? 'Aujourd\'hui' :
+                  widget.rdv['date'] ==  DateFormat('dd/MM/yyyy').format(currenDate.add(const Duration(days: 1))) ? 'Demain' :
+                  widget.rdv['date']!,
+                  style: const TextStyle(
+                    color: AppColors.green500,
+                    fontFamily: 'Poppins', 
+                    fontSize: 16.0,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w600,
+                    height: null,
+                  ),
+                ),
+                Text(
+                  widget.rdv['heure']?.replaceAll(':', 'H').substring(0, 5).trim().replaceFirst("H", " H ") ?? '',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 16.0,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  widget.rdv['heure'] != null && widget.rdv['fin'] != null ?
+                  '${DateTime.parse('2022-01-01 ${widget.rdv['fin']!}').difference(DateTime.parse('2022-01-01 ${widget.rdv['heure']!}')).inMinutes} min' :
+                  '',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 12.0,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.grey500,
+                  ),
+                )
+              ],
+            ),
           ),
           const SizedBox(width: 16),
           Container(
-            width: MediaQuery.of(context).size.width - 140,
+            width: MediaQuery.of(context).size.width - 150,
             decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(8),
@@ -281,7 +388,7 @@ class _CardRdvState extends State<CardRdv> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
@@ -303,9 +410,13 @@ class _CardRdvState extends State<CardRdv> {
                           textAlign: TextAlign.center,
                         ),
                         IconButton(
-                          icon: const Icon(Icons.more_vert, color: AppColors.grey500, size: 20),
+                          key: key,
+                          icon: const Icon(BootstrapIcons.three_dots_vertical, color: AppColors.grey500, size: 20),
                           onPressed: () {
-                            
+                            // Code to make the invisible container appear
+                            setState(() {
+                              isVisible = true;
+                            });
                           },
                         ),
                       ],
@@ -330,22 +441,28 @@ class _CardRdvState extends State<CardRdv> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.location_on, color: AppColors.grey500, size: 20),
-                        Text(
-                          widget.rdv['adresse'] ?? '',
-                          style: const TextStyle(
-                            color: AppColors.grey500,
-                            fontFamily: 'Poppins',
-                            fontSize: 12.0,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            height: null,
+                        const Icon(BootstrapIcons.geo, color: AppColors.grey600, size: 12 ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 236,
+                          child: AutoSizeText(
+                            widget.rdv['adresse'] ?? '',
+                            maxLines: 2,
+                            minFontSize: 12,
+                            maxFontSize: 16,
+                            style: const TextStyle(
+                              color: AppColors.grey500,
+                              fontFamily: 'Poppins',
+                              fontSize: 12.0,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
+                              height: null,
+                            ),
+                            textAlign: TextAlign.start
                           ),
-                          textAlign: TextAlign.center,
                         ),
                         IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios
-                          , color: AppColors.grey500, size: 20),
+                          icon: const Icon(BootstrapIcons.chevron_right
+                          , color: AppColors.grey600, size: 20),
                           onPressed: () {},
                         ),
                       ],

@@ -24,6 +24,9 @@ dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_local_notifications: ^16.1.0
+  bootstrap_icons: ^1.11.1
+  auto_size_text: ^3.0.0
+  aligned_dialog: ^0.0.7
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -43,6 +46,11 @@ flutter:
         - asset: assets/font/Raleway-Regular.ttf
         - asset: assets/font/Raleway-Medium.ttf
         - asset: assets/font/Raleway-Italic.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/font/Poppins/Poppins-Regular.ttf
+        - asset: assets/font/Poppins/Poppins-Medium.ttf
+        - asset: assets/font/Poppins/Poppins-Italic.ttf
   assets:
     - assets/images/logo/
     - assets/images/utils/

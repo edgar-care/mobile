@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 import 'package:prototype_1/widget/navbar.dart';
+import 'package:http/http.dart' as http;
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -15,10 +19,74 @@ class HelpScreen extends StatelessWidget {
   }
 }
 
+Future<MessageResponse> sendContactForm(String email, String name, String message) async {
+  try {
+    if (!emailValidityChecker(email)) {
+      return MessageResponse(title: 'Adresse mail invalide', status: 'error');
+    }
+    if (name.isEmpty) {
+      return MessageResponse(title: 'Merci de renseigner votre nom', status: 'error');
+    }
+    if (message.isEmpty) {
+      return MessageResponse(title: 'Merci de renseigner votre message', status: 'error');
+    }
+
+    await dotenv.load();
+    final airtableKey = dotenv.env['AIRTABLE_KEY'];
+
+    final response = await http.post(
+      Uri.parse('https://api.airtable.com/v0/apppNB1HHznqlQND3/tblYv0iZL8XQLXwGH'),
+      headers: {
+        'Authorization': 'Bearer $airtableKey',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'records': [
+          {
+            'fields': {
+              'Email': email,
+              'Name': name,
+              'Message': message,
+              'Date': DateTime.now().toIso8601String(),
+            },
+          },
+        ],
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      return MessageResponse(title: 'Une erreur est survenue, merci de réessayer', status: 'error');
+    }
+
+    return MessageResponse(title: 'Message envoyé', status: 'success');
+  } catch (error) {
+    return MessageResponse(title: 'Une erreur est survenue, merci de réessayer', status: 'error');
+  }
+}
+
+bool emailValidityChecker(String email) {
+  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  return emailRegex.hasMatch(email);
+}
+
+class MessageResponse {
+  final String title;
+  final String status;
+
+  MessageResponse({required this.title, required this.status});
+}
+
 class _ChildBody extends StatelessWidget {
   const _ChildBody({Key? key}) : super(key: key);
+
+
   @override
   Widget build(BuildContext context) {
+
+    var mail = "";
+    var question = "";
+    var name = "";
+
     return SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Padding(
@@ -30,15 +98,45 @@ class _ChildBody extends StatelessWidget {
                   fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 5),
-        const Padding(
-          padding: EdgeInsets.only(left: 24.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0),
           child: SizedBox(
-            width: 248,
-            height: 32,
+            width: MediaQuery.of(context).size.width - 96,
+            height: MediaQuery.of(context).size.height * 0.05,
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
+              textAlignVertical: TextAlignVertical.center,
+              onChanged: (value) {
+                mail = value;
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Padding(
+          padding: EdgeInsets.only(left: 24.0),
+          child: Text("Nom :",
+              style: TextStyle(
+                  color: AppColors.blue700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width - 96,
+            height: MediaQuery.of(context).size.height * 0.05,
+            child: TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+              textAlignVertical: TextAlignVertical.center,
+              onChanged: (value) {
+                name = value;
+              },
             ),
           ),
         ),
@@ -52,24 +150,48 @@ class _ChildBody extends StatelessWidget {
                   fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 5),
-        const Padding(
-          padding: EdgeInsets.only(left: 24.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0),
           child: SizedBox(
-            width: 337,
+            width: MediaQuery.of(context).size.width - 42,
             height: 175,
             child: TextField(
               maxLines: null,
               expands: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
+              textAlign: TextAlign.start,
+              textAlignVertical: TextAlignVertical.top,
+              onChanged: (value) {
+                question = value;
+              },
             ),
           ),
         ),
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(left: 24.0),
-          child: PlainButton(text: "Envoyer", onPressed: () {}),
+          child: PlainButton(text: "Envoyer", onPressed: () async {
+            final response = await sendContactForm(mail, name, question);
+            // ignore: use_build_context_synchronously
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(response.title),
+                  actions: [
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }),
         ),
         const SizedBox(height: 20),
         SizedBox(
@@ -94,7 +216,8 @@ class _ChildBody extends StatelessWidget {
               SizedBox(width: 20),
             ],
           ),
-        )
+        ),
+        const SizedBox(height: 20),
       ]),
     );
   }

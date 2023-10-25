@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -41,12 +42,12 @@ class PDFCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.download_rounded),
+                    icon: const Icon(BootstrapIcons.download),
                     onPressed: () async {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.remove_red_eye),
+                    icon: const Icon(BootstrapIcons.eye),
                     onPressed: () async {
                       File file = await downloadPDF(pdfUrl, 'my-pdf.pdf');
                       // ignore: use_build_context_synchronously

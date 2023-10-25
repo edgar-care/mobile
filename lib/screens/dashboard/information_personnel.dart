@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/plain_button.dart';
@@ -103,7 +104,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
       'Medecin_traitant': dataHealth['patients_primary_doctor'] ?? 'Inconnu',
       'Traitement_en_cours': 'Aucun',
       'Allergies': 'Aucune',
-      'Maladies':  'Aucune',
+      'Maladies_connues':  'Aucune',
     };
   }
 
@@ -124,24 +125,25 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
                   children: <Widget>[
                     Text(
                       entry.key.replaceAll('_', ' '),
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Poppins'),
                     ),
                     const Text(
-                      ':',
-                      style: TextStyle(color: Colors.white),
+                      ' :',
+                      style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
                     ),
                     const Spacer(),
                     Text(
                       '${entry.value}',
-                      style: const TextStyle(color: AppColors.green400),
+                      style: const TextStyle(color: Colors.white, fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
               );
             }).toList(),
             const SizedBox(height: 20),
-            GreenPlainButton(
+            GreenPlainButtonWithIcon(
               text: 'Modifier',
+              icon: BootstrapIcons.pencil,
               onPressed: () {
               },
             ),
@@ -187,13 +189,13 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
           isSelected: isSelected,
           children: <Widget>[
             Text(
-              'Information\nPersonnel', 
-              style: TextStyle(color: isSelected[0] ? Colors.white : AppColors.blue900, 
+              'Information\nPersonnelle', 
+              style: TextStyle(color: isSelected[0] ? Colors.white : AppColors.blue900, fontFamily: 'Poppins'
               ),
             ),
             Text(
-              'Information\nMedical', 
-              style: TextStyle(color: isSelected[1] ? Colors.white : AppColors.blue900)
+              'Information\nMedicale', 
+              style: TextStyle(color: isSelected[1] ? Colors.white : AppColors.blue900, fontFamily: 'Poppins')
             ),
           ],
         ),

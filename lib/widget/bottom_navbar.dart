@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 
 class CustomBottomNavigationBars extends StatefulWidget {
   final int selectedIndex;
@@ -20,11 +21,11 @@ class CustomBottomNavigationBars extends StatefulWidget {
 class _CustomBottomNavigationBarsState extends State<CustomBottomNavigationBars>
     with TickerProviderStateMixin {
   final icons = [
-    const Icon(Icons.home),
-    const Icon(Icons.calendar_today),
-    const Icon(Icons.file_copy),
-    const Icon(Icons.person),
-    const Icon(Icons.settings),
+    const Icon(BootstrapIcons.house),
+    const Icon(BootstrapIcons.calendar),
+    const Icon(BootstrapIcons.file_text),
+    const Icon(BootstrapIcons.person),
+    const Icon(BootstrapIcons.gear),
   ];
 
   @override

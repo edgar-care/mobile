@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/plain_button.dart';
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(width: 10),
               Image.asset(
                 'assets/images/logo/edgar-high-five.png',
-                width: 30,
+                width: 40,
               ),
               const Spacer(),
               IconButton(
@@ -52,8 +53,8 @@ class _HomePageState extends State<HomePage> {
                       AppColors.grey200),
                 ),
                 icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.black,
+                  BootstrapIcons.bell,
+                  color: AppColors.blue950,
                 ),
                 onPressed: () {},
               ),
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const TextSpan(
-                          text: ' à ',
+                          text: ' à  ',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -129,6 +130,7 @@ class _HomePageState extends State<HomePage> {
             fontSize: 16,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
           ),
           textAlign: TextAlign.center,
         ),
@@ -139,7 +141,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         const Text(
-          'Vos dernier documents recu',
+          'Vos dernier documents reçus',
           style: TextStyle(
             color: Color(0xFF1E2B4D),
             fontSize: 16,
@@ -149,13 +151,14 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PDFCard(
               text: 'Document 1',
               pdfUrl:
                   'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
             ),
+            SizedBox(width: 10),
             PDFCard(
               text: 'Document 2',
               pdfUrl:

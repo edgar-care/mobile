@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 
@@ -99,7 +100,7 @@ class _PasswordTextFieldBlockState extends State<PasswordTextFieldBlock> {
                   });
                 },
                 icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                  _obscureText ? BootstrapIcons.eye : BootstrapIcons.eye_slash,
                   color: Colors.grey,
                 ),
               ),
