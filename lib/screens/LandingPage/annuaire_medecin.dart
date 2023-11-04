@@ -4,7 +4,7 @@ import 'package:prototype_1/widget/navbar.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 
 class AnnuaireMedecin extends StatelessWidget {
-  const AnnuaireMedecin({Key? key}) : super(key: key);
+  const AnnuaireMedecin({super.key});
 
   @override
   Widget build(BuildContext context) {

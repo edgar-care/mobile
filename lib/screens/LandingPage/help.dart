@@ -8,7 +8,7 @@ import 'package:prototype_1/widget/navbar.dart';
 import 'package:http/http.dart' as http;
 
 class HelpScreen extends StatelessWidget {
-  const HelpScreen({Key? key}) : super(key: key);
+  const HelpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class MessageResponse {
 }
 
 class _ChildBody extends StatelessWidget {
-  const _ChildBody({Key? key}) : super(key: key);
+  const _ChildBody();
 
 
   @override

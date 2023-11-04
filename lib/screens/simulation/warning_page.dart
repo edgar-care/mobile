@@ -3,7 +3,7 @@ import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 
 class WarningPage extends StatefulWidget {
-  const WarningPage({Key? key}) : super(key: key);
+  const WarningPage({super.key});
 
   @override
   State<WarningPage> createState() => _WarningPageState();

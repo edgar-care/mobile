@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 
 class Register extends StatelessWidget {
-  const Register({Key? key}) : super(key: key);
+  const Register({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/services/getResponseConversation.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  const ChatPage({super.key});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -17,13 +22,23 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    sessionId = initiateConversation() as String;
+    getSessionId();
   }
 
-  @override
-  void dispose() {
-    messageController.dispose();
-    super.dispose();
+  Future<void> getSessionId() async {
+    await dotenv.load();
+    final url = '${dotenv.env['URL']}diagnostic/initiate';
+    final edgarAuthKey = dotenv.env['EDGAR_AUTH_KEY'];
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Edgar-Auth-Key': edgarAuthKey!,
+      },
+    );
+    setState(() {
+      sessionId = jsonDecode(response.body)['sessionId'];
+    });
   }
 
   List<List<dynamic>> messages = [[
@@ -123,7 +138,8 @@ class _ChatPageState extends State<ChatPage> {
                         icon: const Icon(BootstrapIcons.arrow_right_circle_fill, color: AppColors.blue950),
                         onPressed: () {
                           sendMessage(true);
-                          parseUserInput(messageController.text);
+                          // parseUserInput(messageController.text);
+                           messages.add(["next question", false]);
                         },
                       ),
                     ],

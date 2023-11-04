@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
-import 'package:prototype_1/services/getAppointement.dart';
+import 'package:prototype_1/services/get_appointement.dart';
 
 enum RdvFilter {
   aVenir,
@@ -12,7 +12,7 @@ enum RdvFilter {
 }
 
 class GestionRendezVous extends StatefulWidget {
-  const GestionRendezVous({Key? key}) : super(key: key);
+  const GestionRendezVous({super.key});
 
   @override
   State<GestionRendezVous> createState() => _GestionRendezVousPageState();
@@ -50,7 +50,6 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
     }
   });
   
-  print(rdv);
 
   List<Map<String, String>> filteredRdv = rdv;
 
@@ -95,7 +94,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
         SwitchThreeElements(
           onValueChanged: (RdvFilter value) {
             setState(() {
-              rdvFilter = value;
+              rdvFilter = value; 
             });
           },
         ),
@@ -167,7 +166,7 @@ class DateCard extends StatelessWidget {
   final bool isRdv;
   final bool isToday;
 
-  const DateCard({Key? key, required this.month, required this.date, required this.isRdv, required this.isToday}) : super(key: key);
+  const DateCard({super.key, required this.month, required this.date, required this.isRdv, required this.isToday});
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +216,7 @@ class DateCard extends StatelessWidget {
 
 class SwitchThreeElements extends StatefulWidget {
   final ValueChanged<RdvFilter> onValueChanged;
-  const SwitchThreeElements({Key? key, required this.onValueChanged}) : super(key: key);
+  const SwitchThreeElements({super.key, required this.onValueChanged});
 
   @override
   // ignore: library_private_types_in_public_api

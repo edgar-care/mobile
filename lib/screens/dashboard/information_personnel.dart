@@ -9,7 +9,7 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class InformationPersonnel extends StatefulWidget {
-  const InformationPersonnel({Key? key}) : super(key: key);
+  const InformationPersonnel({super.key});
 
   @override
   State<InformationPersonnel> createState() => _InformationPersonnelState();
@@ -139,6 +139,7 @@ class _InformationPersonnelState extends State<InformationPersonnel> with Single
                   ],
                 ),
               );
+            // ignore: unnecessary_to_list_in_spreads
             }).toList(),
             const SizedBox(height: 20),
             GreenPlainButtonWithIcon(

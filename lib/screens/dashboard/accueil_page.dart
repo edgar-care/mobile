@@ -5,7 +5,7 @@ import 'package:prototype_1/widget/plain_button.dart';
 import 'package:prototype_1/widget/pdf_card.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

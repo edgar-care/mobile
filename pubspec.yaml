@@ -8,7 +8,7 @@
 # following page: https://dart.dev/tools/pub/pubspec
 
 dependencies:
-  intl: ^0.17.0
+  intl: ^0.18.1
   cupertino_icons: ^1.0.2
   flutter_dotenv: ^5.0.2
   shared_preferences: ^2.0.8
@@ -27,9 +27,10 @@ dependencies:
   bootstrap_icons: ^1.11.1
   auto_size_text: ^3.0.0
   aligned_dialog: ^0.0.7
+  logger: ^2.0.2+1
 description: A new Flutter project.
 dev_dependencies:
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter
 flutter_launcher_icons:

@@ -67,21 +67,16 @@ class _DashBoardPageState extends State<DashBoardPage> with TickerProviderStateM
 }
 
 
-class CalendarPage extends StatelessWidget {
-  const CalendarPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text('Calendar Page');
-  }
-}
-
 class FilePage extends StatelessWidget {
   const FilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Text('File Page');
+    return const Stack(
+      children: [
+        Text('File Page'),
+      ],
+    );
   }
 }
 

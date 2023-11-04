@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:prototype_1/widget/snackbar.dart';
+
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -16,6 +20,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String email = '';
   String password = '';
+  Color borderColor = AppColors.blue800;
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +35,14 @@ class _LoginState extends State<Login> {
             TextFieldBlock(children: [
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        BorderSide(color: AppColors.darkBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                        BorderSide(color: borderColor, width: 2.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Adresse mail',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: AppColors.textBlue,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
@@ -53,14 +58,14 @@ class _LoginState extends State<Login> {
             TextFieldBlock(children: [
               TextFormField(
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration:  InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide:
-                        BorderSide(color: AppColors.darkBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                        BorderSide(color: borderColor, width: 2.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Mot de passe',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: AppColors.textBlue,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
@@ -79,24 +84,48 @@ class _LoginState extends State<Login> {
                 await dotenv.load();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String url = '${dotenv.env['URL']}auth/p/login';
+                ScaffoldMessenger.of(context).showSnackBar(
+                  WaittingSnackBar(
+                    message: 'Connexion en cours...',
+                    context: context,
+                  ),
+                );
                 final response = await http.post(
                   Uri.parse(url),
                   headers: {'Content-Type': 'application/json'},
                   body: jsonEncode({'email': email, 'password': password}),
                 );
                 if (response.statusCode == 200) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   final token = jsonDecode(response.body)['token'];
                   prefs.setString('token', token);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushNamed(context, '/dashboard');
-                } else {
-                  final scaffoldContext = context;
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Identifiants incorrects'),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    ValidateSnackBar(
+                      message: 'Connexion réussie',
+                      context: context,
+                      duration: const Duration(seconds: 2),
                     ),
                   );
+                  await Future.delayed(const Duration(seconds: 3));
+                  Navigator.pushNamed(context, '/dashboard');
+                } else {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  final scaffoldContext = context;
+                  setState(() {
+                    borderColor = AppColors.red700;
+                  });
+                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                    ErrorSnackBar(
+                      message: 'Identifiants incorrects ou mot de passe invalide',
+                      context: scaffoldContext,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  
+                  await Future.delayed(const Duration(seconds: 2));
+                  setState(() {
+                    borderColor = AppColors.blue800;
+                  });
                 }
               },
             ),
