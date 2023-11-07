@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  const ChatPage({super.key});
 
   @override
   State<ChatPage> createState() => _ChatPageState();

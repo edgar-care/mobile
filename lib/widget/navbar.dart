@@ -4,7 +4,7 @@ import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/plain_button.dart';
 
 class Navbar extends StatelessWidget implements PreferredSizeWidget {
-  const Navbar({Key? key}) : super(key: key);
+  const Navbar({super.key});
 
   @override
   Widget build(BuildContext context) {
