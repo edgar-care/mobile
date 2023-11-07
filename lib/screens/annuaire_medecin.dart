@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:prototype_1/widget/navbar.dart';
 import 'package:prototype_1/widget/plain_button.dart';
