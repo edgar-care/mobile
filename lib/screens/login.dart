@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_1/styles/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 class Login extends StatefulWidget {
@@ -75,9 +76,10 @@ class _LoginState extends State<Login> {
             PlainButton(
               text: "Connexion",
               onPressed: () async {
+                await dotenv.load();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                const url =
-                    'https://dvpm9zw6vc.execute-api.eu-west-3.amazonaws.com/auth/p/login';
+                final url =
+                    '${dotenv.env['URL']}auth/p/login';
                 final response = await http.post(
                   Uri.parse(url),
                   headers: {'Content-Type': 'application/json'},

@@ -65,22 +65,23 @@ class _ChatPageState extends State<ChatPage> {
       );
 
       if (responseExam.statusCode == 200) {
-      final examData = jsonDecode(responseExam.body);
-      final nextQuestion = examData['question'];
-      // ignore: unused_local_variable
-      final symptoms = examData['symptoms'];
-      final done = examData['done'];
+        final examData = jsonDecode(responseExam.body);
+        final nextQuestion = examData['question'];
+        // ignore: unused_local_variable
+        final symptoms = examData['symptoms'];
+        final done = examData['done'];
 
-      if (done) {
-        setState(() {
-        messages.add([nextQuestion, false]);
-        });
-      } else {
-        setState(() {
-          messages.add([nextQuestion, false]);
-          });
-        }
-      } else {
+        if (done) {
+          setState(() {
+            messages.add([nextQuestion, false]);
+            });
+          } else {
+            setState(() {
+              messages.add([nextQuestion, false]);
+            });
+          }
+        } 
+      else {
         setState(() {
         messages.add(['Une erreur est survenue lors de la requête d\'examen', false]);
         });
