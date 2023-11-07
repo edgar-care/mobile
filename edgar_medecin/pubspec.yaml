@@ -1,0 +1,45 @@
+name: edgar_medecin
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_dotenv: ^5.1.0
+  flutter_launcher_icons: ^0.13.1
+  http: ^1.1.0
+  shared_preferences: ^2.0.8
+  logger: ^2.0.2+1
+  bootstrap_icons: ^1.11.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter_launcher_icons:
+  android: launcher_icon
+  ios: true
+  image_path: "assets/images/logo/small-width-blue-edgar-logo.png"
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/font/Raleway-Regular.ttf
+        - asset: assets/font/Raleway-Medium.ttf
+        - asset: assets/font/Raleway-Italic.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/font/Poppins/Poppins-Regular.ttf
+        - asset: assets/font/Poppins/Poppins-Medium.ttf
+        - asset: assets/font/Poppins/Poppins-Italic.ttf
+  assets:
+    - assets/images/logo/
+    - assets/images/utils/
+    - .env  # The following line ensures that the Material Icons font is
