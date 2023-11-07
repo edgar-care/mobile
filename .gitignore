@@ -32,6 +32,11 @@ Android related
 **android/key.properties
 **/android/*.keystore
 **/android/*.jks
+**/android/app/google-services.json
+**/android/app/src/debug/google-services.json
+**/android/app/src/profile/google-services.json
+android/.gradle/7.4/executionHistory
+
 
 
 iOS/XCode related
@@ -47,7 +52,7 @@ iOS/XCode related
 **/ios/**/DerivedData/
 **/ios/**/Icon?
 **/ios/**/Pods/
-**/ios/**/.symlinks/
+**/ios/**/.symlinks/    
 **/ios/**/profile
 **/ios/**/xcuserdata
 **/ios/.generated/
@@ -96,3 +101,4 @@ app.*.map.json
 # Environment files
 *.env
 android/
+.gitignore

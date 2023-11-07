@@ -21,35 +21,39 @@ class GestionRendezVous extends StatefulWidget {
 
 class _GestionRendezVousPageState extends State<GestionRendezVous> {
 
+    @override
+  void initState() {
+    super.initState();
+    fetchData(context);
+  }
 
-  final List<Map<String, String>> rdv = [
-
-  ];
+  final List<Map<String, String>> rdv = [];
 
   final currentDate = DateTime.now();
 
   RdvFilter rdvFilter = RdvFilter.aVenir;
+  Future<void> fetchData(BuildContext context) async {
+    final Map<String, dynamic>? rdvs = await getAppointement(context);
+      if (rdvs != null) {
+        final uniqueRdv = <Map<String, String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+        rdvs['rdv'].forEach((dynamic rdv) {
+          final rendezVous = {
+            'date': DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+            'heure': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+            'fin': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
+            'medecin': 'Dr. ${rdv['doctor_id'] as String}',
+            'adresse': '123 Rue de la Santé, Paris',
+          };
+          uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
+        });
+        rdv.addAll(uniqueRdv.toList()); // Convertir le Set en une liste et l'ajouter à rdv
+      } else {
+        throw Exception('Failed to fetch data');
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
-  final Future<Map<String, dynamic>?> rdvs = getAppointement(context);
-  rdvs.then((rdvs) {
-    if (rdvs != null) {
-      final uniqueRdv = <Map<String, String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
-      rdvs['rdv'].forEach((dynamic rdv) {
-        final rendezVous = {
-          'date': DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-          'heure': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-          'fin': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
-          'medecin': 'Dr. ${rdv['doctor_id'] as String}',
-          'adresse': '123 Rue de la Santé, Paris',
-        };
-        uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
-      });
-      rdv.addAll(uniqueRdv.toList()); // Convertir le Set en une liste et l'ajouter à rdv
-    }
-  });
-  
 
   List<Map<String, String>> filteredRdv = rdv;
 
@@ -77,7 +81,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   if (rdv.any((element) => element['date'] == DateFormat.yMd().format(currentDate))) {
     rdv.sort((a, b) => DateFormat('HH:mm:ss').parse(a['heure']!).compareTo(DateFormat('HH:mm:ss').parse(b['heure']!)));
   }
-
+  
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -203,6 +207,7 @@ class DateCard extends StatelessWidget {
           Text(
             date,
             style: TextStyle(
+              fontFamily: 'Poppins',
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isToday ? Colors.white : AppColors.grey500,
