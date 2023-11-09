@@ -1,3 +1,6 @@
-# medecin_mobile
+Application FLutter edgar - Medecin :
 
-A new Flutter project.
+  1. Run the following command to get the project dependencies:
+     flutter pub get
+  2. You can now run the application using the following command:
+     flutter run

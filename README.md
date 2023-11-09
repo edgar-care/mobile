@@ -10,7 +10,7 @@ To install this project from GitHub, you can follow the following steps:
      cd <PROJECT_PATH>
   4. Run the following command to get the project dependencies:
    on Linux :
-      :commande sh compile_edgar_apps.sh
+      sh compile_edgar_apps.sh
    on Window :
      execute compile_edgar_apps.bat
 
