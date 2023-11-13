@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:medecin_mobile/styles/colors.dart';
 import 'package:medecin_mobile/widgets/buttons.dart';
 import 'package:medecin_mobile/widgets/field_custom.dart';
-import 'package:logger/logger.dart';
 import 'package:medecin_mobile/services/login_service.dart';
 
 class Login extends StatefulWidget {
@@ -39,9 +38,15 @@ class _LoginState extends State<Login> {
                   const SizedBox(height: 24),
                   Image.asset('assets/images/logo/new_white_logo.png', height: 60, width: 200),
                   const SizedBox(height: 24),
-                  const Text('Bienvenue sur la plateforme edgar', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins')),
+                  const SizedBox(
+                    width: 320,
+                    child : Text('Bienvenue sur la plateforme edgar', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+                  ),
                   const SizedBox(height: 8),
-                  const Text('Connecter-vous pour acceder à votre espace médecin', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'Poppins'))
+                  const SizedBox(
+                    width: 320,
+                    child : Text('Connectez-vous pour accéder à votre espace médecin', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w500))
+                  ),
                 ],
               ),
             ),
@@ -62,7 +67,6 @@ class _LoginState extends State<Login> {
                         label: "prenom.nom@gmail.com",
                         keyboardType : TextInputType.text,
                         onChanged: (value) {
-                          Logger().i("email: $value");
                           setState(() {
                             email = value;
                           });
@@ -76,7 +80,6 @@ class _LoginState extends State<Login> {
                         keyboardType: TextInputType.text,
                         isPassword: true,
                         onChanged: (value) {
-                          Logger().i("password: $value");
                           setState(() {
                             password = value;
                           });
@@ -95,13 +98,11 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 64),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
+                Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text("Vous n'êtes pas encore inscrit ?", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+                      const Text("Vous n'êtes pas encore inscrit ?", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
                       const SizedBox(height: 8,),
                       Buttons(
                         variant: Variante.secondary,
@@ -113,7 +114,6 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                ),
               ],
             ),
           ),

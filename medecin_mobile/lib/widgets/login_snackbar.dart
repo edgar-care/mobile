@@ -10,6 +10,7 @@ class SuccessLoginSnackBar extends SnackBar {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       backgroundColor: AppColors.green400,
       shape: RoundedRectangleBorder(
+        side: const BorderSide(color: AppColors.green500, width: 2),
         borderRadius: BorderRadius.circular(64),
       ),
       content: Row(
@@ -18,8 +19,8 @@ class SuccessLoginSnackBar extends SnackBar {
               height: 48,
               width: 48,
               decoration: const BoxDecoration(
-              color: AppColors.green600,
-              shape: BoxShape.circle,
+                color: AppColors.green600,
+                shape: BoxShape.circle,
             ),
             child: const Icon(BootstrapIcons.check, color: Colors.white, size: 30),
             ),
@@ -57,6 +58,30 @@ class ErrorLoginSnackBar extends SnackBar {
           children: [
             const Text("Une erreur est survenue", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
             Text(message, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12)),
+      ]),
+      ]),
+  );
+}
+
+class InfoLoginSnackBar extends SnackBar {
+  final String message;
+  InfoLoginSnackBar({super.key, required this.message, required BuildContext context}) : super (
+    behavior: SnackBarBehavior.floating,
+    duration: const Duration(minutes: 1),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    backgroundColor: AppColors.blue600,
+    shape: RoundedRectangleBorder(
+      side: const BorderSide(color: AppColors.blue700, width: 2),
+      borderRadius: BorderRadius.circular(64),
+    ),
+    content: Row(
+      children: [
+        const CircularProgressIndicator(color: Colors.white, strokeWidth: 3, backgroundColor: AppColors.green400),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(message, style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
       ]),
       ]),
   );

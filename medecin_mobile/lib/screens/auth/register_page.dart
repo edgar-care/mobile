@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:medecin_mobile/widgets/buttons.dart';
 
 class Register extends StatelessWidget {
@@ -20,7 +19,6 @@ class Register extends StatelessWidget {
               size: SizeButton.md,
               msg: const Text("Change to Login page!"),
               onPressed: () {
-                Logger().i("Bouton register");
                 callback(0);
               },
             ),
