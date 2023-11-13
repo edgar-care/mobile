@@ -1,19 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:medecin_mobile/styles/colors.dart';
 import 'package:medecin_mobile/widgets/buttons.dart';
 import 'package:medecin_mobile/widgets/field_custom.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:medecin_mobile/services/login_service.dart';
 
 class Login extends StatefulWidget {
   final Function(int) callback;
   const Login({Key? key, required this.callback}) : super(key: key);
   @override
-  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
@@ -93,6 +88,7 @@ class _LoginState extends State<Login> {
                         msg: const Text("Se connecter"),
                         size: SizeButton.md,
                         onPressed: () {
+                          login(email,password, context);
                         },
                       ),
                     ],
@@ -111,20 +107,8 @@ class _LoginState extends State<Login> {
                         variant: Variante.secondary,
                         msg: const Text("Créer un compte"),
                         size: SizeButton.md,
-                        onPressed: () async {
-                          widget.callback(1);
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          String url = '${dotenv.env['URL']}auth/d/login';
-                          final response = await http.post(
-                            Uri.parse(url),
-                            headers: {'Content-Type': 'application/json'},
-                            body: jsonEncode({'email': email, 'password': password}),
-                          );
-                          if (response.statusCode == 200) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Connexion réussie')));
-                            prefs.setString('token', jsonDecode(response.body)['token']);
-                          }
+                        onPressed: ()  {
+                          //redirect page register
                         },
                       ),
                     ],
