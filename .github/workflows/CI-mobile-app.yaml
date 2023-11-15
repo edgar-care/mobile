@@ -44,7 +44,7 @@ jobs:
 
   build-apk:
     runs-on: ubuntu-latest
-    needs: analyze
+#    needs: analyze
     outputs:
       branch: ${{ steps.extract_branch.outputs.branch }}
     steps:
