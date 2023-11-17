@@ -9,7 +9,7 @@ Future login(String email, String password, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String url = '${dotenv.env['URL']}auth/d/login';
     // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(message: "Connexion à l\'application ...", context: context));
+    ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(message: "Connexion à l'application ...", context: context));
     final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -21,6 +21,9 @@ Future login(String email, String password, BuildContext context) async {
       prefs.setString('token', jsonDecode(response.body)['token']);
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Connecté à l\'application', context: context,));
+      await Future.delayed(const Duration(seconds: 2));
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/dashboard');
     } else {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
