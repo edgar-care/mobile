@@ -175,9 +175,12 @@ class Buttons extends StatelessWidget {
           border: Border.fromBorderSide(borderSide),
           borderRadius: BorderRadius.circular(radius),
         ),
-        child: Text(
-          msg.data.toString(),
-          style: textStyle,
+        width: double.infinity,
+        child: Center(
+          child: Text(
+            msg.data.toString(),
+            style: textStyle,
+          ),
         ),
       ),
     );

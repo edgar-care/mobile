@@ -1,42 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import '../styles/colors.dart';
-import 'package:medecin_mobile/widgets/buttons.dart';
+import 'package:medecin_mobile/screens/auth/login_page.dart';
+import 'package:medecin_mobile/screens/auth/register_page.dart';
 
-class Auth extends StatelessWidget {
-  const Auth({super.key});
+
+class Auth extends StatefulWidget {
+  const Auth({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  // ignore: library_private_types_in_public_api
+  _AuthState createState() => _AuthState();
+}
 
-        body : Center(
-          child:  Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/logo/small-width-blue-edgar-logo.png', width: 200),
-              const SizedBox(height: 128),
-              const Text('Exemple de buttons et\nexemple d\'utilisation de logger', style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.blue700,
-                  fontFamily: 'Poppins'
-                ),
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              Buttons(
-                variant: Variante.secondary,
-                size: SizeButton.md,
-                msg: const Text("Au click regarde dans la console!"),
-                onPressed: () {
-                  Logger().i("Bouton cliqué");
-                },
-              ),
-            ],
-          ),
-        )
-    ); 
+class _AuthState extends State<Auth> {
+  int _selectedIndex = 0;
+
+  void updateSelectedIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = <Widget>[
+      Login(callback: updateSelectedIndex),
+      Register(callback: updateSelectedIndex),
+    ];
+    return Scaffold(
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 600),
+        child: pages[_selectedIndex],
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ),
+    );
   }
 }
