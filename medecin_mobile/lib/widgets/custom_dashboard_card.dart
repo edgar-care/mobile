@@ -19,7 +19,7 @@ class CustomCard extends Card {
                     children: [
                       Icon(icon, color: isSelected ? Colors.white : AppColors.blue900, size: 16,),
                       const SizedBox(width: 16,),
-                      Text(title, style: TextStyle(fontFamily: 'Poppins', fontSize: 16, color: isSelected ? Colors.white : AppColors.blue950),),
+                      Text(title, style: TextStyle(fontFamily: 'Poppins', fontSize: 16, color: isSelected ? Colors.white : AppColors.blue950, fontWeight: FontWeight.w500),),
                     ],
                   ),
               ),

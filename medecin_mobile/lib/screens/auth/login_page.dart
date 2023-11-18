@@ -8,6 +8,7 @@ class Login extends StatefulWidget {
   final Function(int) callback;
   const Login({Key? key, required this.callback}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
