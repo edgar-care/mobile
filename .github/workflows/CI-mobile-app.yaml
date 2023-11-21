@@ -138,7 +138,7 @@ jobs:
 
       - name: Rename Preview Apk
         if: ${{ needs.build.outputs.branch != 'main' && needs.build.outputs.branch != 'dev' }}
-        run: mv ./app-release.apk ./preview.edgar-{{ github.head_ref }}.apk
+        run: mv ./app-release.apk ./preview.edgar-${{ github.head_ref }}.apk
 
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
