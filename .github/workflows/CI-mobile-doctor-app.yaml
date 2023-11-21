@@ -113,7 +113,7 @@ jobs:
       - name: Upload Apk to artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: apk-doctor-${{ github.head_ref }}
+          name: apk-doctor-${{ github.head_ref }}.apk
           path: medecin_mobile/build/app/outputs/apk/release/app-release.apk
 
   deploy-apk:
@@ -126,19 +126,19 @@ jobs:
       - name: Download Apk
         uses: actions/download-artifact@v3
         with:
-          name: apk-doctor-${{ github.head_ref }}
+          name: apk-doctor-${{ github.head_ref }}.apk
 
       - name: Rename Production Apk
         if: ${{ needs.build.outputs.branch == 'main' }}
-        run: mv ./app-release.apk ./pro.edgar.apk
+        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./pro.edgar.apk
 
       - name: Rename Dev Apk
         if: ${{ needs.build.outputs.branch  == 'dev' }}
-        run: mv ./app-release.apk ./staging.pro.edgar.apk
+        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./staging.pro.edgar.apk
 
       - name: Rename Preview Apk
         if: ${{ needs.build.outputs.branch != 'main' && needs.build.outputs.branch != 'dev' }}
-        run: mv ./app-release.apk ./preview.pro.edgar-${{ github.head_ref }}.apk
+        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./preview.pro.edgar-${{ github.head_ref }}.apk
 
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
