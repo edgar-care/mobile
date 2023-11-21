@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup Java Environment
         uses: actions/setup-java@v3
@@ -49,7 +49,7 @@ jobs:
     needs: analyze
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup Java Environment
         uses: actions/setup-java@v3
@@ -82,7 +82,7 @@ jobs:
     needs: analyze
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup Java Environment
         uses: actions/setup-java@v3
@@ -119,6 +119,8 @@ jobs:
   deploy-apk:
     runs-on: ubuntu-latest
     needs: build-apk
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -127,18 +129,21 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: apk-doctor-${{ github.head_ref }}.apk
+          path: medecin_mobile
 
-      - name: Rename Production Apk
-        if: ${{ needs.build.outputs.branch == 'main' }}
-        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./pro.edgar.apk
+      - name: Extract Apk Name depending on branch
+        run: |
+          if [[ "${{ github.base_ref }}" == "main" ]]; then
+            echo apk_name=pro.edgar.apk >> $GITHUB_OUTPUT
+          elif [[ "${{ github.base_ref }}" == "dev" ]]; then
+            echo apk_name=staging.pro.edgar.apk >> $GITHUB_OUTPUT
+          else
+            echo apk_name=preview.pro.edgar-${{ github.head_ref }}.apk >> $GITHUB_OUTPUT
+          fi
+        id: extract_apk_name
 
-      - name: Rename Dev Apk
-        if: ${{ needs.build.outputs.branch  == 'dev' }}
-        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./staging.pro.edgar.apk
-
-      - name: Rename Preview Apk
-        if: ${{ needs.build.outputs.branch != 'main' && needs.build.outputs.branch != 'dev' }}
-        run: mv ./apk-doctor-${{ github.head_ref }}.apk ./preview.pro.edgar-${{ github.head_ref }}.apk
+      - name: Rename Apk Name
+        run: mv ./app-release.apk ./${{ steps.extract_apk_name.outputs.apk_name }}
 
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -149,3 +154,9 @@ jobs:
 
       - name: Export Apk to S3
         run: aws s3 cp *.apk s3://${{ secrets.BUCKET_NAME }} --acl public-read
+
+      - name: Add PR Comment
+        uses: mshick/add-pr-comment@v2.8.1
+        with:
+          message: |
+            **APK** is ready to download [here](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})
