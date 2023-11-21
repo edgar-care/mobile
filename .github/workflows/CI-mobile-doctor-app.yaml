@@ -29,7 +29,7 @@ jobs:
         with:
           envkey_API_URL: ${{ secrets.API_URL }}
           envkey_APP_NAME: edgar
-          directory: .
+          directory: ./medecin_mobile
           file_name: .env
           fail_on_empty: false
 
@@ -62,7 +62,7 @@ jobs:
         with:
           envkey_API_URL: ${{ secrets.API_URL }}
           envkey_APP_NAME: edgar
-          directory: .
+          directory: ./medecin_mobile
           file_name: .env
           fail_on_empty: false
 
