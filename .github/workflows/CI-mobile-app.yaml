@@ -1,4 +1,4 @@
-name: Mobile CI Doctor App Edgar
+name: Mobile CI App Edgar
 
 on:
   pull_request:
