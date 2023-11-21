@@ -27,7 +27,8 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
+          envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
           file_name: .env
@@ -60,7 +61,8 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
+          envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
           file_name: .env
@@ -93,7 +95,8 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
+          envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
           file_name: .env

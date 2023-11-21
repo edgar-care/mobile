@@ -25,9 +25,9 @@ jobs:
           distribution: corretto
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2.0.2
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -58,9 +58,9 @@ jobs:
           distribution: corretto
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2.0.2
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -91,9 +91,9 @@ jobs:
           distribution: corretto
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2.0.2
         with:
-          envkey_API_URL: ${{ secrets.API_URL }}
+          envkey_URL: ${{ secrets.URL }}
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
