@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medecin_mobile/screens/dashboard/patientele_page.dart';
 import 'package:medecin_mobile/styles/colors.dart';
 import 'package:medecin_mobile/widgets/appbar.dart';
 
@@ -32,7 +33,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Text('Agenda', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950),),
-      const Text('Patientèle', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
+      const Patient(),
       const Text('Aide', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
       const Text("Déconnexion", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
     ];
@@ -45,9 +46,8 @@ class _DashBoardState extends State<DashBoard> {
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 600),
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 80,),
-                            child : 
-                              pages[_selectedIndex],
+                          padding: const EdgeInsets.only(top: 85,),
+                            child : pages[_selectedIndex],
                         ),
                       ),
                       CustomAppBar(callback: updateSelectedIndex,getSelected: getSelectedIndex,),
