@@ -164,11 +164,16 @@ class Buttons extends StatelessWidget {
         break;
     }
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: () async {
         onPressed!();
       },
       child: Container(
+        constraints: BoxConstraints(
+          maxWidth: screenWidth,
+        ),
         padding: EdgeInsets.symmetric(vertical: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 6 : 12 , horizontal: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 16 : 24),
         decoration: BoxDecoration(
           color: backgroundcolor,

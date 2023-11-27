@@ -44,8 +44,14 @@ class _CustomFieldState extends State<CustomField> {
               Expanded(
                 child: TextFormField(
                   obscureText: widget.isPassword && !_isPasswordVisible,
-                  keyboardType: widget.keyboardType,
+                  keyboardType:  _isPasswordVisible ?   TextInputType.text: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
+                  style: const TextStyle(
+                    color: AppColors.grey950,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    textBaseline: TextBaseline.ideographic,
+                  ),
                   decoration: InputDecoration(
                     constraints: BoxConstraints(minWidth: 0, maxWidth: constraints.maxWidth),
                     border: InputBorder.none,
@@ -65,16 +71,13 @@ class _CustomFieldState extends State<CustomField> {
               if (widget.icon != null)
                 Icon(widget.icon!, color: AppColors.grey950, size: 16),
               if (widget.isPassword)
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.center,
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(
+                GestureDetector(
+                  child: Icon(
                     _isPasswordVisible ? BootstrapIcons.eye_slash_fill : BootstrapIcons.eye_fill,
                     color: Colors.black,
                     size: 16,
                   ),
-                  onPressed: () {
+                  onTap: () {
                     setState(() {
                       _isPasswordVisible = !_isPasswordVisible;
                     });

@@ -1,6 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:medecin_mobile/styles/colors.dart';
 
 
