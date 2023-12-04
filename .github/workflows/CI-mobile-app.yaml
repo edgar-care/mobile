@@ -162,4 +162,4 @@ jobs:
         uses: mshick/add-pr-comment@v2.8.1
         with:
           message: |
-            **APK** is ready to download [here](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})
+            **APK** is ready to download [edgar](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})
