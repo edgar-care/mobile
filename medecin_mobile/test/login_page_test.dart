@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:medecin_mobile/screens/auth/login_page.dart';
-import 'package:medecin_mobile/widgets/field_custom.dart';
+import 'package:edgar_pro/screens/auth/login_page.dart';
+import 'package:edgar_pro/widgets/field_custom.dart';
 
 void main() {
   testWidgets('Test de la page de login', (WidgetTester tester) async {

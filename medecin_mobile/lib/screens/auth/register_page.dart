@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/buttons.dart';
 
 class Register extends StatelessWidget {
   final Function(int) callback;

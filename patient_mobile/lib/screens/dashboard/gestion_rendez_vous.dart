@@ -1,9 +1,9 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
+import 'package:edgar/styles/colors.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
-import 'package:prototype_1/services/get_appointement.dart';
+import 'package:edgar/services/get_appointement.dart';
 
 enum RdvFilter {
   aVenir,
