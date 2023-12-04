@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.prototype_1">
    <application
-        android:label="edgar"
-        android:name="${applicationName}"
+        android:label="edgar Pro"
+        android:name="edgar_pro"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
