@@ -1,4 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:medecin_mobile/widgets/AddPatient/add_button.dart';
+import 'package:medecin_mobile/widgets/AddPatient/add_patient_field.dart';
 import 'package:medecin_mobile/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:medecin_mobile/styles/colors.dart';
@@ -8,10 +10,15 @@ import 'package:medecin_mobile/widgets/custom_patient_card_info.dart';
 
 
 class CustomList extends StatelessWidget {
-  const CustomList({Key? key}) : super(key: key);
+  int selected = 0;
+  get isSelected => selected;
+  set setSelected(int value) => selected = value;
+  CustomList({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
+    
     List<Map<String, dynamic>> patients = [
       {
         'prenom': 'Edgar',
@@ -21,9 +28,9 @@ class CustomList extends StatelessWidget {
         'taille': '1,52m',
         'poids': '45kg',
         'medecin': 'Docteur Edgar',
-        'Allergies': ['pollen', 'pollen', 'pollen', 'pollen','pollen','pollen', 'pollen', 'pollen', 'pollen','pollen'],
+        'allergies': ['pollen', 'pollen', 'pollen', 'pollen','pollen','pollen', 'pollen', 'pollen', 'pollen','pollen'],
         'maladies': ['maladies', 'maladies', 'maladies'],
-        'traitement': ['traitement', 'traitement', 'traitement'],
+        'traitements': ['traitement', 'traitement', 'traitement'],
       },
       {
         'prenom': 'Edgar',
@@ -33,14 +40,15 @@ class CustomList extends StatelessWidget {
         'taille': '1,52m',
         'poids': '45kg',
         'medecin': 'Docteur Edgar',
-        'Allergies': ['pollen', 'pollen', 'pollen', 'pollen'],
-        'maladies': 'maladies, maladies, maladies',
-        'traitement': 'traitement, traitement, traitement',
+        'allergies': ['pollen', 'pollen', 'pollen', 'pollen'],
+        'maladies': ['maladies', 'maladies', 'maladies'],
+        'traitements': ['traitement', 'traitement', 'traitement'],
       },
     ];
 
 
     List<Widget> patientCards = patients.map((patients) {
+      final pageIndexNotifier = ValueNotifier(2);
       return Card(
         color: AppColors.blue100,
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
@@ -53,8 +61,8 @@ class CustomList extends StatelessWidget {
         child: InkWell (
           onTap: () {
             WoltModalSheet.show<void>(context: context, pageListBuilder: (modalSheetContext){
-              return [patientInfo(context, patients, modalSheetContext)];
-            }, pageIndexNotifier: ValueNotifier(0));
+              return [fixPatient(context, pageIndexNotifier, patients),fixPatient2(context, pageIndexNotifier, patients),patientInfo(context, patients, modalSheetContext, pageIndexNotifier)];
+            }, pageIndexNotifier: pageIndexNotifier);
           },
           child : Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), 
@@ -88,7 +96,7 @@ class CustomList extends StatelessWidget {
         );
   }
 
-  WoltModalSheetPage patientInfo(BuildContext context, Map<String, dynamic> patient, BuildContext modalSheetContext) {
+  WoltModalSheetPage patientInfo(BuildContext context, Map<String, dynamic> patient, BuildContext modalSheetContext, ValueNotifier<int> pageIndexNotifier) {
     return WoltModalSheetPage.withSingleChild(
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -249,7 +257,7 @@ class CustomList extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              PatientInfoCard(context: context, patient: patient, champ: 'Allergies', isDeletable: false),
+                              PatientInfoCard(context: context, patient: patient, champ: 'allergies', isDeletable: false),
                             ],
                           ),
                           const Text(
@@ -267,7 +275,7 @@ class CustomList extends StatelessWidget {
                               fontSize: 14,
                             ),
                           ),
-                          PatientInfoCard(context: context, patient: patient, champ: 'traitement', isDeletable: true,),
+                          PatientInfoCard(context: context, patient: patient, champ: 'traitements', isDeletable: false,),
                         ],
                       )
                     ],
@@ -292,7 +300,7 @@ class CustomList extends StatelessWidget {
                 size: SizeButton.sm,
                 msg: const Text('Modifier'),
                 onPressed: () {
-                  Navigator.pop(modalSheetContext);
+                  pageIndexNotifier.value = 0;
                 },
               ),
             ),
@@ -303,7 +311,7 @@ class CustomList extends StatelessWidget {
                 size: SizeButton.sm,
                 msg: const Text('Supprimer'),
                 onPressed: () {
-                  Navigator.pop(modalSheetContext);
+                  pageIndexNotifier.value = 3;
                 },
               ),
             ),
@@ -316,27 +324,51 @@ class CustomList extends StatelessWidget {
       hasTopBarLayer: false,
     );
   }
-  WoltModalSheetPage addPatient(BuildContext context) {
-    final Map<String, String> info = {
-      'email': '',
-      'prenom': '',
-      'nom': '',
-      'date': '',
-      'sexe': '',
-      'taille': '',
-      'poids': '',
-      'medecin': '',
-      'Allergies': '',
-      'maladies': '',
-      'traitement': '',
-    };
+
+  WoltModalSheetPage fixPatient(BuildContext context, ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient) {
     return WoltModalSheetPage.withSingleChild(
       hasTopBarLayer: false,
+      backgroundColor: AppColors.white,
+      hasSabGradient: true,
+      enableDrag: true,
+      stickyActionBar: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          direction: Axis.horizontal,
+          spacing: 12,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text('Annuler'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  pageIndexNotifier.value = 2;
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text('Continuer'),
+                onPressed: () {
+                  pageIndexNotifier.value = pageIndexNotifier.value + 1;
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
       child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: 
             Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
             child: 
               Column(
               children: [
@@ -380,19 +412,167 @@ class CustomList extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Adresse email", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
-                    CustomField(label: "prenom.nom@gmail.com", onChanged: (value) => info['email'] = value, isPassword: false,),
-                    const SizedBox(height: 16,),
                     const Text("Votre Prénom", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
-                    CustomField(label: "Prénom", onChanged: (value) => info['prenom'] = value, isPassword: false,),
+                    CustomField(label: patient['prenom'], onChanged: (value) => patient['prenom'] = value, isPassword: false,),
                     const SizedBox(height: 16,),
                     const Text("Votre Nom", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
-                    CustomField(label: "Nom", onChanged: (value) => info['nom'] = value, isPassword: false,),
+                    CustomField(label: patient['nom'], onChanged: (value) => patient['nom'] = value, isPassword: false,),
+                    const SizedBox(height: 16,),
+                    const Text("Date de naissance", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    // AddCustomField(label: patient['date'], onChanged: (value) => patient['date'] = value, add: false, list: const [''],),
+                    const SizedBox(height: 16,),
+                    const Text("Sexe", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                   Row(children: [
+                      // AddButton(onTap: () => selected = 0, label: "Masculin", isSelected: isSelected == 0 ? true : false),
+                      // const SizedBox(width: 16,),
+                      // AddButton(onTap: () => selected = 1, label: "Feminin", isSelected: isSelected == 1 ? true : false),
+                      // const SizedBox(width: 16,),
+                      // AddButton(onTap: () => selected = 2, label: "Autre", isSelected: isSelected == 2 ? true : false),
+                    ],),
+                    const SizedBox(height: 16,),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Taille", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                              CustomField(label: patient['taille'], onChanged: (value) => patient['taille'] = value, isPassword: false,),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 32,),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Poids", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                              CustomField(label: patient['poids'], onChanged: (value) => patient['poids'] = value, isPassword: false,),
+                            ],
+                          ),
+                        ),
+                    ],)                   
+                    ],),
                   ]
-                )
-              ])
+                ),
+              ),
             ),
+      );
+  }
+  WoltModalSheetPage fixPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient) {
+    return WoltModalSheetPage.withSingleChild(
+      hasTopBarLayer: false,
+      backgroundColor: AppColors.white,
+      hasSabGradient: true,
+      enableDrag: true,
+      stickyActionBar: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          direction: Axis.horizontal,
+          spacing: 12,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text('Revenir en arrière',),
+                onPressed: () {
+                  pageIndexNotifier.value = pageIndexNotifier.value - 1;
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.validate,
+                size: SizeButton.sm,
+                msg: const Text('Confirmer'),
+                onPressed: () {
+                  pageIndexNotifier.value = 2;
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+      child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: 
+            Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
+            child: 
+              Column(
+              children: [
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: AppColors.grey200,
+                  ),
+                  child:
+                    const Icon(BootstrapIcons.postcard_heart_fill, color: AppColors.grey700)
+                ),
+                const SizedBox(height: 8,),
+                const Text("Mettez à jour vos informations personelles", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w700),),
+                const SizedBox(height: 8,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.blue700,
+                      ),
+                    ),
+                    const SizedBox(width: 16,),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.blue700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Votre médecin traitant", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    CustomField(label: "Dr. Edgar", onChanged: (value) => patient['medecin'] = value, isPassword: false,),
+                    const SizedBox(height: 16,),
+                    const Text("Vos allergies", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    // AddCustomField(label: "Renseignez vos maladies ici", add: true, list: patient['allergies'], onChanged: (value) => patient['allergies'] = value),
+                    const SizedBox(height: 8,),
+                    const Text("Vos allergies renseignée", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    PatientInfoCard(context: context, patient: patient, champ: 'allergies', isDeletable: true),
+                    const SizedBox(height: 16,),
+                    const Text("Vos maladies", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    // AddCustomField(label: "Renseignez vos maladies ici", add: true, list: patient['maladies'], onChanged: (value) => patient['maladies'] = value),
+                    const SizedBox(height: 8,),
+                    const Text("Vos maladies renseignée", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    PatientInfoCard(context: context, patient: patient, champ: 'maladies', isDeletable: true),
+                    const SizedBox(height: 16,),
+                    const Text("Vos traitements en cours", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    // AddCustomField(label: "Renseignez vos traitements ici", add: true, list: patient['traitements'], onChanged: (value) => patient['traitements'] = value),
+                    const SizedBox(height: 8,),
+                    const Text("Vos traitements renseignée", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
+                    PatientInfoCard(context: context, patient: patient, champ: 'traitements', isDeletable: true),
+                    ],),
+                  ]
+                ),
+              ),
+            ),
+      );
   }
 }

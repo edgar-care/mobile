@@ -109,9 +109,9 @@ class Buttons extends StatelessWidget {
       case Variante.primary:
         backgroundcolor = AppColors.blue700;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.blue700,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       case Variante.secondary:
@@ -141,9 +141,9 @@ class Buttons extends StatelessWidget {
       case Variante.validate:
         backgroundcolor = AppColors.green600;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.green600,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       case Variante.delete:
