@@ -31,7 +31,7 @@ jobs:
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
-          fail_on_empty: false
+          fail_on_empty: true
 
       - name: Setup Flutter Environment
         uses: subosito/flutter-action@v2
@@ -64,7 +64,7 @@ jobs:
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
-          fail_on_empty: false
+          fail_on_empty: true
 
       - name: Setup Flutter Environment
         uses: subosito/flutter-action@v2
@@ -97,7 +97,7 @@ jobs:
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
-          fail_on_empty: false
+          fail_on_empty: true
 
       - name: Setup Flutter Environment
         uses: subosito/flutter-action@v2
