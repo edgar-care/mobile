@@ -4,7 +4,7 @@ import 'package:edgar_pro/widgets/appbar.dart';
 
 
 class DashBoard extends StatefulWidget {
-  const DashBoard({Key? key}) : super(key: key);
+  const DashBoard({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

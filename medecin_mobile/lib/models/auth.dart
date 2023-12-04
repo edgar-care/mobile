@@ -4,7 +4,7 @@ import 'package:edgar_pro/screens/auth/register_page.dart';
 
 
 class Auth extends StatefulWidget {
-  const Auth({Key? key}) : super(key: key);
+  const Auth({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

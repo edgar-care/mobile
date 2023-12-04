@@ -11,13 +11,13 @@ class CustomField extends StatefulWidget {
   
 
   const CustomField({
-    Key? key,
+    super.key,
     required this.label,
     this.icon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     required this.onChanged, // Added required onChanged parameter
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api

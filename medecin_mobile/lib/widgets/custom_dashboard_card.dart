@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 
 class CustomCard extends Card {
-  CustomCard({Key? key, required bool isSelected, required IconData? icon, required String title, required Function()? onTap}) : super(
-    key: key,
+  CustomCard({super.key, required bool isSelected, required IconData? icon, required String title, required Function()? onTap}) : super(
     elevation: 0,
     color: isSelected ? AppColors.blue900 : Colors.transparent,
     shape: RoundedRectangleBorder(
