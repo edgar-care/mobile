@@ -2,7 +2,7 @@
     package="com.example.prototype_1">
    <application
         android:label="edgar"
-        android:name="edgar"
+        android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
