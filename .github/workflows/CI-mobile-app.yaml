@@ -161,5 +161,7 @@ jobs:
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v2.8.1
         with:
+          message-id: edgar-apk-message
+          refresh-message-position: true
           message: |
             **APK** is ready to download [edgar](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})
