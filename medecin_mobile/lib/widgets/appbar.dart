@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-import 'package:medecin_mobile/widgets/custom_dashboard_card.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/custom_dashboard_card.dart';
 
 class CustomAppBar extends StatefulWidget {
   final Function(int) callback;

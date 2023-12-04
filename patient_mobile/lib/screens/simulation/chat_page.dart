@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/services/getResponseConversation.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/services/getResponseConversation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

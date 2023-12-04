@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-import 'package:medecin_mobile/widgets/appbar.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/appbar.dart';
 
 
 class DashBoard extends StatefulWidget {
