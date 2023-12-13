@@ -1,6 +1,4 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:medecin_mobile/widgets/AddPatient/add_button.dart';
-import 'package:medecin_mobile/widgets/AddPatient/add_patient_field.dart';
 import 'package:medecin_mobile/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:medecin_mobile/styles/colors.dart';
@@ -9,6 +7,7 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:medecin_mobile/widgets/custom_patient_card_info.dart';
 
 
+// ignore: must_be_immutable
 class CustomList extends StatelessWidget {
   int selected = 0;
   get isSelected => selected;
@@ -422,7 +421,7 @@ class CustomList extends StatelessWidget {
                     // AddCustomField(label: patient['date'], onChanged: (value) => patient['date'] = value, add: false, list: const [''],),
                     const SizedBox(height: 16,),
                     const Text("Sexe", style: TextStyle(fontFamily: 'Poppins', fontSize: 14),),
-                   Row(children: [
+                    const Row(children: [
                       // AddButton(onTap: () => selected = 0, label: "Masculin", isSelected: isSelected == 0 ? true : false),
                       // const SizedBox(width: 16,),
                       // AddButton(onTap: () => selected = 1, label: "Feminin", isSelected: isSelected == 1 ? true : false),
