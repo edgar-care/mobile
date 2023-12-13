@@ -149,9 +149,9 @@ class Buttons extends StatelessWidget {
       case Variante.delete:
         backgroundcolor = AppColors.red600;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.red600,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       default:

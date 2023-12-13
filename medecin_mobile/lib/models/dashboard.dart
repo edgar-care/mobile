@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medecin_mobile/screens/dashboard/agenda_page.dart';
 import 'package:medecin_mobile/screens/dashboard/patientele_page.dart';
 import 'package:medecin_mobile/styles/colors.dart';
 import 'package:medecin_mobile/widgets/appbar.dart';
@@ -32,7 +33,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
-      const Text('Agenda', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950),),
+      const Agenda(),
       const Patient(),
       const Text('Aide', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
       const Text("Déconnexion", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),

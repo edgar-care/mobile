@@ -61,7 +61,7 @@ class CustomList extends StatelessWidget {
         child: InkWell (
           onTap: () {
             WoltModalSheet.show<void>(context: context, pageListBuilder: (modalSheetContext){
-              return [fixPatient(context, pageIndexNotifier, patients),fixPatient2(context, pageIndexNotifier, patients),patientInfo(context, patients, modalSheetContext, pageIndexNotifier)];
+              return [fixPatient(context, pageIndexNotifier, patients),fixPatient2(context, pageIndexNotifier, patients),patientInfo(context, patients, modalSheetContext, pageIndexNotifier), deletePatient(context, pageIndexNotifier, patients)];
             }, pageIndexNotifier: pageIndexNotifier);
           },
           child : Padding(
@@ -575,4 +575,67 @@ class CustomList extends StatelessWidget {
             ),
       );
   }
+    WoltModalSheetPage deletePatient(BuildContext context, ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient) {
+      return WoltModalSheetPage.withSingleChild(
+        hasTopBarLayer: false,
+        backgroundColor: AppColors.white,
+        hasSabGradient: false,
+        enableDrag: true,
+        child: Padding(
+          padding : const EdgeInsets.fromLTRB(18, 18, 18, 18), 
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width*0.8,
+            child: Column(
+              children: [
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: AppColors.red200,
+                  ),
+                  child:
+                    const Icon(BootstrapIcons.x, color: AppColors.red700, size: 40,)
+                ),
+                const SizedBox(height: 8,),
+                const Text("Êtes-vous sûr ?", style: TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8,),
+                const Text("Si vous supprimez ce patient, vous ne pourrez plus le consulter.", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.grey400), textAlign: TextAlign.center,),
+                const SizedBox(height: 32,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.43,
+                      child: Buttons(
+                        variant: Variante.secondary,
+                        size: SizeButton.sm,
+                        msg: const Text('Annuler'),
+                        onPressed: () {
+                          pageIndexNotifier.value = 2;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12,),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.43,
+                      child: Buttons(
+                        variant: Variante.delete,
+                        size: SizeButton.sm,
+                        msg: const Text('Oui, je suis sûr'),
+                        onPressed: () {
+                          pageIndexNotifier.value = 2;
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ), 
+          ),
+      );
+    }
 }
