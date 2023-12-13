@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-import 'package:medecin_mobile/widgets/appbar.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/appbar.dart';
 
 
 class DashBoard extends StatefulWidget {
-  const DashBoard({Key? key}) : super(key: key);
+  const DashBoard({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

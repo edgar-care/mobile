@@ -236,4 +236,3 @@ app.*.map.json
 
 # Environment files
 *.env
-android/

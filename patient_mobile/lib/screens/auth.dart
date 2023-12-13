@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
+import 'package:edgar/styles/colors.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});

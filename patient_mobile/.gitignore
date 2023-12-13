@@ -201,6 +201,7 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
 
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -235,4 +236,3 @@ app.*.map.json
 
 # Environment files
 *.env
-android/

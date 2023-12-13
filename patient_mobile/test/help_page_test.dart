@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:prototype_1/screens/landingPage/help.dart';
+import 'package:edgar/screens/landingPage/help.dart';
 
 void main() {
   testWidgets('Test fonctionnel pour HelpScreen', (WidgetTester tester) async {

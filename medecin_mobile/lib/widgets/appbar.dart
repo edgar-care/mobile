@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-import 'package:medecin_mobile/widgets/custom_dashboard_card.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/custom_dashboard_card.dart';
 
 class CustomAppBar extends StatefulWidget {
   final Function(int) callback;
   final Function() getSelected;
-  const CustomAppBar({Key? key, required this.callback, required this.getSelected}) : super(key: key);
+  const CustomAppBar({super.key, required this.callback, required this.getSelected});
 
   @override
   // ignore: library_private_types_in_public_api
