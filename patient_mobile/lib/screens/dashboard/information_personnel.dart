@@ -1,9 +1,9 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/widget/plain_button.dart';
-import 'package:prototype_1/services/get_information_patient.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/plain_button.dart';
+import 'package:edgar/services/get_information_patient.dart';
 
 
 class InformationPersonnel extends StatefulWidget {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/appbar.dart';
 
 
 class DashBoard extends StatefulWidget {
-  const DashBoard({Key? key}) : super(key: key);
+  const DashBoard({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -18,6 +20,10 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
+  int getSelectedIndex(){
+    return _selectedIndex;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -25,29 +31,26 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
-      const Center(child: Text('Home')),
-      const Center(child: Text('Search')),
-      const Center(child: Text('Profile')),
+      const Text('Agenda', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950),),
+      const Text('Patientèle', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
+      const Text('Aide', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
     ];
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 600),
-        child: Padding(
+      backgroundColor: AppColors.blue50,
+      body:SafeArea(
+        child:Padding (
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    color: Colors.grey[200],
-                  ),
+          child: Stack(
+            children: [
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 600),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 80,),
+                    child : pages[_selectedIndex],
                 ),
-                const SizedBox(height: 24.0),
-                pages[_selectedIndex],
-              ],
-            ),
-          ),
+              ),
+              CustomAppBar(callback: updateSelectedIndex,getSelected: getSelectedIndex,),
+          ]),
         ),
       ),
     );

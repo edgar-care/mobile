@@ -3,11 +3,11 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:prototype_1/services/get_appointement.dart';
-import 'package:prototype_1/services/get_information_patient.dart';
-import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/widget/plain_button.dart';
-import 'package:prototype_1/widget/pdf_card.dart';
+import 'package:edgar/services/get_appointement.dart';
+import 'package:edgar/services/get_information_patient.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/plain_button.dart';
+import 'package:edgar/widget/pdf_card.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

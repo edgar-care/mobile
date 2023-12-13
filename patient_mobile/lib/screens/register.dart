@@ -1,6 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
+import 'package:edgar/styles/colors.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});

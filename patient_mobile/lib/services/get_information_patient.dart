@@ -6,7 +6,7 @@ import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:prototype_1/widget/snackbar.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:logger/logger.dart';
  
 Future<Map<String, Object>?> getInformationPersonnel(BuildContext context) async {

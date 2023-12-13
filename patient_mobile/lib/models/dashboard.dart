@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:prototype_1/widget/bottom_navbar.dart';
-import 'package:prototype_1/screens/dashboard/accueil_page.dart';
-import 'package:prototype_1/screens/dashboard/information_personnel.dart';
-import 'package:prototype_1/screens/dashboard/gestion_rendez_vous.dart';
+import 'package:edgar/widget/bottom_navbar.dart';
+import 'package:edgar/screens/dashboard/accueil_page.dart';
+import 'package:edgar/screens/dashboard/information_personnel.dart';
+import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});

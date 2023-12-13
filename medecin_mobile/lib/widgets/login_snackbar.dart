@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
+import 'package:edgar_pro/styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 
 class SuccessLoginSnackBar extends SnackBar {
