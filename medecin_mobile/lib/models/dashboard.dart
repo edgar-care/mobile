@@ -34,24 +34,23 @@ class _DashBoardState extends State<DashBoard> {
       const Text('Agenda', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950),),
       const Text('Patientèle', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
       const Text('Aide', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
-      const Text("Déconnexion", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
     ];
     return Scaffold(
+      backgroundColor: AppColors.blue50,
       body:SafeArea(
         child:Padding (
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           child: Stack(
             children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 600),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 80,),
-                            child : 
-                              pages[_selectedIndex],
-                        ),
-                      ),
-                      CustomAppBar(callback: updateSelectedIndex,getSelected: getSelectedIndex,),
-                  ]),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 600),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 80,),
+                    child : pages[_selectedIndex],
+                ),
+              ),
+              CustomAppBar(callback: updateSelectedIndex,getSelected: getSelectedIndex,),
+          ]),
         ),
       ),
     );

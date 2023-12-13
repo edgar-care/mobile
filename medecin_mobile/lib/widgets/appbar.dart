@@ -1,3 +1,4 @@
+import 'package:edgar_pro/services/logout_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -25,10 +26,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.blue200, width: 2)
+        border: Border.all(color: AppColors.blue200, width: 1)
     ),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, isOpen ? 16 : 8),
       child: Column(
         children: [
           Row(
@@ -41,7 +42,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       borderRadius: BorderRadius.circular(50),
                       color: AppColors.blue950,
                     ),
-                    child: !isOpen ? const Icon(BootstrapIcons.chevron_down, size: 14, color: Colors.white,) : const Icon(BootstrapIcons.chevron_up, size: 14, color: Colors.white,),
+                    child: !isOpen ? const Icon(BootstrapIcons.chevron_down, size: 16, color: Colors.white,) : const Icon(BootstrapIcons.chevron_up, size: 16, color: Colors.white,),
                   ),
                   onTap: () {
                     setState(() {
@@ -50,10 +51,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   },
                 ),
                 const SizedBox(width: 8,),
-                Image.asset(
-                  'assets/images/logo/full-width-color.png',
-                  height: 40,
-                ),
+                Image.asset('assets/images/logo/full-width-color.png', height: 40),
                 const Spacer(),
                 Container(
                   height: 24,
@@ -79,7 +77,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 const SizedBox(height: 8,),
                 CustomCard(isSelected: widget.getSelected() == 2 ? true : false, icon: BootstrapIcons.question_circle_fill, title: "Aide", onTap: () {widget.callback(2);}),
                 const SizedBox(height: 2,),
-                CustomCard(isSelected: widget.getSelected() == 3 ? true : false, icon: BootstrapIcons.arrow_right_circle_fill, title: "Déconnexion", onTap: () {widget.callback(3);}),
+                CustomCard(isSelected: widget.getSelected() == 3 ? true : false, icon: BootstrapIcons.arrow_right_circle_fill, title: "Déconnexion", onTap: () {logout(context);}),
               ],
             ),
           ],
