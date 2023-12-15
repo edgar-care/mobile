@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:prototype_1/screens/register.dart';
+import 'package:edgar/screens/register.dart';
 
 void main() {
   testWidgets('Test fonctionnel pour lib/screens/register.dart', (WidgetTester tester) async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prototype_1/styles/colors.dart';
-import 'package:prototype_1/widget/plain_button.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/plain_button.dart';
 
 class WarningPage extends StatefulWidget {
   const WarningPage({super.key});
