@@ -101,7 +101,7 @@ class _PatientState extends State<Patient> {
           height: 8,
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.77,
+          height: MediaQuery.of(context).size.height * 0.74,
           width: MediaQuery.of(context).size.width,
           child: Container(
             decoration: BoxDecoration(
