@@ -1,6 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
+import 'package:edgar_pro/styles/colors.dart';
 
 class PatientInfoCard extends StatefulWidget {
   final BuildContext context;
@@ -9,12 +9,12 @@ class PatientInfoCard extends StatefulWidget {
   final bool isDeletable;
 
   const PatientInfoCard({
-    Key? key,
+    super.key,
     required this.context,
     required this.patient,
     required this.champ,
     required this.isDeletable,
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api

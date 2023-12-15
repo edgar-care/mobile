@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/screens/auth/login_page.dart';
-import 'package:medecin_mobile/screens/auth/register_page.dart';
+import 'package:edgar_pro/screens/auth/login_page.dart';
+import 'package:edgar_pro/screens/auth/register_page.dart';
 
 
 class Auth extends StatefulWidget {
-  const Auth({Key? key}) : super(key: key);
+  const Auth({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

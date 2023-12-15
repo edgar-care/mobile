@@ -1,4 +1,4 @@
-name: medecin_mobile
+name: edgar_pro
 description: A new Flutter project.
 publish_to: 'none'
 version: 0.1.0
@@ -20,7 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 flutter_launcher_icons:
   android: launcher_icon
   ios: true
@@ -42,4 +42,4 @@ flutter:
   assets:
     - assets/images/logo/
     - assets/images/utils/
-    - .env  # The following line ensures that the Material Icons font is
+    - .env # The following line ensures that the Material Icons font is

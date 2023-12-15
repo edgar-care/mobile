@@ -1,7 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-
+import 'package:edgar_pro/styles/colors.dart';
 
 class AddCustomField extends StatefulWidget {
   final String label;
@@ -9,16 +8,15 @@ class AddCustomField extends StatefulWidget {
   final Function(String) onChanged;
   final Function()? onTap;
   final bool add;
-  
+
   const AddCustomField({
-    Key? key,
+    super.key,
     required this.label,
     this.keyboardType = TextInputType.text,
     required this.onChanged,
     this.onTap,
     required this.add,
-
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -51,7 +49,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                     textBaseline: TextBaseline.ideographic,
                   ),
                   decoration: InputDecoration(
-                    constraints: BoxConstraints(minWidth: 0, maxWidth: constraints.maxWidth),
+                    constraints: BoxConstraints(
+                        minWidth: 0, maxWidth: constraints.maxWidth),
                     border: InputBorder.none,
                     isDense: true,
                     hintText: widget.label,
@@ -77,7 +76,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                   ),
                 ),
               if (!widget.add)
-              const Icon(BootstrapIcons.calendar3 , color : AppColors.grey400, size: 16)
+                const Icon(BootstrapIcons.calendar3,
+                    color: AppColors.grey400, size: 16)
             ],
           ),
         );

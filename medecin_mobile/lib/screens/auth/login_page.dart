@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
-import 'package:medecin_mobile/widgets/buttons.dart';
-import 'package:medecin_mobile/widgets/field_custom.dart';
-import 'package:medecin_mobile/services/login_service.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/field_custom.dart';
+import 'package:edgar_pro/services/login_service.dart';
 
 class Login extends StatefulWidget {
   final Function(int) callback;
-  const Login({Key? key, required this.callback}) : super(key: key);
+  const Login({super.key, required this.callback});
   @override
   // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();

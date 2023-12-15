@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:prototype_1/screens/auth.dart';
-import 'package:prototype_1/screens/landingPage/help.dart';
-import 'package:prototype_1/screens/login.dart';
-import 'package:prototype_1/screens/register.dart';
-import 'package:prototype_1/screens/simulation/warning_page.dart';
-import 'package:prototype_1/screens/simulation/chat_page.dart';
-import 'package:prototype_1/models/dashboard.dart';
+import 'package:edgar/screens/auth.dart';
+import 'package:edgar/screens/landingPage/help.dart';
+import 'package:edgar/screens/login.dart';
+import 'package:edgar/screens/register.dart';
+import 'package:edgar/screens/simulation/warning_page.dart';
+import 'package:edgar/screens/simulation/chat_page.dart';
+import 'package:edgar/models/dashboard.dart';
 
 import 'screens/landingPage/annuaire_medecin.dart';
 import 'screens/landingPage/landing_page.dart';

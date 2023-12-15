@@ -8,16 +8,15 @@ class CustomField extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final Function(String) onChanged; // Added onChanged parameter
-  
 
   const CustomField({
-    Key? key,
+    super.key,
     required this.label,
     this.icon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     required this.onChanged, // Added required onChanged parameter
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -44,7 +43,9 @@ class _CustomFieldState extends State<CustomField> {
               Expanded(
                 child: TextFormField(
                   obscureText: widget.isPassword && !_isPasswordVisible,
-                  keyboardType:  _isPasswordVisible ?   TextInputType.text: TextInputType.emailAddress,
+                  keyboardType: _isPasswordVisible
+                      ? TextInputType.text
+                      : TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(
                     color: AppColors.grey950,
@@ -53,7 +54,8 @@ class _CustomFieldState extends State<CustomField> {
                     textBaseline: TextBaseline.ideographic,
                   ),
                   decoration: InputDecoration(
-                    constraints: BoxConstraints(minWidth: 0, maxWidth: constraints.maxWidth),
+                    constraints: BoxConstraints(
+                        minWidth: 0, maxWidth: constraints.maxWidth),
                     border: InputBorder.none,
                     isDense: true,
                     hintText: widget.label,
@@ -65,7 +67,8 @@ class _CustomFieldState extends State<CustomField> {
                       textBaseline: TextBaseline.ideographic,
                     ),
                   ),
-                  onChanged: widget.onChanged, // Set onChanged to the provided parameter
+                  onChanged: widget
+                      .onChanged, // Set onChanged to the provided parameter
                 ),
               ),
               if (widget.icon != null)
@@ -73,7 +76,9 @@ class _CustomFieldState extends State<CustomField> {
               if (widget.isPassword)
                 GestureDetector(
                   child: Icon(
-                    _isPasswordVisible ? BootstrapIcons.eye_slash_fill : BootstrapIcons.eye_fill,
+                    _isPasswordVisible
+                        ? BootstrapIcons.eye_slash_fill
+                        : BootstrapIcons.eye_fill,
                     color: Colors.black,
                     size: 16,
                   ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:medecin_mobile/widgets/login_snackbar.dart';
+import 'package:edgar_pro/widgets/login_snackbar.dart';
 
 Future login(String email, String password, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

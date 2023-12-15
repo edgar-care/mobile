@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:medecin_mobile/styles/colors.dart';
+import 'package:edgar_pro/styles/colors.dart';
 
 class CustomCard extends Card {
-  CustomCard({Key? key, required bool isSelected, required IconData? icon, required String title, required Function()? onTap}) : super(
-    key: key,
+  CustomCard({super.key, required bool isSelected, required IconData? icon, required String title, required Function()? onTap}) : super(
     elevation: 0,
+    margin: const EdgeInsets.all(0),
     color: isSelected ? AppColors.blue900 : Colors.transparent,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       ),
     child: InkWell(
             onTap: onTap,
-            child:
-             Padding (
+            child: Padding (
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: 
-                  Row(
+                child: Row(
                     children: [
                       Icon(icon, color: isSelected ? Colors.white : AppColors.blue900, size: 16,),
                       const SizedBox(width: 16,),

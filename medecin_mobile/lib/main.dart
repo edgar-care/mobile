@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:medecin_mobile/models/dashboard.dart';
+import 'package:edgar_pro/models/dashboard.dart';
 import 'models/auth.dart';
 
 void main() async {
