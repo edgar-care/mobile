@@ -135,7 +135,7 @@ class _FilePageState extends State<FilePage> {
                     itemCount: files.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
+                        padding: const EdgeInsets.only(bottom: 8),
                         child: CardDocument(
                           typeDeDocument: files[index]['typeDeDocument'],
                           nomDocument: files[index]['nomDocument'],

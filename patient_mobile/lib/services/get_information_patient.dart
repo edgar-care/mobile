@@ -43,17 +43,60 @@ Map<String, Object> infoMedical = {};
 void populateInfoMedical(Map<String, dynamic>? data) {
   if (data != null) {
     infoMedical = {
+      'Prenom': data['patient_info']?['name'] ?? 'Inconnu',
       'Nom': data['patient_info']?['surname'] ?? 'Inconnu',
       'Sex': data['patient_info']?['sex']?.toString() ?? 'Inconnu',
       'Anniversaire': data['patient_info']?['birthdate'] ?? 'Inconnu',
       'Taille': data['patient_info']?['height'] ?? 'Inconnu',
       'Poids': data['patient_info']?['weight'] ?? 'Inconnu',
       'Medecin_traitant':
-          data['patient_health']?['patients_primary_doctor'] ?? 'Inconnu',
-      'Traitement_en_cours': 'Aucun',
-      'Allergies': data['patient_health']?['patients_allergies'] ?? 'Inconnu',
-      'Maladies_connues':
-          data['patient_health']?['patients_illness'] ?? 'Inconnu',
+          data['patient_health']?['patients_primary_doctor'] ?? [],
+      'Traitement_en_cours':
+          data['patient_health']?['patients_treatment'] ?? [],
+      'Allergies': data['patient_health']?['patients_allergies'] ?? [],
+      'Maladies_connues': data['patient_health']?['patients_illness'] ?? [],
     };
+  }
+}
+
+Future<Map<String, Object>?> putInformationPatient(
+    BuildContext context, Map<String, Object>? info) async {
+  await dotenv.load();
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
+  final body = {
+    'onboarding_info': {},
+    'name': info?['Prenom'],
+    'surname': info?['Nom'],
+    'birthdate': info?['Anniversaire'],
+    'sex': info?['Sex'],
+    'height': info?['Taille'],
+    'weight': info?['Poids'],
+    'patients_primary_doctor': info?['Medecin_traitant'],
+    'patients_illness': info?['Traitement_en_cours'],
+    'patients_allergies': info?['Allergies'],
+    'patients_treatment': info?['Maladies_connues'],
+    'onboarding_health': {},
+  };
+
+  final response = await http.put(
+    Uri.parse(url),
+    body: jsonEncode(body),
+  );
+  if (response.statusCode == 200) {
+    final body = response.body;
+    populateInfoMedical(jsonDecode(body));
+    return infoMedical;
+  } else {
+    final scaffoldContext = context;
+    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+      SnackBar(
+        content: ErrorSnackBar(
+          message: 'La recuperation des informations personnelles a échoué',
+          context: scaffoldContext,
+          duration: const Duration(seconds: 2),
+        ),
+      ),
+    );
+    return null;
   }
 }
