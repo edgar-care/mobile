@@ -9,6 +9,7 @@ class CustomField extends StatefulWidget {
   final TextInputType keyboardType;
   final Function(String) onChanged;
   final String value; // Added onChanged parameter
+  final int? maxSize;
 
   const CustomField({
     super.key,
@@ -18,6 +19,7 @@ class CustomField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     required this.onChanged,
     this.value = '',
+    this.maxSize,
   });
 
   @override
@@ -33,6 +35,8 @@ class _CustomFieldState extends State<CustomField> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
+          // ignore: prefer_null_aware_operators
+          width: widget.maxSize != null ? widget.maxSize?.toDouble() : null,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
