@@ -513,8 +513,8 @@ class CustomListRdv extends StatelessWidget {
                   const Text("Modification du rendez-vous", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                   const Text("Date rdv", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.green500),),
                   const SizedBox(height: 16,),
-                  Expanded(
-                    child: const ModifList()),
+                  const Expanded(
+                    child: ModifList()),
                   const SizedBox(height: 16,),
                   Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text("Valider le changement")),
                 ],)

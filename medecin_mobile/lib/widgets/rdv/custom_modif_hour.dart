@@ -2,12 +2,14 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 
+// ignore: must_be_immutable
 class CustomModifHour extends StatefulWidget {
   int selected;
   final int id;
   CustomModifHour({super.key, required this.selected, required this.id});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomModifHourState createState() => _CustomModifHourState();
 }
 

@@ -1,13 +1,13 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/rdv/custom_modif_hour.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomModifCard extends StatefulWidget {
-  CustomModifCard({super.key});
+  const CustomModifCard({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomModifCardState createState() => _CustomModifCardState();
 }
 

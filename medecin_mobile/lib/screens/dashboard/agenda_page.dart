@@ -1,6 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/slot_service.dart';
-import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
 import 'package:edgar_pro/widgets/Agenda/3_days.dart';
 import 'package:edgar_pro/widgets/Agenda/Slot_list_three.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 class Agenda extends StatefulWidget {
   const Agenda({super.key});
@@ -32,12 +30,6 @@ class _AgendaState extends State<Agenda> {
 
   List<dynamic> slots = [];
 
-  Future<void> _refresh() async {
-    var tempslots = await getSlot();
-    setState(() {
-      slots = tempslots;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

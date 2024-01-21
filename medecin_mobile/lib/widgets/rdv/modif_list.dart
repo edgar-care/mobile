@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class ModifList extends StatefulWidget {
   const ModifList({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _ModifListState createState() => _ModifListState();
 }
 
@@ -17,9 +18,9 @@ class _ModifListState extends State<ModifList> {
         child: ListView.builder(
         itemCount: 2,
         itemBuilder: (context, index) {
-          return Column(children: [
+          return const Column(children: [
             CustomModifCard(),
-            const SizedBox(height: 8,)
+            SizedBox(height: 8,)
             ]);
     }));
   }

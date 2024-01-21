@@ -2,12 +2,8 @@ import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Agenda/slot.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
-
-
-
-
+// ignore: must_be_immutable
 class SlotList extends StatefulWidget {
   DateTime date;
   SlotList({super.key, required this.date});
