@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:edgar/widget/snackbar.dart';
 
-
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -37,8 +36,7 @@ class _LoginState extends State<Login> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: borderColor, width: 2.0),
+                    borderSide: BorderSide(color: borderColor, width: 2.0),
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Adresse mail',
@@ -58,10 +56,9 @@ class _LoginState extends State<Login> {
             TextFieldBlock(children: [
               TextFormField(
                 obscureText: true,
-                decoration:  InputDecoration(
+                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: borderColor, width: 2.0),
+                    borderSide: BorderSide(color: borderColor, width: 2.0),
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Mot de passe',
@@ -111,18 +108,19 @@ class _LoginState extends State<Login> {
                   Navigator.pushNamed(context, '/dashboard');
                 } else {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  final scaffoldContext = context;
                   setState(() {
                     borderColor = AppColors.red700;
                   });
+                  BuildContext scaffoldContext = context;
                   ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                     ErrorSnackBar(
-                      message: 'Identifiants incorrects ou mot de passe invalide',
+                      message:
+                          'Identifiants incorrects ou mot de passe invalide',
                       context: scaffoldContext,
                       duration: const Duration(seconds: 2),
                     ),
                   );
-                  
+
                   await Future.delayed(const Duration(seconds: 2));
                   setState(() {
                     borderColor = AppColors.blue800;

@@ -10,6 +10,7 @@ import 'package:edgar/widget/plain_button.dart';
 import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/widget/AddPatient/add_patient_field.dart';
 import 'package:edgar/widget/AddPatient/add_button.dart';
+import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class InformationPersonnel extends StatefulWidget {
@@ -306,7 +307,11 @@ WoltModalSheetPage addPatient(
               ),
               CustomField(
                 label: "Prénom",
-                onChanged: (value) => info?['prenom'] = value,
+                onChanged: (value) {
+                  Logger().i(value);
+                  info?['Prenom'] = value;
+                  Logger().i(info);
+                },
                 isPassword: false,
                 value: info!['Prenom'].toString(),
               ),
@@ -464,6 +469,8 @@ WoltModalSheetPage addPatient2(
               size: SizeButton.sm,
               msg: const Text('Confirmer'),
               onPressed: () async {
+                putInformationPatient(context, info);
+                Navigator.pushReplacementNamed(context, '/dashboard');
                 pageIndexNotifier.value = 0;
                 Navigator.pop(context);
               },

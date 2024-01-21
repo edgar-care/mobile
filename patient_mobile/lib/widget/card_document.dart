@@ -13,10 +13,10 @@ import 'package:edgar/services/get_files.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 enum TypeDeDocument {
-  ORDONNANCE,
-  AUTRE,
-  CERTIFICAT,
-  RADIO,
+  PRESCRIPTION,
+  OTHER,
+  CERTIFICATE,
+  XRAY,
 }
 
 // ignore: must_be_immutable
@@ -45,13 +45,13 @@ class CardDocument extends StatefulWidget {
 class _CardDocumentState extends State<CardDocument> {
   Color documentColor(TypeDeDocument typeDeDocument) {
     switch (typeDeDocument) {
-      case TypeDeDocument.ORDONNANCE:
+      case TypeDeDocument.PRESCRIPTION:
         return AppColors.green500;
-      case TypeDeDocument.AUTRE:
+      case TypeDeDocument.OTHER:
         return AppColors.blue200;
-      case TypeDeDocument.CERTIFICAT:
+      case TypeDeDocument.CERTIFICATE:
         return AppColors.blue700;
-      case TypeDeDocument.RADIO:
+      case TypeDeDocument.XRAY:
         return AppColors.green200;
     }
   }
@@ -70,10 +70,10 @@ class _CardDocumentState extends State<CardDocument> {
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             GestureDetector(
               onTap: () {
+                changeFavorite(widget.id);
                 setState(() {
                   widget.isfavorite = !widget.isfavorite;
                 });
-                changeFavorite(widget.id);
               },
               child: Container(
                 child: widget.isfavorite
@@ -138,8 +138,8 @@ class _CardDocumentState extends State<CardDocument> {
                               widget.id,
                               widget.nomDocument,
                             ),
-                            modifierPatient(
-                                context, pageIndex, widget.nomDocument),
+                            modifierPatient(context, pageIndex,
+                                widget.nomDocument, widget.id),
                             deletePatient(context, pageIndex, widget.id),
                           ];
                         });
@@ -226,6 +226,7 @@ WoltModalSheetPage modifierPatient(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String name,
+  String id,
 ) {
   int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
   int maxSize = (MediaQuery.of(context).size.width - 48).toInt();
@@ -298,11 +299,12 @@ WoltModalSheetPage modifierPatient(
                     pageIndex.value = 0;
                   }),
               Buttons(
-                  variant: Variante.delete,
+                  variant: Variante.validate,
                   size: SizeButton.sm,
-                  msg: const Text('Oui, je suis sûr'),
+                  msg: const Text('Valider'),
                   widthBtn: widthBtn,
                   onPressed: () {
+                    modifyDocument(id, name);
                     pageIndex.value = 0;
                   }),
             ],

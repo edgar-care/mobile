@@ -25,81 +25,13 @@ class _FilePageState extends State<FilePage> {
     fetchData(context);
   }
 
-  Future<void> fetchData(BuildContext context) async {}
+  List<Map<String, dynamic>> files = [];
+
+  Future<void> fetchData(BuildContext context) async {
+    files = await getAllDocument();
+  }
 
   final pageIndex = ValueNotifier(0);
-  List<Map<String, dynamic>> files = [
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "XRAY",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "XRAY",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "XRAY",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "XRAY",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "RADIO",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "CERTIFICAT",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-    {
-      "id": "659808a56818b662ce4b974d",
-      "owner_id": "63986e23ee0188d157616b4e",
-      "name": "POC Solution DevOps.docx",
-      "document_type": "ORDONNANCE",
-      "category": "GENERAL",
-      "is_favorite": false,
-      "download_url":
-          "https://document-patient.s3.amazonaws.com/POC Solution DevOps.docx"
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -121,15 +53,23 @@ class _FilePageState extends State<FilePage> {
       BuildContext context,
       ValueNotifier<int> pageIndex,
     ) {
-      String dropdownValue = 'Ordonnance';
-      String dropdownValue2 = 'Général';
+      String dropdownValue = 'Général';
+      String dropdownValue2 = 'Ordonnance';
 
       File? fileSelected;
 
       void openFileExplorer() async {
         final file = await FilePicker.platform.pickFiles(
           type: FileType.custom,
-          allowedExtensions: ['pdf', 'doc'],
+          allowedExtensions: [
+            'pdf',
+            'doc',
+            'png',
+            'jpg',
+            'jpeg',
+            'docx',
+            'odt'
+          ],
           dialogTitle: 'Choisir un fichier',
         );
         if (file != null) {
@@ -297,10 +237,8 @@ class _FilePageState extends State<FilePage> {
                               });
                             },
                             items: <String>[
-                              'Ordonnance',
-                              'Certificat',
-                              'Autre',
-                              'Radio'
+                              'Général',
+                              'Finance',
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -351,10 +289,10 @@ class _FilePageState extends State<FilePage> {
                               });
                             },
                             items: <String>[
-                              'Général',
-                              'Dentiste',
-                              'Ophtalmologue',
+                              'Ordonnance',
+                              'Certificat',
                               'Autre',
+                              'Radio'
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -390,8 +328,8 @@ class _FilePageState extends State<FilePage> {
                     onPressed: () {
                       if (fileSelected != null) {
                         postDocument(
-                          dropdownValue2,
                           dropdownValue,
+                          dropdownValue2,
                           fileSelected!,
                         );
                       }
@@ -487,13 +425,13 @@ class _FilePageState extends State<FilePage> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: CardDocument(
                           typeDeDocument: files[index]['document_type'] ==
-                                  'ORDONNANCE'
-                              ? TypeDeDocument.ORDONNANCE
-                              : files[index]['document_type'] == 'CERTIFICAT'
-                                  ? TypeDeDocument.CERTIFICAT
-                                  : files[index]['document_type'] == 'RADIO'
-                                      ? TypeDeDocument.RADIO
-                                      : TypeDeDocument.AUTRE,
+                                  'PRESCRIPTION'
+                              ? TypeDeDocument.PRESCRIPTION
+                              : files[index]['document_type'] == 'CERTIFICATE'
+                                  ? TypeDeDocument.CERTIFICATE
+                                  : files[index]['document_type'] == 'XRAY'
+                                      ? TypeDeDocument.XRAY
+                                      : TypeDeDocument.OTHER,
                           nomDocument: files[index]['name'],
                           dateDocument: DateTime.now(),
                           nameDoctor: 'Vous',

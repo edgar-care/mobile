@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar/widget/snackbar.dart';
@@ -63,6 +64,10 @@ Future<Map<String, Object>?> putInformationPatient(
     BuildContext context, Map<String, Object>? info) async {
   await dotenv.load();
   final url = '${dotenv.env['URL']}dashboard/medical-info';
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  Logger().i(info);
   final body = {
     'onboarding_info': {},
     'name': info?['Prenom'],
@@ -81,22 +86,15 @@ Future<Map<String, Object>?> putInformationPatient(
   final response = await http.put(
     Uri.parse(url),
     body: jsonEncode(body),
+    headers: {'Authorization': 'Bearer $token'},
   );
   if (response.statusCode == 200) {
     final body = response.body;
     populateInfoMedical(jsonDecode(body));
     return infoMedical;
   } else {
-    final scaffoldContext = context;
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-      SnackBar(
-        content: ErrorSnackBar(
-          message: 'La recuperation des informations personnelles a échoué',
-          context: scaffoldContext,
-          duration: const Duration(seconds: 2),
-        ),
-      ),
-    );
+    Logger().e(response.statusCode);
+    Logger().e(response.body);
     return null;
   }
 }

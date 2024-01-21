@@ -5,20 +5,22 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<String?> getDocument(String id) async {
-  final url = '${dotenv.env['URL']}document/upload/$id';
+Future<List<Map<String, dynamic>>> getAllDocument() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final url = '${dotenv.env['URL']}document/download';
 
-  final response = await http.get(
-    Uri.parse(url),
-  );
+  final response = await http
+      .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
     Logger().i(body);
-    return jsonDecode(body);
+    return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
     Logger().e(response.statusCode);
     Logger().e(url);
-    return null;
+    Logger().e(token);
+    return [];
   }
 }
 
@@ -37,7 +39,7 @@ Future<Object?> changeFavorite(String id) async {
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(url);
+    Logger().e(token);
     return null;
   }
 }
@@ -47,16 +49,49 @@ Future<Object?> postDocument(
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}document/upload';
+  Logger().i('doctyp $documentType');
+  Logger().i('cat $category');
+  final docT = {
+    'Ordonnance': 'PRESCRIPTION',
+    'Certificat': 'CERTIFICATE',
+    'Radio': 'XRAY',
+    'Autre': 'OTHER',
+  }[documentType];
 
-  final response = await http.post(
+  final categoryT = {
+    'Général': 'GENERAL',
+    'Finance': 'FINANCE',
+  }[category];
+
+  final request = http.MultipartRequest('POST', Uri.parse(url))
+    ..headers['Authorization'] = 'Bearer $token';
+  request.fields['category'] = categoryT!;
+  request.fields['documentType'] = docT!;
+  request.files.add(await http.MultipartFile.fromPath('document', file.path));
+  request.fields['isFavorite'] = 'false';
+
+  final response = await request.send();
+  if (response.statusCode == 201) {
+    final body = await response.stream.bytesToString();
+    Logger().i(body);
+    return jsonDecode(body);
+  } else {
+    Logger().e(response.statusCode);
+    Logger().e(url);
+    Logger().e(token);
+    Logger().e(response.reasonPhrase);
+    return null;
+  }
+}
+
+Future<Object?> deleteDocument(String id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final url = '${dotenv.env['URL']}document/$id';
+
+  final response = await http.delete(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
-    body: {
-      'document': file.path,
-      'isFavorite': 'false',
-      'category': category,
-      'documentType': documentType,
-    },
   );
   if (response.statusCode == 201) {
     final body = response.body;
@@ -69,16 +104,18 @@ Future<Object?> postDocument(
   }
 }
 
-Future<Object?> deleteDocument(String id) async {
+Future<Object?> modifyDocument(String id, String name) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}document/delete/$id';
+  final url = '${dotenv.env['URL']}document/$id';
 
-  final response = await http.delete(
+  Logger().i(name);
+  final response = await http.put(
     Uri.parse(url),
+    body: {'name': name},
     headers: {'Authorization': 'Bearer $token'},
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     final body = response.body;
     Logger().i(body);
     return jsonDecode(body);
