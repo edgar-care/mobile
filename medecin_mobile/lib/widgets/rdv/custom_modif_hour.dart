@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class CustomModifHour extends StatefulWidget {
-  int selected;
+  bool selected;
   final int id;
-  CustomModifHour({super.key, required this.selected, required this.id});
+  final void Function()? onTap;
+  CustomModifHour({super.key, required this.selected, required this.id, required this.onTap});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,16 +21,16 @@ class _CustomModifHourState extends State<CustomModifHour> {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.all(0),
-      color: widget.selected == widget.id ? AppColors.blue700 : AppColors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+      color: widget.selected ? AppColors.blue700 : AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         side: BorderSide(
-          color: AppColors.blue200,
+          color: widget.selected ? AppColors.blue700 : AppColors.blue200,
           width: 2,
         ),
       ),
       child: InkWell(
-        onTap: () => {widget.selected = widget.id},
+        onTap: widget.onTap,
         child:
           Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -38,7 +39,7 @@ class _CustomModifHourState extends State<CustomModifHour> {
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12,
-              color: widget.selected == widget.id ? AppColors.white : AppColors.blue800,
+              color: widget.selected ? AppColors.white : AppColors.blue700,
               fontWeight: FontWeight.w600
             ),
           ),

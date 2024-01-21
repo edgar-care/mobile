@@ -18,23 +18,20 @@ class _ThreeDaysState extends State<ThreeDays> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 43),
-      child : SizedBox(
-        height: MediaQuery.of(context).size.height * 0.06,
         child : Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Flexible(
-            fit: FlexFit.tight,
-            child: Text(DateFormat("yMMMMEEEEd").format(widget.date), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700,), textAlign: TextAlign.center,),
+          Expanded(
+            child:  
+              Text(DateFormat(MediaQuery.of(context).size.width < 380 ? "yMMMEd" : "yMMMMEEEEd").format(widget.date), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700,), textAlign: TextAlign.center,),
             ),
           const VerticalDivider(color: AppColors.blue200, thickness: 1,),
-          Flexible(child:
-              Text(DateFormat("yMMMMEEEEd").format(widget.date.add(const Duration(days: 1))), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700),textAlign: TextAlign.center ), ),
+          Expanded(child:
+              Text(DateFormat(MediaQuery.of(context).size.width < 380 ? "yMMMEd" : "yMMMMEEEEd").format(widget.date.add(const Duration(days: 1))), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700),textAlign: TextAlign.center ), ),
           const VerticalDivider(color: AppColors.blue200, thickness: 1,),
-          Flexible(child:
-              Text(DateFormat("yMMMMEEEEd").format(widget.date.add(const Duration(days: 2))), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700), textAlign: TextAlign.center),),
+          Expanded(child:
+              Text(DateFormat(MediaQuery.of(context).size.width < 380 ? "yMMMEd" : "yMMMMEEEEd").format(widget.date.add(const Duration(days: 2))), style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700), textAlign: TextAlign.center),),
         ]),
-      )
     );
   }
 }

@@ -21,29 +21,27 @@ class AddButton extends StatefulWidget {
 class _AddButtonState extends State<AddButton> {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: widget.onTap,
-      style: ElevatedButton.styleFrom(
-        side: BorderSide(
-            width: 2.0,
-            color: widget.color == AppColors.blue700
-                ? AppColors.blue700
-                : AppColors.blue500),
-        backgroundColor: widget.color,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(12),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: widget.color,
+        border: Border.all(
+          color: AppColors.blue700,
+          width: 2,
         ),
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Text(widget.label,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child:InkWell(
+          onTap: widget.onTap,
+          child: Text(widget.label,
           style: TextStyle(
               fontSize: 16,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
               color: widget.color == AppColors.blue700
                   ? AppColors.white
-                  : AppColors.blue800)),
-    );
+                  : AppColors.grey400)),
+    )));
   }
 }

@@ -40,9 +40,8 @@ initState() {
   }
    @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.74,
-      child:  RefreshIndicator(
+    return Expanded(
+      child: RefreshIndicator(
         color: AppColors.blue200,
         onRefresh: _refreshSlots,
         child: ListView.builder(
@@ -53,41 +52,38 @@ initState() {
             children : [
               Container(height: 1,color: AppColors.blue200,),
               const SizedBox(height: 4,),
-              Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.end,
-              children : [
-                Text(index.toString().length == 1 ? "0$index:00" : "$index:00", style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.w600),),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children : [
+                  SizedBox(
+                    width: 36,
+                    child:
+                  Text(index.toString().length == 1 ? "0$index:00" : "$index:00", style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.w600), textAlign: TextAlign.right,),),
+                  const SizedBox(width: 8,),
+                  Expanded(
+                    child: Column(
+                    children: [
+                      checktypeslot(slots, widget.date.add(Duration(hours: index))),
+                      const SizedBox(height: 2,),
+                      checktypeslot(slots, widget.date.add(Duration(hours: index, minutes: 30))),
+                  ]),),
                 const SizedBox(width: 8,),
-                Wrap(
-                  direction: Axis.vertical,
-                  alignment: WrapAlignment.end,
-                  clipBehavior: Clip.values[1],
-                  spacing: 2,
-                  children: [
-                    checktypeslot(slots, widget.date.add(Duration(hours: index))),
-                    checktypeslot(slots, widget.date.add(Duration(hours: index, minutes: 30))),
-                ]),
-                const SizedBox(width: 8,),
-                Wrap(
-                  direction: Axis.vertical,
-                  alignment: WrapAlignment.end,
-                  clipBehavior: Clip.values[1],
-                  spacing: 2,
+                Expanded(
+                  child: Column(
                   children: [
                     checktypeslot(slots, widget.date.add(Duration(days: 1, hours: index))),
+                    const SizedBox(height: 2,),
                     checktypeslot(slots, widget.date.add(Duration(days: 1,hours: index, minutes: 30))),
-                ]),
+                ]),),
                 const SizedBox(width: 8,),
-                Wrap(
-                  direction: Axis.vertical,
-                  alignment: WrapAlignment.end,
-                  clipBehavior: Clip.values[1],
-                  spacing: 2,
+                Expanded(
+                  child: Column(
                   children: [
                     checktypeslot(slots, widget.date.add(Duration(days: 2, hours: index))),
+                    const SizedBox(height: 2,),
                     checktypeslot(slots, widget.date.add(Duration(days: 2, hours: index, minutes: 30))),
-                ]),
+                ]),),
             ],),
             const SizedBox(height: 4,),
         ])

@@ -8,12 +8,14 @@ class AddCustomField extends StatefulWidget {
   final Function(String) onChanged;
   final Function()? onTap;
   final bool add;
+  final TextEditingController controller;
 
   const AddCustomField({
     super.key,
     required this.label,
     this.keyboardType = TextInputType.text,
     required this.onChanged,
+    required this.controller,
     this.onTap,
     required this.add,
   });
@@ -40,6 +42,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  controller: widget.controller,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(

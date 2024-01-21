@@ -14,7 +14,7 @@ class CustomList extends StatelessWidget {
   CustomList({super.key});
 
 
-  ValueNotifier<int> selected = ValueNotifier(0);
+  ValueNotifier<int> selected = ValueNotifier(2);
 
   void updateSelection(int newSelection) {
     selected.value = newSelection;
@@ -296,10 +296,22 @@ class CustomList extends StatelessWidget {
                               PatientInfoCard(context: context,patient: patient,champ: 'allergies',isDeletable: false),
                             ],
                           ),
-                          const Text("Maladies:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
-                          PatientInfoCard(context: context,patient: patient,champ: 'maladies',isDeletable: false,),
-                          const Text("Traitements:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
-                          PatientInfoCard(context: context,patient: patient,champ: 'traitements',isDeletable: false,),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Maladies:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
+                              const SizedBox(height: 8),
+                              PatientInfoCard(context: context,patient: patient,champ: 'maladies',isDeletable: false,),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Traitements:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
+                              const SizedBox(height: 8),
+                              PatientInfoCard(context: context,patient: patient,champ: 'traitements',isDeletable: false,),
+                            ],
+                          ),
                         ],
                       )
                     ],
@@ -452,9 +464,11 @@ class CustomList extends StatelessWidget {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 CustomField(
+                  text: patient['prenom'],
                   label: patient['prenom'],
                   onChanged: (value) => patient['prenom'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
@@ -465,8 +479,10 @@ class CustomList extends StatelessWidget {
                 ),
                 CustomField(
                   label: patient['nom'],
+                  text: patient['nom'],
                   onChanged: (value) => patient['nom'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
@@ -476,14 +492,16 @@ class CustomList extends StatelessWidget {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 AddCustomField(
-                    label: "10 / 09 / 2023",
+                    controller: TextEditingController(text: patient['date']),
+                    keyboardType: TextInputType.datetime,
+                    label: patient['date'],
                     onChanged: (value) => patient['date'] = value,
                     add: false),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Sexe",
+                  "Votre sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                  ValueListenableBuilder<int>(
@@ -530,14 +548,16 @@ class CustomList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Taille",
+                            "Votre taille",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
                           CustomField(
+                            text: patient['taille'],
                             label: patient['taille'],
                             onChanged: (value) => patient['taille'] = value,
                             isPassword: false,
+                            keyboardType: TextInputType.number,
                           ),
                         ],
                       ),
@@ -551,14 +571,16 @@ class CustomList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Poids",
+                            "Votre poids",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
                           CustomField(
+                            text: patient['poids'],
                             label: patient['poids'],
                             onChanged: (value) => patient['poids'] = value,
                             isPassword: false,
+                            keyboardType: TextInputType.number,
                           ),
                         ],
                       ),
@@ -678,9 +700,11 @@ class CustomList extends StatelessWidget {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 CustomField(
+                  text: patient.value['medecin'],
                   label: "Dr. Edgar",
                   onChanged: (value) => patient.value['medecin'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
@@ -689,12 +713,12 @@ class CustomList extends StatelessWidget {
                   "Vos allergies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
+                AddCustomField(controller: TextEditingController(),label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
                 const Text(
-                  "Vos allergies renseignée",
+                  "Vos allergies renseignées",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 ValueListenableBuilder(
@@ -714,12 +738,12 @@ class CustomList extends StatelessWidget {
                   "Vos maladies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(label: "Renseignez vos Maladies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
+                AddCustomField(controller: TextEditingController(),label: "Renseignez vos Maladies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
                 const Text(
-                  "Vos maladies renseignée",
+                  "Vos maladies renseignées",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 ValueListenableBuilder(
@@ -739,12 +763,12 @@ class CustomList extends StatelessWidget {
                   "Vos traitements",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
+                AddCustomField(controller: TextEditingController(),label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
                 const Text(
-                  "Vos traitements renseignée",
+                  "Vos traitements renseignés",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 ValueListenableBuilder(

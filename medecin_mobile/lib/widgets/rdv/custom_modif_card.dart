@@ -13,20 +13,28 @@ class CustomModifCard extends StatefulWidget {
 
 class _CustomModifCardState extends State<CustomModifCard> {
   bool isOpen = false;
-  int selected = -1;
+  ValueNotifier<int> selected = ValueNotifier(-1);
 
-
+void updateSelection(int newSelection) {
+    selected.value = newSelection;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         border: Border.all(color: AppColors.blue200, width: 2,),
         color: AppColors.white
       ),
-      child: Padding(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            isOpen = !isOpen;
+          });
+        },
+        child:
+        Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,33 +45,32 @@ class _CustomModifCardState extends State<CustomModifCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Date", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
-                    Row(children: [ 
-                        Text("nbr horaires", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
+                    Row(children: [
+                        Text("nbr horraires", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
                         Text(" disponibles", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                     ],)
                 ],),
                 const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isOpen = !isOpen;
-                    });
-                  },
-                  child: !isOpen ? const Icon(BootstrapIcons.chevron_down, size: 16,) : const Icon(BootstrapIcons.chevron_up, size: 16,),
-                ),
+                !isOpen ? const Icon(BootstrapIcons.chevron_down, size: 16,) : const Icon(BootstrapIcons.chevron_up, size: 16,),
               ],
             ),
-            const SizedBox(height: 8,),
-            if(isOpen)Wrap(
-              runSpacing: 4,
-              spacing: 8,
-              children: [
-                  for (var i = 0; i < 4; i++)
-                    CustomModifHour(selected: selected, id: i),
-              ]
+            if(isOpen)ValueListenableBuilder(
+              valueListenable: selected,
+              builder: (context, value, child) {
+                return Column( children:[
+                  const SizedBox(height: 8,),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for(int i = 0; i < 4; i++)
+                          CustomModifHour(selected: selected.value == i ? true : false, id: i, onTap: () => updateSelection(i)),
+                    ])]
+                );
+              }
             )
         ])
       ),
-    );
+    ));
   }
 }

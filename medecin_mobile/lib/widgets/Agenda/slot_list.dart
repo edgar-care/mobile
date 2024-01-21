@@ -37,6 +37,18 @@ class _SlotListState extends State<SlotList> {
     });
   }
 
+  Widget checktypeslot (List<dynamic> slots, DateTime date) {
+    for (var i = 0; i < slots.length; i++) {
+      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch && slots[i]['id_patient'] != "") {
+        return  Slot(type: SlotType.taken);
+      }
+      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
+        return  Slot(type: SlotType.create, date: date, id: slots[i]['id']);
+      }
+    }
+    return Slot(type: SlotType.empty, date: date, id: '1',);
+    }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -78,18 +90,6 @@ class _SlotListState extends State<SlotList> {
         ),
       ),
       );
-    }
-
-    Widget checktypeslot (List<dynamic> slots, DateTime date) {
-    for (var i = 0; i < slots.length; i++) {
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch && slots[i]['id_patient'] != "") {
-        return  Slot(type: SlotType.taken);
-      }
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
-        return  Slot(type: SlotType.create, date: date, id: slots[i]['id']);
-      }
-    }
-    return Slot(type: SlotType.empty, date: date, id: '1',);
     }
 }
 

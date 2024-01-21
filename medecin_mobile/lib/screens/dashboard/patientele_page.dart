@@ -207,7 +207,7 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             const Text(
-              "Mettez à jour vos informations personelles",
+              "Ajoutez les informations d'un patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
@@ -248,37 +248,43 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Adresse email",
+                  "Votre adresse mail",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 CustomField(
                   label: "prenom.nom@gmail.com",
                   onChanged: (value) => info['email'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Votre Prénom",
+                  "Votre prénom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 CustomField(
                   label: "Prénom",
                   onChanged: (value) => info['prenom'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Votre Nom",
+                  "Votre nom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 CustomField(
                   label: "Nom",
                   onChanged: (value) => info['nom'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
@@ -287,7 +293,9 @@ class _PatientState extends State<Patient> {
                   "Date de naissance",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 AddCustomField(
+                    controller: TextEditingController(),
                     label: "10 / 09 / 2023",
                     onChanged: (value) => info['date'] = value,
                     add: false),
@@ -295,40 +303,39 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Sexe",
+                  "Votre sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
                     return Row(
                       children: [
-                        SizedBox(
-                          child : 
-                        AddButton(
-                            onTap: () => updateSelection(0),
-                            label: "Masculin",
-                            color: value == 0
-                                ? AppColors.blue700
-                                : AppColors.white)),
+                            AddButton(
+                                onTap: () => updateSelection(0),
+                                label: "Masculin",
+                                color: value == 0
+                                      ? AppColors.blue700
+                                      : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                        AddButton(
-                            onTap: () => updateSelection(1),
-                            label: "Feminin",
-                            color: value == 1
-                                ? AppColors.blue700
-                                : AppColors.white),
+                            AddButton(
+                                onTap: () => updateSelection(1),
+                                label: "Féminin",
+                                color: value == 1
+                                    ? AppColors.blue700
+                                    : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                        AddButton(
-                            onTap: () => updateSelection(2),
-                            label: "Autre",
-                            color: value == 2
-                                ? AppColors.blue700
-                                : AppColors.white),
+                            AddButton(
+                                onTap: () => updateSelection(2),
+                                label: "Autre",
+                                color: value == 2
+                                    ? AppColors.blue700
+                                    : AppColors.white),
                       ],
                     );
                   },
@@ -344,13 +351,15 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Taille",
+                            "Votre taille",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
+                          const SizedBox(height: 4,),
                           CustomField(
                             label: "1,52m",
                             onChanged: (value) => info['taille'] = value,
+                            keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
                         ],
@@ -365,13 +374,15 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Poids",
+                            "Votre poids",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
+                          const SizedBox(height: 4,),
                           CustomField(
                             label: "45kg",
                             onChanged: (value) => info['poids'] = value,
+                            keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
                         ],
@@ -390,9 +401,9 @@ class _PatientState extends State<Patient> {
   WoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
     ValueNotifier<Map<String, dynamic>> info = ValueNotifier({
       'medecin': '',
-      'allergies': ['pollen', 'pollen'],
-      'maladies': ['maladies', 'maladies', 'maladies'],
-      'traitements': ['traitement', 'traitement', 'traitement'],
+      'allergies': [],
+      'maladies': [],
+      'traitements': [],
     });
 
     String alergie = "";
@@ -456,7 +467,7 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             const Text(
-              "Mettez à jour vos informations personelles",
+              "Ajoutez les informations d'un patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
@@ -500,10 +511,12 @@ class _PatientState extends State<Patient> {
                   "Votre médecin traitant",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 CustomField(
                   label: "Dr. Edgar",
                   onChanged: (value) => info.value['medecin'] = value,
                   isPassword: false,
+                  keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
@@ -512,7 +525,9 @@ class _PatientState extends State<Patient> {
                   "Vos allergies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 AddCustomField(
+                  controller: TextEditingController(),
                   label: "Renseignez vos allergies ici",
                   add: true,
                   onChanged: (value) {
@@ -529,9 +544,10 @@ class _PatientState extends State<Patient> {
                   height: 8,
                 ),
                 const Text(
-                  "Vos allergies renseignée",
+                  "Vos allergies renseignées",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 ValueListenableBuilder(
                   valueListenable: info,
                   builder: (context, value, child) {
@@ -549,7 +565,9 @@ class _PatientState extends State<Patient> {
                   "Vos maladies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 AddCustomField(
+                  controller: TextEditingController(),
                   label: "Renseignez vos maladies ici",
                   add: true,
                   onChanged: (value) {
@@ -566,9 +584,10 @@ class _PatientState extends State<Patient> {
                   height: 8,
                 ),
                 const Text(
-                  "Vos maladies renseignée",
+                  "Vos maladies renseignées",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 ValueListenableBuilder(
                   valueListenable: info,
                   builder: (context, value, child) {
@@ -579,7 +598,6 @@ class _PatientState extends State<Patient> {
                         isDeletable: true);
                   },
                 ),
-                // PatientInfoCard(context: context, patient: info.value, champ: 'maladies', isDeletable: true),
                 const SizedBox(
                   height: 16,
                 ),
@@ -587,7 +605,9 @@ class _PatientState extends State<Patient> {
                   "Vos traitements en cours",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 AddCustomField(
+                    controller: TextEditingController(),
                     label: "Renseignez vos traitements ici",
                     add: true,
                     onChanged: (value) {
@@ -603,9 +623,10 @@ class _PatientState extends State<Patient> {
                   height: 8,
                 ),
                 const Text(
-                  "Vos traitements renseignée",
+                  "Vos traitements renseignés",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
+                const SizedBox(height: 4,),
                 ValueListenableBuilder(
                   valueListenable: info,
                   builder: (context, value, child) {
@@ -616,7 +637,6 @@ class _PatientState extends State<Patient> {
                         isDeletable: true);
                   },
                 ),
-                // PatientInfoCard(context: context, patient: info.value, champ: 'traitements', isDeletable: true),
               ],
             ),
           ]),

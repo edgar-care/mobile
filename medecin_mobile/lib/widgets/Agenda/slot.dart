@@ -116,8 +116,8 @@ class SlotEmpty extends Card {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: Row(
-            children: [
-              Text(three == false ? "Ouvrir le créneau" : "Ouvrir",
+            children: [ 
+              Text(!three ? "Ouvrir le créneau" : ( MediaQuery.of(context).size.width > 380 ? "Ouvrir" : ""),
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class SlotCreate extends Card {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(three == false ? "Fermer le créneau" : "Fermer",
+                Text(three == false ? "Fermer le créneau" : ( MediaQuery.of(context).size.width > 380 ? "Fermer" : ""),
                     style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -226,7 +226,7 @@ class SlotTaken extends Card {
               const SizedBox(
                 width: 8,
               ),
-              Text(three == false ? patientName : "Réservé",
+              Text(three == false ? patientName :  ( MediaQuery.of(context).size.width > 380 ? "Réservé" : ""),
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.bold)),
             ],

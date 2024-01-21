@@ -21,19 +21,31 @@ class Agenda extends StatefulWidget {
 }
 
 class _AgendaState extends State<Agenda> {
-   ValueNotifier<int> selected = ValueNotifier(0);
+  ValueNotifier<int> selected = ValueNotifier(0);
   DateTime date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
+  List<dynamic> tempslot = [];
 
   void updateSelection(int newSelection) {
     selected.value = newSelection;
   }
 
-  List<dynamic> slots = [];
+@override
+    initState() {
+    super.initState();
+    _loadSlots();
+  }
 
+  Future<void> _loadSlots() async {
+    var tempslots = await getSlot();
+    setState(() {
+      tempslot = tempslots;
+    });
+  }
+
+  List<dynamic> slots = [];
 
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       children: [
         Container(
@@ -68,34 +80,30 @@ class _AgendaState extends State<Agenda> {
                     ValueListenableBuilder<int>(
                       valueListenable: selected,
                       builder: (context, value, child) {
-                        return Wrap(
-                            direction: Axis.horizontal,
-                            alignment: WrapAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.338,
-                              child:
-                              Buttons(variant: value == 0 ? Variante.primary : Variante.secondary, size: SizeButton.sm, msg: const Text("Jour"), onPressed: () => updateSelection(0),),),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.338,
-                              child: Buttons(variant: value == 1 ? Variante.primary : Variante.secondary, size: SizeButton.sm, msg: const Text(" 3 Jours"), onPressed: () => updateSelection(1),),),
-                            const SizedBox(width:8),
-                            GestureDetector(
-                              onTap: () => { setState(() {
-                                date = date.subtract(const Duration(days: 1));
-                              })},
-                              child: const Icon(BootstrapIcons.chevron_left, color: AppColors.blue700, size: 22,),
-                            ),
-                            GestureDetector(
-                              onTap: () => { setState(() {
-                                date = date.add(const Duration(days: 1));
-                              })},
-                              child: const Icon(BootstrapIcons.chevron_right, color: AppColors.blue700, size: 22,),
-                            ),
-                      ]);}),
+                        return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(child:
+                                  Buttons(variant: value == 0 ? Variante.primary : Variante.secondary, size: SizeButton.sm, msg: const Text("Jour"), onPressed: () => updateSelection(0),),),
+                                const SizedBox(width: 8,),
+                                Expanded(child:
+                                  Buttons(variant: value == 1 ? Variante.primary : Variante.secondary, size: SizeButton.sm, msg: const Text(" 3 Jours"), onPressed: () => updateSelection(1),),),
+                                const SizedBox(width: 8,),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => { setState(() {
+                                        date = date.subtract(const Duration(days: 1));
+                                      })},
+                                    child: const Icon(BootstrapIcons.chevron_left, color: AppColors.blue700, size: 20,),),
+                                    GestureDetector(
+                                      onTap: () => { setState(() {
+                                        date = date.add(const Duration(days: 1));
+                                      })},
+                                      child: const Icon(BootstrapIcons.chevron_right, color: AppColors.blue700, size: 20,),
+                                    ),
+                                  ],),
+                                ]);}),  
                     const SizedBox(height: 8,),
                     ValueListenableBuilder<int>(
                       valueListenable: selected,
@@ -111,7 +119,7 @@ class _AgendaState extends State<Agenda> {
                         ),
                     ),
                     const SizedBox(height: 8,),
-                    Buttons(variant: Variante.primary, size: SizeButton.md, msg: const Text('Ajouter un créneau +'), onPressed : () => WoltModalSheet.show(context: context, pageListBuilder: (modalSheetContext) {return [addSlot(context)];}, ) ),
+                    Buttons(variant: Variante.primary, size: SizeButton.md, msg: const Text('Ajouter un créneau +'), onPressed : () => WoltModalSheet.show(context: context, pageListBuilder: (modalSheetContext) {return [addSlot(context, tempslot)];}, ) ),
                   ])
             ),
           ),
@@ -120,14 +128,29 @@ class _AgendaState extends State<Agenda> {
     );
   }
 }
+  Future<List<dynamic>> loadSlots(List<dynamic> slots) async {
+    var tempslots = await getSlot();
+      slots = tempslots;
+      return slots;
+  }
 
-WoltModalSheetPage addSlot(BuildContext context){
+ bool parsing(DateTime date, List<dynamic> slots) {
+    for (var slot in slots) {
+      if((slot['start_date'] * 1000) == date.millisecondsSinceEpoch){
+        return false;
+      }
+    }
+    return true;
+  }
+
+WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
   DateTime date = DateTime.now();
   int year = date.year;
   int month = date.month;
   int day = date.day;
   int hour = 0;
   int minute = 0;
+  TextEditingController dateController = TextEditingController();
 
   String dropdownvalue = '00:00';
   List<String> list = ['00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30'];
@@ -165,7 +188,7 @@ WoltModalSheetPage addSlot(BuildContext context){
                     }
                     else{
                     }
-                  }, add: false, keyboardType: TextInputType.datetime,),
+                  }, add: false, keyboardType: TextInputType.datetime, controller: dateController,),
                   const SizedBox(height: 12,),
                   const Text("Heure du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
@@ -214,6 +237,8 @@ WoltModalSheetPage addSlot(BuildContext context){
                     ),
                   ),
                   const SizedBox(width: 12,),
+                  ValueListenableBuilder(valueListenable: dateController, builder: (context, value, child) =>
+                  dateController.text.length == 10 && dateController.text[2] == '/' && dateController.text[5] == '/' ?
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.42,
                     child: Buttons(
@@ -222,14 +247,19 @@ WoltModalSheetPage addSlot(BuildContext context){
                       msg: const Text('Ouvrir le créneau'),
                       onPressed: () {
                         date = DateTime(year, month, day, hour, minute, 0);
-                        postSlot(date);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/dashboard');
-                        ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Créneau créé avec succès', context: context,));
+                        if(parsing(date, tempslot) == true){
+                          postSlot(date);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, '/dashboard');
+                          ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Créneau créé avec succès', context: context,));
+                        }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Créneau déjà existant', context: context,));
+                        }
                       },
                     ),
-                  ),
+                  ): const SizedBox(width: 0,)),
                 ],
               ),
             ],

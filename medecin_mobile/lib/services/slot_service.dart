@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<dynamic>> getSlot() async {
@@ -19,7 +18,6 @@ Future<List<dynamic>> getSlot() async {
     return jsonDecode(response.body)['slot'];
   }
   if (response.statusCode != 201) {
-    Logger().d('response body = ${response.body}');
     return [];
   }
   return [];
@@ -40,12 +38,10 @@ Future<Object?> postSlot(DateTime date) async {
     },
     body: jsonEncode({'start_date': start, 'end_date': end}),
   );
-  Logger().i(response.statusCode);
   if (response.statusCode == 201) {
     return jsonDecode(response.body);
   }
   if (response.statusCode != 201) {
-    Logger().d('response body = ${response.body}');
     return null;
   }
   return null;
@@ -65,7 +61,6 @@ Future deleteSlot(String id) async {
     return jsonDecode(response.body);
   }
   else if (response.statusCode != 200) {
-    Logger().d('response body = ${response.body}');
     return null;
   }
 }

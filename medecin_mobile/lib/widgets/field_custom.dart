@@ -7,14 +7,16 @@ class CustomField extends StatefulWidget {
   final IconData? icon; // Changed from IconData to IconData?
   final bool isPassword;
   final TextInputType keyboardType;
-  final Function(String) onChanged; // Added onChanged parameter
+  final Function(String) onChanged;
+  final String text; // Added onChanged parameter
 
   const CustomField({
     super.key,
     required this.label,
     this.icon,
     this.isPassword = false,
-    this.keyboardType = TextInputType.text,
+    this.text = "",
+    required this.keyboardType,
     required this.onChanged, // Added required onChanged parameter
   });
 
@@ -42,10 +44,9 @@ class _CustomFieldState extends State<CustomField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  controller: TextEditingController(text: widget.text),
                   obscureText: widget.isPassword && !_isPasswordVisible,
-                  keyboardType: _isPasswordVisible
-                      ? TextInputType.text
-                      : TextInputType.emailAddress,
+                  keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(
                     color: AppColors.grey950,
