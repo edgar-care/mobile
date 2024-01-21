@@ -1,6 +1,6 @@
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/rdv/Custom_list_rdv.dart';
+import 'package:edgar_pro/widgets/rdv/custom_list_rdv.dart';
 import 'package:flutter/material.dart';
 
 class Rdv extends StatefulWidget {
