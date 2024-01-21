@@ -1,5 +1,6 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
+import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
@@ -35,11 +36,8 @@ class _DashBoardState extends State<DashBoard> {
     final List<Widget> pages = <Widget>[
       const Agenda(),
       const Patient(),
-      const Text('Aide',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
+      const Rdv(),
+      const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

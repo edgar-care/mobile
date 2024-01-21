@@ -43,7 +43,7 @@ class _AddButtonState extends State<AddButton> {
               fontWeight: FontWeight.w500,
               color: widget.color == AppColors.blue700
                   ? AppColors.white
-                  : AppColors.grey400)),
+                  : AppColors.blue800)),
     );
   }
 }

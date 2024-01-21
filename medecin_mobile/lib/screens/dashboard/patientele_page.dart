@@ -100,11 +100,10 @@ class _PatientState extends State<Patient> {
         const SizedBox(
           height: 8,
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.74,
-          width: MediaQuery.of(context).size.width,
+      Expanded(
           child: Container(
             decoration: BoxDecoration(
+              color: AppColors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.blue200, width: 2)),
             child: Padding(
@@ -304,12 +303,14 @@ class _PatientState extends State<Patient> {
                   builder: (context, value, child) {
                     return Row(
                       children: [
+                        SizedBox(
+                          child : 
                         AddButton(
                             onTap: () => updateSelection(0),
                             label: "Masculin",
                             color: value == 0
                                 ? AppColors.blue700
-                                : AppColors.white),
+                                : AppColors.white)),
                         const SizedBox(
                           width: 16,
                         ),
@@ -386,8 +387,7 @@ class _PatientState extends State<Patient> {
     );
   }
 
-  WoltModalSheetPage addPatient2(
-      BuildContext context, ValueNotifier<int> pageIndexNotifier) {
+  WoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
     ValueNotifier<Map<String, dynamic>> info = ValueNotifier({
       'medecin': '',
       'allergies': ['pollen', 'pollen'],

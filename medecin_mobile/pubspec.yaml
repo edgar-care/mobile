@@ -11,11 +11,12 @@ dependencies:
   shared_preferences: ^2.0.8
   bootstrap_icons: ^1.11.1
   logger: ^2.0.2+1
-  http: ^1.1.0
+  http: ^1.2.0
   flutter_launcher_icons: ^0.13.1
   flutter:
     sdk: flutter
   wolt_modal_sheet: ^0.1.4
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

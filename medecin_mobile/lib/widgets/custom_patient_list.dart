@@ -1,4 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
+import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -8,10 +10,16 @@ import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 
 // ignore: must_be_immutable
 class CustomList extends StatelessWidget {
-  int selected = 0;
-  get isSelected => selected;
-  set setSelected(int value) => selected = value;
+
   CustomList({super.key});
+
+
+  ValueNotifier<int> selected = ValueNotifier(0);
+
+  void updateSelection(int newSelection) {
+    selected.value = newSelection;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +78,7 @@ class CustomList extends StatelessWidget {
                 pageListBuilder: (modalSheetContext) {
                   return [
                     fixPatient(context, pageIndexNotifier, patients),
-                    fixPatient2(context, pageIndexNotifier, patients),
+                    fixPatient2(context, pageIndexNotifier, ValueNotifier(patients)),
                     patientInfo(context, patients, modalSheetContext,
                         pageIndexNotifier),
                     deletePatient(context, pageIndexNotifier, patients)
@@ -283,47 +291,15 @@ class CustomList extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Allergies:",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
+                              const Text("Allergies:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
                               const SizedBox(height: 8),
-                              PatientInfoCard(
-                                  context: context,
-                                  patient: patient,
-                                  champ: 'allergies',
-                                  isDeletable: false),
+                              PatientInfoCard(context: context,patient: patient,champ: 'allergies',isDeletable: false),
                             ],
                           ),
-                          const Text(
-                            "Maladies:",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                            ),
-                          ),
-                          PatientInfoCard(
-                            context: context,
-                            patient: patient,
-                            champ: 'maladies',
-                            isDeletable: false,
-                          ),
-                          const Text(
-                            "Traitements:",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                            ),
-                          ),
-                          PatientInfoCard(
-                            context: context,
-                            patient: patient,
-                            champ: 'traitements',
-                            isDeletable: false,
-                          ),
+                          const Text("Maladies:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
+                          PatientInfoCard(context: context,patient: patient,champ: 'maladies',isDeletable: false,),
+                          const Text("Traitements:",style: TextStyle(fontFamily: 'Poppins',fontSize: 14,),),
+                          PatientInfoCard(context: context,patient: patient,champ: 'traitements',isDeletable: false,),
                         ],
                       )
                     ],
@@ -499,7 +475,10 @@ class CustomList extends StatelessWidget {
                   "Date de naissance",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                // AddCustomField(label: patient['date'], onChanged: (value) => patient['date'] = value, add: false, list: const [''],),
+                AddCustomField(
+                    label: "10 / 09 / 2023",
+                    onChanged: (value) => patient['date'] = value,
+                    add: false),
                 const SizedBox(
                   height: 16,
                 ),
@@ -507,14 +486,38 @@ class CustomList extends StatelessWidget {
                   "Sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                const Row(
-                  children: [
-                    // AddButton(onTap: () => selected = 0, label: "Masculin", isSelected: isSelected == 0 ? true : false),
-                    // const SizedBox(width: 16,),
-                    // AddButton(onTap: () => selected = 1, label: "Feminin", isSelected: isSelected == 1 ? true : false),
-                    // const SizedBox(width: 16,),
-                    // AddButton(onTap: () => selected = 2, label: "Autre", isSelected: isSelected == 2 ? true : false),
-                  ],
+                 ValueListenableBuilder<int>(
+                  valueListenable: selected,
+                  builder: (context, value, child) {
+                    return Row(
+                      children: [
+                        AddButton(
+                            onTap: () => updateSelection(0),
+                            label: "Masculin",
+                            color: value == 0
+                                ? AppColors.blue700
+                                : AppColors.white),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                        AddButton(
+                            onTap: () => updateSelection(1),
+                            label: "Feminin",
+                            color: value == 1
+                                ? AppColors.blue700
+                                : AppColors.white),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                        AddButton(
+                            onTap: () => updateSelection(2),
+                            label: "Autre",
+                            color: value == 2
+                                ? AppColors.blue700
+                                : AppColors.white),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 16,
@@ -571,7 +574,7 @@ class CustomList extends StatelessWidget {
   }
 
   WoltModalSheetPage fixPatient2(BuildContext context,
-      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient) {
+      ValueNotifier<int> pageIndexNotifier, ValueNotifier<Map<String, dynamic>> patient) {
     return WoltModalSheetPage.withSingleChild(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -676,7 +679,7 @@ class CustomList extends StatelessWidget {
                 ),
                 CustomField(
                   label: "Dr. Edgar",
-                  onChanged: (value) => patient['medecin'] = value,
+                  onChanged: (value) => patient.value['medecin'] = value,
                   isPassword: false,
                 ),
                 const SizedBox(
@@ -686,7 +689,7 @@ class CustomList extends StatelessWidget {
                   "Vos allergies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                // AddCustomField(label: "Renseignez vos maladies ici", add: true, list: patient['allergies'], onChanged: (value) => patient['allergies'] = value),
+                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
@@ -694,11 +697,16 @@ class CustomList extends StatelessWidget {
                   "Vos allergies renseignée",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                PatientInfoCard(
-                    context: context,
-                    patient: patient,
-                    champ: 'allergies',
-                    isDeletable: true),
+                ValueListenableBuilder(
+                  valueListenable: patient,
+                  builder: (context, value, child) {
+                    return PatientInfoCard(
+                        context: context,
+                        patient: value,
+                        champ: 'maladies',
+                        isDeletable: true);
+                  },
+                ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -706,7 +714,7 @@ class CustomList extends StatelessWidget {
                   "Vos maladies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                // AddCustomField(label: "Renseignez vos maladies ici", add: true, list: patient['maladies'], onChanged: (value) => patient['maladies'] = value),
+                AddCustomField(label: "Renseignez vos Maladies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
@@ -714,19 +722,24 @@ class CustomList extends StatelessWidget {
                   "Vos maladies renseignée",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                PatientInfoCard(
-                    context: context,
-                    patient: patient,
-                    champ: 'maladies',
-                    isDeletable: true),
+                ValueListenableBuilder(
+                  valueListenable: patient,
+                  builder: (context, value, child) {
+                    return PatientInfoCard(
+                        context: context,
+                        patient: value,
+                        champ: 'allergies',
+                        isDeletable: true);
+                  },
+                ),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Vos traitements en cours",
+                  "Vos traitements",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                // AddCustomField(label: "Renseignez vos traitements ici", add: true, list: patient['traitements'], onChanged: (value) => patient['traitements'] = value),
+                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
                 const SizedBox(
                   height: 8,
                 ),
@@ -734,11 +747,16 @@ class CustomList extends StatelessWidget {
                   "Vos traitements renseignée",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                PatientInfoCard(
-                    context: context,
-                    patient: patient,
-                    champ: 'traitements',
-                    isDeletable: true),
+                ValueListenableBuilder(
+                  valueListenable: patient,
+                  builder: (context, value, child) {
+                    return PatientInfoCard(
+                        context: context,
+                        patient: value,
+                        champ: 'traitements',
+                        isDeletable: true);
+                  },
+                ),
               ],
             ),
           ]),
