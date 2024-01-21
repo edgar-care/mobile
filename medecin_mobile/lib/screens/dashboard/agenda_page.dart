@@ -1,7 +1,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
-import 'package:edgar_pro/widgets/Agenda/3_days.dart';
+import 'package:edgar_pro/widgets/Agenda/three_days.dart';
 import 'package:edgar_pro/widgets/Agenda/Slot_list_three.dart';
 import 'package:edgar_pro/widgets/Agenda/custom_dropdown_buttont.dart';
 import 'package:edgar_pro/widgets/Agenda/slot_list.dart';
