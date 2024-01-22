@@ -2,30 +2,28 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 
-class AddCustomPreloadField extends StatefulWidget {
+class AddCustomField extends StatefulWidget {
   final String label;
   final TextInputType keyboardType;
   final Function(String) onChanged;
   final Function()? onTap;
   final bool add;
-  final TextEditingController controller;
 
-  const AddCustomPreloadField({
+  const AddCustomField({
     super.key,
     required this.label,
     this.keyboardType = TextInputType.text,
     required this.onChanged,
-    required this.controller,
     this.onTap,
     required this.add,
   });
 
   @override
   // ignore: library_private_types_in_public_api
-  _AddCustomPreloadFieldState createState() => _AddCustomPreloadFieldState();
+  _AddCustomFieldState createState() => _AddCustomFieldState();
 }
 
-class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
+class _AddCustomFieldState extends State<AddCustomField> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -42,7 +40,6 @@ class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
             children: [
               Expanded(
                 child: TextFormField(
-                  controller: widget.controller,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(

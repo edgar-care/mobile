@@ -1,17 +1,26 @@
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
+import 'package:edgar_pro/widgets/AddPatient/custom_preload_field.dart';
+import 'package:edgar_pro/widgets/add_custom_field.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 
-// ignore: must_be_immutable
-class CustomList extends StatelessWidget {
 
-  CustomList({super.key});
+class CustomList extends StatefulWidget {
+  const CustomList({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _CustomListState createState() => _CustomListState();
+}
+// ignore: must_be_immutable
+class _CustomListState extends State<CustomList> {
 
 
   ValueNotifier<int> selected = ValueNotifier(2);
@@ -359,8 +368,7 @@ class CustomList extends StatelessWidget {
       hasSabGradient: true,
       hasTopBarLayer: false,
     );
-  }
-
+}
   WoltModalSheetPage fixPatient(BuildContext context,
       ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient) {
     return WoltModalSheetPage.withSingleChild(
@@ -463,7 +471,7 @@ class CustomList extends StatelessWidget {
                   "Votre Prénom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                CustomField(
+                CustomPreloadField(
                   text: patient['prenom'],
                   label: patient['prenom'],
                   onChanged: (value) => patient['prenom'] = value,
@@ -477,7 +485,7 @@ class CustomList extends StatelessWidget {
                   "Votre Nom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                CustomField(
+                CustomPreloadField(
                   label: patient['nom'],
                   text: patient['nom'],
                   onChanged: (value) => patient['nom'] = value,
@@ -491,7 +499,7 @@ class CustomList extends StatelessWidget {
                   "Date de naissance",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(
+                AddCustomPreloadField(
                     controller: TextEditingController(text: patient['date']),
                     keyboardType: TextInputType.datetime,
                     label: patient['date'],
@@ -552,7 +560,7 @@ class CustomList extends StatelessWidget {
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
-                          CustomField(
+                          CustomPreloadField(
                             text: patient['taille'],
                             label: patient['taille'],
                             onChanged: (value) => patient['taille'] = value,
@@ -575,7 +583,7 @@ class CustomList extends StatelessWidget {
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14),
                           ),
-                          CustomField(
+                          CustomPreloadField(
                             text: patient['poids'],
                             label: patient['poids'],
                             onChanged: (value) => patient['poids'] = value,
@@ -597,6 +605,9 @@ class CustomList extends StatelessWidget {
 
   WoltModalSheetPage fixPatient2(BuildContext context,
       ValueNotifier<int> pageIndexNotifier, ValueNotifier<Map<String, dynamic>> patient) {
+    String alergie = "";
+    String maladie = "";
+    String traitement = "";
     return WoltModalSheetPage.withSingleChild(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -699,7 +710,7 @@ class CustomList extends StatelessWidget {
                   "Votre médecin traitant",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                CustomField(
+                CustomPreloadField(
                   text: patient.value['medecin'],
                   label: "Dr. Edgar",
                   onChanged: (value) => patient.value['medecin'] = value,
@@ -713,37 +724,12 @@ class CustomList extends StatelessWidget {
                   "Vos allergies",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(controller: TextEditingController(),label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
+                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) {setState(() {alergie = value;});},onTap: () {patient.value['allergies'].add(alergie);patient.notifyListeners();}, add: true),
                 const SizedBox(
                   height: 8,
                 ),
                 const Text(
                   "Vos allergies renseignées",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: patient,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'maladies',
-                        isDeletable: true);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Vos maladies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                ),
-                AddCustomField(controller: TextEditingController(),label: "Renseignez vos Maladies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos maladies renseignées",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 ValueListenableBuilder(
@@ -760,10 +746,35 @@ class CustomList extends StatelessWidget {
                   height: 16,
                 ),
                 const Text(
+                  "Vos maladies",
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                ),
+                AddCustomField(label: "Renseignez vos Maladies ici", onChanged: (value) {setState(() {maladie = value;});},onTap: () {patient.value['maladies'].add(maladie);patient.notifyListeners();}, add: true),
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text(
+                  "Vos maladies renseignées",
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: patient,
+                  builder: (context, value, child) {
+                    return PatientInfoCard(
+                        context: context,
+                        patient: value,
+                        champ: 'maladies',
+                        isDeletable: true);
+                  },
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text(
                   "Vos traitements",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
-                AddCustomField(controller: TextEditingController(),label: "Renseignez vos allergies ici", onChanged: (value) => patient.value['allergies'] = value, add: true),
+                AddCustomField(label: "Renseignez vos allergies ici", onChanged: (value) {setState(() {traitement = value;});},onTap: () {patient.value['traitements'].add(traitement);patient.notifyListeners();}, add: true),
                 const SizedBox(
                   height: 8,
                 ),

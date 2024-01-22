@@ -180,7 +180,7 @@ WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
                   const SizedBox(height: 16,),
                   const Text("Date du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
-                  AddCustomField(label: "10/09/2023", onChanged: (value) {
+                  AddCustomPreloadField(label: "10/09/2023", onChanged: (value) {
                     if (value.length == 10 && value[2] == '/' && value[5] == '/') {
                       year = int.parse(value.substring(6));
                       month = int.parse(value.substring(3,5));

@@ -68,6 +68,7 @@ class _LoginState extends State<Login> {
                         const Text("Adresse mail", style: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600), textAlign: TextAlign.left,),
                         const SizedBox(height: 8,),
                         CustomField(
+                          text: email,
                           label: "prenom.nom@gmail.com",
                           keyboardType : TextInputType.text,
                           onChanged: (value) {

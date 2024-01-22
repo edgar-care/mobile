@@ -1,10 +1,10 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/widgets/add_custom_field.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
-import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/custom_patient_list.dart';
@@ -111,7 +111,7 @@ class _PatientState extends State<Patient> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomList(),
+                    const CustomList(),
                     Buttons(
                       variant: Variante.primary,
                       size: SizeButton.md,
@@ -295,7 +295,6 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
-                    controller: TextEditingController(),
                     label: "10 / 09 / 2023",
                     onChanged: (value) => info['date'] = value,
                     add: false),
@@ -527,7 +526,6 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
-                  controller: TextEditingController(),
                   label: "Renseignez vos allergies ici",
                   add: true,
                   onChanged: (value) {
@@ -545,7 +543,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos allergies renseignées",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 const SizedBox(height: 4,),
                 ValueListenableBuilder(
@@ -567,7 +565,6 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
-                  controller: TextEditingController(),
                   label: "Renseignez vos maladies ici",
                   add: true,
                   onChanged: (value) {
@@ -607,7 +604,6 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
-                    controller: TextEditingController(),
                     label: "Renseignez vos traitements ici",
                     add: true,
                     onChanged: (value) {
