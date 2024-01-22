@@ -37,6 +37,7 @@ class _CustomFieldState extends State<CustomField> {
               children: [
                 Expanded(
                   child: TextFormField(
+                    cursorColor: AppColors.blue500,
                     keyboardType: widget.keyboardType,
                     textInputAction: TextInputAction.next,
                     style: const TextStyle(

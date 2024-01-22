@@ -42,6 +42,7 @@ class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  cursorColor: AppColors.blue500,
                   controller: widget.controller,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,

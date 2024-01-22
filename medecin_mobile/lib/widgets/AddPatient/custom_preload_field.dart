@@ -44,6 +44,7 @@ class _CustomPreloadFieldState extends State<CustomPreloadField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  cursorColor: AppColors.blue500,
                   controller: TextEditingController(text: widget.text),
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,
