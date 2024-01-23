@@ -38,7 +38,7 @@ class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.blue500, width: 2),
           ),
-          child: Row(
+          child: widget.keyboardType == TextInputType.datetime ? Row(
             children: [
               Expanded(
                 child: TextFormField(
@@ -83,7 +83,13 @@ class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
                 const Icon(BootstrapIcons.calendar3,
                     color: AppColors.grey400, size: 16)
             ],
-          ),
+          ) : 
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.blue500, width: 2),
+            ),
+          )
         );
       },
     );

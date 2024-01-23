@@ -2,6 +2,7 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/widgets/add_custom_field.dart';
+import 'package:edgar_pro/widgets/custom_date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
@@ -115,7 +116,7 @@ class _PatientState extends State<Patient> {
                     Buttons(
                       variant: Variante.primary,
                       size: SizeButton.md,
-                      msg: const Text('Ajouter un patient'),
+                      msg: const Text('Ajouter un patient +'),
                       onPressed: () {
                         WoltModalSheet.show<void>(
                             context: context,
@@ -294,10 +295,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                 ),
                 const SizedBox(height: 4,),
-                AddCustomField(
-                    label: "10 / 09 / 2023",
-                    onChanged: (value) => info['date'] = value,
-                    add: false),
+                CustomDatePiker(onChanged: (value) => info['date'] = value),
                 const SizedBox(
                   height: 16,
                 ),

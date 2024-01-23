@@ -1,11 +1,11 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/slot_service.dart';
-import 'package:edgar_pro/widgets/AddPatient/add_patient_field.dart';
 import 'package:edgar_pro/widgets/Agenda/three_days.dart';
 import 'package:edgar_pro/widgets/Agenda/Slot_list_three.dart';
 import 'package:edgar_pro/widgets/Agenda/custom_dropdown_buttont.dart';
 import 'package:edgar_pro/widgets/Agenda/slot_list.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_date_picker.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -41,6 +41,10 @@ class _AgendaState extends State<Agenda> {
       tempslot = tempslots;
     });
   }
+
+  String capitalise(String date){
+      return date.split(' ').map((word) => toBeginningOfSentenceCase(word)).join(' ');
+    }
 
   List<dynamic> slots = [];
 
@@ -108,7 +112,7 @@ class _AgendaState extends State<Agenda> {
                     ValueListenableBuilder<int>(
                       valueListenable: selected,
                       builder: (context, value, child) {
-                        return selected.value == 0 ? Text(DateFormat("yMMMMEEEEd").format(date), style: const TextStyle(fontSize: 16, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700),) : ThreeDays(date: date,);}),
+                        return selected.value == 0 ? Text(capitalise(DateFormat("yMMMMEEEEd", "fr").format(date)), style: const TextStyle(fontSize: 16, fontFamily: "Poppins", fontWeight: FontWeight.bold, color: AppColors.blue700),) : ThreeDays(date: date,);}),
                     const SizedBox(height: 8,),
                     Expanded(
                       child: ValueListenableBuilder<int>(
@@ -143,21 +147,29 @@ class _AgendaState extends State<Agenda> {
     return true;
   }
 
-WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
-  DateTime date = DateTime.now();
-  int year = date.year;
-  int month = date.month;
-  int day = date.day;
-  int hour = 0;
-  int minute = 0;
-  TextEditingController dateController = TextEditingController();
+ class Addslot extends StatefulWidget {
+    final List<dynamic> tempslot = [];
+    Addslot({super.key, required List<dynamic> tempslot});
+ 
+   @override
+   State<Addslot> createState() => _AddslotState();
+ }
+ 
+ class _AddslotState extends State<Addslot> {
+    DateTime date = DateTime.now();
+    int year = DateTime.now().year;
+    int month = DateTime.now().month;
+    int day = DateTime.now().day;
+    int hour = DateTime.now().hour;
+    int minute = 0;
 
-  String dropdownvalue = '00:00';
+  String dropdownvalue = DateTime.now().hour.toString().length == 1 ? "0${DateTime.now().hour + 1}:00" : "${DateTime.now().hour}:00";
   List<String> list = ['00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30'];
 
-  return WoltModalSheetPage.withSingleChild(
-    hasTopBarLayer: false,
-    child: SizedBox(
+
+   @override
+   Widget build(BuildContext context) {
+     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
@@ -180,15 +192,18 @@ WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
                   const SizedBox(height: 16,),
                   const Text("Date du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
-                  AddCustomPreloadField(label: "10/09/2023", onChanged: (value) {
+                  CustomDatePiker(value: DateFormat("yMMMMEEEEd", "fr").format(date), onChanged: (value) {
+                    setState(() {
                     if (value.length == 10 && value[2] == '/' && value[5] == '/') {
                       year = int.parse(value.substring(6));
                       month = int.parse(value.substring(3,5));
                       day = int.parse(value.substring(0,2));
+                      date = DateTime(year, month, day);
                     }
                     else{
-                    }
-                  }, add: false, keyboardType: TextInputType.datetime, controller: dateController,),
+                    } 
+                    });
+                  }),
                   const SizedBox(height: 12,),
                   const Text("Heure du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
@@ -237,18 +252,16 @@ WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
                     ),
                   ),
                   const SizedBox(width: 12,),
-                  ValueListenableBuilder(valueListenable: dateController, builder: (context, value, child) =>
-                  dateController.text.length == 10 && dateController.text[2] == '/' && dateController.text[5] == '/' ?
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.42,
                     child: Buttons(
                       variant: Variante.validate,
                       size: SizeButton.sm,
                       msg: const Text('Ouvrir le créneau'),
-                      onPressed: () {
-                        date = DateTime(year, month, day, hour, minute, 0);
-                        if(parsing(date, tempslot) == true){
-                          postSlot(date);
+                      onPressed: () {          
+                        if(parsing(date, widget.tempslot) == true){
+                          date = DateTime(year, month, day, hour, minute, 0);
+                          //postSlot(date);
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pushNamed(context, '/dashboard');
@@ -259,12 +272,20 @@ WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
                         }
                       },
                     ),
-                  ): const SizedBox(width: 0,)),
-                ],
+                  ),
+              ],
               ),
             ],
           )
         ),
-      ),
+      );
+   }
+ }
+
+WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
+ 
+  return WoltModalSheetPage.withSingleChild(
+    hasTopBarLayer: false,
+    child: Addslot(tempslot: tempslot,),
     );
 }

@@ -15,8 +15,10 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter  
   wolt_modal_sheet: ^0.1.4
-  intl: ^0.19.0
+  intl: ^0.18.1
   flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:

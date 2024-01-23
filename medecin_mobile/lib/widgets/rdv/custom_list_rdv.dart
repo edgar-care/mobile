@@ -359,32 +359,40 @@ class CustomListRdv extends StatelessWidget {
                                   isDeletable: false),
                             ],
                           ),
-                          const Text(
-                            "Maladies:",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                            ),
-                          ),
-                          PatientInfoCard(
-                            context: context,
-                            patient: patient,
-                            champ: 'maladies',
-                            isDeletable: false,
-                          ),
-                          const Text(
-                            "Traitements:",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                            ),
-                          ),
-                          PatientInfoCard(
-                            context: context,
-                            patient: patient,
-                            champ: 'traitements',
-                            isDeletable: false,
-                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Maladies:",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              PatientInfoCard(
+                                context: context,
+                                patient: patient,
+                                champ: 'maladies',
+                                isDeletable: false,
+                              ),
+                            ]),
+                            Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Traitements:",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              PatientInfoCard(
+                                context: context,
+                                patient: patient,
+                                champ: 'traitements',
+                                isDeletable: false,
+                              ),
+                            ]),
                         ],
                       )
                     ],

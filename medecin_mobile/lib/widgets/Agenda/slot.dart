@@ -162,7 +162,7 @@ class SlotCreate extends Card {
           updateSlotType(SlotType.empty);
         },
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
             child: Row(
               children: [
                 Container(

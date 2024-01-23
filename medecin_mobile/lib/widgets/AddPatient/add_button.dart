@@ -21,7 +21,9 @@ class AddButton extends StatefulWidget {
 class _AddButtonState extends State<AddButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return InkWell(
+          onTap: widget.onTap,
+          child:Container(
       decoration: BoxDecoration(
         color: widget.color,
         border: Border.all(
@@ -32,9 +34,7 @@ class _AddButtonState extends State<AddButton> {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child:InkWell(
-          onTap: widget.onTap,
-          child: Text(widget.label,
+        child: Text(widget.label,
           style: TextStyle(
               fontSize: 16,
               fontFamily: 'Poppins',
