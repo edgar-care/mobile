@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/screens/auth/login_page.dart';
 import 'package:edgar_pro/screens/auth/register_page.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});
@@ -23,7 +23,18 @@ class _AuthState extends State<Auth> {
   @override
   void initState() {
     super.initState();
+    checkConnectivity();
   }
+
+  Future<void> checkConnectivity() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/dashboard');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[

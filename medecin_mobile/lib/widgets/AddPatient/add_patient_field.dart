@@ -1,33 +1,31 @@
-import 'package:flutter/material.dart';
-import '../styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:flutter/material.dart';
+import 'package:edgar_pro/styles/colors.dart';
 
-class CustomField extends StatefulWidget {
+class AddCustomPreloadField extends StatefulWidget {
   final String label;
-  final IconData? icon; // Changed from IconData to IconData?
-  final bool isPassword;
   final TextInputType keyboardType;
   final Function(String) onChanged;
-  final String text; // Added onChanged parameter
+  final Function()? onTap;
+  final bool add;
+  final TextEditingController controller;
 
-  const CustomField({
+  const AddCustomPreloadField({
     super.key,
     required this.label,
-    this.icon,
-    this.isPassword = false,
-    this.text = "",
-    required this.keyboardType,
-    required this.onChanged, // Added required onChanged parameter
+    this.keyboardType = TextInputType.text,
+    required this.onChanged,
+    required this.controller,
+    this.onTap,
+    required this.add,
   });
 
   @override
   // ignore: library_private_types_in_public_api
-  _CustomFieldState createState() => _CustomFieldState();
+  _AddCustomPreloadFieldState createState() => _AddCustomPreloadFieldState();
 }
 
-class _CustomFieldState extends State<CustomField> {
-  bool _isPasswordVisible = false;
-
+class _AddCustomPreloadFieldState extends State<AddCustomPreloadField> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -40,12 +38,12 @@ class _CustomFieldState extends State<CustomField> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.blue500, width: 2),
           ),
-          child: Row(
+          child: widget.keyboardType == TextInputType.datetime ? Row(
             children: [
               Expanded(
                 child: TextFormField(
                   cursorColor: AppColors.blue500,
-                  obscureText: widget.isPassword && !_isPasswordVisible,
+                  controller: widget.controller,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(
@@ -64,33 +62,34 @@ class _CustomFieldState extends State<CustomField> {
                       color: AppColors.grey400,
                       fontFamily: 'Poppins',
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
                       textBaseline: TextBaseline.ideographic,
                     ),
                   ),
-                  onChanged: widget
-                      .onChanged, // Set onChanged to the provided parameter
+                  onChanged: widget.onChanged, // Added onChanged
                 ),
               ),
-              if (widget.icon != null)
-                Icon(widget.icon!, color: AppColors.grey950, size: 16),
-              if (widget.isPassword)
+              if (widget.add)
                 GestureDetector(
-                  child: Icon(
-                    _isPasswordVisible
-                        ? BootstrapIcons.eye_slash_fill
-                        : BootstrapIcons.eye_fill,
-                    color: Colors.black,
-                    size: 16,
-                  ),
                   onTap: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
+                    widget.onTap!();
                   },
+                  child: const Icon(
+                    BootstrapIcons.plus,
+                    color: AppColors.blue700,
+                    size: 22,
+                  ),
                 ),
+              if (!widget.add)
+                const Icon(BootstrapIcons.calendar3,
+                    color: AppColors.grey400, size: 16)
             ],
-          ),
+          ) : 
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.blue500, width: 2),
+            ),
+          )
         );
       },
     );

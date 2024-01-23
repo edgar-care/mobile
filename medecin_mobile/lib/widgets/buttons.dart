@@ -109,9 +109,9 @@ class Buttons extends StatelessWidget {
       case Variante.primary:
         backgroundcolor = AppColors.blue700;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.blue700,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       case Variante.secondary:
@@ -141,17 +141,17 @@ class Buttons extends StatelessWidget {
       case Variante.validate:
         backgroundcolor = AppColors.green600;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.green600,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       case Variante.delete:
         backgroundcolor = AppColors.red600;
         borderSide = const BorderSide(
-          color: Colors.transparent,
+          color: AppColors.red600,
           style: BorderStyle.solid,
-          width: 0,
+          width: 2,
         );
         break;
       default:
@@ -164,11 +164,16 @@ class Buttons extends StatelessWidget {
         break;
     }
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: () async {
         onPressed!();
       },
       child: Container(
+        constraints: BoxConstraints(
+          maxWidth: screenWidth,
+        ),
         padding: EdgeInsets.symmetric(vertical: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 6 : 12 , horizontal: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 16 : 24),
         decoration: BoxDecoration(
           color: backgroundcolor,

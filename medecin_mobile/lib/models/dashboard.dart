@@ -1,7 +1,9 @@
+import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
+import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
+import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
-
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -20,7 +22,7 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
-  int getSelectedIndex(){
+  int getSelectedIndex() {
     return _selectedIndex;
   }
 
@@ -28,28 +30,34 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
-      const Text('Agenda', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950),),
-      const Text('Patientèle', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
-      const Text('Aide', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.blue950)),
+      const Agenda(),
+      const Patient(),
+      const Rdv(),
+      const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,
-      body:SafeArea(
-        child:Padding (
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 600),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 80,),
-                    child : pages[_selectedIndex],
+          child: Stack(children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 600),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 80,
                 ),
+                child: pages[_selectedIndex],
               ),
-              CustomAppBar(callback: updateSelectedIndex,getSelected: getSelectedIndex,),
+            ),
+            CustomAppBar(
+              callback: updateSelectedIndex,
+              getSelected: getSelectedIndex,
+            ),
           ]),
         ),
       ),
