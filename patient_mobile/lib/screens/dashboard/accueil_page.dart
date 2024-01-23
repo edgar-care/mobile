@@ -37,6 +37,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchData(BuildContext context) async {
     infoMedical = await getInformationPersonnel(context);
+    if (infoMedical != null) {
+      info['d'] = infoMedical!['Anniversaire'] as String;
+      info['nom'] = infoMedical!['Prenom']!;
+    } else {
+      throw Exception('Failed to fetch data');
+    }
     final Map<String, dynamic>? rdvs = await getAppointement(context);
     if (rdvs != null) {
       final uniqueRdv = <Map<String,

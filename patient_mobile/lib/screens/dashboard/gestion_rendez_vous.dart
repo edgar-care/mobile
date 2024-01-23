@@ -49,7 +49,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
               DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
           'fin': DateFormat('HH:mm:ss').format(
               DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
-          'medecin': 'Dr. ${rdv['doctor_id'] as String}',
+          'medecin': 'Dr. Malade',
           'adresse': '123 Rue de la Santé, Paris',
         };
         uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set

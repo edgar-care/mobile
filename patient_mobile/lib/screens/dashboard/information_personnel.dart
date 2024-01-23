@@ -1,17 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+
+import 'package:edgar/services/get_information_patient.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/AddPatient/add_button.dart';
+import 'package:edgar/widget/AddPatient/add_patient_field.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/custom_patient_card_info.dart';
 import 'package:edgar/widget/field_custom.dart';
-import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/plain_button.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/widget/AddPatient/add_patient_field.dart';
-import 'package:edgar/widget/AddPatient/add_button.dart';
-import 'package:logger/logger.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class InformationPersonnel extends StatefulWidget {
   const InformationPersonnel({super.key});
@@ -240,203 +242,222 @@ WoltModalSheetPage addPatient(
         ],
       ),
     ),
-    child: SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
-        child: Column(children: [
-          Container(
-              height: 50,
-              width: 50,
+    child: const Bodymodify1(),
+  );
+}
+
+// ignore: must_be_immutable
+class Bodymodify1 extends StatefulWidget {
+  const Bodymodify1({
+    super.key,
+  });
+
+  @override
+  State<Bodymodify1> createState() => _Bodymodify1State();
+}
+
+class _Bodymodify1State extends State<Bodymodify1> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
+      child: Column(children: [
+        Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),
+              color: AppColors.grey200,
+            ),
+            child: const Icon(BootstrapIcons.postcard_heart_fill,
+                color: AppColors.grey700)),
+        const SizedBox(
+          height: 8,
+        ),
+        const Text(
+          "Mettez à jour vos informations personelles",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.35,
+              height: 7,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
-                color: AppColors.grey200,
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.blue700,
               ),
-              child: const Icon(BootstrapIcons.postcard_heart_fill,
-                  color: AppColors.grey700)),
-          const SizedBox(
-            height: 8,
-          ),
-          const Text(
-            "Mettez à jour vos informations personelles",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.35,
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue700,
-                ),
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.35,
+              height: 7,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors.blue200,
               ),
-              const SizedBox(
-                width: 16,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.35,
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue200,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 32,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 16,
-              ),
-              const Text(
-                "Votre Prénom",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-              ),
-              CustomField(
-                label: "Prénom",
-                onChanged: (value) {
-                  Logger().i(value);
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 32,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Votre Prénom",
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+            ),
+            CustomField(
+              label: "Prénom",
+              onChanged: (value) {
+                setState(() {
                   info?['Prenom'] = value;
                   Logger().i(info);
-                },
-                isPassword: false,
-                value: info!['Prenom'].toString(),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              const Text(
-                "Votre Nom",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-              ),
-              CustomField(
-                label: "Nom",
-                onChanged: (value) => info?['Nom'] = value,
-                isPassword: false,
-                value: info!['Nom'].toString(),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              const Text(
-                "Date de naissance",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-              ),
-              AddCustomField(
-                  label: "10 / 09 / 2023",
-                  onChanged: (value) => info?['Anniversaire'] = value,
-                  add: false,
-                  value: info!['Anniversaire'].toString()),
-              const SizedBox(
-                height: 16,
-              ),
-              const Text(
-                "Sexe",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-              ),
-              ValueListenableBuilder<int>(
-                valueListenable: selected,
-                builder: (context, value, child) {
-                  return Row(
+                });
+                Logger().i(info);
+              },
+              isPassword: false,
+              value: info!['Prenom'].toString(),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Votre Nom",
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+            ),
+            CustomField(
+              label: "Nom",
+              onChanged: (value) => setState(() {
+                info?['Nom'] = value;
+              }),
+              isPassword: false,
+              value: info!['Nom'].toString(),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Date de naissance",
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+            ),
+            AddCustomField(
+                label: "10 / 09 / 2023",
+                onChanged: (value) => setState(() {
+                      info?['Anniversaire'] = value;
+                      Logger().i(info);
+                    }),
+                add: false,
+                value: info!['Anniversaire'].toString()),
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Sexe",
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+            ),
+            ValueListenableBuilder<int>(
+              valueListenable: selected,
+              builder: (context, value, child) {
+                return Row(
+                  children: [
+                    AddButton(
+                        onTap: () => updateSelection(0),
+                        label: "Masculin",
+                        color:
+                            value == 0 ? AppColors.blue700 : AppColors.white),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    AddButton(
+                        onTap: () => updateSelection(1),
+                        label: "Feminin",
+                        color:
+                            value == 1 ? AppColors.blue700 : AppColors.white),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    AddButton(
+                        onTap: () => updateSelection(2),
+                        label: "Autre",
+                        color:
+                            value == 2 ? AppColors.blue700 : AppColors.white),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AddButton(
-                          onTap: () => updateSelection(0),
-                          label: "Masculin",
-                          color:
-                              value == 0 ? AppColors.blue700 : AppColors.white),
-                      const SizedBox(
-                        width: 16,
+                      const Text(
+                        "Taille",
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
                       ),
-                      AddButton(
-                          onTap: () => updateSelection(1),
-                          label: "Feminin",
-                          color:
-                              value == 1 ? AppColors.blue700 : AppColors.white),
-                      const SizedBox(
-                        width: 16,
+                      CustomField(
+                        label: "1,52m",
+                        onChanged: (value) => setState(() {
+                          info?['Taille'] = value;
+                        }),
+                        isPassword: false,
+                        value: info!['Taille'].toString(),
                       ),
-                      AddButton(
-                          onTap: () => updateSelection(2),
-                          label: "Autre",
-                          color:
-                              value == 2 ? AppColors.blue700 : AppColors.white),
                     ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Taille",
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        CustomField(
-                          label: "1,52m",
-                          onChanged: (value) => info?['Taille'] = value,
-                          isPassword: false,
-                          value: info!['Taille'].toString(),
-                        ),
-                      ],
-                    ),
                   ),
-                  const SizedBox(
-                    width: 32,
+                ),
+                const SizedBox(
+                  width: 32,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.40,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Poids",
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                      ),
+                      CustomField(
+                        label: "45kg",
+                        onChanged: (value) => setState(() {
+                          info?['Poids'] = value;
+                        }),
+                        isPassword: false,
+                        value: info!['Poids'].toString(),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Poids",
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        CustomField(
-                          label: "45kg",
-                          onChanged: (value) => info?['Poids'] = value,
-                          isPassword: false,
-                          value: info!['Poids'].toString(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ]),
-      ),
-    ),
-  );
+                ),
+              ],
+            )
+          ],
+        ),
+      ]),
+    );
+  }
 }
 
 WoltModalSheetPage addPatient2(
     BuildContext context, ValueNotifier<int> pageIndexNotifier) {
-  String alergie = "";
-  String maladie = "";
-  String traitement = "";
-  final infoModel = InfoModel();
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
@@ -444,42 +465,84 @@ WoltModalSheetPage addPatient2(
     enableDrag: true,
     stickyActionBar: Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        direction: Axis.horizontal,
-        spacing: 12,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.43,
-            child: Buttons(
-              variant: Variante.secondary,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Revenir en arrière',
-              ),
-              onPressed: () {
-                pageIndexNotifier.value = pageIndexNotifier.value - 1;
-              },
-            ),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.43,
-            child: Buttons(
-              variant: Variante.validate,
-              size: SizeButton.sm,
-              msg: const Text('Confirmer'),
-              onPressed: () async {
-                putInformationPatient(context, info);
-                Navigator.pushReplacementNamed(context, '/dashboard');
-                pageIndexNotifier.value = 0;
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
+      child: ButtonModal(
+        pageIndexNotifier: pageIndexNotifier,
       ),
     ),
-    child: SizedBox(
+    child: const BodyModify2(),
+  );
+}
+
+// ignore: must_be_immutable
+class ButtonModal extends StatefulWidget {
+  ValueNotifier<int> pageIndexNotifier;
+  ButtonModal({
+    super.key,
+    required this.pageIndexNotifier,
+  });
+
+  @override
+  State<ButtonModal> createState() => _ButtonModalState();
+}
+
+class _ButtonModalState extends State<ButtonModal> {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      direction: Axis.horizontal,
+      spacing: 12,
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.43,
+          child: Buttons(
+            variant: Variante.secondary,
+            size: SizeButton.sm,
+            msg: const Text(
+              'Revenir en arrière',
+            ),
+            onPressed: () {
+              widget.pageIndexNotifier.value =
+                  widget.pageIndexNotifier.value - 1;
+            },
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.43,
+          child: Buttons(
+            variant: Variante.validate,
+            size: SizeButton.sm,
+            msg: const Text('Confirmer'),
+            onPressed: () async {
+              putInformationPatient(context, info);
+              setState(() {
+                infoMedical = info!;
+              });
+              widget.pageIndexNotifier.value = 0;
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BodyModify2 extends StatefulWidget {
+  const BodyModify2({super.key});
+
+  @override
+  State<BodyModify2> createState() => _BodyModify2State();
+}
+
+class _BodyModify2State extends State<BodyModify2> {
+  String alergie = "";
+  String maladie = "";
+  String traitement = "";
+  final infoModel = InfoModel();
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
@@ -543,7 +606,9 @@ WoltModalSheetPage addPatient2(
               ),
               CustomField(
                 label: "Dr. Edgar",
-                onChanged: (value) => info?['Medecin_traitant'] = value,
+                onChanged: (value) => setState(() {
+                  info?['Medecin_traitant'] = value;
+                }),
                 isPassword: false,
                 value: info!['Medecin_traitant'].toString(),
               ),
@@ -561,12 +626,14 @@ WoltModalSheetPage addPatient2(
                   alergie = value;
                 },
                 onTap: () {
-                  if (info!['Allergies'] is List) {
-                    (info!['Allergies'] as List).add(alergie);
-                  } else {
-                    info!['Allergies'] = [alergie];
-                  }
-                  infoModel.setInfo(info!);
+                  setState(() {
+                    if (info!['Allergies'] is List) {
+                      (info!['Allergies'] as List).add(alergie);
+                    } else {
+                      info!['Allergies'] = [alergie];
+                    }
+                    infoModel.setInfo(info!);
+                  });
                 },
               ),
               const SizedBox(
@@ -597,15 +664,19 @@ WoltModalSheetPage addPatient2(
                 label: "Renseignez vos maladies ici",
                 add: true,
                 onChanged: (value) {
-                  maladie = value;
+                  setState(() {
+                    maladie = value;
+                  });
                 },
                 onTap: () {
-                  if (info!['maladies'] is List) {
-                    (info!['maladies'] as List).add(maladie);
-                  } else {
-                    info!['maladies'] = [maladie];
-                  }
-                  infoModel.setInfo(info!);
+                  setState(() {
+                    if (info!['maladies'] is List) {
+                      (info!['maladies'] as List).add(maladie);
+                    } else {
+                      info!['maladies'] = [maladie];
+                    }
+                    infoModel.setInfo(info!);
+                  });
                 },
               ),
               const SizedBox(
@@ -637,15 +708,19 @@ WoltModalSheetPage addPatient2(
                   label: "Renseignez vos traitements ici",
                   add: true,
                   onChanged: (value) {
-                    traitement = value;
+                    setState(() {
+                      traitement = value;
+                    });
                   },
                   onTap: () {
-                    if (info!['traitements'] is List) {
-                      (info!['traitements'] as List).add(traitement);
-                    } else {
-                      info!['traitements'] = [traitement];
-                    }
-                    infoModel.setInfo(info!);
+                    setState(() {
+                      if (info!['traitements'] is List) {
+                        (info!['traitements'] as List).add(traitement);
+                      } else {
+                        info!['traitements'] = [traitement];
+                      }
+                      infoModel.setInfo(info!);
+                    });
                   }),
               const SizedBox(
                 height: 8,
@@ -669,6 +744,6 @@ WoltModalSheetPage addPatient2(
           ),
         ]),
       ),
-    ),
-  );
+    );
+  }
 }

@@ -69,18 +69,20 @@ Future<Map<String, Object>?> putInformationPatient(
 
   Logger().i(info);
   final body = {
-    'onboarding_info': {},
-    'name': info?['Prenom'],
-    'surname': info?['Nom'],
-    'birthdate': info?['Anniversaire'],
-    'sex': info?['Sex'],
-    'height': info?['Taille'],
-    'weight': info?['Poids'],
-    'patients_primary_doctor': info?['Medecin_traitant'],
-    'patients_illness': info?['Traitement_en_cours'],
-    'patients_allergies': info?['Allergies'],
-    'patients_treatment': info?['Maladies_connues'],
-    'onboarding_health': {},
+    'onboarding_info': {
+      'name': info?['Prenom'],
+      'surname': info?['Nom'],
+      'birthdate': info?['Anniversaire'],
+      'sex': info?['Sex'],
+      'height': info?['Taille'],
+      'weight': info?['Poids'],
+    },
+    'onboarding_health': {
+      'patients_primary_doctor': info?['Medecin_traitant'],
+      'patients_illness': info?['Traitement_en_cours'],
+      'patients_allergies': info?['Allergies'],
+      'patients_treatment': info?['Maladies_connues'],
+    },
   };
 
   final response = await http.put(

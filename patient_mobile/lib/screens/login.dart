@@ -22,6 +22,20 @@ class _LoginState extends State<Login> {
   Color borderColor = AppColors.blue800;
 
   @override
+  void initState() {
+    super.initState();
+    checkToken();
+  }
+
+  Future<void> checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      Navigator.pushNamed(context, '/dashboard');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -108,10 +122,10 @@ class _LoginState extends State<Login> {
                   Navigator.pushNamed(context, '/dashboard');
                 } else {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  final scaffoldContext = context;
                   setState(() {
                     borderColor = AppColors.red700;
                   });
-                  BuildContext scaffoldContext = context;
                   ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                     ErrorSnackBar(
                       message:
