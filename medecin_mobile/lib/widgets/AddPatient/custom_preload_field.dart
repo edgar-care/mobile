@@ -1,8 +1,8 @@
+import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
-import '../styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 
-class CustomField extends StatefulWidget {
+class CustomPreloadField extends StatefulWidget {
   final String label;
   final IconData? icon; // Changed from IconData to IconData?
   final bool isPassword;
@@ -10,7 +10,7 @@ class CustomField extends StatefulWidget {
   final Function(String) onChanged;
   final String text; // Added onChanged parameter
 
-  const CustomField({
+  const CustomPreloadField({
     super.key,
     required this.label,
     this.icon,
@@ -22,10 +22,10 @@ class CustomField extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _CustomFieldState createState() => _CustomFieldState();
+  _CustomPreloadFieldState createState() => _CustomPreloadFieldState();
 }
 
-class _CustomFieldState extends State<CustomField> {
+class _CustomPreloadFieldState extends State<CustomPreloadField> {
   bool _isPasswordVisible = false;
 
   @override
@@ -45,6 +45,7 @@ class _CustomFieldState extends State<CustomField> {
               Expanded(
                 child: TextFormField(
                   cursorColor: AppColors.blue500,
+                  controller: TextEditingController(text: widget.text),
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.next,
