@@ -1,15 +1,20 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/widget/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/services/get_appointement.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:edgar/services/put_appoitement.dart';
 
 enum RdvFilter {
   aVenir,
   passes,
   annules,
 }
+
+int screenWidth = 0;
 
 class GestionRendezVous extends StatefulWidget {
   const GestionRendezVous({super.key});
@@ -18,10 +23,8 @@ class GestionRendezVous extends StatefulWidget {
   State<GestionRendezVous> createState() => _GestionRendezVousPageState();
 }
 
-
 class _GestionRendezVousPageState extends State<GestionRendezVous> {
-
-    @override
+  @override
   void initState() {
     super.initState();
     fetchData(context);
@@ -34,54 +37,63 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   RdvFilter rdvFilter = RdvFilter.aVenir;
   Future<void> fetchData(BuildContext context) async {
     final Map<String, dynamic>? rdvs = await getAppointement(context);
-      if (rdvs != null) {
-        final uniqueRdv = <Map<String, String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
-        rdvs['rdv'].forEach((dynamic rdv) {
-          final rendezVous = {
-            'date': DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-            'heure': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-            'fin': DateFormat('HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
-            'medecin': 'Dr. ${rdv['doctor_id'] as String}',
-            'adresse': '123 Rue de la Santé, Paris',
-          };
-          uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
-        });
-        rdv.addAll(uniqueRdv.toList()); // Convertir le Set en une liste et l'ajouter à rdv
-      } else {
-        throw Exception('Failed to fetch data');
-      }
+    if (rdvs != null) {
+      final uniqueRdv = <Map<String,
+          String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+      rdvs['rdv'].forEach((dynamic rdv) {
+        final rendezVous = {
+          'id': rdv['id'] as String,
+          'date': DateFormat('dd/MM/yyyy').format(
+              DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+          'heure': DateFormat('HH:mm:ss').format(
+              DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
+          'fin': DateFormat('HH:mm:ss').format(
+              DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
+          'medecin': 'Dr. Malade',
+          'adresse': '123 Rue de la Santé, Paris',
+        };
+        uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
+      });
+      rdv.addAll(uniqueRdv
+          .toList()); // Convertir le Set en une liste et l'ajouter à rdv
+    } else {
+      throw Exception('Failed to fetch data');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, String>> filteredRdv = rdv;
+    screenWidth = MediaQuery.of(context).size.width.toInt();
+    switch (rdvFilter) {
+      case RdvFilter.aVenir:
+        filteredRdv = rdv.where((element) {
+          final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
+          return rdvDate.isAfter(DateTime.now());
+        }).toList();
+        break;
+      case RdvFilter.passes:
+        filteredRdv = rdv.where((element) {
+          final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
+          return rdvDate.isBefore(DateTime.now());
+        }).toList();
+        break;
+      case RdvFilter.annules:
+        filteredRdv = rdv;
+        break;
+    }
 
-  List<Map<String, String>> filteredRdv = rdv;
+    rdv.sort((a, b) => DateFormat('dd/MM/yyyy')
+        .parse(a['date']!)
+        .compareTo(DateFormat('dd/MM/yyyy').parse(b['date']!)));
 
-  switch (rdvFilter) {
-  case RdvFilter.aVenir:
-    filteredRdv = rdv.where((element) {
-      final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
-      return rdvDate.isAfter(DateTime.now());
-    }).toList();
-    break;
-  case RdvFilter.passes:
-    filteredRdv = rdv.where((element) {
-      final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
-      return rdvDate.isBefore(DateTime.now());
-    }).toList();
-    break;
-  case RdvFilter.annules:
-    filteredRdv = rdv;
-    break;
-  }
-   
+    if (rdv.any(
+        (element) => element['date'] == DateFormat.yMd().format(currentDate))) {
+      rdv.sort((a, b) => DateFormat('HH:mm:ss')
+          .parse(a['heure']!)
+          .compareTo(DateFormat('HH:mm:ss').parse(b['heure']!)));
+    }
 
-  rdv.sort((a, b) => DateFormat('dd/MM/yyyy').parse(a['date']!).compareTo(DateFormat('dd/MM/yyyy').parse(b['date']!)));
-
-  if (rdv.any((element) => element['date'] == DateFormat.yMd().format(currentDate))) {
-    rdv.sort((a, b) => DateFormat('HH:mm:ss').parse(a['heure']!).compareTo(DateFormat('HH:mm:ss').parse(b['heure']!)));
-  }
-  
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -89,7 +101,8 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
           child: Container(
             padding: const EdgeInsets.only(top: 50),
             width: 120,
-            child: Image.asset('assets/images/logo/full-width-colored-edgar-logo.png'),
+            child: Image.asset(
+                'assets/images/logo/full-width-colored-edgar-logo.png'),
           ),
         ),
         const SizedBox(height: 30),
@@ -98,7 +111,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
         SwitchThreeElements(
           onValueChanged: (RdvFilter value) {
             setState(() {
-              rdvFilter = value; 
+              rdvFilter = value;
             });
           },
         ),
@@ -139,7 +152,8 @@ class DateSlider extends StatelessWidget {
               itemBuilder: (context, index) {
                 final currentDate = DateTime.now().add(Duration(days: index));
                 final isToday = index == 0;
-                final isRdv = rdv.any((element) => element['date'] == DateFormat.yMd().format(currentDate));
+                final isRdv = rdv.any((element) =>
+                    element['date'] == DateFormat.yMd().format(currentDate));
                 return Row(
                   children: [
                     const SizedBox(width: 4),
@@ -147,7 +161,9 @@ class DateSlider extends StatelessWidget {
                       width: 70, // Largeur fixe pour chaque carte
                       height: 90,
                       child: DateCard(
-                        month: DateFormat.MMMM().format(currentDate).substring(0, 3),
+                        month: DateFormat.MMMM()
+                            .format(currentDate)
+                            .substring(0, 3),
                         date: DateFormat.d().format(currentDate),
                         isRdv: isRdv,
                         isToday: isToday,
@@ -170,11 +186,15 @@ class DateCard extends StatelessWidget {
   final bool isRdv;
   final bool isToday;
 
-  const DateCard({super.key, required this.month, required this.date, required this.isRdv, required this.isToday});
+  const DateCard(
+      {super.key,
+      required this.month,
+      required this.date,
+      required this.isRdv,
+      required this.isToday});
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       width: 70,
       height: 90,
@@ -264,12 +284,18 @@ class _SwitchThreeElementsState extends State<SwitchThreeElements> {
                   height: 100.0,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: selectedFilter == filter ? AppColors.blue700 : Colors.white,
+                    color: selectedFilter == filter
+                        ? AppColors.blue700
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                   child: Text(
                     filterToString(filter),
-                    style: TextStyle(fontSize: 16.0, color: selectedFilter == filter ? Colors.white : AppColors.blue950),
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: selectedFilter == filter
+                            ? Colors.white
+                            : AppColors.blue950),
                   ),
                 ),
               ),
@@ -293,7 +319,6 @@ class _SwitchThreeElementsState extends State<SwitchThreeElements> {
   }
 }
 
-
 class CardRdv extends StatefulWidget {
   final Map<String, String> rdv;
 
@@ -305,12 +330,11 @@ class CardRdv extends StatefulWidget {
 }
 
 class _CardRdvState extends State<CardRdv> {
-  
   @override
   Widget build(BuildContext context) {
     var currenDate = DateTime.now();
 
-    GlobalKey key = GlobalKey(); 
+    GlobalKey key = GlobalKey();
     bool isVisible = false;
 
     return Padding(
@@ -320,37 +344,42 @@ class _CardRdvState extends State<CardRdv> {
           Stack(
             children: [
               Visibility(
-            visible: isVisible,
-            child: Positioned(
-              left: key.currentContext?.size?.width ?? 0,
-              right: key.currentContext?.size?.height ?? 0,
-              child: Container(
-                width: 200,
-                height: 100,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.green,
-                  borderRadius: null,
+                visible: isVisible,
+                child: Positioned(
+                  left: key.currentContext?.size?.width ?? 0,
+                  right: key.currentContext?.size?.height ?? 0,
+                  child: Container(
+                    width: 200,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green,
+                      borderRadius: null,
+                    ),
+                    child: const Text('Test'),
+                  ),
                 ),
-                child: const Text('Test'),
               ),
-            ),
-          ),
             ],
           ),
           SizedBox(
-            width: 100   ,
+            width: 100,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.rdv['date'] ==  DateFormat('dd/MM/yyyy').format(currenDate) ? 'Aujourd\'hui' :
-                  widget.rdv['date'] ==  DateFormat('dd/MM/yyyy').format(currenDate.add(const Duration(days: 1))) ? 'Demain' :
-                  widget.rdv['date']!,
+                  widget.rdv['date'] ==
+                          DateFormat('dd/MM/yyyy').format(currenDate)
+                      ? 'Aujourd\'hui'
+                      : widget.rdv['date'] ==
+                              DateFormat('dd/MM/yyyy').format(
+                                  currenDate.add(const Duration(days: 1)))
+                          ? 'Demain'
+                          : widget.rdv['date']!,
                   style: const TextStyle(
                     color: AppColors.green500,
-                    fontFamily: 'Poppins', 
+                    fontFamily: 'Poppins',
                     fontSize: 16.0,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w600,
@@ -358,7 +387,12 @@ class _CardRdvState extends State<CardRdv> {
                   ),
                 ),
                 Text(
-                  widget.rdv['heure']?.replaceAll(':', 'H').substring(0, 5).trim().replaceFirst("H", " H ") ?? '',
+                  widget.rdv['heure']
+                          ?.replaceAll(':', 'H')
+                          .substring(0, 5)
+                          .trim()
+                          .replaceFirst("H", " H ") ??
+                      '',
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16.0,
@@ -367,9 +401,9 @@ class _CardRdvState extends State<CardRdv> {
                   ),
                 ),
                 Text(
-                  widget.rdv['heure'] != null && widget.rdv['fin'] != null ?
-                  '${DateTime.parse('2022-01-01 ${widget.rdv['fin']!}').difference(DateTime.parse('2022-01-01 ${widget.rdv['heure']!}')).inMinutes} min' :
-                  '',
+                  widget.rdv['heure'] != null && widget.rdv['fin'] != null
+                      ? '${DateTime.parse('2022-01-01 ${widget.rdv['fin']!}').difference(DateTime.parse('2022-01-01 ${widget.rdv['heure']!}')).inMinutes} min'
+                      : '',
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 12.0,
@@ -415,18 +449,30 @@ class _CardRdvState extends State<CardRdv> {
                         ),
                         IconButton(
                           key: key,
-                          icon: const Icon(BootstrapIcons.three_dots_vertical, color: AppColors.grey500, size: 20),
+                          icon: const Icon(BootstrapIcons.three_dots_vertical,
+                              color: AppColors.grey500, size: 20),
                           onPressed: () {
-                            // Code to make the invisible container appear
-                            setState(() {
-                              isVisible = true;
-                            });
+                            WoltModalSheet.show<void>(
+                                context: context,
+                                pageIndexNotifier: pageIndexRDV,
+                                pageListBuilder: (modalSheetContext) {
+                                  return [
+                                    openRDV(
+                                      context,
+                                      pageIndexRDV,
+                                    ),
+                                    deleteRDV(
+                                      context,
+                                      pageIndexRDV,
+                                      widget.rdv['id']!,
+                                    ),
+                                  ];
+                                });
                           },
                         ),
                       ],
                     ),
                   ),
-                  
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -445,28 +491,27 @@ class _CardRdvState extends State<CardRdv> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(BootstrapIcons.geo, color: AppColors.grey600, size: 12 ),
+                        const Icon(BootstrapIcons.geo,
+                            color: AppColors.grey600, size: 12),
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 236,
-                          child: AutoSizeText(
-                            widget.rdv['adresse'] ?? '',
-                            maxLines: 2,
-                            minFontSize: 12,
-                            maxFontSize: 16,
-                            style: const TextStyle(
-                              color: AppColors.grey500,
-                              fontFamily: 'Poppins',
-                              fontSize: 12.0,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w500,
-                              height: null,
-                            ),
-                            textAlign: TextAlign.start
-                          ),
+                          child: AutoSizeText(widget.rdv['adresse'] ?? '',
+                              maxLines: 2,
+                              minFontSize: 12,
+                              maxFontSize: 16,
+                              style: const TextStyle(
+                                color: AppColors.grey500,
+                                fontFamily: 'Poppins',
+                                fontSize: 12.0,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                height: null,
+                              ),
+                              textAlign: TextAlign.start),
                         ),
                         IconButton(
-                          icon: const Icon(BootstrapIcons.chevron_right
-                          , color: AppColors.grey600, size: 20),
+                          icon: const Icon(BootstrapIcons.chevron_right,
+                              color: AppColors.grey600, size: 20),
                           onPressed: () {},
                         ),
                       ],
@@ -480,4 +525,124 @@ class _CardRdvState extends State<CardRdv> {
       ),
     );
   }
+}
+
+final pageIndexRDV = ValueNotifier(0);
+
+WoltModalSheetPage openRDV(
+  BuildContext context,
+  ValueNotifier<int> pageIndex,
+) {
+  return WoltModalSheetPage(
+    hasTopBarLayer: false,
+    backgroundColor: AppColors.white,
+    hasSabGradient: true,
+    enableDrag: true,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          Buttons(
+              variant: Variante.primary,
+              size: SizeButton.sm,
+              msg: const Text('Modifier'),
+              onPressed: () async {}),
+          Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text('Supprimer'),
+              onPressed: () {
+                pageIndexRDV.value = 1;
+              }),
+        ],
+      ),
+    ),
+  );
+}
+
+WoltModalSheetPage deleteRDV(
+  BuildContext context,
+  ValueNotifier<int> pageIndex,
+  String id,
+) {
+  return WoltModalSheetPage(
+    hasTopBarLayer: false,
+    backgroundColor: AppColors.white,
+    hasSabGradient: true,
+    enableDrag: true,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.red200,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: const Icon(
+              BootstrapIcons.x,
+              color: AppColors.red700,
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Êtes-vous sûr ?',
+            style: TextStyle(
+              color: AppColors.grey950,
+              fontFamily: 'Poppins',
+              fontSize: 20,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w600,
+              height: null,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Si vous supprimez ce document, ni vous ni votre médecin ne pourrez le consulter.',
+            style: TextStyle(
+              color: AppColors.grey500,
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              height: null,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Buttons(
+                  variant: Variante.secondary,
+                  size: SizeButton.sm,
+                  msg: const Text('Annuler'),
+                  onPressed: () {
+                    pageIndexRDV.value = 0;
+                  },
+                  widthBtn: 140),
+              Buttons(
+                variant: Variante.delete,
+                size: SizeButton.sm,
+                msg: const Text('Supprimer'),
+                onPressed: () async {
+                  putAppointement(context, id);
+                  pageIndexRDV.value = 0;
+                  Navigator.pop(context);
+                },
+                widthBtn: 140,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }

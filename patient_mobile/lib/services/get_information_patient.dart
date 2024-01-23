@@ -4,34 +4,28 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar/widget/snackbar.dart';
-import 'package:logger/logger.dart';
- 
-Future<Map<String, Object>?> getInformationPersonnel(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await dotenv.load();
-    final token = prefs.getString('token');
-    final url = '${dotenv.env['URL']}dashboard/medical-info';
-    var logger = Logger(
-      filter: null, // Use the default LogFilter (-> only log in debug mode)
-      printer: PrettyPrinter(), // Use the PrettyPrinter to format and print log
-      output: null, // Use the default LogOutput (-> send everything to console)
-    );
 
-    final response = await http.get(
+Future<Map<String, Object>?> getInformationPersonnel(
+    BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await dotenv.load();
+  final token = prefs.getString('token');
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
+
+  final response = await http.get(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    logger.i('Voici le body des informations personnelles $body');
     populateInfoMedical(jsonDecode(body));
     return infoMedical;
   } else {
     final scaffoldContext = context;
-    logger.e(response.body);
     ScaffoldMessenger.of(scaffoldContext).showSnackBar(
       SnackBar(
         content: ErrorSnackBar(
@@ -44,19 +38,65 @@ Future<Map<String, Object>?> getInformationPersonnel(BuildContext context) async
     return null;
   }
 }
-    
+
 Map<String, Object> infoMedical = {};
 
-  void populateInfoMedical(Map<String, dynamic>? data) {
+void populateInfoMedical(Map<String, dynamic>? data) {
+  if (data != null) {
     infoMedical = {
-      'Nom': data?['patient_info']['surname'] ?? 'Inconnu',
-      'Sex': data!['patient_info']['sex'].toString(),
-      'Anniversaire': data['patient_info']['birthdate'] ?? 'Inconnu',
-      'Taille': data['patient_info']['height'] ?? 'Inconnu',
-      'Poids': data['patient_info']['weight'] ?? 'Inconnu',
-      'Medecin_traitant': data['patient_health']['patients_primary_doctor'] ?? 'Inconnu',
-      'Traitement_en_cours': 'Aucun',
-      'Allergies': data['patient_health']['patients_allergies'].isEmpty ? 'Aucune' : data['patient_health']['patients_allergies'].join(', '),
-      'Maladies_connues': data['patient_health']['patients_illness'].isEmpty ? 'Aucune' : data['patient_health']['patients_illness'].join(', '),
+      'Prenom': data['patient_info']?['name'] ?? 'Inconnu',
+      'Nom': data['patient_info']?['surname'] ?? 'Inconnu',
+      'Sex': data['patient_info']?['sex']?.toString() ?? 'Inconnu',
+      'Anniversaire': data['patient_info']?['birthdate'] ?? 'Inconnu',
+      'Taille': data['patient_info']?['height'] ?? 'Inconnu',
+      'Poids': data['patient_info']?['weight'] ?? 'Inconnu',
+      'Medecin_traitant':
+          data['patient_health']?['patients_primary_doctor'] ?? [],
+      'Traitement_en_cours':
+          data['patient_health']?['patients_treatment'] ?? [],
+      'Allergies': data['patient_health']?['patients_allergies'] ?? [],
+      'Maladies_connues': data['patient_health']?['patients_illness'] ?? [],
     };
   }
+}
+
+Future<Map<String, Object>?> putInformationPatient(
+    BuildContext context, Map<String, Object>? info) async {
+  await dotenv.load();
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  Logger().i(info);
+  final body = {
+    'onboarding_info': {
+      'name': info?['Prenom'],
+      'surname': info?['Nom'],
+      'birthdate': info?['Anniversaire'],
+      'sex': info?['Sex'],
+      'height': info?['Taille'],
+      'weight': info?['Poids'],
+    },
+    'onboarding_health': {
+      'patients_primary_doctor': info?['Medecin_traitant'],
+      'patients_illness': info?['Traitement_en_cours'],
+      'patients_allergies': info?['Allergies'],
+      'patients_treatment': info?['Maladies_connues'],
+    },
+  };
+
+  final response = await http.put(
+    Uri.parse(url),
+    body: jsonEncode(body),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  if (response.statusCode == 200) {
+    final body = response.body;
+    populateInfoMedical(jsonDecode(body));
+    return infoMedical;
+  } else {
+    Logger().e(response.statusCode);
+    Logger().e(response.body);
+    return null;
+  }
+}

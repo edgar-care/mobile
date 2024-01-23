@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-    initialRoute: "/",
-      routes: { 
+      initialRoute: "/",
+      routes: {
         '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
         '/auth': (context) => const AuthScreen(),
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
-        '/dashboard': (context) =>  const DashBoardPage(),
+        '/dashboard': (context) => const DashBoardPage(),
       },
     );
   }

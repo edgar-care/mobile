@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const white = Color(0xFFFFFFFF);
+  static const black = Color(0xFF000000);
+
   static const darkBlue = Color.fromRGBO(30, 43, 77, 1);
   static const buttonBlue = Color.fromRGBO(51, 95, 194, 1);
   static const textBlue = Color.fromRGBO(46, 76, 154, 1);
@@ -16,6 +19,8 @@ class AppColors {
   static const blue200 = Color.fromRGBO(198, 222, 247, 1);
   static const blue100 = Color.fromRGBO(223, 236, 250, 1);
   static const blue50 = Color.fromRGBO(241, 247, 253, 1);
+  static const grey50 = Color(0xFFF6F6F9);
+  static const grey100 = Color(0xFFECEDF2);
   static const grey200 = Color.fromRGBO(213, 215, 226, 1);
   static const grey300 = Color.fromRGBO(188, 190, 201, 1);
   static const grey400 = Color.fromRGBO(163, 165, 176, 1);
@@ -25,8 +30,30 @@ class AppColors {
   static const grey800 = Color.fromRGBO(63, 65, 76, 1);
   static const grey900 = Color.fromRGBO(38, 40, 51, 1);
   static const grey950 = Color.fromRGBO(34, 35, 47, 1);
+  static const green50 = Color(0xFFF2FAEB);
+  static const green100 = Color(0xFFDFF4D3);
   static const green200 = Color.fromRGBO(195, 234, 172, 1);
+  static const green300 = Color(0xFF9CDB7B);
+  static const green400 = Color(0xFF79CA51);
   static const green500 = Color.fromRGBO(90, 175, 51, 1);
-  static const green400 = Color.fromRGBO(121, 202, 81, 1);
+  static const green600 = Color.fromRGBO(67, 139, 37, 1);
+  static const green700 = Color(0xFF356B20);
+  static const green800 = Color(0xFF2D551F);
+  static const green900 = Color(0xFF29491E);
+  static const green950 = Color(0xFF12270C);
+  static const red100 = Color(0xFFFFE0E0);
+  static const red200 = Color(0xFFFFC7C7);
+  static const red300 = Color(0xFFFF9F9F);
+  static const red400 = Color.fromRGBO(255, 104, 104, 1);
+  static const red500 = Color.fromRGBO(250, 57, 57, 1);
+  static const red600 = Color(0xFFDA1616);
   static const red700 = Color(0xFFC31212);
+  static const red800 = Color(0xFFA11313);
+  static const red900 = Color(0xFF851717);
+  static const orange100 = Color(0xFFFEECD6);
+  static const orange200 = Color(0xFFFBD5AD);
+  static const orange300 = Color(0xFFF9B778);
+  static const orange400 = Color(0xFFF58E42);
+  static const orange500 = Color(0xFFF26E1D);
+  static const orange600 = Color(0xFFE75613);
 }
