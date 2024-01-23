@@ -14,12 +14,9 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
       .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
-    Logger().i(body);
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(url);
-    Logger().e(token);
     return [];
   }
 }
@@ -35,7 +32,6 @@ Future<Object?> changeFavorite(String id) async {
   );
   if (response.statusCode == 201) {
     final body = response.body;
-    Logger().i(body);
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
@@ -49,8 +45,7 @@ Future<Object?> postDocument(
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}document/upload';
-  Logger().i('doctyp $documentType');
-  Logger().i('cat $category');
+
   final docT = {
     'Ordonnance': 'PRESCRIPTION',
     'Certificat': 'CERTIFICATE',
@@ -73,13 +68,10 @@ Future<Object?> postDocument(
   final response = await request.send();
   if (response.statusCode == 201) {
     final body = await response.stream.bytesToString();
-    Logger().i(body);
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(url);
-    Logger().e(token);
-    Logger().e(response.reasonPhrase);
+
     return null;
   }
 }
@@ -95,7 +87,6 @@ Future<Object?> deleteDocument(String id) async {
   );
   if (response.statusCode == 201) {
     final body = response.body;
-    Logger().i(body);
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
@@ -109,15 +100,13 @@ Future<Object?> modifyDocument(String id, String name) async {
   final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}document/$id';
 
-  Logger().i(name);
   final response = await http.put(
     Uri.parse(url),
-    body: {'name': name},
+    body: jsonEncode({'name': name}),
     headers: {'Authorization': 'Bearer $token'},
   );
   if (response.statusCode == 201) {
     final body = response.body;
-    Logger().i(body);
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);

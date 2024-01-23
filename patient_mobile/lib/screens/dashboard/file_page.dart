@@ -35,312 +35,18 @@ class _FilePageState extends State<FilePage> {
 
   @override
   Widget build(BuildContext context) {
-    int? sizescreen = MediaQuery.of(context).size.width.toInt();
-
-    int sizescreen2 = sizescreen ~/ 2 - 26;
-
-    String getFileName(String path) {
-      String filePath =
-          '/data/user/0/com.edgar.edgar/cache/file_picker/4040. Basic Electrical Installation Work Sixth Edition By Trevor Linsley.pdf';
-      String fileName = filePath.split('/').last;
-      String title =
-          fileName.split('.').skip(1).join('.').replaceAll('.pdf', '').trim();
-
-      return title;
-    }
-
     SliverWoltModalSheetPage addDocument(
       BuildContext context,
       ValueNotifier<int> pageIndex,
     ) {
-      String dropdownValue = 'Général';
-      String dropdownValue2 = 'Ordonnance';
-
-      File? fileSelected;
-
-      void openFileExplorer() async {
-        final file = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: [
-            'pdf',
-            'doc',
-            'png',
-            'jpg',
-            'jpeg',
-            'docx',
-            'odt'
-          ],
-          dialogTitle: 'Choisir un fichier',
-        );
-        if (file != null) {
-          setState(() {
-            fileSelected = File(file.files.single.path!);
-          });
-          Logger().i(fileSelected);
-          Logger().i(fileSelected!.path);
-        }
-      }
-
       return WoltModalSheetPage(
         hasTopBarLayer: false,
         backgroundColor: AppColors.white,
         hasSabGradient: true,
         enableDrag: true,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: [
-              Wrap(
-                spacing: 8,
-                direction: Axis.vertical,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.green200,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Icon(
-                      BootstrapIcons.file_plus_fill,
-                      color: AppColors.green700,
-                    ),
-                  ),
-                  const Text(
-                    'Ajoutez un document à votre espace santé',
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      textBaseline: TextBaseline.alphabetic,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.clip,
-                  ),
-                ],
-              ),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                direction: Axis.vertical,
-                children: [
-                  const Text(
-                    'Votre document',
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      textBaseline: TextBaseline.alphabetic,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.clip,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 48,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.blue500, width: 2),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.grey100,
-                            border:
-                                Border.all(color: AppColors.grey700, width: 1),
-                          ),
-                          child: TextFieldTapRegion(
-                            debugLabel: 'Choisir un fichier',
-                            child: const Text(
-                              'Choisir un fichier',
-                              style: TextStyle(
-                                color: AppColors.grey700,
-                                fontFamily: 'Poppins',
-                                fontSize: 8,
-                                fontWeight: FontWeight.w500,
-                                textBaseline: TextBaseline.alphabetic,
-                                decorationColor: AppColors.grey400,
-                              ),
-                            ),
-                            onTapInside: (event) {
-                              openFileExplorer();
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          fileSelected == null
-                              ? 'Aucun fichier sélectionné'
-                              : getFileName(fileSelected!.path),
-                          style: const TextStyle(
-                            color: AppColors.grey700,
-                            fontFamily: 'Poppins',
-                            fontSize: 8,
-                            fontWeight: FontWeight.w500,
-                            textBaseline: TextBaseline.alphabetic,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 48,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Le type de votre document',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            textBaseline: TextBaseline.alphabetic,
-                          ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.clip,
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2 - 48,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: AppColors.blue500, width: 2),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: DropdownButton<String>(
-                            value: dropdownValue,
-                            icon: const Icon(BootstrapIcons.chevron_down),
-                            iconSize: 16,
-                            isExpanded: true,
-                            style: const TextStyle(color: AppColors.black),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownValue = newValue!;
-                              });
-                            },
-                            items: <String>[
-                              'Général',
-                              'Finance',
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Le type de médecine',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            textBaseline: TextBaseline.alphabetic,
-                          ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.clip,
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2 - 48,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: AppColors.blue500, width: 2),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          child: DropdownButton<String>(
-                            value: dropdownValue2,
-                            icon: const Icon(BootstrapIcons.chevron_down),
-                            iconSize: 16,
-                            style: const TextStyle(color: AppColors.black),
-                            isExpanded: true,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownValue = newValue!;
-                              });
-                            },
-                            items: <String>[
-                              'Ordonnance',
-                              'Certificat',
-                              'Autre',
-                              'Radio'
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: const TextStyle(
-                                        color: AppColors
-                                            .black)), // Added style to change display value color
-                              );
-                            }).toList(),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    widthBtn: sizescreen2,
-                  ),
-                  Buttons(
-                    variant: Variante.validate,
-                    size: SizeButton.sm,
-                    msg: const Text('Ajouter'),
-                    onPressed: () {
-                      if (fileSelected != null) {
-                        postDocument(
-                          dropdownValue,
-                          dropdownValue2,
-                          fileSelected!,
-                        );
-                      }
-                      Navigator.pop(context);
-                    },
-                    widthBtn: sizescreen2,
-                  ),
-                ],
-              )
-            ],
-          ),
+        child: const Padding(
+          padding: EdgeInsets.all(24),
+          child: BodyModal(),
         ),
       );
     }
@@ -448,6 +154,310 @@ class _FilePageState extends State<FilePage> {
           );
         }
       },
+    );
+  }
+}
+
+class BodyModal extends StatefulWidget {
+  const BodyModal({super.key});
+
+  @override
+  State<BodyModal> createState() => _BodyModalState();
+}
+
+class _BodyModalState extends State<BodyModal> {
+  String dropdownValue = 'Général';
+  String dropdownValue2 = 'Ordonnance';
+
+  File? fileSelected;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  String getFileName(String path) {
+    String filePath =
+        '/data/user/0/com.edgar.edgar/cache/file_picker/4040. Basic Electrical Installation Work Sixth Edition By Trevor Linsley.pdf';
+    String fileName = filePath.split('/').last;
+    String title =
+        fileName.split('.').skip(1).join('.').replaceAll('.pdf', '').trim();
+
+    return title;
+  }
+
+  void openFileExplorer() async {
+    final file = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'png', 'jpg', 'jpeg', 'docx', 'odt'],
+      dialogTitle: 'Choisir un fichier',
+    );
+    if (file != null) {
+      setState(() {
+        fileSelected = File(file.files.single.path!);
+      });
+      Logger().i(fileSelected);
+      Logger().i(fileSelected!.path);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        Wrap(
+          spacing: 8,
+          direction: Axis.vertical,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: AppColors.green200,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                BootstrapIcons.file_plus_fill,
+                color: AppColors.green700,
+              ),
+            ),
+            const Text(
+              'Ajoutez un document à votre espace santé',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                textBaseline: TextBaseline.alphabetic,
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.clip,
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          direction: Axis.vertical,
+          children: [
+            const Text(
+              'Votre document',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                textBaseline: TextBaseline.alphabetic,
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.clip,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width - 48,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.blue500, width: 2),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey100,
+                      border: Border.all(color: AppColors.grey700, width: 1),
+                    ),
+                    child: TextFieldTapRegion(
+                      debugLabel: 'Choisir un fichier',
+                      child: const Text(
+                        'Choisir un fichier',
+                        style: TextStyle(
+                          color: AppColors.grey700,
+                          fontFamily: 'Poppins',
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          textBaseline: TextBaseline.alphabetic,
+                          decorationColor: AppColors.grey400,
+                        ),
+                      ),
+                      onTapInside: (event) {
+                        openFileExplorer();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      fileSelected == null
+                          ? 'Aucun fichier sélectionné'
+                          : getFileName(fileSelected!.path),
+                      style: const TextStyle(
+                        color: AppColors.grey700,
+                        fontFamily: 'Poppins',
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        textBaseline: TextBaseline.alphabetic,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Le type de votre document',
+                    style: TextStyle(
+                      color: AppColors.black,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.alphabetic,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2 - 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.blue500, width: 2),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButton<String>(
+                      value: dropdownValue,
+                      icon: const Icon(BootstrapIcons.chevron_down),
+                      iconSize: 16,
+                      isExpanded: true,
+                      style: const TextStyle(color: AppColors.black),
+                      onChanged: (String? newValue) {
+                        Logger().i(newValue);
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Général',
+                        'Finance',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  )
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Le type de médecine',
+                    style: TextStyle(
+                      color: AppColors.black,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.alphabetic,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2 - 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.blue500, width: 2),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: DropdownButton<String>(
+                      value: dropdownValue2,
+                      icon: const Icon(BootstrapIcons.chevron_down),
+                      iconSize: 16,
+                      style: const TextStyle(color: AppColors.black),
+                      isExpanded: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue2 = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Ordonnance',
+                        'Certificat',
+                        'Autre',
+                        'Radio'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value,
+                              style: const TextStyle(
+                                  color: AppColors
+                                      .black)), // Added style to change display value color
+                        );
+                      }).toList(),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text('Annuler'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Buttons(
+                variant: Variante.validate,
+                size: SizeButton.sm,
+                msg: const Text('Ajouter'),
+                onPressed: () {
+                  if (fileSelected != null) {
+                    postDocument(
+                      dropdownValue,
+                      dropdownValue2,
+                      fileSelected!,
+                    );
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }

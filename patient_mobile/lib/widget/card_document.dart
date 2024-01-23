@@ -61,7 +61,7 @@ class _CardDocumentState extends State<CardDocument> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(12),
@@ -147,6 +147,7 @@ class _CardDocumentState extends State<CardDocument> {
                   child: const Icon(
                     BootstrapIcons.three_dots_vertical,
                     color: AppColors.black,
+                    size: 24,
                   ),
                 ),
               ],
