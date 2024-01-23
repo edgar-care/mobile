@@ -250,7 +250,7 @@ class _PatientState extends State<Patient> {
               children: [
                 const Text(
                   "Votre adresse mail",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
@@ -264,7 +264,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Votre prénom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
@@ -278,7 +278,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Votre nom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
@@ -292,7 +292,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Date de naissance",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomDatePiker(onChanged: (value) => info['date'] = value),
@@ -301,7 +301,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Votre sexe",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 ValueListenableBuilder<int>(
@@ -350,7 +350,7 @@ class _PatientState extends State<Patient> {
                           const Text(
                             "Votre taille",
                             style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
@@ -373,7 +373,7 @@ class _PatientState extends State<Patient> {
                           const Text(
                             "Votre poids",
                             style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
@@ -506,7 +506,7 @@ class _PatientState extends State<Patient> {
               children: [
                 const Text(
                   "Votre médecin traitant",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
@@ -520,7 +520,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos allergies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
@@ -541,7 +541,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos allergies renseignées",
-                    style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 ValueListenableBuilder(
@@ -559,7 +559,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos maladies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
@@ -580,7 +580,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos maladies renseignées",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 ValueListenableBuilder(
@@ -598,7 +598,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos traitements en cours",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 AddCustomField(
@@ -618,7 +618,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Vos traitements renseignés",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 ValueListenableBuilder(

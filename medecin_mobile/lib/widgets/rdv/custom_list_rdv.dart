@@ -369,6 +369,7 @@ class CustomListRdv extends StatelessWidget {
                                   fontSize: 14,
                                 ),
                               ),
+                              const SizedBox(height: 8),
                               PatientInfoCard(
                                 context: context,
                                 patient: patient,
@@ -386,6 +387,7 @@ class CustomListRdv extends StatelessWidget {
                                   fontSize: 14,
                                 ),
                               ),
+                              const SizedBox(height: 8),
                               PatientInfoCard(
                                 context: context,
                                 patient: patient,

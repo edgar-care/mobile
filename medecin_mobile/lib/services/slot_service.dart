@@ -51,16 +51,10 @@ Future deleteSlot(String id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/slot/$id';
-  final response = await http.delete(
+  await http.delete(
     Uri.parse(url),
     headers: {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  }
-  else if (response.statusCode != 200) {
-    return null;
-  }
 }

@@ -43,10 +43,10 @@ class _SlotListState extends State<SlotList> {
         return  Slot(type: SlotType.taken);
       }
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
-        return  Slot(type: SlotType.create, date: date, id: slots[i]['id']);
+        return  Slot(type: SlotType.create, date: date, slots: slots,);
       }
     }
-    return Slot(type: SlotType.empty, date: date, id: '1',);
+    return Slot(type: SlotType.empty, date: date, slots: slots,);
     }
 
   @override

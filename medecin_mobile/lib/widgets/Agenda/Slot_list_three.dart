@@ -98,9 +98,9 @@ initState() {
         return  Slot(type: SlotType.taken, three: true,);
       }
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
-        return  Slot(type: SlotType.create, date: date, id: slots[i]['id'], three: true,);
+        return  Slot(type: SlotType.create, date: date, slots: slots, three: true,);
       }
     }
-    return Slot(type: SlotType.empty, date: date, id: '1', three: true,);
+    return Slot(type: SlotType.empty, date: date, slots: slots, three: true,);
     }
 }

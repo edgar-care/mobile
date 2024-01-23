@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 
+
 enum SlotType { empty, taken, create }
 
 // ignore: must_be_immutable
@@ -14,13 +15,15 @@ class Slot extends StatefulWidget {
   final bool? three;
   final DateTime? date;
   String? id;
+  List <dynamic>? slots;
   Slot(
       {super.key,
       required this.type,
       this.date,
       this.id,
       this.patientName,
-      this.three});
+      this.three,
+      this.slots});
 
   @override
   State<Slot> createState() => _SlotState();
@@ -44,7 +47,15 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
     _controller.forward();
   }
 
+  Future<void> loadSlots() async {
+    var tempslots = await getSlot();
+    setState(() {
+      widget.slots = tempslots;
+    });
+  }
+
   void updateSlotType(SlotType types) {
+    loadSlots();
     setState(() {
       widget.type = types;
     });
@@ -69,7 +80,7 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
               return SlotEmpty(
                   three: widget.three ?? false,
                   updateSlotType: updateSlotType,
-                  date: widget.date!, id: widget.id!,);
+                  date: widget.date!);
             case SlotType.taken:
               return SlotTaken(
                   patientName: widget.patientName ?? "Nom du patient",
@@ -77,7 +88,7 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
             case SlotType.create:
               return SlotCreate(
                   three: widget.three ?? false,
-                  updateSlotType: updateSlotType, date: widget.date!, id: widget.id!);
+                  updateSlotType: updateSlotType, date: widget.date!, slots: widget.slots!,);
             default:
               return Container(); // ou un autre widget par défaut
           }
@@ -91,13 +102,11 @@ class SlotEmpty extends Card {
   final bool three;
   final Function updateSlotType;
   final DateTime date;
-  final String id;
   const SlotEmpty(
       {super.key,
       required this.three,
       required this.updateSlotType,
-      required this.date,
-      required this.id});
+      required this.date,});
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +119,7 @@ class SlotEmpty extends Card {
           : MediaQuery.of(context).size.width * 0.236,
       child: InkWell(
         onTap: () {
-          updateSlotType(SlotType.create);
-          postSlot(date);
+          postSlot(date).then((value) => updateSlotType(SlotType.create));
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -137,16 +145,25 @@ class SlotCreate extends Card {
   final bool three;
   final Function updateSlotType;
   final DateTime date;
-  final String id;
+  final List<dynamic> slots;
   const SlotCreate(
       {super.key,
       required this.three,
       required this.updateSlotType,
-      required this.date,
-      required this.id});
+      required this.date, required this.slots});
 
   @override
   Widget build(BuildContext context) {
+    String id;
+
+  String parsing(DateTime date, List<dynamic> slots) {
+    for (var i = 0; i < slots.length; i++) {
+      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch) {
+        return slots[i]['id'];
+      }
+    }
+    return "";
+  }
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.blue50,
@@ -158,8 +175,8 @@ class SlotCreate extends Card {
           : MediaQuery.of(context).size.width * 0.236,
       child: InkWell(
         onTap: () {
-          deleteSlot(id);
-          updateSlotType(SlotType.empty);
+          id = parsing(date, slots);
+          deleteSlot(id).then((value) => updateSlotType(SlotType.empty));
         },
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),

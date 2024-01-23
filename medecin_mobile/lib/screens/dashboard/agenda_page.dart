@@ -148,8 +148,8 @@ class _AgendaState extends State<Agenda> {
   }
 
  class Addslot extends StatefulWidget {
-    final List<dynamic> tempslot = [];
-    Addslot({super.key, required List<dynamic> tempslot});
+    final List<dynamic> tempslot;
+    const Addslot({super.key, required this.tempslot});
  
    @override
    State<Addslot> createState() => _AddslotState();
@@ -192,7 +192,7 @@ class _AgendaState extends State<Agenda> {
                   const SizedBox(height: 16,),
                   const Text("Date du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
-                  CustomDatePiker(value: DateFormat("yMMMMEEEEd", "fr").format(date), onChanged: (value) {
+                  CustomDatePiker(value: DateFormat("yMd", "fr").format(date), onChanged: (value) {
                     setState(() {
                     if (value.length == 10 && value[2] == '/' && value[5] == '/') {
                       year = int.parse(value.substring(6));
@@ -259,9 +259,9 @@ class _AgendaState extends State<Agenda> {
                       size: SizeButton.sm,
                       msg: const Text('Ouvrir le créneau'),
                       onPressed: () {          
+                        date = DateTime(year, month, day, hour, minute, 0);
                         if(parsing(date, widget.tempslot) == true){
-                          date = DateTime(year, month, day, hour, minute, 0);
-                          //postSlot(date);
+                          postSlot(date);
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pushNamed(context, '/dashboard');
