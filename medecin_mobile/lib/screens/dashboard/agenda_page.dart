@@ -21,13 +21,10 @@ class Agenda extends StatefulWidget {
 }
 
 class _AgendaState extends State<Agenda> {
-  ValueNotifier<int> selected = ValueNotifier(0);
   DateTime date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
+  ValueNotifier<int> selected = ValueNotifier(0);
+  List<dynamic> slots = [];
   List<dynamic> tempslot = [];
-
-  void updateSelection(int newSelection) {
-    selected.value = newSelection;
-  }
 
 @override
     initState() {
@@ -35,18 +32,20 @@ class _AgendaState extends State<Agenda> {
     _loadSlots();
   }
 
-  Future<void> _loadSlots() async {
-    var tempslots = await getSlot();
-    setState(() {
-      tempslot = tempslots;
-    });
+  void updateSelection(int newSelection) {
+    selected.value = newSelection;
   }
 
   String capitalise(String date){
       return date.split(' ').map((word) => toBeginningOfSentenceCase(word)).join(' ');
     }
 
-  List<dynamic> slots = [];
+  Future<void> _loadSlots() async {
+    var tempslots = await getSlot();
+    setState(() {
+      tempslot = tempslots;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

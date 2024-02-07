@@ -12,7 +12,6 @@ class Rdv extends StatefulWidget {
 }
 
 class _RdvState extends State<Rdv> {
-
   ValueNotifier<int> selected = ValueNotifier(0);
 
   void updateSelection(int newSelection) {
@@ -77,14 +76,15 @@ class _RdvState extends State<Rdv> {
                 ],
               );
               }),
+
+              //ici refaire une page en fonction de si c'est ancien ou actuel rdv reprendre code actuel en gros
         const SizedBox(height: 8,),
          ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
-                return CustomListRdv(pressed: selected.value,);
+                return const CustomListRdv();
           }),
       ],
     );
   }
-
 }

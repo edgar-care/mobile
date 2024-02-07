@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/AddPatient/custom_preload_field.dart';
 import 'package:edgar_pro/widgets/add_custom_field.dart';
@@ -61,14 +62,23 @@ class CustomList extends StatefulWidget {
 // ignore: must_be_immutable
 class _CustomListState extends State<CustomList> {
 
-
+  
   ValueNotifier<int> selected = ValueNotifier(2);
 
   void updateSelection(int newSelection) {
     selected.value = newSelection;
   }
 
+  @override
+    initState() {
+    super.initState();
+    _loadInfo();
+  }
   
+  Future<void> _loadInfo() async {
+    var temp = await getAllPatientId();
+///////////////////////////ICI/////////////////////////////////////
+  }
 
   @override
   Widget build(BuildContext context) {
