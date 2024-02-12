@@ -1,15 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:edgar/services/get_files.dart';
-import 'package:edgar/widget/buttons.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/field_custom.dart';
-import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/widget/card_document.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+
+import 'package:edgar/services/get_files.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/buttons.dart';
+import 'package:edgar/widget/card_document.dart';
+import 'package:edgar/widget/field_custom.dart';
 
 class FilePage extends StatefulWidget {
   const FilePage({super.key});
@@ -31,6 +32,12 @@ class _FilePageState extends State<FilePage> {
     files = await getAllDocument();
   }
 
+  Future<void> updateData(BuildContext context) async {
+    setState(() {
+      fetchData(context);
+    });
+  }
+
   final pageIndex = ValueNotifier(0);
 
   @override
@@ -38,89 +45,90 @@ class _FilePageState extends State<FilePage> {
     SliverWoltModalSheetPage addDocument(
       BuildContext context,
       ValueNotifier<int> pageIndex,
+      Function updateData,
     ) {
       return WoltModalSheetPage(
         hasTopBarLayer: false,
         backgroundColor: AppColors.white,
         hasSabGradient: true,
         enableDrag: true,
-        child: const Padding(
-          padding: EdgeInsets.all(24),
-          child: BodyModal(),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: BodyModal(updateData: updateData),
         ),
       );
     }
 
-    return FutureBuilder(
-      future: fetchData(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Erreur: ${snapshot.error}');
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: <Widget>[
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 50),
-                    width: 120,
-                    child: Image.asset(
-                        'assets/images/logo/full-width-colored-edgar-logo.png'),
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: <Widget>[
+          Center(
+            child: Container(
+              padding: const EdgeInsets.only(top: 50),
+              width: 120,
+              child: Image.asset(
+                  'assets/images/logo/full-width-colored-edgar-logo.png'),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            decoration: const BoxDecoration(
+              color: AppColors.blue700,
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(children: [
+              Image.asset(
+                'assets/images/logo/edgar-high-five.png',
+                width: 40,
+              ),
+              const SizedBox(width: 16),
+              const Text(
+                'Mes Documents',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.blue700,
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(children: [
-                    Image.asset(
-                      'assets/images/logo/edgar-high-five.png',
-                      width: 40,
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Mes Documents',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ]),
-                ),
-                const SizedBox(height: 24),
-                CustomField(
-                  label: 'Nom du document ou du médecin',
-                  icon: BootstrapIcons.search,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: 24),
-                Buttons(
-                    variant: Variante.primary,
-                    size: SizeButton.sm,
-                    msg: const Text('Ajouter un document'),
-                    onPressed: () {
-                      WoltModalSheet.show<void>(
-                          context: context,
-                          pageIndexNotifier: pageIndex,
-                          pageListBuilder: (modalSheetContext) {
-                            return [
-                              addDocument(
-                                context,
-                                pageIndex,
-                              ),
-                            ];
-                          });
-                    }),
-                Expanded(
+              ),
+            ]),
+          ),
+          const SizedBox(height: 24),
+          CustomField(
+            label: 'Nom du document ou du médecin',
+            icon: BootstrapIcons.search,
+            onChanged: (value) {},
+          ),
+          const SizedBox(height: 24),
+          Buttons(
+              variant: Variante.primary,
+              size: SizeButton.sm,
+              msg: const Text('Ajouter un document'),
+              onPressed: () {
+                WoltModalSheet.show<void>(
+                    context: context,
+                    pageIndexNotifier: pageIndex,
+                    pageListBuilder: (modalSheetContext) {
+                      return [
+                        addDocument(
+                          context,
+                          pageIndex,
+                          updateData,
+                        ),
+                      ];
+                    });
+              }),
+          FutureBuilder(
+            future: fetchData(context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Erreur: ${snapshot.error}');
+              } else {
+                return Expanded(
                   flex: 1,
                   child: ListView.builder(
                     addRepaintBoundaries: true,
@@ -139,27 +147,32 @@ class _FilePageState extends State<FilePage> {
                                       ? TypeDeDocument.XRAY
                                       : TypeDeDocument.OTHER,
                           nomDocument: files[index]['name'],
-                          dateDocument: DateTime.now(),
                           nameDoctor: 'Vous',
                           isfavorite: files[index]['is_favorite'],
                           id: files[index]['id'],
                           url: files[index]['download_url'],
+                          updatedata: updateData,
                         ),
                       );
                     },
                   ),
-                ),
-              ],
-            ),
-          );
-        }
-      },
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }
 
+// ignore: must_be_immutable
 class BodyModal extends StatefulWidget {
-  const BodyModal({super.key});
+  Function updateData;
+  BodyModal({
+    super.key,
+    required this.updateData,
+  });
 
   @override
   State<BodyModal> createState() => _BodyModalState();
@@ -177,13 +190,8 @@ class _BodyModalState extends State<BodyModal> {
   }
 
   String getFileName(String path) {
-    String filePath =
-        '/data/user/0/com.edgar.edgar/cache/file_picker/4040. Basic Electrical Installation Work Sixth Edition By Trevor Linsley.pdf';
-    String fileName = filePath.split('/').last;
-    String title =
-        fileName.split('.').skip(1).join('.').replaceAll('.pdf', '').trim();
-
-    return title;
+    String fileName = path.split('/').last;
+    return fileName;
   }
 
   void openFileExplorer() async {
@@ -196,8 +204,6 @@ class _BodyModalState extends State<BodyModal> {
       setState(() {
         fileSelected = File(file.files.single.path!);
       });
-      Logger().i(fileSelected);
-      Logger().i(fileSelected!.path);
     }
   }
 
@@ -345,9 +351,12 @@ class _BodyModalState extends State<BodyModal> {
                       icon: const Icon(BootstrapIcons.chevron_down),
                       iconSize: 16,
                       isExpanded: true,
+                      borderRadius: BorderRadius.circular(12),
+                      underline: Container(
+                        height: 0,
+                      ),
                       style: const TextStyle(color: AppColors.black),
                       onChanged: (String? newValue) {
-                        Logger().i(newValue);
                         setState(() {
                           dropdownValue = newValue!;
                         });
@@ -398,6 +407,10 @@ class _BodyModalState extends State<BodyModal> {
                       iconSize: 16,
                       style: const TextStyle(color: AppColors.black),
                       isExpanded: true,
+                      borderRadius: BorderRadius.circular(12),
+                      underline: Container(
+                        height: 0,
+                      ),
                       onChanged: (String? newValue) {
                         setState(() {
                           dropdownValue2 = newValue!;
@@ -450,6 +463,7 @@ class _BodyModalState extends State<BodyModal> {
                       dropdownValue2,
                       fileSelected!,
                     );
+                    widget.updateData(context);
                   }
                   Navigator.pop(context);
                 },
