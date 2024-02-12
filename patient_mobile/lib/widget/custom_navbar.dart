@@ -12,8 +12,6 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
-  bool _isOpened = false;
-
   @override
   Widget build(BuildContext context) {
     return Wrap(

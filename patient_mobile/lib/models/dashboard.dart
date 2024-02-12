@@ -1,4 +1,3 @@
-import 'package:edgar/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
 import 'package:edgar/screens/dashboard/information_personnel.dart';
