@@ -12,45 +12,7 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 
-List<Map<String, dynamic>> patients = [
-    {
-      'id': '1',
-      'prenom': 'Edgar',
-      'nom': 'L\'assistant numérique',
-      'date': '26/09/2022',
-      'sexe': 'Autre',
-      'taille': '1,52',
-      'poids': '45',
-      'medecin': 'Docteur Edgar',
-      'allergies': [
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen',
-        'pollen'
-      ],
-      'maladies': ['maladies', 'maladies', 'maladies'],
-      'traitements': ['traitement', 'traitement', 'traitement'],
-    },
-    {
-      'id': '2',
-      'prenom': 'Edgar',
-      'nom': 'L\'assistant',
-      'date': '26/09/2021',
-      'sexe': 'autre',
-      'taille': '1,52',
-      'poids': '45',
-      'medecin': 'Docteur Edgar',
-      'allergies': ['pollen', 'pollen', 'pollen', 'pollen'],
-      'maladies': ['maladies', 'maladies', 'maladies'],
-      'traitements': ['traitement', 'traitement', 'traitement'],
-    },
-  ];
+List<Map<String,dynamic>> patients = [];
 
 class CustomList extends StatefulWidget {
   const CustomList({super.key});
@@ -77,96 +39,20 @@ class _CustomListState extends State<CustomList> {
   
   Future<void> _loadInfo() async {
     var temp = await getAllPatientId();
-///////////////////////////ICI/////////////////////////////////////
+    for (var i = 0; i < temp.length; i++) {
+     var patient = await getPatientById(temp[i]);
+      if (patient.isNotEmpty) {
+        patients.add(patient);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> templist;
-
-    List<Widget> patientCards = patients.map((patient) {
-      final pageIndexNotifier = ValueNotifier(2);
-      return Card(
-        color: AppColors.blue100,
-        margin: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: const BorderSide(color: AppColors.blue200, width: 1),
-        ),
-        child: InkWell(
-          onTap: () {
-            templist = Map.of(patient);
-            WoltModalSheet.show<void>(
-                onModalDismissedWithBarrierTap: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    pageIndexNotifier.value = 2;
-                  });
-                },
-                onModalDismissedWithDrag: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    pageIndexNotifier.value = 2;
-                  });
-                },
-                context: context,
-                pageListBuilder: (modalSheetContext) {
-                  return [
-                    fixPatient(context, pageIndexNotifier, patient, templist),
-                    fixPatient2(context, pageIndexNotifier, ValueNotifier(patient), ValueNotifier(templist)),
-                    patientInfo(context, patient, modalSheetContext,
-                        pageIndexNotifier),
-                    deletePatient(context, pageIndexNotifier, patient)
-                  ];
-                },
-                pageIndexNotifier: pageIndexNotifier);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              children: [
-                Container(
-                  height: 19,
-                  width: 3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.black,
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  patient['prenom'],
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      color: AppColors.black),
-                  textAlign: TextAlign.left,
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  patient['nom'],
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      color: AppColors.black),
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }).toList();
-
     return Expanded(
         child: ListView(
       physics: const BouncingScrollPhysics(),
-      children: patientCards,
+      children: [Container()],
     ));
   }
 
@@ -854,7 +740,6 @@ WoltModalSheetPage fixPatient2(BuildContext context,
                   widget.pageIndexNotifier.value = 2;
                   {
                     setState(() {
-                        patients = patients.map((p) => p['id'] == widget.patient.value['id'] ? widget.templist.value : p).toList();
                       },
                     );}
                   Navigator.pop(context);

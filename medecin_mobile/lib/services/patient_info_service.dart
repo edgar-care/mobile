@@ -19,8 +19,8 @@ Future<List<dynamic>> getAllPatientId() async{
     },
   );
   if (response.statusCode == 201) {
-    prefs.setString('id', jsonDecode(response.body)['patients']['id']);
-    return jsonDecode(response.body)['patients']['patient_ids'];
+    prefs.setString('id', jsonDecode(response.body)['patients'][0]['id']);
+    return jsonDecode(response.body)['patients'][0]['patient_ids'];
   }
   if (response.statusCode != 201) {
     return [];
@@ -28,7 +28,7 @@ Future<List<dynamic>> getAllPatientId() async{
   return [];
 }
 
-Map <String, dynamic> patientInfo = {};
+Map<String, dynamic> patientInfo = {};
 
 void populatePatientInfo(Map<String, dynamic>? data) {
   if (data != null) {
@@ -48,10 +48,10 @@ void populatePatientInfo(Map<String, dynamic>? data) {
   }
 }
 
-Future <dynamic> getPatientById(String id) async{
+Future <Map<String,dynamic>> getPatientById(String id) async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/doctor/patients/$id';
+  String url = '${dotenv.env['URL']}/doctor/patient/$id';
   final response = await http.get(
     Uri.parse(url),
     headers: {
@@ -64,9 +64,9 @@ Future <dynamic> getPatientById(String id) async{
     return patientInfo;
   }
   if (response.statusCode != 201) {
-    return [];
+    return <String, dynamic>{};
   }
-  return [];
+  return <String,dynamic>{};
 }
 
 
