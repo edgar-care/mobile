@@ -14,7 +14,6 @@ import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 
-List<Map<String,dynamic>> patients = [];
 
 class CustomList extends StatefulWidget {
   const CustomList({super.key});
@@ -26,6 +25,7 @@ class CustomList extends StatefulWidget {
 // ignore: must_be_immutable
 class _CustomListState extends State<CustomList> {
 
+  List<Map<String,dynamic>> patients = [];
   ValueNotifier<int> pageIndexNotifier = ValueNotifier(2);
   ValueNotifier<int> selected = ValueNotifier(2);
 
@@ -780,7 +780,8 @@ WoltModalSheetPage fixPatient2(BuildContext context,
                 onPressed: () {
                   widget.pageIndexNotifier.value = 2;
                   var patient = Map.of(widget.templist.value);
-                  putInformationPatient(context, patient, widget.id);
+                  Logger().d(patient);
+                  //putInformationPatient(context, patient, widget.id);
                   Navigator.pop(context);
                 },
               ),
