@@ -91,7 +91,7 @@ void populateInfoMedical(Map<String, dynamic>? data) {
   }
 }
 
-Future putInformationPatient(BuildContext context, Map<String, Object>? info, String id) async {
+Future putInformationPatient(BuildContext context, Map<String, dynamic>? info, String id) async {
   await dotenv.load();
   final url = '${dotenv.env['URL']}doctor/patient/$id';
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -167,7 +167,7 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
 
 }
 
-Future deletePatient(String id, BuildContext context) async {
+Future deletePatientService(String id, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/patient/$id';
