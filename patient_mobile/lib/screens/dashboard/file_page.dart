@@ -59,9 +59,7 @@ class _FilePageState extends State<FilePage> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
+    return Column(
         children: <Widget>[
           Center(
             child: Container(
@@ -120,6 +118,7 @@ class _FilePageState extends State<FilePage> {
                       ];
                     });
               }),
+          const SizedBox(height: 24),
           FutureBuilder(
             future: fetchData(context),
             builder: (context, snapshot) {
@@ -161,8 +160,7 @@ class _FilePageState extends State<FilePage> {
             },
           ),
         ],
-      ),
-    );
+      );
   }
 }
 

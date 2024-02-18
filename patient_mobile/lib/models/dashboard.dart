@@ -24,9 +24,9 @@ class _DashBoardPageState extends State<DashBoardPage>
 
   final List<Widget> pages = <Widget>[
     const HomePage(),
-    const InformationPersonnel(),
-    const GestionRendezVous(),
     const FilePage(),
+    const GestionRendezVous(),
+    const InformationPersonnel(),
   ];
 
   void updateSelectedIndex(int index) {
@@ -49,24 +49,15 @@ class _DashBoardPageState extends State<DashBoardPage>
               children: [
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 600),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 80,
-                    ),
-                    child: pages[_selectedIndex],
+                  child: pages[_selectedIndex],
                   ),
-                ),
-                Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Navbar(
-                      callback: updateSelectedIndex,
-                      getSelected: getSelectedIndex,
-                    )),
               ],
             )),
       ),
+      bottomNavigationBar: Navbar(
+        callback: updateSelectedIndex,
+        getSelected: getSelectedIndex,
+      )
     );
   }
 }
