@@ -291,6 +291,7 @@ WoltModalSheetPage modifierPatient(
                   name = value;
                 },
                 maxSize: maxSize,
+                action: TextInputAction.done,
               ),
             ],
           ),

@@ -10,6 +10,7 @@ class CustomField extends StatefulWidget {
   final Function(String) onChanged;
   final String value; // Added onChanged parameter
   final int? maxSize;
+  final TextInputAction action;
 
   const CustomField({
     super.key,
@@ -20,6 +21,7 @@ class CustomField extends StatefulWidget {
     required this.onChanged,
     this.value = '',
     this.maxSize,
+    required this.action,
   });
 
   @override
@@ -52,7 +54,7 @@ class _CustomFieldState extends State<CustomField> {
                   keyboardType: _isPasswordVisible
                       ? TextInputType.text
                       : TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: widget.action,
                   initialValue: widget.value,
                   style: const TextStyle(
                     color: AppColors.grey950,

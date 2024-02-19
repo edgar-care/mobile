@@ -328,6 +328,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
               },
               isPassword: false,
               value: info!['Prenom'].toString(),
+              action: TextInputAction.next,
             ),
             const SizedBox(
               height: 16,
@@ -343,6 +344,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
               }),
               isPassword: false,
               value: info!['Nom'].toString(),
+              action: TextInputAction.next,
             ),
             const SizedBox(
               height: 16,
@@ -416,6 +418,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
                         }),
                         isPassword: false,
                         value: info!['Taille'].toString(),
+                        action: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -439,6 +442,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
                         }),
                         isPassword: false,
                         value: info!['Poids'].toString(),
+                        action: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -607,6 +611,7 @@ class _BodyModify2State extends State<BodyModify2> {
                 }),
                 isPassword: false,
                 value: info!['Medecin_traitant'].toString(),
+                action: TextInputAction.next,
               ),
               const SizedBox(
                 height: 16,
