@@ -1,4 +1,5 @@
 import 'package:edgar_pro/services/rdv_service.dart';
+import 'package:edgar_pro/widgets/rdv/custom_list_rdv_card.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -34,25 +35,10 @@ class _CustomListRdvState extends State<CustomListRdv> {
   Widget build(BuildContext context) {
     // refaire le return pour avoir des cards
     return Expanded(
-        child: ListView.builder(itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: pressed == index ? Colors.blue : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                title: const Text('date'),
-                subtitle: const Text('heure'),
-                onTap: () {
-                  setState(() {
-                    pressed = index;
-                  });
-                },
-              ),
-            ),
-          );
+        child: ListView.builder(
+          itemCount: 2,
+          itemBuilder: (context, index) {
+          return CustomListRdvCard(id: 1);
         },
     ));
   }
