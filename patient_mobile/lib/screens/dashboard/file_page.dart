@@ -11,7 +11,6 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_document.dart';
 import 'package:edgar/widget/field_custom.dart';
-import 'package:logger/logger.dart';
 
 final documentTypeMap = {
   'PRESCRIPTION': TypeDeDocument.PRESCRIPTION,
@@ -38,7 +37,6 @@ class _FilePageState extends State<FilePage> {
 
   Future<void> fetchData(BuildContext context) async {
     files = await getAllDocument();
-    Logger().i(files);
   }
 
   Future<void> updateData(BuildContext context) async {
