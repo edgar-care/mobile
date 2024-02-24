@@ -4,7 +4,8 @@ import 'dart:convert';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> initiateConversation() async {
   final url = '${dotenv.env['URL']}diagnostic/initiate';
@@ -22,31 +23,26 @@ Future<String> initiateConversation() async {
   }
 }
 
-Future<Object?> getResponseMessage(
+Future<Object> getResponseMessage(
     BuildContext context, String msg, String idConversation) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}diagnostic/diagnose';
 
   final response = await http.post(
     Uri.parse(url),
-    body: {
+    headers: {'Authorization': 'Bearer $token'},
+    body: jsonEncode({
       'id': idConversation,
       'sentence': msg,
-    },
+    }),
   );
   if (response.statusCode == 200) {
     final body = response.body;
+    Logger().d(body);
     return body;
   } else {
-    final scaffoldContext = context;
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-      SnackBar(
-        content: ErrorSnackBar(
-          message: 'Une erreur est survenue',
-          context: scaffoldContext,
-          duration: const Duration(seconds: 2),
-        ),
-      ),
-    );
-    return null;
+    Logger().e(response.statusCode);
+    return {};
   }
 }

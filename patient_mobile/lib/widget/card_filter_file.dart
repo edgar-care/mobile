@@ -26,7 +26,7 @@ class _FilterCardState extends State<FilterCard> {
         children: [
           widget.header,
           const SizedBox(width: 8),
-          Text(widget.text, style: const TextStyle(fontSize: 12, color: AppColors.blue700, fontFamily: 'Poppins', fontWeight: FontWeight.w700)),
+          Text(widget.text, style: const TextStyle(fontSize: 12, color: AppColors.blue700, fontFamily: 'Poppins', fontWeight: FontWeight.w500)),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () => widget.onTap(),

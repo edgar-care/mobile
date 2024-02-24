@@ -168,6 +168,7 @@ class _FilePageState extends State<FilePage> {
                                       },
                                       child: Wrap(
                                       spacing: 8,
+                                      runAlignment: WrapAlignment.start,
                                       crossAxisAlignment: WrapCrossAlignment.center,
                                       alignment: WrapAlignment.start,
                                       children: [
@@ -422,10 +423,9 @@ class _FilePageState extends State<FilePage> {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            width: MediaQuery.of(context).size.width - 48,
+            width: MediaQuery.of(context).size.width,
             child: Wrap(
               spacing: 8,
-              runSpacing: 8,
             children: [
               if (isOrdonnance)
               IntrinsicWidth(child: FilterCard(
@@ -552,8 +552,6 @@ class _FilePageState extends State<FilePage> {
                     .where((document) => document['document_type'] == 'OTHER')
                     .toList();
               }
-
-
                 return Expanded(
                   flex: 1,
                   child: ListView.builder(

@@ -34,6 +34,31 @@ class _NavbarState extends State<Navbar> {
                 fit: StackFit.loose,
                 clipBehavior: Clip.none,
                 children: [
+                  Positioned(
+                    top: -30,
+                    left: MediaQuery.of(context).size.width / 2 - 50,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isOpen = !isOpen;
+                        });
+                      },
+                      child: Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: AppColors.blue700,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Icon(
+                            isOpen
+                                ? BootstrapIcons.chevron_down
+                                : BootstrapIcons.chevron_up,
+                            color: Colors.white,
+                            size: 32,
+                          )),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -84,31 +109,7 @@ class _NavbarState extends State<Navbar> {
                       ),
                     ],
                   ),
-                  Positioned(
-                    top: -30,
-                    left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isOpen = !isOpen;
-                        });
-                      },
-                      child: Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.blue700,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Icon(
-                            isOpen
-                                ? BootstrapIcons.chevron_down
-                                : BootstrapIcons.chevron_up,
-                            color: Colors.white,
-                            size: 32,
-                          )),
-                    ),
-                  ),
+
                 ],
               )),
           isOpen == true
@@ -173,7 +174,7 @@ class CardNavbar extends StatelessWidget {
           // ignore: use_build_context_synchronously
           Navigator.pushNamed(context, '/login');
         }
-        else if (isDeconnexion == false) {
+        else if (isDeconnexion == false || isDeconnexion == null) {
           callback(index);
         }
       },

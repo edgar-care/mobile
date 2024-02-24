@@ -6,6 +6,7 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/services/getResponseConversation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 
 
 class ChatPage extends StatefulWidget {
@@ -45,14 +46,22 @@ class _ChatPageState extends State<ChatPage> {
   ]];
 
   Future<void> parseUserInput(String userInput) async {
-    Object? response = getResponseMessage(context, userInput, sessionId);
-    Map<String, dynamic> responseMap = response as Map<String, dynamic>;
-    String question = responseMap['question'] as String;
-    bool done = responseMap['done'] as bool;
+    final response = await getResponseMessage(context, userInput, sessionId);
+    Logger().d(response);
+    final Map<String, dynamic> jsonData = json.decode(response.toString());
 
+    final question = jsonData['question'];
+    Logger().d(jsonData['done']);
+    bool done = jsonData['done'] as bool;
+    Logger().d(done);
+    Logger().d(question.toString());
     if (done) {
-      Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/simulation/confirmation');
     } else {
+      setState(() {
+        messages.add([question, false]);
+      });
       messages.add([question, false]);
     }
   }
@@ -136,8 +145,7 @@ class _ChatPageState extends State<ChatPage> {
                         icon: const Icon(BootstrapIcons.arrow_right_circle_fill, color: AppColors.blue950),
                         onPressed: () {
                           sendMessage(true);
-                          // parseUserInput(messageController.text);
-                           messages.add(["next question", false]);
+                          parseUserInput(messageController.text);
                         },
                       ),
                     ],

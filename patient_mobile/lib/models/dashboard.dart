@@ -3,6 +3,7 @@ import 'package:edgar/screens/dashboard/accueil_page.dart';
 import 'package:edgar/screens/dashboard/information_personnel.dart';
 import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar/screens/dashboard/file_page.dart';
+import 'package:edgar/screens/dashboard/chat_page.dart';
 import 'package:edgar/widget/custom_navbar.dart';
 
 class DashBoardPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _DashBoardPageState extends State<DashBoardPage>
     const FilePage(),
     const GestionRendezVous(),
     const InformationPersonnel(),
+    const ChatPage()
   ];
 
   void updateSelectedIndex(int index) {
