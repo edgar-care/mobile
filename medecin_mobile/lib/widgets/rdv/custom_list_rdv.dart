@@ -1,7 +1,6 @@
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_rdv_card.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 
 class CustomListRdv extends StatefulWidget {
@@ -13,32 +12,38 @@ class CustomListRdv extends StatefulWidget {
 
 class _CustomListRdvState extends State<CustomListRdv> {
   int pressed = 0;
-  List<dynamic> bAppointment = [];
+  List<Map<String, dynamic>> bAppointment = [];
   @override
     initState() {
     super.initState();
     _loadAppointment();
   }
 
+  void deleteAppointmentList(int index) {
+    setState(() {
+      bAppointment.removeAt(index);
+    });
+  }
+
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments();
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'] == '') {
-        tempAp.removeAt(i);
+      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == null){
+        setState(() {
+          bAppointment.add(tempAp[i]);
+        });
       }
     }
-    bAppointment = tempAp;
-    Logger().d(bAppointment);
   }
 
   @override
   Widget build(BuildContext context) {
-    // refaire le return pour avoir des cards
     return Expanded(
-        child: ListView.builder(
-          itemCount: 2,
+        child: ListView.separated(
+          itemCount: bAppointment.length,
+          separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 4),
           itemBuilder: (context, index) {
-          return CustomListRdvCard(id: 1);
+          return CustomListRdvCard(rdvInfo: bAppointment[index], delete: () => {deleteAppointmentList(index)});
         },
     ));
   }

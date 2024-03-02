@@ -12,7 +12,6 @@ import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class Patient extends StatefulWidget {
@@ -355,7 +354,6 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Confirmer'),
                 onPressed: () {
-                  Logger().d(info.value);
                   if(checkadd()){
                     addPatientService(context, info.value);
                   } else {

@@ -14,7 +14,7 @@ class PatientListCard extends StatelessWidget {
         color: AppColors.blue100,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.blue100,
+          color: AppColors.blue200,
           width: 2,
         ),
       ),
