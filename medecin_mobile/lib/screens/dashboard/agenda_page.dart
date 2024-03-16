@@ -281,9 +281,9 @@ class _AgendaState extends State<Agenda> {
    }
  }
 
-WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
+SliverWoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
  
-  return WoltModalSheetPage.withSingleChild(
+  return WoltModalSheetPage(
     hasTopBarLayer: false,
     child: Addslot(tempslot: tempslot,),
     );

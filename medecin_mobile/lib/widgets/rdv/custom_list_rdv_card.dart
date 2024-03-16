@@ -36,11 +36,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     });
   }
 
-    WoltModalSheetPage patientInfoModal(
+    SliverWoltModalSheetPage patientInfoModal(
       BuildContext context,
       Map<String, dynamic> patient,
       BuildContext modalSheetContext,) {
-    return WoltModalSheetPage.withSingleChild(
+    return WoltModalSheetPage(
       child: PatienInfo(patient: patient,),
       backgroundColor: AppColors.white,
       enableDrag: true,
@@ -49,8 +49,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-   WoltModalSheetPage deleteAppointment(BuildContext context, String id) {
-    return WoltModalSheetPage.withSingleChild(
+   SliverWoltModalSheetPage deleteAppointment(BuildContext context, String id) {
+    return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: false,
@@ -138,9 +138,9 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-   WoltModalSheetPage updateAppointmentModal(BuildContext context, Map<String, dynamic> rdvInfo, Function updateAppointment) {
+   SliverWoltModalSheetPage updateAppointmentModal(BuildContext context, Map<String, dynamic> rdvInfo, Function updateAppointment) {
     
-    return WoltModalSheetPage.withSingleChild(
+    return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
       child: ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment),
@@ -263,7 +263,7 @@ class _PatienInfoState extends State<PatienInfo> {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 62),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
           child: Wrap(
             children: [
               Container(
@@ -328,7 +328,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                widget.patient['date_de_naissance'],
+                                 DateFormat("yMd", "fr").format(DateTime.fromMillisecondsSinceEpoch(widget.patient['date_de_naissance'] * 1000)).toString(),
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -408,60 +408,6 @@ class _PatienInfoState extends State<PatienInfo> {
                               ),
                             ],
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Allergies:",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              PatientInfoCard(
-                                  context: context,
-                                  patient: widget.patient,
-                                  champ: 'allergies',
-                                  isDeletable: false),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Maladies:",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              PatientInfoCard(
-                                context: context,
-                                patient: widget.patient,
-                                champ: 'maladies_connues',
-                                isDeletable: false,
-                              ),
-                            ]),
-                            Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Traitements:",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              PatientInfoCard(
-                                context: context,
-                                patient: widget.patient,
-                                champ: 'traitement_en_cours',
-                                isDeletable: false,
-                              ),
-                            ]),
                         ],
                       )
                     ],

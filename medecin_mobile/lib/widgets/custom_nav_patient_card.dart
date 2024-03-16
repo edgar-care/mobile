@@ -16,7 +16,7 @@ class CustomNavPatientCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.blue200, width: 2),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child:InkWell( 
         onTap: (){ontap;},
         child:

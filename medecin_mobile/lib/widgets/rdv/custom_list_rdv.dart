@@ -28,7 +28,7 @@ class _CustomListRdvState extends State<CustomListRdv> {
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments();
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == null){
+      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == ""){
         setState(() {
           bAppointment.add(tempAp[i]);
         });

@@ -4,6 +4,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/add_custom_field.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
+import 'package:edgar_pro/widgets/doctor_list.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -15,7 +16,8 @@ import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class Patient extends StatefulWidget {
-  const Patient({super.key});
+  Function setPages;
+  Patient({super.key, required this.setPages});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -43,9 +45,9 @@ class _PatientState extends State<Patient> {
     selected.value = newSelection;
   }
 
-  WoltModalSheetPage addPatient(
+  SliverWoltModalSheetPage addPatient(
       BuildContext context, ValueNotifier<int> pageIndexNotifier) {
-    return WoltModalSheetPage.withSingleChild(
+    return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: true,
@@ -123,30 +125,41 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue200,
+                  const SizedBox(
+                    width: 16,
                   ),
-                ),
-              ],
-            ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue200,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue200,
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(
               height: 32,
             ),
@@ -154,10 +167,10 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre adresse mail",
+                  "Adresse mail",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(height: 8,),
                 CustomField(
                   label: "prenom.nom@gmail.com",
                   onChanged: (value) => info.value['email'] = value,
@@ -168,10 +181,10 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre prénom",
+                  "Prénom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(height: 8,),
                 CustomField(
                   label: "Prénom",
                   onChanged: (value) => info.value['prenom'] = value,
@@ -182,10 +195,10 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre nom",
+                  "Nom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(height: 8,),
                 CustomField(
                   label: "Nom",
                   onChanged: (value) => info.value['nom'] = value,
@@ -199,16 +212,16 @@ class _PatientState extends State<Patient> {
                   "Date de naissance",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(height: 8,),
                 CustomDatePiker(onChanged: (value) => info.value['date'] = value),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Votre sexe",
+                  "Sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(height: 8,),
                 ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
@@ -253,11 +266,11 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre taille",
+                            "Taille",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 4,),
+                          const SizedBox(height: 8,),
                           CustomField(
                             label: "1,52m",
                             onChanged: (value) => info.value['taille'] = value,
@@ -276,11 +289,11 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre poids",
+                            "Poids",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 4,),
+                          const SizedBox(height: 8,),
                           CustomField(
                             label: "45kg",
                             onChanged: (value) => info.value['poids'] = value,
@@ -318,11 +331,156 @@ class _PatientState extends State<Patient> {
     }
   }
 
-  WoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
+  SliverWoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
     String alergie = '';
     String maladie = '';
     String traitement = '';
-    return WoltModalSheetPage.withSingleChild(
+    return WoltModalSheetPage(
+      hasTopBarLayer: false,
+      backgroundColor: AppColors.white,
+      hasSabGradient: false,
+      enableDrag: true,
+      stickyActionBar: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          direction: Axis.horizontal,
+          spacing: 12,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Revenir en arrière',
+                ),
+                onPressed: () {
+                  pageIndexNotifier.value = pageIndexNotifier.value - 1;
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text('Continuer'),
+                onPressed: () {
+                //   if(checkadd()){
+                //     addPatientService(context, info.value);
+                //   } else {
+                //     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez remplir tous les champs', context: context,));
+                //   }
+                //   pageIndexNotifier.value = 0;
+                //   Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      child: SizedBox(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
+          child: Column(
+            children: [
+            Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(60),
+                  color: AppColors.grey200,
+                ),
+                child: const Icon(BootstrapIcons.postcard_heart_fill,
+                    color: AppColors.grey700)),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Ajoutez les informations d'un patient",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue200,
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(
+              height: 32,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Votre médecin traitant",
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4,),
+                CustomField(
+                  label: "Docteur Edgar",
+                  onChanged: (value) => info.value['medecin'] = value,
+                  isPassword: false,
+                  keyboardType: TextInputType.text,
+                  icon: BootstrapIcons.search,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.3,
+                  ),
+                  child: const DoctorList(),
+                ),
+              ],
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+
+SliverWoltModalSheetPage addPatient3(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
+  return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: true,
@@ -354,13 +512,13 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Confirmer'),
                 onPressed: () {
-                  if(checkadd()){
-                    addPatientService(context, info.value);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez remplir tous les champs', context: context,));
-                  }
-                  pageIndexNotifier.value = 0;
-                  Navigator.pop(context);
+                //   if(checkadd()){
+                //     addPatientService(context, info.value);
+                //   } else {
+                //     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez remplir tous les champs', context: context,));
+                //   }
+                //   pageIndexNotifier.value = 0;
+                //   Navigator.pop(context);
                 },
               ),
             ),
@@ -368,10 +526,10 @@ class _PatientState extends State<Patient> {
         ),
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
-          child: Column(children: [
+          child: Column(
+            children: [
             Container(
                 height: 50,
                 width: 50,
@@ -394,31 +552,42 @@ class _PatientState extends State<Patient> {
             const SizedBox(
               height: 8,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
+                  const SizedBox(
+                    width: 16,
                   ),
-                ),
-              ],
-            ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.23,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.blue700,
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(
               height: 32,
             ),
@@ -426,131 +595,23 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre médecin traitant",
+                  "Antecedents médicaux et sujets de santé",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
-                  label: "Dr. Edgar",
-                  onChanged: (value) => info.value['medecin'] = value,
+                  label: "Renseignez les informations",
+                  onChanged: (value) => value,
                   isPassword: false,
                   keyboardType: TextInputType.text,
+                  icon: BootstrapIcons.search,
                 ),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Vos allergies",
+                  "Antecedents médicaux et sujets de santé renseignés",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                  label: "Renseignez vos allergies ici",
-                  add: true,
-                  onChanged: (value) {
-                    setState(() {
-                      alergie = value;
-                    });
-                  },
-                  onTap: () {
-                    info.value['allergies'].add(alergie);
-                    info.notifyListeners();
-                  },
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos allergies renseignées",
-                    style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'allergies',
-                        isDeletable: true);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Vos maladies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                  label: "Renseignez vos maladies ici",
-                  add: true,
-                  onChanged: (value) {
-                    setState(() {
-                      maladie = value;
-                    });
-                  },
-                  onTap: () {
-                    info.value['maladies'].add(maladie);
-                    info.notifyListeners();
-                  },
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos maladies renseignées",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'maladies',
-                        isDeletable: true);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Vos traitements en cours",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                    label: "Renseignez vos traitements ici",
-                    add: true,
-                    onChanged: (value) {
-                      setState(() {
-                        traitement = value;
-                      });
-                    },
-                    onTap: () {
-                      info.value['traitements'].add(traitement);
-                      info.notifyListeners();
-                    }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos traitements renseignés",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'traitements',
-                        isDeletable: true);
-                  },
                 ),
               ],
             ),
@@ -558,7 +619,7 @@ class _PatientState extends State<Patient> {
         ),
       ),
     );
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -607,7 +668,7 @@ class _PatientState extends State<Patient> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CustomList(),
+                    CustomList(setPages: widget.setPages,),
                     Buttons(
                       variant: Variante.primary,
                       size: SizeButton.md,

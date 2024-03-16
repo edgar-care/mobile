@@ -28,6 +28,7 @@ class _AuthState extends State<Auth> {
 
   Future<void> checkConnectivity() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb2N0b3IiOnsiaWQiOiI2NWU3NTQwOGY2MTIyY2JkOGM0MWQ5YzciLCJlbWFpbCI6InRlc3QrNTBAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkUmJMb3plTHhuR1lVaU1sYjJRREkuT3FWbDJ4OGw2QmdYY3lKRzBjSXc5MFRjVThkVDNPbGkiLCJuYW1lIjoiRWRnYXIiLCJmaXJzdG5hbWUiOiJBc3Npc3RhbnQiLCJhZGRyZXNzIjp7InN0cmVldCI6IjEgcnVlIGR1IG3DqWRlY2luIiwiemlwX2NvZGUiOiI2OTAwMCIsImNvdW50cnkiOiJGcmFuY2UiLCJjaXR5IjoiTHlvbiJ9fX0.ymrhvY7qerZrX-uwDrR7Ob_oSO08jkjKc0HpV5PwQ88');
     final token = prefs.getString('token');
     if (token != null) {
       // ignore: use_build_context_synchronously

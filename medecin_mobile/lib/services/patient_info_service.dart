@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<dynamic>> getAllPatientId() async{
+Future<List<Map<String, dynamic>>> getAllPatientId() async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/patients';
@@ -18,32 +19,48 @@ Future<List<dynamic>> getAllPatientId() async{
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
-    prefs.setString('id', jsonDecode(response.body)['patients'][0]['id']);
-    return jsonDecode(response.body)['patients'][0]['patient_ids'];
+  if (response.statusCode == 200) {
+    populatePatientInfoAll(jsonDecode(response.body)['patients']);
+    return patientInfo;
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return [];
   }
   return [];
 }
 
-Map<String, dynamic> patientInfo = {};
+List<Map<String, dynamic>> patientInfo = [];
 
-void populatePatientInfo(Map<String, dynamic>? data) {
+void populatePatientInfoAll(List<dynamic> data) {
+  for(int i = 0; i < data.length; i++){
+    patientInfo.add({
+      'id': data[i]['medical_info']['id'] ?? 'Inconnu',
+      'Prenom': data[i]['medical_info']['firstname'] ?? 'Inconnu',
+      'Nom': data[i]['medical_info']['name'] ?? 'Inconnu',
+      'date_de_naissance': data[i]['medical_info']['birthdate'] ?? 'Inconnu',
+      'sexe': data[i]['medical_info']['sex'] ?? 'Inconnu',
+      'taille': data[i]['medical_info']['height'] ?? 'Inconnu',
+      'poids': data[i]['medical_info']['weight'] ?? 'Inconnu',
+      'medecin_traitant': data[i]['medical_info']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data[i]['medical_info']['medical_antecedents'] ?? [],
+    });
+  }
+}
+
+Map<String, dynamic> patientInfoById = {};
+
+void populatePatientInfobyId(Map<String, dynamic>? data) {
   if (data != null) {
-    patientInfo = {
-      'id': data['patient']['id'] ?? 'Inconnu',
-      'Prenom': data['onboarding_info']['name'] ?? 'Inconnu',
-      'Nom': data['onboarding_info']['surname'] ?? 'Inconnu',
-      'date_de_naissance': data['onboarding_info']['birthdate'] ?? 'Inconnu',
-      'sexe': data['onboarding_info']['sex'] ?? 'Inconnu',
-      'taille': data['onboarding_info']['height'] ?? 'Inconnu',
-      'poids': data['onboarding_info']['weight'] ?? 'Inconnu',
-      'medecin_traitant': data['onboarding_health']['patients_primary_doctor'] ?? 'Inconnu',
-      'allergies': data['onboarding_health']['patients_allergies'] ?? [],
-      'maladies_connues': data['onboarding_health']['patients_illness'] ?? [],
-      'traitement_en_cours': data['onboarding_health']['patients_treatment'] ?? [],
+    patientInfoById = {
+      'id': data['medical_info']['id'] ?? 'Inconnu',
+      'Prenom': data['medical_info']['firstname'] ?? 'Inconnu',
+      'Nom': data['medical_info']['name'] ?? 'Inconnu',
+      'date_de_naissance': data['medical_info']['birthdate'] ?? 'Inconnu',
+      'sexe': data['medical_info']['sex'] ?? 'Inconnu',
+      'taille': data['medical_info']['height'] ?? 'Inconnu',
+      'poids': data['medical_info']['weight'] ?? 'Inconnu',
+      'medecin_traitant': data['medical_info']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data['medical_info']['medical_antecedents'] ?? [],
     };
   }
 }
@@ -58,12 +75,12 @@ Future <Map<String,dynamic>> getPatientById(String id) async{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
-  );
-  if (response.statusCode == 201) {
-    populatePatientInfo(jsonDecode(response.body));
-    return patientInfo;
+  ); 
+  if (response.statusCode == 200) {
+    populatePatientInfobyId(jsonDecode(response.body));
+    return patientInfoById;
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return <String, dynamic>{};
   }
   return <String,dynamic>{};
