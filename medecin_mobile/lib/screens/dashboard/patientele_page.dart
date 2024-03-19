@@ -2,17 +2,14 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
-import 'package:edgar_pro/widgets/add_custom_field.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class Patient extends StatefulWidget {
@@ -32,10 +29,8 @@ class _PatientState extends State<Patient> {
       'sexe': '',
       'taille': '',
       'poids': '',
-      'medecin': '',
-      'allergies': [],
-      'maladies': [],
-      'traitements': [],
+      'medecin_traitant': '',
+      'medical_antecedents': [],
     });
 
   ValueNotifier<int> selected = ValueNotifier(0);
@@ -44,9 +39,9 @@ class _PatientState extends State<Patient> {
     selected.value = newSelection;
   }
 
-  WoltModalSheetPage addPatient(
+  SliverWoltModalSheetPage addPatient(
       BuildContext context, ValueNotifier<int> pageIndexNotifier) {
-    return WoltModalSheetPage.withSingleChild(
+    return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: true,
@@ -79,13 +74,13 @@ class _PatientState extends State<Patient> {
                 onPressed: () {
                   switch (selected.value) {
                     case 0:
-                      info.value['sexe'] = "Male";
+                      info.value['sexe'] = "MALE";
                       break;
                     case 1:
-                      info.value['sexe'] = "Female";
+                      info.value['sexe'] = "FEMALE";
                       break;
                     case 2:
-                      info.value['sexe'] = "Other";
+                      info.value['sexe'] = "OTHER";
                       break;
                     default:
                   }           
@@ -309,21 +304,15 @@ class _PatientState extends State<Patient> {
         info.value['sexe'] == '' ||
         info.value['taille'] == '' ||
         info.value['poids'] == '' ||
-        info.value['medecin'] == '' ||
-        info.value['allergies'].isEmpty ||
-        info.value['maladies'].isEmpty ||
-        info.value['traitements'].isEmpty) {
+        info.value['medecin_traitant'] == '') {
       return false;
     } else {
       return true;
     }
   }
 
-  WoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier) {
-    String alergie = '';
-    String maladie = '';
-    String traitement = '';
-    return WoltModalSheetPage.withSingleChild(
+  SliverWoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier, Function() refresh){
+    return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: true,
@@ -355,9 +344,11 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Confirmer'),
                 onPressed: () {
-                  Logger().d(info.value);
                   if(checkadd()){
                     addPatientService(context, info.value);
+                    Future.delayed(const Duration(seconds: 3), () {
+                      refresh();
+                    });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez remplir tous les champs', context: context,));
                   }
@@ -434,125 +425,12 @@ class _PatientState extends State<Patient> {
                 const SizedBox(height: 4,),
                 CustomField(
                   label: "Dr. Edgar",
-                  onChanged: (value) => info.value['medecin'] = value,
+                  onChanged: (value) => info.value['medecin_traitant'] = value,
                   isPassword: false,
                   keyboardType: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 16,
-                ),
-                const Text(
-                  "Vos allergies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                  label: "Renseignez vos allergies ici",
-                  add: true,
-                  onChanged: (value) {
-                    setState(() {
-                      alergie = value;
-                    });
-                  },
-                  onTap: () {
-                    info.value['allergies'].add(alergie);
-                    info.notifyListeners();
-                  },
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos allergies renseignées",
-                    style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'allergies',
-                        isDeletable: true);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Vos maladies",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                  label: "Renseignez vos maladies ici",
-                  add: true,
-                  onChanged: (value) {
-                    setState(() {
-                      maladie = value;
-                    });
-                  },
-                  onTap: () {
-                    info.value['maladies'].add(maladie);
-                    info.notifyListeners();
-                  },
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos maladies renseignées",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'maladies',
-                        isDeletable: true);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Vos traitements en cours",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                AddCustomField(
-                    label: "Renseignez vos traitements ici",
-                    add: true,
-                    onChanged: (value) {
-                      setState(() {
-                        traitement = value;
-                      });
-                    },
-                    onTap: () {
-                      info.value['traitements'].add(traitement);
-                      info.notifyListeners();
-                    }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                  "Vos traitements renseignés",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4,),
-                ValueListenableBuilder(
-                  valueListenable: info,
-                  builder: (context, value, child) {
-                    return PatientInfoCard(
-                        context: context,
-                        patient: value,
-                        champ: 'traitements',
-                        isDeletable: true);
-                  },
                 ),
               ],
             ),
@@ -560,6 +438,38 @@ class _PatientState extends State<Patient> {
         ),
       ),
     );
+  }
+  
+  List<Map<String,dynamic>> patients = [];
+  
+  Future<void> _loadInfo() async {
+    patients = await getAllPatientId();
+  }
+
+  void refresh() {
+    setState(() {
+      _loadInfo();
+    });
+  }
+  
+  void deletePatientList(String id) {
+    setState(() {
+      for(int i = 0; i < patients.length; i++) {
+        if(patients[i]['id'] == id) {
+          patients.removeAt(i);
+        }
+      }
+    });
+  }
+
+  void updatePatient(Map<String, dynamic> patient, String id) {
+    setState(() {
+      for(int i = 0; i < patients.length; i++) {
+        if(patients[i]['id'] == id) {
+          patients[i] = patient;
+        }
+      }
+    });
   }
 
   @override
@@ -609,7 +519,22 @@ class _PatientState extends State<Patient> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CustomList(),
+                    FutureBuilder(
+                      future: _loadInfo(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return CustomList(
+                            patients: patients,
+                            deletePatientList: deletePatientList,
+                            updatePatient: updatePatient,
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
                     Buttons(
                       variant: Variante.primary,
                       size: SizeButton.md,
@@ -621,7 +546,7 @@ class _PatientState extends State<Patient> {
                             pageListBuilder: (modalSheetContext) {
                               return [
                                 addPatient(context, pageindex),
-                                addPatient2(context, pageindex)
+                                addPatient2(context, pageindex, refresh)
                               ];
                             });
                       },

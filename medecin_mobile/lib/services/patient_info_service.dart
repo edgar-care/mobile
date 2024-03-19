@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<dynamic>> getAllPatientId() async{
+Future<List<Map<String, dynamic>>> getAllPatientId() async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/patients';
@@ -18,32 +18,55 @@ Future<List<dynamic>> getAllPatientId() async{
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
-    prefs.setString('id', jsonDecode(response.body)['patients'][0]['id']);
-    return jsonDecode(response.body)['patients'][0]['patient_ids'];
+  if (response.statusCode == 200) {
+    populatePatientInfoAll(jsonDecode(response.body)['patients']);
+    List<Map<String,dynamic>> patients = [];
+    for (var i = 0; i < patientInfo.length; i++) {
+      if (patientInfo[i].isNotEmpty) {
+        patients.add(patientInfo[i]);
+      }
+    }
+    return patients;
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return [];
   }
   return [];
 }
 
-Map<String, dynamic> patientInfo = {};
+List<Map<String, dynamic>> patientInfo = [];
 
-void populatePatientInfo(Map<String, dynamic>? data) {
+void populatePatientInfoAll(List<dynamic> data) {
+  patientInfo = [];
+  for(int i = 0; i < data.length; i++){
+    patientInfo.add({
+      'id': data[i]['id'] ?? 'Inconnu',
+      'Prenom': data[i]['medical_info']['firstname'] ?? 'Inconnu',
+      'Nom': data[i]['medical_info']['name'] ?? 'Inconnu',
+      'date_de_naissance': data[i]['medical_info']['birthdate'] ?? 'Inconnu',
+      'sexe': data[i]['medical_info']['sex'] ?? 'Inconnu',
+      'taille': data[i]['medical_info']['height'] ?? 'Inconnu',
+      'poids': data[i]['medical_info']['weight'] ?? 'Inconnu',
+      'medecin_traitant': data[i]['medical_info']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data[i]['medical_info']['medical_antecedents'] ?? [],
+    });
+  }
+}
+
+Map<String, dynamic> patientInfoById = {};
+
+void populatePatientInfobyId(Map<String, dynamic>? data) {
   if (data != null) {
-    patientInfo = {
+    patientInfoById = {
       'id': data['patient']['id'] ?? 'Inconnu',
-      'Prenom': data['onboarding_info']['name'] ?? 'Inconnu',
-      'Nom': data['onboarding_info']['surname'] ?? 'Inconnu',
-      'date_de_naissance': data['onboarding_info']['birthdate'] ?? 'Inconnu',
-      'sexe': data['onboarding_info']['sex'] ?? 'Inconnu',
-      'taille': data['onboarding_info']['height'] ?? 'Inconnu',
-      'poids': data['onboarding_info']['weight'] ?? 'Inconnu',
-      'medecin_traitant': data['onboarding_health']['patients_primary_doctor'] ?? 'Inconnu',
-      'allergies': data['onboarding_health']['patients_allergies'] ?? [],
-      'maladies_connues': data['onboarding_health']['patients_illness'] ?? [],
-      'traitement_en_cours': data['onboarding_health']['patients_treatment'] ?? [],
+      'Prenom': data['patient']['medical_info']['firstname'] ?? 'Inconnu',
+      'Nom': data['patient']['medical_info']['name'] ?? 'Inconnu',
+      'date_de_naissance': data['patient']['medical_info']['birthdate'] ?? 'Inconnu',
+      'sexe': data['patient']['medical_info']['sex'] ?? 'Inconnu',
+      'taille': data['patient']['medical_info']['height'] ?? 'Inconnu',
+      'poids': data['patient']['medical_info']['weight'] ?? 'Inconnu',
+      'medecin_traitant': data['patient']['medical_info']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data['patient']['medical_info']['medical_antecedents'] ?? [],
     };
   }
 }
@@ -59,11 +82,11 @@ Future <Map<String,dynamic>> getPatientById(String id) async{
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
-    populatePatientInfo(jsonDecode(response.body));
-    return patientInfo;
+  if (response.statusCode == 200) {
+    populatePatientInfobyId(jsonDecode(response.body));
+    return patientInfoById;
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return <String, dynamic>{};
   }
   return <String,dynamic>{};
@@ -81,12 +104,7 @@ void populateInfoMedical(Map<String, dynamic>? data) {
       'date_de_naissance': data['patient_info']?['birthdate'] ?? 'Inconnu',
       'Taille': data['patient_info']?['height'] ?? 'Inconnu',
       'Poids': data['patient_info']?['weight'] ?? 'Inconnu',
-      'Medecin_traitant':
-          data['patient_health']?['patients_primary_doctor'] ?? 'Inconnu',
-      'Traitement_en_cours':
-          data['patient_health']?['patients_treatment'] ?? [],
-      'Allergies': data['patient_health']?['patients_allergies'] ?? [],
-      'Maladies_connues': data['patient_health']?['patients_illness'] ?? [],
+      'Medecin_traitant': data['patient_health']?['patients_primary_doctor'] ?? 'Inconnu',
     };
   }
 }
@@ -97,21 +115,24 @@ Future putInformationPatient(BuildContext context, Map<String, dynamic>? info, S
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
+  int poids = int.tryParse(info?['poids'] ?? '0') ?? 0;
+  int taille = int.tryParse(info?['taille'] ?? '0') ?? 0;
+
+  String day = info?['date_de_naissance']?.substring(0, 2) ?? '00';
+  String month = info?['date_de_naissance']?.substring(3, 5) ?? '00';
+  String year = info?['date_de_naissance']?.substring(6, 10) ?? '0000';
+  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch;
+
   final body = {
-    'onboarding_info': {
-      'name': info?['Prenom'],
-      'surname': info?['Nom'],
-      'birthdate': info?['date_de_naissance'],
-      'sex': info?['Sex'],
-      'height': info?['Taille'],
-      'weight': info?['Poids'],
-    },
-    'onboarding_health': {
-      'patients_primary_doctor': info?['Medecin_traitant'],
-      'patients_illness': info?['Traitement_en_cours'],
-      'patients_allergies': info?['Allergies'],
-      'patients_treatment': info?['Maladies_connues'],
-    },
+    'name': info?['Prenom'],
+    'surname': info?['Nom'],
+    'birthdate': date,
+    'sex': info?['Sex'],
+    'height': taille,
+    'weight': poids,
+    'primary_doctor_id': info?['Medecin_traitant'],
+    'medical_antecedents': info?['medical_antecedents'],
+    'onboarding_status': 'DONE'
   };
 
   final response = await http.put(
@@ -132,32 +153,34 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
+  int poids = int.tryParse(info?['poids'] ?? '0') ?? 0;
+  int taille = int.tryParse(info?['taille'] ?? '0') ?? 0;
+
+  String day = info?['date_de_naissance']?.substring(0, 2) ?? '00';
+  String month = info?['date_de_naissance']?.substring(3, 5) ?? '00';
+  String year = info?['date_de_naissance']?.substring(6, 10) ?? '0000';
+  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch;
+
   final body = {
-    'patient_input': {
-      'email' : info?['email'],
-    },
-    'onboarding_info': {
-      'name': info?['prenom'],
-      'surname': info?['nom'],
-      'birthdate': info?['date'],
+    'email' : info?['email'],
+    'medical_info': {
+      'name': info?['nom'],
+      'firstname': info?['prenom'],
+      'birthdate': date,
       'sex': info?['sexe'],
-      'weight': info?['poids'],
-      'height': info?['taille'],
-    },
-    'onboarding_health': {
-      'patients_primary_doctor': info?['medecin'],
-      'patients_illness': info?['traitements'],
-      'patients_allergies': info?['allergies'],
-      'patients_treatment': info?['maladies'],
+      'weight': poids,
+      'height': taille,
+      'primary_doctor_id': info?['medecin_traitant'],
+      'medical_antecedents': info?['medical_antecedents'],
+      'onboarding_status': 'DONE'
     },
   };
-
   final response = await http.post(
     Uri.parse(url),
     body: jsonEncode(body),
     headers: {'Authorization': 'Bearer $token'},
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient ajouté avec succès', context: context));
   } else {

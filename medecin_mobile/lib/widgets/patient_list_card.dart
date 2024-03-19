@@ -23,7 +23,7 @@ class PatientListCard extends StatelessWidget {
           onTap();
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
           child: Row(
             children: [
               Container(
@@ -35,8 +35,9 @@ class PatientListCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(patientData['Prenom'] + ' ' + patientData['Nom'] ?? 'Nom Prénom', style: const TextStyle(fontSize: 16, fontFamily: 'Poppins', color: AppColors.black)),
-              const Spacer(),
+              Expanded(
+                child: Text(patientData['Prenom'] + ' ' + patientData['Nom'] ?? 'Nom Prénom', style: const TextStyle(fontSize: 16, fontFamily: 'Poppins', color: AppColors.black), overflow: TextOverflow.ellipsis,),
+              ),
               const Icon(
                 Icons.arrow_forward_ios,
                 color: AppColors.black,
