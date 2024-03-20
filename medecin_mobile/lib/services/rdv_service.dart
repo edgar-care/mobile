@@ -27,8 +27,8 @@ Future<List<dynamic>> getAppointments() async {
   return [];
 }
 
-Future updateAppointment(String appointmentId, String newSlotId, BuildContext context) async {
-  SharedPreferences prefs =  SharedPreferences.getInstance() as SharedPreferences;
+Future <void> updateAppointment(String appointmentId, String newSlotId, BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
   final response = await http.put(

@@ -31,7 +31,7 @@ class _ModifListState extends State<ModifList> {
   Future<void> _loadAppointment() async {
   var temp = await getSlot();
     for (var i = 0; i < temp.length; i++) {
-      if (temp[i]['start_date'] > widget.rdvInfo['start_date'] && temp[i]["id_patient"] == "" && temp[i]['cancelation_reason'] == null) {
+      if (temp[i]['start_date'] > widget.rdvInfo['start_date'] && temp[i]["id_patient"] == "") {
         bool added = false;
         for(var j = 0; j < freeslots.length; j++) {
           if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(freeslots[j][0]['start_date'] * 1000), DateTime.fromMillisecondsSinceEpoch(temp[i]['start_date'] * 1000))) {

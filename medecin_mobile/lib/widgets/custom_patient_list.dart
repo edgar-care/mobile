@@ -10,7 +10,6 @@ import 'package:edgar_pro/widgets/custom_date_picker.dart';
 import 'package:edgar_pro/widgets/patient_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
-import 'package:intl/intl.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 
@@ -272,10 +271,8 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   text: widget.templist['Prenom'],
                   label: widget.templist['Prenom'],
                   onChanged: (value) => {
-                    setState(() {
-                        widget.templist['Prenom'] = value;
-                      },
-                    ),},
+                        widget.templist['Prenom'] = value,
+                  },
                   isPassword: false,
                   keyboardType: TextInputType.text,
                 ),
@@ -293,10 +290,8 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   label: widget.templist['Nom'],
                   text: widget.templist['Nom'],
                   onChanged: (value) => {
-                    setState(() {
-                        widget.templist['Nom'] = value;
-                      },
-                    ),},
+                        widget.templist['Nom'] = value,
+                    },
                   isPassword: false,
                   keyboardType: TextInputType.text,
                 ),
@@ -395,10 +390,8 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             text: widget.templist['taille'].toString(),
                             label: widget.templist['taille'].toString(),
                             onChanged: (value) => {
-                              setState(() {
-                                  widget.templist['taille'] = value;
-                                },
-                              ),},
+                                  widget.templist['taille'] = value,
+                              },
                             isPassword: false,
                             keyboardType: TextInputType.number,
                           ),
@@ -425,10 +418,8 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             text: widget.templist['poids'].toString(),
                             label: widget.templist['poids'].toString(),
                             onChanged: (value) => {
-                              setState(() {
-                                  widget.templist['poids'] = value;
-                                },
-                              ),},
+                                  widget.templist['poids'] = value,
+                            },
                             isPassword: false,
                             keyboardType: TextInputType.number,
                           ),
@@ -622,7 +613,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                DateFormat('yMd', 'fr').format(DateTime.fromMillisecondsSinceEpoch(widget.patient['date_de_naissance'] * 1000)),
+                                widget.patient['date_de_naissance'],
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -755,7 +746,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                   var patient = Map.of(widget.templist.value);
                   widget.updatePatient(patient, widget.patient.value['id']);
                   Navigator.pop(context);
-                  //putInformationPatient(context, patient, widget.id);
+                  putInformationPatient(context, patient, widget.patient.value['id']);
                 },
               ),
             ),
