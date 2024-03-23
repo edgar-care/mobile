@@ -60,7 +60,7 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
 
   if (data != null) {
     patientInfoById = {
-      'id': data['patient']['id'] ?? 'Inconnu',
+      'id': data['id'] ?? 'Inconnu',
       'Prenom': data['medical_info']['firstname'] ?? 'Inconnu',
       'Nom': data['medical_info']['name'] ?? 'Inconnu',
       'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data['medical_info']['birthdate'] * 1000)).toString(),
@@ -85,7 +85,7 @@ Future <Map<String,dynamic>> getPatientById(String id) async{
     },
   );
   if (response.statusCode == 200) {
-    populatePatientInfobyId(jsonDecode(response.body));
+    populatePatientInfobyId(jsonDecode(response.body)['patient']);
     return patientInfoById;
   }
   if (response.statusCode != 200) {
