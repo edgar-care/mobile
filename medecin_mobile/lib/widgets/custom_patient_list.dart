@@ -16,6 +16,7 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 
 
+// ignore: must_be_immutable
 class CustomList extends StatefulWidget {
   Function setPages;
   CustomList({super.key, required this.setPages});

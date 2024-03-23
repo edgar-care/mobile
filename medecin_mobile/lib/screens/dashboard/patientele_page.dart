@@ -4,8 +4,11 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/add_custom_field.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
+import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/doctor_list.dart';
+import 'package:edgar_pro/widgets/list_medical_background.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
+import 'package:edgar_pro/widgets/medical_background_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
@@ -367,6 +370,7 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Continuer'),
                 onPressed: () {
+                  pageIndexNotifier.value = pageIndexNotifier.value + 1;
                 //   if(checkadd()){
                 //     addPatientService(context, info.value);
                 //   } else {
@@ -604,7 +608,7 @@ SliverWoltModalSheetPage addPatient3(BuildContext context, ValueNotifier<int> pa
                   onChanged: (value) => value,
                   isPassword: false,
                   keyboardType: TextInputType.text,
-                  icon: BootstrapIcons.search,
+                  icon: BootstrapIcons.plus_lg,
                 ),
                 const SizedBox(
                   height: 16,
@@ -613,6 +617,8 @@ SliverWoltModalSheetPage addPatient3(BuildContext context, ValueNotifier<int> pa
                   "Antecedents médicaux et sujets de santé renseignés",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
+                const SizedBox(height: 8,),
+                const MedicalBackgroundList(),
               ],
             ),
           ]),
@@ -620,6 +626,44 @@ SliverWoltModalSheetPage addPatient3(BuildContext context, ValueNotifier<int> pa
       ),
     );
 }
+
+ SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index){
+    return WoltModalSheetPage(
+      backgroundColor: AppColors.white,
+      hasTopBarLayer: false,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          child: Column(
+            children: [
+              Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 16),
+              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, ontap: () {widget.setPages(5);Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, ontap: () {widget.setPages(6);Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, ontap: () {widget.setPages(7);Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, ontap: () {widget.setPages(8);Navigator.pop(context);}),
+              const SizedBox(height: 12),
+              Container(height: 2,color: AppColors.blue200),
+              const SizedBox(height: 12),
+              Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text('Revenir à la patientèle', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le patient', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {WoltModalSheet.show(
+                context: context,
+                pageListBuilder: (BuildContext context) {
+                  return [
+                    deletePatient(context, patient, index, () => {null})
+                  ];
+                },
+              );},)
+            ]),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -679,8 +723,10 @@ SliverWoltModalSheetPage addPatient3(BuildContext context, ValueNotifier<int> pa
                             pageIndexNotifier: pageindex,
                             pageListBuilder: (modalSheetContext) {
                               return [
+                                //patientNavigation(context, Map<String, dynamic>.of(<String, dynamic>{'Mercury': 1,'Venus' : 2,'Earth': 3}), 2),
                                 addPatient(context, pageindex),
-                                addPatient2(context, pageindex)
+                                addPatient2(context, pageindex),
+                                addPatient3(context, pageindex)
                               ];
                             });
                       },

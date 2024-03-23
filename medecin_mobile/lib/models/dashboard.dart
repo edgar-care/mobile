@@ -1,4 +1,5 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,8 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      Patient(setPages: updateSelectedIndex,),
+      const PatientPage(),
+      //Patient(setPages: updateSelectedIndex,),
       const Rdv(),
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];

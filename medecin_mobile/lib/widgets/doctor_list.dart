@@ -20,11 +20,7 @@ class _DoctorListState extends State<DoctorList> {
             height: 8,
           ),
           itemBuilder: (context, index) {
-            return Container(
-              width: 30,
-              height: 30,
-              color: AppColors.blue700,
-            );
+            return const DoctorCard();
         }
       )
     );

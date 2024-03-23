@@ -21,18 +21,21 @@ class _DoctorCardState extends State<DoctorCard> {
           width: 2,
         ),
       ),
-      child: const Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Column(
+      child: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child:
+          Wrap(
+            direction: Axis.horizontal,
             children: [
-            Text("Docteur XX", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
-            Text("10 rue du machin, 54000 - Nancy", style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w300),),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text("Docteur XX", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),),
+                Text("10 rue du médecin, 54000 - Nancy", style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600),),
+                ],
+              ),
             ],
           ),
-          Spacer(),
-          Icon(BootstrapIcons.arrow_right, size: 12,),
-        ],
       ),
     );
   }
