@@ -27,7 +27,7 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v2.0.2
         with:
-          envkey_URL: ${{ secrets.URL }}
+          envkey_URL: ${{ secrets.URL }}/demo
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -91,17 +91,6 @@ jobs:
           distribution: corretto
 
       - name: Make envfile
-        if: ${{ github.base_ref }} == 'main'
-        uses: SpicyPizza/create-envfile@v2.0.2
-        with:
-          envkey_URL: ${{ secrets.URL }}
-          envkey_APP_NAME: edgar
-          directory: medecin_mobile
-          file_name: .env
-          fail_on_empty: true
-
-      - name: Make envfile
-        if: ${{ github.base_ref }} !== "main"
         uses: SpicyPizza/create-envfile@v2.0.2
         with:
           envkey_URL: ${{ secrets.URL }}/demo
@@ -163,7 +152,7 @@ jobs:
       - name: Upload Apk to artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: apk-dev-doctor-${{ github.head_ref }}
+          name: apk-dev-doctor-${{ github.head_ref }}.apk
           path: medecin_mobile/build/app/outputs/apk/debug/app-debug.apk
 
   deploy-apk:
@@ -182,14 +171,7 @@ jobs:
           path: medecin_mobile
 
       - name: Extract Apk Name depending on branch
-        run: |
-          if [[ "${{ github.base_ref }}" == "main" ]]; then
-            echo apk_name=pro.edgar.apk >> $GITHUB_OUTPUT
-          elif [[ "${{ github.base_ref }}" == "dev" ]]; then
-            echo apk_name=staging.pro.edgar.apk >> $GITHUB_OUTPUT
-          else
-            echo apk_name=preview.pro.edgar-${{ github.head_ref }}.apk >> $GITHUB_OUTPUT
-          fi
+        run: echo apk_name=preview.pro.edgar-${{ github.head_ref }}.apk >> $GITHUB_OUTPUT
         id: extract_apk_name
 
       - name: Rename Apk Name
@@ -211,4 +193,4 @@ jobs:
           message-id: edgar-pro-apk-message
           refresh-message-position: true
           message: |
-            **APK** is ready to download [edgar-pro](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})
+            **APK** is ready to download [preview.pro.edgar-${{ github.head_ref }}](https://edgar-care-apk.s3.eu-west-3.amazonaws.com/${{ steps.extract_apk_name.outputs.apk_name }})

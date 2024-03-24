@@ -1,0 +1,78 @@
+name: Mobile CI Prod Doctor App Edgar
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "medecin_mobile/**"
+
+defaults:
+  run:
+    working-directory: ./medecin_mobile
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    needs: analyze
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java Environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: corretto
+
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0.2
+        with:
+          envkey_URL: ${{ secrets.URL }}
+          envkey_APP_NAME: edgar Pro
+          directory: medecin_mobile
+          file_name: .env
+          fail_on_empty: true
+
+      - name: Setup Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get Packages
+        run: flutter pub get
+
+      - name: Build Apk
+        run: flutter build apk --release
+
+      - name: Upload Apk to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-doctor-main.apk
+          path: medecin_mobile/build/app/outputs/apk/release/app-release.apk
+
+  deploy-apk:
+    runs-on: ubuntu-latest
+    needs: build-apk
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download Apk
+        uses: actions/download-artifact@v3
+        with:
+          name: apk-doctor-main.apk
+          path: medecin_mobile
+
+      - name: Rename Apk Name
+        run: mv ./app-release.apk ./pro.edgar.apk
+
+      - name: Setup AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Export Apk to S3
+        run: aws s3 cp *.apk s3://${{ secrets.BUCKET_NAME }} --acl public-read
