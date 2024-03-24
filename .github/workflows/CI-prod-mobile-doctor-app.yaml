@@ -17,16 +17,16 @@ jobs:
     needs: analyze
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Java Environment
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: corretto
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v2.0.2
+        uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}
           envkey_APP_NAME: edgar Pro
@@ -46,7 +46,7 @@ jobs:
         run: flutter build apk --release
 
       - name: Upload Apk to artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apk-doctor-main.apk
           path: medecin_mobile/build/app/outputs/apk/release/app-release.apk
@@ -56,10 +56,10 @@ jobs:
     needs: build-apk
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Apk
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: apk-doctor-main.apk
           path: medecin_mobile
@@ -68,7 +68,7 @@ jobs:
         run: mv ./app-release.apk ./pro.edgar.apk
 
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
