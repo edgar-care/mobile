@@ -11,9 +11,8 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text('Confirmation Page'),
-      )
-    );
+        body: Center(
+      child: Text('Confirmation Page'),
+    ));
   }
 }

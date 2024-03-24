@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:edgar/widget/snackbar.dart';
@@ -107,6 +108,8 @@ class _LoginState extends State<Login> {
                   headers: {'Content-Type': 'application/json'},
                   body: jsonEncode({'email': email, 'password': password}),
                 );
+                Logger().i(response.body);
+                
                 if (response.statusCode == 200) {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   final token = jsonDecode(response.body)['token'];

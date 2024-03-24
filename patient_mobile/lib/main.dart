@@ -1,3 +1,5 @@
+import 'package:edgar/models/onBoarding.dart';
+import 'package:edgar/models/simulation_intro.dart';
 import 'package:edgar/screens/simulation/confirmation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashBoardPage(),
         '/dashboard/chat': (context) => const ConverstationPatient(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
+        '/simulation/intro': (context) => const IntroSimulation(),
+        '/onboarding': (context) => const Onboarding(),
       },
     );
   }

@@ -4,7 +4,6 @@ import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/widget/snackbar.dart';
 
 Future<Map<String, dynamic>?> getAppointement(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -20,19 +19,6 @@ Future<Map<String, dynamic>?> getAppointement(BuildContext context) async {
     final body = response.body;
     return jsonDecode(body);
   } else {
-    final scaffoldContext = context;
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-        // ignore: use_build_context_synchronously
-        SnackBar(
-      // ignore: use_build_context_synchronously
-      content: ErrorSnackBar(
-        message: 'Une erreur est survenue',
-        // ignore: use_build_context_synchronously
-        context: scaffoldContext,
-        duration: const Duration(seconds: 2),
-      ),
-    ));
     return null;
   }
 }

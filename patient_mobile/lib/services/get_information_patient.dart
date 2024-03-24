@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/widget/snackbar.dart';
 
 Future<Map<String, Object>?> getInformationPersonnel(
     BuildContext context) async {
@@ -25,16 +24,7 @@ Future<Map<String, Object>?> getInformationPersonnel(
     populateInfoMedical(jsonDecode(body));
     return infoMedical;
   } else {
-    final scaffoldContext = context;
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-      SnackBar(
-        content: ErrorSnackBar(
-          message: 'La recuperation des informations personnelles a échoué',
-          context: scaffoldContext,
-          duration: const Duration(seconds: 2),
-        ),
-      ),
-    );
+    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -96,7 +86,6 @@ Future<Map<String, Object>?> putInformationPatient(
     return infoMedical;
   } else {
     Logger().e(response.statusCode);
-    Logger().e(response.body);
     return null;
   }
 }

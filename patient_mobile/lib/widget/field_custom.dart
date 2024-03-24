@@ -103,3 +103,83 @@ class _CustomFieldState extends State<CustomField> {
     );
   }
 }
+
+class CustomFieldSearch extends StatefulWidget {
+  final String label;
+  final IconData
+      icon; // Utilisation de IconData au lieu de Icon pour la cohérence
+  final TextInputType keyboardType;
+  final Function(String) onValidate;
+
+  const CustomFieldSearch({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+    required this.onValidate,
+  });
+
+  @override
+  State<CustomFieldSearch> createState() => _CustomFieldSearchState();
+}
+
+class _CustomFieldSearchState extends State<CustomFieldSearch> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _controller,
+                  keyboardType: widget.keyboardType,
+                  textInputAction: TextInputAction.search,
+                  style: const TextStyle(
+                    color: AppColors.grey950,
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    textBaseline: TextBaseline.ideographic,
+                  ),
+                  decoration: InputDecoration(
+                    constraints: BoxConstraints(
+                        minWidth: 0, maxWidth: constraints.maxWidth),
+                    border: InputBorder.none,
+                    isDense: true,
+                    hintText: widget.label,
+                    hintStyle: const TextStyle(
+                      color: AppColors.grey400,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                  ),
+                  onFieldSubmitted: (value) {
+                    widget.onValidate(value);
+                  },
+                ),
+              ),
+              GestureDetector(
+                child: Icon(widget.icon, color: AppColors.grey950, size: 16),
+                onTap: () {
+                  widget.onValidate(_controller.text);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
