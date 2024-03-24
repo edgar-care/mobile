@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<dynamic>> getAppointments() async {
@@ -32,7 +31,7 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
-  final response = await http.put(
+  await http.put(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
