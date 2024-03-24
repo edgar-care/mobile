@@ -97,11 +97,7 @@ class _ModifListState extends State<ModifList> {
                     size: SizeButton.sm,
                     msg: const Text("Valider le changement"),
                     onPressed: () {
-                      var status = updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context);
-                      // ignore: unrelated_type_equality_checks
-                      if (status == 201) {
-                        widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000));
-                      }
+                      updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context).then((value) =>{widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000))});
                       Navigator.pop(context);
                     }),
                 ],)
