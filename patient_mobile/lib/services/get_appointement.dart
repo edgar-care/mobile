@@ -28,6 +28,7 @@ Future<Map<String, dynamic>?> getAppointement(BuildContext context) async {
       // ignore: use_build_context_synchronously
       content: ErrorSnackBar(
         message: 'Une erreur est survenue',
+        // ignore: use_build_context_synchronously
         context: scaffoldContext,
         duration: const Duration(seconds: 2),
       ),

@@ -3,7 +3,6 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 import 'package:edgar/services/get_information_patient.dart';
@@ -325,9 +324,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
               onChanged: (value) {
                 setState(() {
                   info?['Prenom'] = value;
-                  Logger().i(info);
                 });
-                Logger().i(info);
               },
               isPassword: false,
               value: info!['Prenom'].toString(),
@@ -358,7 +355,6 @@ class _Bodymodify1State extends State<Bodymodify1> {
                 label: "10 / 09 / 2023",
                 onChanged: (value) => setState(() {
                       info?['Anniversaire'] = value;
-                      Logger().i(info);
                     }),
                 add: false,
                 value: info!['Anniversaire'].toString()),

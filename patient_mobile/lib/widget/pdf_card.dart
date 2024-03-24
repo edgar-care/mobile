@@ -52,6 +52,7 @@ class PDFCard extends StatelessWidget {
                       File file = await downloadPDF(pdfUrl, 'my-pdf.pdf');
                       // ignore: use_build_context_synchronously
                       Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => PDFScreen(path: file.path),
