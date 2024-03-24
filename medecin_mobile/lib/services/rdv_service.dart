@@ -27,7 +27,7 @@ Future<List<dynamic>> getAppointments() async {
   return [];
 }
 
-Future <void> updateAppointment(String appointmentId, String newSlotId, BuildContext context) async {
+Future <int> updateAppointment(String appointmentId, String newSlotId, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
@@ -45,6 +45,7 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   else {
     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Une erreur est survenue, veuillez réessayer', context: context,));
   }
+  return response.statusCode;
 }
 
 Future cancelAppointments(String id, BuildContext context) async {

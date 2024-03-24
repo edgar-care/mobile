@@ -258,8 +258,22 @@ class PatienInfo extends StatefulWidget {
 }
 
 class _PatienInfoState extends State<PatienInfo> {
+  String sexe = '';
   @override
   Widget build(BuildContext context) {
+    switch (widget.patient['sexe']) {
+      case 'MALE':
+        sexe = 'Masculin';
+        break;
+      case 'FEMALE':
+        sexe = 'Feminin';
+        break;
+      case 'OTHER':
+        sexe = 'Autre';
+        break;
+      default:
+        sexe = 'Inconnu';
+    }
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
@@ -328,7 +342,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                 DateFormat("yMd", "fr").format(DateTime.fromMillisecondsSinceEpoch(widget.patient['date_de_naissance'] * 1000)).toString(),
+                                 widget.patient['date_de_naissance'],
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -346,7 +360,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                widget.patient['sexe'],
+                                sexe,
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -364,7 +378,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                "${(widget.patient['taille'] / 100).toString()} m",
+                                "${(int.parse(widget.patient['taille']) / 100).toString()} m",
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -382,7 +396,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                "${widget.patient['poids'].toString()} kg",
+                                "${(int.parse(widget.patient['poids']) / 100).toString()} kg",
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -400,7 +414,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                widget.patient['medecin_traitant'],
+                                widget.patient['medecin_traitant'].toString(),
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,

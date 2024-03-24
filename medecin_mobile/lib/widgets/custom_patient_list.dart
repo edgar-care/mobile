@@ -559,8 +559,20 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
   }
   
   class _BodyInfoState extends State<BodyInfo> {
+    String sexe = '';
     @override
     Widget build(BuildContext context) {
+      switch (widget.patient['sexe']) {
+        case 'MALE':
+          sexe = 'Masculin';
+          break;
+        case 'FEMALE':
+          sexe = 'Feminin';
+          break;
+        case 'OTHER':
+          sexe = 'Autre';
+          break;
+      }
       return Row(
                     children: [
                       Wrap(
@@ -631,7 +643,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['sexe'],
+                                sexe,
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -649,7 +661,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['taille'].toString(),
+                                '${(int.parse(widget.patient['taille'])/100).toString()} m',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -667,7 +679,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['poids'].toString(),
+                                '${(int.parse(widget.patient['poids'])/100).toString()} Kg',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,

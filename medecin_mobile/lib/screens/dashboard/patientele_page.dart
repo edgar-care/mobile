@@ -150,12 +150,12 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre adresse mail",
+                  "Adresse mail",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
-                  label: "prenom.nom@gmail.com",
+                  label: "Prenom.nom@gmail.com",
                   onChanged: (value) => info.value['email'] = value,
                   isPassword: false,
                   keyboardType: TextInputType.emailAddress,
@@ -164,7 +164,7 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre prénom",
+                  "Prénom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
@@ -178,7 +178,7 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre nom",
+                  "Nom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
@@ -201,7 +201,7 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre sexe",
+                  "Sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
@@ -249,14 +249,14 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre taille",
+                            "Taille",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
                             label: "1,52m",
-                            onChanged: (value) => info.value['taille'] = value,
+                            onChanged: (value) => info.value['taille'] = (value * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -272,14 +272,14 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre poids",
+                            "Poids",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
                             label: "45kg",
-                            onChanged: (value) => info.value['poids'] = value,
+                            onChanged: (value) => info.value['poids'] = (value * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -419,7 +419,7 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre médecin traitant",
+                  "Médecin traitant",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),

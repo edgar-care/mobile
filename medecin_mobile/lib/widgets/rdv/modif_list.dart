@@ -71,8 +71,8 @@ class _ModifListState extends State<ModifList> {
               Column(
                 children: [
                   Container(
-                    height: 32,
-                    width: 32,
+                    height: 48,
+                    width: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(60),
                       color: AppColors.grey200,
@@ -97,8 +97,11 @@ class _ModifListState extends State<ModifList> {
                     size: SizeButton.sm,
                     msg: const Text("Valider le changement"),
                     onPressed: () {
-                      updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context);
-                      widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000));
+                      var status = updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context);
+                      // ignore: unrelated_type_equality_checks
+                      if (status == 201) {
+                        widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000));
+                      }
                       Navigator.pop(context);
                     }),
                 ],)
