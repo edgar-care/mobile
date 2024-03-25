@@ -6,7 +6,6 @@ import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId() async{
@@ -158,11 +157,6 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
   int poids = int.parse(info?['poids']);
   int taille = int.parse(info?['taille']);
 
-  Logger().d(info?['taille']);
-  Logger().d(taille);
-  Logger().d(info?['poids']);
-  Logger().d(poids);
-
   String day = info?['date']?.substring(0, 2) ?? '00';
   String month = info?['date']?.substring(3, 5) ?? '00';
   String year = info?['date']?.substring(6, 10) ?? '0000';
@@ -182,14 +176,12 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
       'onboarding_status': 'DONE'
     },
   };
-  Logger().d(body);
+ 
   final response = await http.post(
     Uri.parse(url),
     body: jsonEncode(body),
     headers: {'Authorization': 'Bearer $token'},
   );
-  Logger().d(response.statusCode);
-  Logger().d(response.body);
   if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient ajouté avec succès', context: context));
