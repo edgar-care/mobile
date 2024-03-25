@@ -44,6 +44,7 @@ class _CustomFieldState extends State<CustomField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   cursorColor: AppColors.blue500,
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,

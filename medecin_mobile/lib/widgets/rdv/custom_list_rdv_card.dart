@@ -147,19 +147,18 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
   Future<void> _loadAppointment() async {
-  var temp = await getPatientById(widget.rdvInfo['id_patient']);
-      if (temp.isNotEmpty) {
-        setState(() {
-          patientInfo = temp;
-        });
-      }
+    patientInfo = await getPatientById(widget.rdvInfo['id_patient']);
   }
 
   @override
   Widget build(BuildContext context) {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
     DateTime end =  DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
-    return Container(
+    return FutureBuilder(
+        future: _loadAppointment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(8.0),
@@ -190,7 +189,9 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     const SizedBox(width: 4,),
                     Row(children: [
                       Text(DateFormat('jm', 'fr').format(start), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                      const Text(" --> ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                      const SizedBox(width: 2,),
+                      const Icon(BootstrapIcons.arrow_right, size: 16,),
+                      const SizedBox(width: 2,),
                       Text(DateFormat('jm', 'fr').format(end), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
                     ]),
                   ]
@@ -245,6 +246,15 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
           ),
         ),
       );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      );
+    
+    
     }
 }
 

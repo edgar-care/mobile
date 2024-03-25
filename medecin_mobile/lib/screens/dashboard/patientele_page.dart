@@ -256,7 +256,7 @@ class _PatientState extends State<Patient> {
                           const SizedBox(height: 4,),
                           CustomField(
                             label: "1,52m",
-                            onChanged: (value) => info.value['taille'] = (value * 100).toString(),
+                            onChanged: (value) => info.value['taille'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -279,7 +279,7 @@ class _PatientState extends State<Patient> {
                           const SizedBox(height: 4,),
                           CustomField(
                             label: "45kg",
-                            onChanged: (value) => info.value['poids'] = (value * 100).toString(),
+                            onChanged: (value) => info.value['poids'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -460,6 +460,9 @@ class _PatientState extends State<Patient> {
         }
       }
     });
+    Future.delayed(const Duration(milliseconds: 50), () {
+      refresh();
+    });
   }
 
   void updatePatient(Map<String, dynamic> patient, String id) {
@@ -469,6 +472,9 @@ class _PatientState extends State<Patient> {
           patients[i] = patient;
         }
       }
+    });
+    Future.delayed(const Duration(milliseconds: 50), () {
+      refresh();
     });
   }
 

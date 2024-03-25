@@ -6,6 +6,7 @@ import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId() async{
@@ -44,7 +45,7 @@ void populatePatientInfoAll(List<dynamic> data) {
       'id': data[i]['id'] ?? 'Inconnu',
       'Prenom': data[i]['medical_info']['firstname'] ?? 'Inconnu',
       'Nom': data[i]['medical_info']['name'] ?? 'Inconnu',
-      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data[0]['medical_info']['birthdate'] * 1000)).toString(),
+      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data[i]['medical_info']['birthdate'] * 1000)).toString(),
       'sexe': data[i]['medical_info']['sex'] ?? 'Inconnu',
       'taille': (data[i]['medical_info']['height']).toString(),
       'poids': (data[i]['medical_info']['weight']).toString(),
@@ -154,9 +155,13 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
+  int poids = int.parse(info?['poids']);
+  int taille = int.parse(info?['taille']);
 
-  int poids = int.tryParse(info?['poids'] ?? '0') ?? 0;
-  int taille = int.tryParse(info?['taille'] ?? '0') ?? 0;
+  Logger().d(info?['taille']);
+  Logger().d(taille);
+  Logger().d(info?['poids']);
+  Logger().d(poids);
 
   String day = info?['date']?.substring(0, 2) ?? '00';
   String month = info?['date']?.substring(3, 5) ?? '00';
@@ -177,12 +182,14 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
       'onboarding_status': 'DONE'
     },
   };
-
+  Logger().d(body);
   final response = await http.post(
     Uri.parse(url),
     body: jsonEncode(body),
     headers: {'Authorization': 'Bearer $token'},
   );
+  Logger().d(response.statusCode);
+  Logger().d(response.body);
   if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient ajouté avec succès', context: context));

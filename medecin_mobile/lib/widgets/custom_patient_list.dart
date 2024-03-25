@@ -83,7 +83,6 @@ class _CustomListState extends State<CustomList> {
       BuildContext modalSheetContext,
       ValueNotifier<int> pageIndexNotifier) {
     return WoltModalSheetPage(
-      
       stickyActionBar: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
         child: Wrap(
@@ -137,7 +136,7 @@ class _CustomListState extends State<CustomList> {
       ),
       backgroundColor: AppColors.white,
       enableDrag: true,
-      hasSabGradient: true,
+      hasSabGradient: false,
       hasTopBarLayer: false,
     );
 }
@@ -387,10 +386,10 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
-                            text: widget.templist['taille'].toString(),
+                            text: (double.parse(widget.templist['taille']) / 100).toString(),
                             label: widget.templist['taille'].toString(),
                             onChanged: (value) => {
-                                  widget.templist['taille'] = value,
+                                  widget.templist['taille'] = (double.parse(value) * 100).round().toString(),
                               },
                             isPassword: false,
                             keyboardType: TextInputType.number,
@@ -415,10 +414,10 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
-                            text: widget.templist['poids'].toString(),
+                            text: (double.parse(widget.templist['poids']) / 100).toString(),
                             label: widget.templist['poids'].toString(),
                             onChanged: (value) => {
-                                  widget.templist['poids'] = value,
+                                  widget.templist['poids'] = (double.parse(value) * 100).round().toString(),
                             },
                             isPassword: false,
                             keyboardType: TextInputType.number,
@@ -437,7 +436,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
 }
 
   SliverWoltModalSheetPage deletePatient(BuildContext context,
-      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient, Function deletePatient) {
+      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient, Function deletePatientList) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -512,7 +511,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
                         pageIndexNotifier.value = 2;
-                        deletePatient(patient['id']);
+                        deletePatientList(patient['id']);
                         deletePatientService(patient['id'], context);
                         Navigator.pop(context);
                       },
