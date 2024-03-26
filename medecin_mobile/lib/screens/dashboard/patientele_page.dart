@@ -155,6 +155,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: false,
                   label: "Prenom.nom@gmail.com",
                   onChanged: (value) => info.value['email'] = value,
                   isPassword: false,
@@ -169,6 +170,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Prénom",
                   onChanged: (value) => info.value['prenom'] = value,
                   isPassword: false,
@@ -183,6 +185,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Nom",
                   onChanged: (value) => info.value['nom'] = value,
                   isPassword: false,
@@ -196,7 +199,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
-                CustomDatePiker(onChanged: (value) => info.value['date'] = value),
+                CustomDatePiker(onChanged: (value) => info.value['date'] = value, endDate: DateTime.now()),
                 const SizedBox(
                   height: 16,
                 ),
@@ -255,6 +258,7 @@ class _PatientState extends State<Patient> {
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
+                            startUppercase: false,
                             label: "1,52m",
                             onChanged: (value) => info.value['taille'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
@@ -278,6 +282,7 @@ class _PatientState extends State<Patient> {
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
+                            startUppercase: false,
                             label: "45kg",
                             onChanged: (value) => info.value['poids'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
@@ -424,6 +429,7 @@ class _PatientState extends State<Patient> {
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Dr. Edgar",
                   onChanged: (value) => info.value['medecin_traitant'] = value,
                   isPassword: false,

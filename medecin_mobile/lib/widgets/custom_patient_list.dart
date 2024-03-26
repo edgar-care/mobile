@@ -267,6 +267,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   text: widget.templist['Prenom'],
                   label: widget.templist['Prenom'],
                   onChanged: (value) => {
@@ -286,6 +287,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   label: widget.templist['Nom'],
                   text: widget.templist['Nom'],
                   onChanged: (value) => {
@@ -305,6 +307,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomDatePiker(
+                  endDate: DateTime.now(),
                   value: widget.templist['date_de_naissance'].toString(),
                   onChanged: (value) {
                     setState(() {
@@ -386,6 +389,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
+                            startUppercase: false,
                             text: (double.parse(widget.templist['taille']) / 100).toString(),
                             label: widget.templist['taille'].toString(),
                             onChanged: (value) => {
@@ -414,6 +418,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
+                            startUppercase: false,
                             text: (double.parse(widget.templist['poids']) / 100).toString(),
                             label: widget.templist['poids'].toString(),
                             onChanged: (value) => {
@@ -846,6 +851,7 @@ class _BodyFixPatient2State extends State<BodyFixPatient2> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   text: widget.templist.value['medecin_traitant'].toString(),
                   label: "Dr. Edgar",
                   onChanged: (value) => widget.templist.value['medecin_traitant'] = value,

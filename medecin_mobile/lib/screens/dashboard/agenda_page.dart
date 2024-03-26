@@ -191,7 +191,7 @@ class _AgendaState extends State<Agenda> {
                   const SizedBox(height: 16,),
                   const Text("Date du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
-                  CustomDatePiker(value: DateFormat("yMd", "fr").format(date), onChanged: (value) {
+                  CustomDatePiker(value: DateFormat("yMd", "fr").format(date),startDate: DateTime.now() ,onChanged: (value) {
                     setState(() {
                     if (value.length == 10 && value[2] == '/' && value[5] == '/') {
                       year = int.parse(value.substring(6));
