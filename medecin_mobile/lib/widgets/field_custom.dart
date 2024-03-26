@@ -3,6 +3,7 @@ import '../styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 
 class CustomField extends StatefulWidget {
+  final bool startUppercase;
   final String label;
   final IconData? icon; // Changed from IconData to IconData?
   final bool isPassword;
@@ -17,7 +18,8 @@ class CustomField extends StatefulWidget {
     this.isPassword = false,
     this.text = "",
     required this.keyboardType,
-    required this.onChanged, // Added required onChanged parameter
+    required this.onChanged,
+    required this.startUppercase,
   });
 
   @override
@@ -44,6 +46,7 @@ class _CustomFieldState extends State<CustomField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  textCapitalization: widget.startUppercase ? TextCapitalization.sentences : TextCapitalization.none,
                   cursorColor: AppColors.blue500,
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,

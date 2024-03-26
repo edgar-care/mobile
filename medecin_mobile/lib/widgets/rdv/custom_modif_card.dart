@@ -2,9 +2,14 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/rdv/custom_modif_hour.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomModifCard extends StatefulWidget {
-  const CustomModifCard({super.key});
+  final List<Map<String, dynamic>> dateList;
+  final Function updateFunc;
+  final Map<String,int> selected;
+  final int number;
+  const CustomModifCard({super.key, required this.dateList, required this.updateFunc, required this.selected, required this.number});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -13,11 +18,6 @@ class CustomModifCard extends StatefulWidget {
 
 class _CustomModifCardState extends State<CustomModifCard> {
   bool isOpen = false;
-  ValueNotifier<int> selected = ValueNotifier(-1);
-
-void updateSelection(int newSelection) {
-    selected.value = newSelection;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,33 +41,29 @@ void updateSelection(int newSelection) {
           children:[
             Row(
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Date", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
+                    Text(DateFormat('yMMMMEEEEd', 'fr').format(DateTime.fromMillisecondsSinceEpoch(widget.dateList[0]['start_date'] * 1000)), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                     Row(children: [
-                        Text("nbr horaires", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
-                        Text(" disponibles", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
+                        Text( widget.dateList.length > 1 ? "${widget.dateList.length} horaires" : "${widget.dateList.length} horaire", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
+                        Text(widget.dateList.length > 1 ? " disponibles" : " disponible", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                     ],)
                 ],),
                 const Spacer(),
                 !isOpen ? const Icon(BootstrapIcons.chevron_down, size: 16,) : const Icon(BootstrapIcons.chevron_up, size: 16,),
               ],
             ),
-            if(isOpen)ValueListenableBuilder(
-              valueListenable: selected,
-              builder: (context, value, child) {
-                return Column( children:[
+            if(isOpen)
+              Column( children:[
                   const SizedBox(height: 8,),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
                     children: [
-                      for(int i = 0; i < 4; i++)
-                          CustomModifHour(selected: selected.value == i ? true : false, id: i, onTap: () => updateSelection(i)),
+                      for(int i = 0; i < widget.dateList.length; i++)
+                          CustomModifHour(selected: widget.selected["first"] == widget.number && widget.selected["second"] == i ? true : false, id: i, onTap: () => widget.updateFunc(widget.number, i), info: widget.dateList[i]),
                     ])]
-                );
-              }
             )
         ])
       ),

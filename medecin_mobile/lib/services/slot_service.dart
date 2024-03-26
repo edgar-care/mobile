@@ -14,10 +14,10 @@ Future<List<dynamic>> getSlot() async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     return jsonDecode(response.body)['slot'];
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return [];
   }
   return [];

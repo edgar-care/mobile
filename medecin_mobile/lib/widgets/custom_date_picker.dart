@@ -4,9 +4,11 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 
 // ignore: must_be_immutable
 class CustomDatePiker extends StatefulWidget {
+  DateTime? startDate;
+  DateTime? endDate;
   String? value;
   final Function(String)? onChanged;
-  CustomDatePiker({super.key, this.value, this.onChanged});
+  CustomDatePiker({super.key, this.value, this.onChanged, this.startDate, this.endDate});
 
   @override
   State<CustomDatePiker> createState() => _CustomDatePikerState();
@@ -33,8 +35,8 @@ class _CustomDatePikerState extends State<CustomDatePiker> {
               int.parse(widget.value!.split('/')[1]), // month
               int.parse(widget.value!.split('/')[0]), // day
             ) : DateTime.now(),
-            firstDate: DateTime(1900),
-            lastDate: DateTime(2100),
+            firstDate: widget.startDate != null ? widget.startDate! : DateTime(1900),
+            lastDate: widget.endDate != null ? widget.endDate! : DateTime(2100),
             locale: const Locale('fr', 'FR'),
           ).then((value) {
             if (value != null) {
