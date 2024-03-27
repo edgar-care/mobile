@@ -2,6 +2,7 @@ import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_rdv_card.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_card_rdv_patient.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 
 class CustomListPatient extends StatefulWidget {
@@ -13,7 +14,16 @@ class CustomListPatient extends StatefulWidget {
 
 class _CustomListRdvPatientState extends State<CustomListPatient> {
   int pressed = 0;
-  List<Map<String, dynamic>> bAppointment = [];
+  List<Map<String, dynamic>> bAppointment = [{
+			"id": "66007e81f7fcbc4bca6f8df6",
+			"doctor_id": "65fa0ecad0a7067ac5593d29",
+			"id_patient": "65fa06393c449dfabded7f25",
+			"start_date": 1711940400,
+			"end_date": 1711942200,
+			"cancelation_reason": "",
+			"appointment_status": "WAITING_FOR_REVIEW",
+			"session_id": "test"
+		}];
   @override
     initState() {
     super.initState();

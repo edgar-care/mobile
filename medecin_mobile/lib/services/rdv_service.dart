@@ -18,10 +18,10 @@ Future<List<dynamic>> getAppointments() async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     return jsonDecode(response.body)['appointments'];
   }
-  if (response.statusCode != 200) {
+  if (response.statusCode != 201) {
     return [];
   }
   return [];
