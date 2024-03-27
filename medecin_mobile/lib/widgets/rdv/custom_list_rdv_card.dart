@@ -4,7 +4,6 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

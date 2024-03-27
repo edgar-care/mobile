@@ -1,4 +1,3 @@
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/doctor_card.dart';
 import 'package:flutter/material.dart';
 

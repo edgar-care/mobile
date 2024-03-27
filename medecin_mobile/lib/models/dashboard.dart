@@ -36,10 +36,10 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      const PatientPage(),
-      //Patient(setPages: updateSelectedIndex,),
+      Patient(setPages: updateSelectedIndex,),
       const Rdv(),
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      const PatientPage(),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

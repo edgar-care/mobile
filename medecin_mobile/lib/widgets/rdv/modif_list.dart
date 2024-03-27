@@ -1,6 +1,5 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';

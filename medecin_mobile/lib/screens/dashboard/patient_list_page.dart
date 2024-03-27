@@ -44,7 +44,7 @@ class _PatientPageState extends State<PatientPage> {
                     ),
                   ),
                   const SizedBox(width: 8,),
-                  Text(
+                  const Text(
                     'Nom Prénom',
                     style: TextStyle(
                       fontSize: 16,

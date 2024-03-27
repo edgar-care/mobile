@@ -1,4 +1,3 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 
