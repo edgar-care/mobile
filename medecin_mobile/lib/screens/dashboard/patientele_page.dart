@@ -13,7 +13,8 @@ import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class Patient extends StatefulWidget {
-  const Patient({super.key});
+  Function setPages;
+  Patient({super.key, required this.setPages});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -536,6 +537,7 @@ class _PatientState extends State<Patient> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomList(
+                            setPages: widget.setPages,
                             patients: patients,
                             deletePatientList: deletePatientList,
                             updatePatient: updatePatient,
