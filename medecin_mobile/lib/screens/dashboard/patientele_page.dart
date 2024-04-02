@@ -12,6 +12,7 @@ import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+// ignore: must_be_immutable
 class Patient extends StatefulWidget {
   Function setPages;
   Patient({super.key, required this.setPages});
