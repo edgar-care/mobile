@@ -125,6 +125,7 @@ class _NavbarState extends State<Navbar> {
                     direction: Axis.horizontal,
                     alignment: WrapAlignment.spaceBetween,
                     spacing: 26,
+                    runSpacing: 16,
                     children: [
                       CardNavbar(
                         text: 'Vos conversation',
@@ -132,6 +133,15 @@ class _NavbarState extends State<Navbar> {
                         index: 4,
                         icon: const Icon(
                           BootstrapIcons.chat,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      CardNavbar(
+                        text: 'Vos traitement',
+                        callback: widget.callback,
+                        index: 5,
+                        icon: const Icon(
+                          BootstrapIcons.file_text,
                           color: AppColors.white,
                         ),
                       ),
