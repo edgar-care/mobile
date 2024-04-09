@@ -1,6 +1,7 @@
 import 'package:edgar/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 // ignore: must_be_immutable
 class CustomDatePiker extends StatefulWidget {
@@ -13,6 +14,12 @@ class CustomDatePiker extends StatefulWidget {
 }
 
 class _CustomDatePikerState extends State<CustomDatePiker> {
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('fr', null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

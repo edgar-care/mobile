@@ -37,8 +37,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchData(BuildContext context) async {
     final Map<String, dynamic>? rdvs = await getAppointement(context);
     if (rdvs != null) {
+      if (rdvs['rdv'] == null) {
+        return;
+      }
       final uniqueRdv = <Map<String,
-          String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+          String>>{}; // Créer un Set pour stocker les rendez-vous uniques
       rdvs['rdv'].forEach((dynamic rdv) {
         final rendezVous = {
           'date': DateFormat('dd/MM/yyyy').format(
@@ -201,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                 GreenPlainButton(
                   text: 'Prendre un rendez-vous',
                   onPressed: () {
-                    Navigator.pushNamed(context, '/warning');
+                    Navigator.pushNamed(context, '/simulation/intro');
                   },
                 ),
                 const Text(
@@ -233,7 +236,6 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           }
-        }
-      );
+        });
   }
 }

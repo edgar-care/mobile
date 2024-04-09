@@ -183,3 +183,107 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
     );
   }
 }
+
+// ignore: must_be_immutable
+class CustomAutoComplete extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  final TextInputType keyboardType;
+  final Function(String) onValidate;
+  final List<String> suggestions; // Added for suggestions list
+
+  const CustomAutoComplete({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+    required this.onValidate,
+    required this.suggestions, // Added for suggestions list
+  });
+
+  @override
+  State<CustomAutoComplete> createState() => _CustomAutoCompleteState();
+}
+
+class _CustomAutoCompleteState extends State<CustomAutoComplete> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedContainer(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16.0), // Adjust padding as needed
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(
+                color: AppColors.blue500,
+                width: 2.0), // Adjust border color and width if desired
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Autocomplete<String>(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    return widget.suggestions.where((suggestion) => suggestion
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase()));
+                  },
+                  onSelected: (String value) {
+                    _controller.text = value;
+                    widget.onValidate(value);
+                  },
+                  fieldViewBuilder:
+                      (context, controller, focusNode, onFieldSubmitted) {
+                    return TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      keyboardType: widget.keyboardType,
+                      textInputAction: TextInputAction.search,
+                      style: const TextStyle(
+                        color: AppColors.grey950,
+                        fontFamily: 'Poppins',
+                        fontSize: 14.0,
+                        textBaseline: TextBaseline.ideographic,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: widget.label,
+                        border: InputBorder
+                            .none, // Remove border for seamless appearance
+                      ),
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Material(
+                      elevation: 4.0,
+                      child: ListView.separated(
+                        // Improved suggestion list presentation
+                        padding: EdgeInsets.zero, // Remove default padding
+                        itemCount: options.length,
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 0.5),
+                        itemBuilder: (context, index) => ListTile(
+                          title: Text(options.elementAt(
+                              index)), // Use elementAt to access elements
+                          onTap: () => onSelected(options.elementAt(
+                              index)), // Use elementAt to access elements
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              GestureDetector(
+                child: Icon(widget.icon, color: AppColors.grey950, size: 16.0),
+                onTap: () => widget.onValidate(_controller.text),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

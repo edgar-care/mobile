@@ -40,8 +40,10 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   Future<void> fetchData(BuildContext context) async {
     final Map<String, dynamic>? rdvs = await getAppointement(context);
     if (rdvs != null) {
-      final uniqueRdv = <Map<String,
-          String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+      final uniqueRdv = <Map<String, String>>{};
+      if (rdvs['rdv'] == null) {
+        return;
+      }
       rdvs['rdv'].forEach((dynamic rdv) {
         final rendezVous = {
           'id': rdv['id'] as String,

@@ -2,6 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CardTraitementDay extends StatefulWidget {
   bool isClickable;
   Map<String, dynamic> data;

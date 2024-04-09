@@ -107,15 +107,6 @@ class _FilePageState extends State<FilePage> {
 
     return Column(
       children: <Widget>[
-        Center(
-          child: Container(
-            padding: const EdgeInsets.only(top: 50),
-            width: 120,
-            child: Image.asset(
-                'assets/images/logo/full-width-colored-edgar-logo.png'),
-          ),
-        ),
-        const SizedBox(height: 24),
         Container(
           decoration: const BoxDecoration(
             color: AppColors.blue700,
@@ -518,7 +509,7 @@ class _FilePageState extends State<FilePage> {
                     ];
                   });
             }),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         FutureBuilder(
           future: fetchData(context),
           builder: (context, snapshot) {

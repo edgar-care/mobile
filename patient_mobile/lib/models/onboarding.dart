@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/auth.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/AddPatient/add_button.dart';
 import 'package:edgar/widget/buttons.dart';
@@ -11,16 +12,18 @@ import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:confetti/confetti.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-String prenom = "";
-String nom = "";
-String birth = "";
+String name = "";
+String lastname = "";
+String birthdate = "";
 String sexe = "";
-String size = "";
-String poids = "";
+String height = "";
+String weight = "";
+String primaryDoctorId = "";
 bool isHealth = false;
 
 class Onboarding extends StatefulWidget {
@@ -40,58 +43,6 @@ class _OnboardingState extends State<Onboarding> {
     {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
   ];
 
-  List<Map<String, dynamic>> traitments = [
-    {
-      "name": "Parasetamole",
-      "medicines": [
-        {
-          "period": ["MORNING"],
-          "day": ["TUESDAY"],
-          "quantity": 2
-        },
-        {
-          "period": ["NIGHT"],
-          "day": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"],
-          "quantity": 2
-        }
-      ],
-      "still_relevant": true
-    },
-    {
-      "name": "Ibuprofène",
-      "medicines": [
-        {
-          "period": ["MORNING"],
-          "day": ["TUESDAY"],
-          "quantity": 2
-        }
-      ],
-      "still_relevant": true
-    },
-    {
-      "name": "Aspirine",
-      "medicines": [
-        {
-          "period": ["MORNING"],
-          "day": ["TUESDAY"],
-          "quantity": 2
-        }
-      ],
-      "still_relevant": false
-    },
-  ];
-
-  void addNewTraitement(
-      String name, List<Map<String, dynamic>> medicines, bool stillRelevant) {
-    setState(() {
-      traitments.add({
-        "name": name,
-        "medicines": medicines,
-        "still_relevant": stillRelevant,
-      });
-    });
-  }
-
   _OnboardingState() {
     pages = [
       Onboarding1(
@@ -103,8 +54,6 @@ class _OnboardingState extends State<Onboarding> {
       ),
       Onboarding3(
         updateSelectedIndex: updateSelectedIndex,
-        traitments: traitments,
-        addNewTraitement: addNewTraitement,
       ),
       const OnboardingFinish(),
     ];
@@ -113,7 +62,6 @@ class _OnboardingState extends State<Onboarding> {
   void updateSelectedIndex(int index) {
     setState(() {
       _selectedIndex = index;
-      Logger().i(_selectedIndex);
     });
   }
 
@@ -187,9 +135,16 @@ class _Onboarding1State extends State<Onboarding1> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('fr', null);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height - 140,
       child: Padding(
         padding: const EdgeInsets.only(
           left: 24,
@@ -245,7 +200,7 @@ class _Onboarding1State extends State<Onboarding1> {
             CustomField(
               label: 'Prénom',
               action: TextInputAction.next,
-              onChanged: (value) => prenom = value,
+              onChanged: (value) => name = value,
               keyboardType: TextInputType.name,
             ),
             const SizedBox(height: 16),
@@ -260,7 +215,7 @@ class _Onboarding1State extends State<Onboarding1> {
             CustomField(
               label: 'Nom',
               action: TextInputAction.next,
-              onChanged: (value) => nom = value,
+              onChanged: (value) => lastname = value,
               keyboardType: TextInputType.name,
             ),
             const SizedBox(height: 16),
@@ -273,7 +228,7 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             const SizedBox(height: 8),
             CustomDatePiker(
-              onChanged: (value) => birth = value,
+              onChanged: (value) => birthdate = value,
             ),
             const SizedBox(height: 16),
             const Text(
@@ -337,7 +292,7 @@ class _Onboarding1State extends State<Onboarding1> {
                       CustomField(
                         label: 'Taille',
                         action: TextInputAction.next,
-                        onChanged: (value) => size = value,
+                        onChanged: (value) => height = value,
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -360,7 +315,7 @@ class _Onboarding1State extends State<Onboarding1> {
                       CustomField(
                         label: 'Poids',
                         action: TextInputAction.next,
-                        onChanged: (value) => poids = value,
+                        onChanged: (value) => weight = value,
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -408,13 +363,43 @@ class _Onboarding1State extends State<Onboarding1> {
                 );
               },
             ),
-            const SizedBox(height: 16),
+            Expanded(child: Container()),
             Buttons(
                 variant: Variante.primary,
                 size: SizeButton.sm,
                 msg: const Text("Continuer"),
-                onPressed: () {
-                  widget.updateSelectedIndex(1);
+                onPressed: () async {
+                  if (name != "" &&
+                      lastname != "" &&
+                      birthdate != "" &&
+                      height != "" &&
+                      weight != "") {
+                    Logger().i("lastname = $lastname");
+                    Logger().i("name = $name");
+                    Logger().i("birthdate = $birthdate");
+                    Logger().i("height = $height");
+                    Logger().i("weight = $weight");
+                    Logger().i("sexe = $sexe");
+                    int age = DateTime.now().year -
+                        int.parse(birthdate.split('/')[2]);
+                    int currentMonth = DateTime.now().month;
+                    int currentDay = DateTime.now().day;
+
+                    if (currentMonth < int.parse(birthdate.split('/')[1]) ||
+                        (currentMonth == int.parse(birthdate.split('/')[1]) &&
+                            currentDay < int.parse(birthdate.split('/')[0]))) {
+                      age--;
+                    }
+
+                    var response = Register(name, lastname, age, sexe,
+                        int.parse(height), int.parse(weight));
+                    response.then((value) {
+                      Logger().i(value);
+                      if (value == true) {
+                        widget.updateSelectedIndex(1);
+                      }
+                    });
+                  }
                 })
           ],
         ),
@@ -568,13 +553,11 @@ class _onboarding2State extends State<Onboarding2> {
 
 class Onboarding3 extends StatefulWidget {
   final Function(int) updateSelectedIndex;
-  final List<Map<String, dynamic>> traitments;
-  final Function addNewTraitement;
-  const Onboarding3(
-      {super.key,
-      required this.updateSelectedIndex,
-      required this.traitments,
-      required this.addNewTraitement});
+
+  const Onboarding3({
+    super.key,
+    required this.updateSelectedIndex,
+  });
 
   @override
   State<Onboarding3> createState() => _Onboarding3State();
@@ -586,6 +569,21 @@ class _Onboarding3State extends State<Onboarding3> {
   void updateData(int index) {
     setState(() {
       pageIndex.value = index;
+    });
+  }
+
+  List<Map<String, dynamic>> traitments = [];
+
+  void addNewTraitement(
+      String name, Map<String, dynamic> medicines, bool stillRelevant) {
+    setState(() {
+      traitments = List.from(traitments);
+      traitments.add({
+        "name": name,
+        "medicines": medicines["medecines"],
+        "still_relevant": stillRelevant,
+      });
+      Logger().i(traitments);
     });
   }
 
@@ -664,10 +662,8 @@ class _Onboarding3State extends State<Onboarding3> {
                               context,
                               pageIndex,
                               updateData,
-                              widget.addNewTraitement,
+                              addNewTraitement,
                             ),
-                            addMedicament(context, pageIndex, updateData,
-                                widget.addNewTraitement),
                           ];
                         });
                   });
@@ -691,16 +687,19 @@ class _Onboarding3State extends State<Onboarding3> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
-                          child: Expanded(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation(AppColors.blue700),
-                          strokeWidth: 2,
-                          backgroundColor: AppColors.white,
+                        child: Expanded(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation(AppColors.blue700),
+                            strokeWidth: 2,
+                            backgroundColor: AppColors.white,
+                          ),
                         ),
-                      ));
+                      );
                     } else if (snapshot.hasError) {
                       return Text('Erreur: ${snapshot.error}');
                     } else {
+                      Logger().i(traitments);
                       return Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Wrap(
@@ -708,44 +707,47 @@ class _Onboarding3State extends State<Onboarding3> {
                           spacing: 4,
                           runSpacing: 4,
                           children: [
-                            for (var i = 0; i < 3; i++)
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return IntrinsicWidth(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        WoltModalSheet.show<void>(
-                                            context: context,
-                                            pageIndexNotifier: pageIndex,
-                                            pageListBuilder:
-                                                (modalSheetContext) {
-                                              return [
-                                                infoTraitement(
-                                                  context,
-                                                  pageIndex,
-                                                  updateData,
-                                                  widget.traitments[i],
-                                                ),
-                                              ];
-                                            });
-                                      },
-                                      child: CardTraitementSmall(
-                                        name: widget.traitments[i]['name'],
-                                        isEnCours: widget.traitments[i]
-                                            ['still_relevant'],
-                                        onTap: () {
-                                          setState(() {
-                                            widget.traitments[i]
-                                                    ['still_relevant'] =
-                                                widget.traitments[i]
-                                                    ['still_relevant'];
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                            if (traitments.isNotEmpty)
+                              for (var i = 0; i < traitments.length; i++)
+                                if (i < 3)
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return IntrinsicWidth(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            WoltModalSheet.show<void>(
+                                              context: context,
+                                              pageIndexNotifier: pageIndex,
+                                              pageListBuilder:
+                                                  (modalSheetContext) {
+                                                return [
+                                                  infoTraitement(
+                                                    context,
+                                                    pageIndex,
+                                                    updateData,
+                                                    traitments[i],
+                                                  ),
+                                                ];
+                                              },
+                                            );
+                                          },
+                                          child: CardTraitementSmall(
+                                            name: traitments[i]['name'],
+                                            isEnCours: traitments[i]
+                                                ['still_relevant'],
+                                            onTap: () {
+                                              setState(() {
+                                                traitments[i]
+                                                        ['still_relevant'] =
+                                                    traitments[i]
+                                                        ['still_relevant'];
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ],
                         ),
                       );
@@ -759,6 +761,7 @@ class _Onboarding3State extends State<Onboarding3> {
                   size: SizeButton.sm,
                   msg: const Text("Valider"),
                   onPressed: () {
+                    postTraitement(traitments);
                     widget.updateSelectedIndex(3);
                   }),
               const SizedBox(height: 8),
@@ -983,28 +986,12 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 AddButton(
-                    onTap: (() {
-                      // setState(() {
-                      //   widget.traitement['still_relevant'] =
-                      //       !widget.traitement['still_relevant'];
-                      //   isHealth.value = !isHealth.value;
-                      //   Logger().i(widget.traitement['still_relevant']);
-                      //   Logger().i(isHealth.value);
-                      // });
-                    }),
+                    onTap: (() {}),
                     label: "Oui",
                     color: value == true ? AppColors.blue700 : AppColors.white),
                 const SizedBox(width: 8),
                 AddButton(
-                    onTap: (() {
-                      // setState(() {
-                      //   widget.traitement['still_relevant'] =
-                      //       !widget.traitement['still_relevant'];
-                      //   isHealth.value = !isHealth.value;
-                      //   Logger().i(widget.traitement['still_relevant']);
-                      //   Logger().i(isHealth.value);
-                      // });
-                    }),
+                    onTap: (() {}),
                     label: "Non",
                     color:
                         value == false ? AppColors.blue700 : AppColors.white),
@@ -1033,7 +1020,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                     return CardTraitementDay(
                       isClickable: false,
                       data: widget.traitement['medicines'][index],
-                      name: widget.traitement['name'],
+                      name: "Doliprane 500 mg",
                       onTap: () {},
                     );
                   },
@@ -1073,8 +1060,6 @@ WoltModalSheetPage addTraitement(
   );
 }
 
-List<Map<String, dynamic>> medicines = [];
-
 class BodyAddTraitement extends StatefulWidget {
   final ValueNotifier<int> pageIndex;
   final Function(int) updateData;
@@ -1095,10 +1080,27 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   String name = "";
   bool stillRelevant = false;
 
+  Map<String, dynamic> medicines = {"medecines": [], "name": "Parasetamole"};
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      medicines = {"medecines": [], "name": name};
+    });
+  }
+
+  void updateMedicament(Map<String, dynamic> medicament) {
+    setState(() {
+      medicines['medecines'].add(medicament);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
           Container(
@@ -1142,7 +1144,11 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               CustomField(
                 label: 'Rhume ',
                 action: TextInputAction.next,
-                onChanged: (value) => name = value,
+                onChanged: (value) {
+                  setState(() {
+                    name = value;
+                  });
+                },
                 keyboardType: TextInputType.name,
               ),
               const SizedBox(height: 16),
@@ -1204,6 +1210,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                               widget.pageIndex,
                               widget.updateData,
                               widget.addNewTraitement,
+                              updateMedicament,
                             ),
                           ];
                         });
@@ -1212,23 +1219,23 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               ),
               const SizedBox(height: 16),
               SizedBox(
-                height: widget.screenSize.height - 627,
+                height: widget.screenSize.height - 650,
                 child: Expanded(
                   child: ListView.builder(
-                    itemCount: medicines.length,
+                    itemCount: medicines['medecines'].length,
                     itemBuilder: (context, index) {
-                      if (medicines.isEmpty) {
+                      if (medicines['medecines'].isEmpty) {
                         return const SizedBox();
                       }
                       return Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: CardTraitementDay(
                           isClickable: false,
-                          data: medicines[index]['medecines'],
-                          name: name,
+                          data: medicines['medecines'][index],
+                          name: "Doliprane 500 mg",
                           onTap: () {
                             setState(() {
-                              medicines.removeAt(index);
+                              medicines['medecines'] = medicines['medecines'];
                             });
                           },
                         ),
@@ -1259,9 +1266,10 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 child: Buttons(
                     variant: Variante.validate,
                     size: SizeButton.sm,
-                    msg: const Text("Annuler"),
+                    msg: const Text("Ajouter"),
                     onPressed: () {
                       widget.addNewTraitement(name, medicines, stillRelevant);
+                      Navigator.pop(context);
                     }),
               ),
             ],
@@ -1277,6 +1285,7 @@ WoltModalSheetPage addMedicament(
   ValueNotifier<int> pageIndex,
   Function(int) updateData,
   Function addNewTraitement,
+  Function(Map<String, dynamic>) updateMedicaments,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
@@ -1284,17 +1293,22 @@ WoltModalSheetPage addMedicament(
     hasSabGradient: true,
     enableDrag: true,
     child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: const Padding(
-        padding: EdgeInsets.all(24),
-        child: BodyAddMedic(),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: BodyAddMedic(
+            updateData: updateData, updateMedicament: updateMedicaments),
       ),
     ),
   );
 }
 
+// ignore: must_be_immutable
 class BodyAddMedic extends StatefulWidget {
-  const BodyAddMedic({super.key});
+  Function(int) updateData;
+  Function(Map<String, dynamic>) updateMedicament;
+
+  BodyAddMedic(
+      {super.key, required this.updateData, required this.updateMedicament});
 
   @override
   State<BodyAddMedic> createState() => _BodyAddMedicState();
@@ -1302,15 +1316,35 @@ class BodyAddMedic extends StatefulWidget {
 
 class _BodyAddMedicState extends State<BodyAddMedic> {
   Map<String, dynamic> medicament = {
-    "name": "",
     "quantity": 0,
     "period": [],
     "day": [],
+    "medicine_id": "66116f1a5ee223d8f1b39c00"
   };
+
+  List<Map<String, dynamic>> medicaments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  List<String> nameMedic = [];
+
+  Future<void> fetchData() async {
+    medicaments = await getMedecines();
+    Logger().i(" medica = $medicaments");
+    for (var medicament in medicaments) {
+      nameMedic.add(medicament['name']);
+    }
+    Logger().i("medic name = $nameMedic");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1341,229 +1375,449 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
-        const Text(
-          'Nom du votre médicament',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        CustomFieldSearch(
-          label: 'Rechercher le nom du médicament ',
-          icon: BootstrapIcons.search,
-          keyboardType: TextInputType.name,
-          onValidate: (value) {
-            setState(() {
-              medicament['name'] = value;
-            });
-          },
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 32),
+            const Text(
+              'Nom du votre médicament',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            CustomAutoComplete(
+                label: 'Rechercher le nom du médicament ',
+                icon: BootstrapIcons.search,
+                keyboardType: TextInputType.name,
+                onValidate: (value) {
+                  setState(() {});
+                },
+                suggestions: nameMedic),
+            const SizedBox(height: 16),
+            const Text(
+              'Quantité de comprimés',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: 50,
+              child: CustomField(
+                label: '1',
+                action: TextInputAction.next,
+                onChanged: (value) {
+                  setState(() {
+                    medicament['quantity'] = int.parse(value);
+                  });
+                },
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Jour des prises des médicaments',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('MONDAY')) {
+                              medicament['day'].remove('MONDAY');
+                            } else {
+                              medicament['day'].add('MONDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('MONDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Lu',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('TUESDAY')) {
+                              medicament['day'].remove('TUESDAY');
+                            } else {
+                              medicament['day'].add('TUESDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('TUESDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Ma',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('WEDNESDAY')) {
+                              medicament['day'].remove('WEDNESDAY');
+                            } else {
+                              medicament['day'].add('WEDNESDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('WEDNESDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Me',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('THURSDAY')) {
+                              medicament['day'].remove('THURSDAY');
+                            } else {
+                              medicament['day'].add('THURSDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('THURSDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Je',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('FRIDAY')) {
+                              medicament['day'].remove('FRIDAY');
+                            } else {
+                              medicament['day'].add('FRIDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('FRIDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Ve',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('SATURDAY')) {
+                              medicament['day'].remove('SATURDAY');
+                            } else {
+                              medicament['day'].add('SATURDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('SATURDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Sa',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['day'].contains('SUNDAY')) {
+                              medicament['day'].remove('SUNDAY');
+                            } else {
+                              medicament['day'].add('SUNDAY');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['day'].contains('SUNDAY')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Di',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Période de prise de la journée',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['period'].contains('MORNING')) {
+                              medicament['period'].remove('MORNING');
+                            } else {
+                              medicament['period'].add('MORNING');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['period'].contains('MORNING')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Matin',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['period'].contains('AFTERNOON')) {
+                              medicament['period'].remove('AFTERNOON');
+                            } else {
+                              medicament['period'].add('AFTERNOON');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['period'].contains('AFTERNOON')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Midi',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['period'].contains('NIGHT')) {
+                              medicament['period'].remove('NIGHT');
+                            } else {
+                              medicament['period'].add('NIGHT');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['period'].contains('NIGHT')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Soir',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['period'].contains('EVERNING')) {
+                              medicament['period'].remove('EVERNING');
+                            } else {
+                              medicament['period'].add('EVERNING');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['period'].contains('EVERNING')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Nuit',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Quantité de comprimés',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Buttons(
+                  variant: Variante.secondary,
+                  size: SizeButton.sm,
+                  msg: const Text("Annuler"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Buttons(
+                  variant: Variante.validate,
+                  size: SizeButton.sm,
+                  msg: const Text("Ajouter"),
+                  onPressed: () {
+                    setState(() {
+                      widget.updateMedicament(medicament);
+                    });
+                    Navigator.pop(context);
+                  }),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: 50,
-          child: CustomField(
-            label: 'Quantité',
-            action: TextInputAction.next,
-            onChanged: (value) {
-              setState(() {
-                medicament['quantity'] = int.parse(value);
-              });
-            },
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Jour des prises des médicaments',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          child: Row(
-            children: [
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('MONDAY');
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('MONDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Lu',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('TUESDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('TUESDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Ma',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('WEDNESDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('WEDNESDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Me',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('THURSDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('THURSDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Je',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('FRIDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('FRIDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Ve',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('SATURDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('SATURDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Sa',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      medicament['day'].add('SUNDAY');
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('SUNDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Di',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-            ],
-          ),
-        )
       ],
     );
   }

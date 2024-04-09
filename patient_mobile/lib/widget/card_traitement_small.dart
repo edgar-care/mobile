@@ -38,6 +38,7 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
             'assets/images/utils/Union.svg',
             width: 16,
             height: 16,
+            // ignore: deprecated_member_use
             color: widget.isEnCours ? AppColors.blue700 : AppColors.grey300,
           ),
           const SizedBox(width: 8),
@@ -45,7 +46,7 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
             widget.name,
             style: const TextStyle(
               color: AppColors.black,
-              fontSize: 12,
+              fontSize: 12, 
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,

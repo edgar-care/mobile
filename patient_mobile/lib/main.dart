@@ -1,5 +1,6 @@
 import 'package:edgar/models/onBoarding.dart';
 import 'package:edgar/models/simulation_intro.dart';
+// import 'package:edgar/screens/simulation/appointement_page.dart';
 import 'package:edgar/screens/simulation/confirmation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,12 +12,15 @@ import 'package:edgar/screens/simulation/warning_page.dart';
 import 'package:edgar/screens/simulation/chat_page.dart';
 import 'package:edgar/models/dashboard.dart';
 import 'package:edgar/screens/dashboard/conversation_patient.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'screens/landingPage/annuaire_medecin.dart';
 import 'screens/landingPage/landing_page.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
+  initializeDateFormatting();
   runApp(const MyApp());
 }
 
@@ -28,6 +32,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'edgar',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: const [Locale('en'), Locale('fr')],
       theme: ThemeData(
           primarySwatch: Colors.blue,
           useMaterial3: true,
@@ -46,6 +55,7 @@ class MyApp extends StatelessWidget {
         '/dashboard/chat': (context) => const ConverstationPatient(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
+        // '/simulation/appointement': (context) => const AppointementPage(),
         '/onboarding': (context) => const Onboarding(),
       },
     );
