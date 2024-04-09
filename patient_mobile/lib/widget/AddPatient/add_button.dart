@@ -38,12 +38,12 @@ class _AddButtonState extends State<AddButton> {
       ),
       child: Text(widget.label,
           style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
               color: widget.color == AppColors.blue700
                   ? AppColors.white
-                  : AppColors.grey400)),
+                  : AppColors.blue700)),
     );
   }
 }
