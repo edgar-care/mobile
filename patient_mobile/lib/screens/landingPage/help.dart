@@ -176,6 +176,7 @@ class _ChildBody extends StatelessWidget {
             final response = await sendContactForm(mail, name, question);
             // ignore: use_build_context_synchronously
             showDialog(
+              // ignore: use_build_context_synchronously
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
