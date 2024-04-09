@@ -1,6 +1,6 @@
 import 'package:edgar/models/onBoarding.dart';
 import 'package:edgar/models/simulation_intro.dart';
-// import 'package:edgar/screens/simulation/appointement_page.dart';
+import 'package:edgar/screens/simulation/appointement_page.dart';
 import 'package:edgar/screens/simulation/confirmation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         '/dashboard/chat': (context) => const ConverstationPatient(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
-        // '/simulation/appointement': (context) => const AppointementPage(),
+        '/simulation/appointement': (context) => const AppointementPage(),
         '/onboarding': (context) => const Onboarding(),
       },
     );
