@@ -14,6 +14,10 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
       .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
+    if (jsonDecode(body)["document"] == null) {
+      return [];
+    }
+    Logger().i(jsonDecode(body));
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
     Logger().e(response.statusCode);
