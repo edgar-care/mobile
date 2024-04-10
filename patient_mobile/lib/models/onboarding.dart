@@ -14,7 +14,6 @@ import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 String name = "";
@@ -374,12 +373,6 @@ class _Onboarding1State extends State<Onboarding1> {
                       birthdate != "" &&
                       height != "" &&
                       weight != "") {
-                    Logger().i("lastname = $lastname");
-                    Logger().i("name = $name");
-                    Logger().i("birthdate = $birthdate");
-                    Logger().i("height = $height");
-                    Logger().i("weight = $weight");
-                    Logger().i("sexe = $sexe");
                     int age = DateTime.now().year -
                         int.parse(birthdate.split('/')[2]);
                     int currentMonth = DateTime.now().month;
@@ -394,7 +387,6 @@ class _Onboarding1State extends State<Onboarding1> {
                     var response = Register(name, lastname, age, sexe,
                         int.parse(height), int.parse(weight));
                     response.then((value) {
-                      Logger().i(value);
                       if (value == true) {
                         widget.updateSelectedIndex(1);
                       }
@@ -583,7 +575,6 @@ class _Onboarding3State extends State<Onboarding3> {
         "medicines": medicines["medecines"],
         "still_relevant": stillRelevant,
       });
-      Logger().i(traitments);
     });
   }
 
@@ -699,7 +690,6 @@ class _Onboarding3State extends State<Onboarding3> {
                     } else if (snapshot.hasError) {
                       return Text('Erreur: ${snapshot.error}');
                     } else {
-                      Logger().i(traitments);
                       return Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Wrap(
@@ -1334,11 +1324,9 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
 
   Future<void> fetchData() async {
     medicaments = await getMedecines();
-    Logger().i(" medica = $medicaments");
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
-    Logger().i("medic name = $nameMedic");
   }
 
   @override
