@@ -37,7 +37,7 @@ class _DiagnosticState extends State<Diagnostic> {
               children: [
                 Image.asset("assets/images/logo/edgar-high-five.png",height: 40,width: 37,),
                 const SizedBox(width: 16,),
-                const Text("Mes rendez-vous", style: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColors.white),
+                const Text("Mes Diagnostics", style: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColors.white),
                 ),
             ]),
           ),
@@ -51,7 +51,7 @@ class _DiagnosticState extends State<Diagnostic> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.297,
+                    width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
                       variant: selected.value == 0 ? Variante.primary : Variante.secondary,
                       size: SizeButton.sm,
@@ -65,7 +65,7 @@ class _DiagnosticState extends State<Diagnostic> {
                     width: 12,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.297,
+                    width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
                       variant: selected.value == 1 ? Variante.primary : Variante.secondary,
                       size: SizeButton.sm,
@@ -75,10 +75,13 @@ class _DiagnosticState extends State<Diagnostic> {
                       },
                     ),
                   ),
+                  const SizedBox(
+                    width: 12,
+                  ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.297,
+                    width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
-                      variant: selected.value == 0 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 2 ? Variante.primary : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Refusés'),
                       onPressed: () {

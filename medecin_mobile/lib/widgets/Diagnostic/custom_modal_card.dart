@@ -3,12 +3,11 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class CustomNavPatientCard extends StatelessWidget {
-  Function setPages;
+class CustomModalCard extends StatelessWidget {
+  Function ontap;
   String text;
   IconData? icon;
-  int pageTo;
-  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo});
+  CustomModalCard({super.key, required this.ontap ,required this.text, required this.icon,});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +19,7 @@ class CustomNavPatientCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          setPages(pageTo);
-          Navigator.pop(context);
+          ontap();
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
