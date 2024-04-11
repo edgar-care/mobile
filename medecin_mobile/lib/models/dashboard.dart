@@ -1,4 +1,5 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
+import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _DashBoardState extends State<DashBoard> {
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
       const Text('Dossier médical',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
       const Text('Rendez-vous',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Documents',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      const DocumentPage(),
       const Text('Messagerie',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];
     return Scaffold(

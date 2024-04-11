@@ -1,6 +1,8 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
 class DocumentPatientCard extends StatelessWidget {
@@ -9,8 +11,9 @@ class DocumentPatientCard extends StatelessWidget {
   final String name;
   DocumentPatientCard({super.key, required this.type, required this.date, required this.name});
   Color? color;
-  // ignore: non_constant_identifier_names
-  Switch(type) {
+
+  @override
+  Widget build(BuildContext context) {
     switch (type) {
       case 'XRAY':
         color = AppColors.green300;
@@ -24,13 +27,9 @@ class DocumentPatientCard extends StatelessWidget {
       default:
         color = AppColors.blue200;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.blue100,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppColors.blue200,
@@ -39,26 +38,64 @@ class DocumentPatientCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          //modal
+          WoltModalSheet.show(
+                context: context,
+                pageListBuilder: (BuildContext context) {
+                  return [
+                    modal(context, name, date)
+                  ];
+                },
+              );
         },
-        child: Row(
-          children: [
-            Container(
-              height: 20,
-              width: 10,
-              color: color,
-            ),
-            Column(
-              children: [
-                Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold)),
-                Text("Ajouté le $date", style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600), ),
-              ],
-            ),
-            const Spacer(),
-            const Icon(BootstrapIcons.chevron_right, size: 12,)
-          ],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
+          child: Row(
+            children: [
+              Container(
+                height: 35,
+                width: 4,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold)),
+                  Text("Ajouté le $date", style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600), ),
+                ],
+              ),
+              const Spacer(),
+              const Icon(BootstrapIcons.chevron_right, size: 17,)
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
+
+  SliverWoltModalSheetPage modal(BuildContext context, String name, String date){
+    return WoltModalSheetPage(
+      backgroundColor: AppColors.white,
+      hasTopBarLayer: false,
+      child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          child: Column(
+            children: [
+              Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
+              Text('Ajouté le $date', style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
+              const SizedBox(height: 12),
+              Container(height: 2,color: AppColors.blue200),
+              const SizedBox(height: 12),
+              Buttons(variant: Variante.primary,size: SizeButton.sm, msg: const Text('Télécharger le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),), onPressed: (){Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),), onPressed: (){Navigator.pop(context);},),
+            ]
+          ),
+        ),
+    );
+  }
+
 }
