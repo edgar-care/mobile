@@ -26,14 +26,14 @@ class CustomNavPatientCard extends StatelessWidget {
           Navigator.pop(context);
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.fromLTRB(16,8,10,8),
           child: Row(
             children:[
               Icon(icon, color: AppColors.blue950, size: 16,),
               const SizedBox(width: 16,),
-              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.bold),),
+              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
               const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 12,)
+              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 16, )
             ]
           ),
         ),

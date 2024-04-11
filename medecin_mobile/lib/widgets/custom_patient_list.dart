@@ -522,6 +522,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       size: SizeButton.sm,
                       msg: const Text('Annuler'),
                       onPressed: () {
+                        Navigator.pop(context);
                       },
                     ),
                   ),
