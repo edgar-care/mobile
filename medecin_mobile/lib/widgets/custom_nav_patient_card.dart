@@ -29,7 +29,7 @@ class CustomNavPatientCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16,8,10,8),
           child: Row(
             children:[
-              Icon(icon, color: AppColors.blue950, size: 16,),
+              Icon(icon, color: AppColors.blue950, size: 17,),
               const SizedBox(width: 16,),
               Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
               const Spacer(),
