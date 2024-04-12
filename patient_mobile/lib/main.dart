@@ -1,4 +1,4 @@
-import 'package:edgar/models/onBoarding.dart';
+import 'package:edgar/models/onboarding.dart';
 import 'package:edgar/models/simulation_intro.dart';
 // import 'package:edgar/screens/simulation/appointement_page.dart';
 import 'package:edgar/screens/simulation/confirmation_page.dart';
