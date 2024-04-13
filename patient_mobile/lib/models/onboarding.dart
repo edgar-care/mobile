@@ -870,7 +870,7 @@ class _OnboardingFinishState extends State<OnboardingFinish> {
                         size: SizeButton.sm,
                         msg: const Text("Commencer"),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/');
+                          Navigator.pushNamed(context, '/dashboard');
                         }),
                   ],
                 ),
