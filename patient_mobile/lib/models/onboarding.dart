@@ -572,7 +572,12 @@ class _Onboarding3State extends State<Onboarding3> {
       traitments = List.from(traitments);
       traitments.add({
         "name": name,
-        "medicines": medicines["medecines"],
+        "treatments": medicines["treatments"],
+        "still_relevant": stillRelevant,
+      });
+      postTraitement({
+        "name": name,
+        "treatments": medicines["treatments"],
         "still_relevant": stillRelevant,
       });
     });
@@ -751,7 +756,6 @@ class _Onboarding3State extends State<Onboarding3> {
                   size: SizeButton.sm,
                   msg: const Text("Valider"),
                   onPressed: () {
-                    postTraitement(traitments);
                     widget.updateSelectedIndex(3);
                   }),
               const SizedBox(height: 8),
@@ -1001,7 +1005,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
         const SizedBox(height: 8),
         Expanded(
           child: ListView.builder(
-            itemCount: widget.traitement['medicines'].length,
+            itemCount: widget.traitement['treatments'].length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -1009,7 +1013,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   builder: (context, constraints) {
                     return CardTraitementDay(
                       isClickable: false,
-                      data: widget.traitement['medicines'][index],
+                      data: widget.traitement['treatments'][index],
                       name: "Doliprane 500 mg",
                       onTap: () {},
                     );
