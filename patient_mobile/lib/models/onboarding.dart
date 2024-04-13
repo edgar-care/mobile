@@ -324,11 +324,12 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Votre état de santé',
+              'Avez-vous des antécédents médicaux ou sujets de santé ?',
               style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.left,
             ),
             const SizedBox(height: 8),
             ValueListenableBuilder<bool>(
