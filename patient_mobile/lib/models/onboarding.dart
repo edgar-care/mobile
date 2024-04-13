@@ -14,7 +14,6 @@ import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 String name = "";
@@ -325,11 +324,12 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Votre état de santé',
+              'Avez-vous des antécédents médicaux ou sujets de santé ?',
               style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.left,
             ),
             const SizedBox(height: 8),
             ValueListenableBuilder<bool>(
@@ -374,12 +374,6 @@ class _Onboarding1State extends State<Onboarding1> {
                       birthdate != "" &&
                       height != "" &&
                       weight != "") {
-                    Logger().i("lastname = $lastname");
-                    Logger().i("name = $name");
-                    Logger().i("birthdate = $birthdate");
-                    Logger().i("height = $height");
-                    Logger().i("weight = $weight");
-                    Logger().i("sexe = $sexe");
                     int age = DateTime.now().year -
                         int.parse(birthdate.split('/')[2]);
                     int currentMonth = DateTime.now().month;
@@ -394,7 +388,6 @@ class _Onboarding1State extends State<Onboarding1> {
                     var response = Register(name, lastname, age, sexe,
                         int.parse(height), int.parse(weight));
                     response.then((value) {
-                      Logger().i(value);
                       if (value == true) {
                         widget.updateSelectedIndex(1);
                       }
@@ -580,10 +573,14 @@ class _Onboarding3State extends State<Onboarding3> {
       traitments = List.from(traitments);
       traitments.add({
         "name": name,
-        "medicines": medicines["medecines"],
+        "treatments": medicines["treatments"],
         "still_relevant": stillRelevant,
       });
-      Logger().i(traitments);
+      postTraitement({
+        "name": name,
+        "treatments": medicines["treatments"],
+        "still_relevant": stillRelevant,
+      });
     });
   }
 
@@ -699,7 +696,6 @@ class _Onboarding3State extends State<Onboarding3> {
                     } else if (snapshot.hasError) {
                       return Text('Erreur: ${snapshot.error}');
                     } else {
-                      Logger().i(traitments);
                       return Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Wrap(
@@ -761,7 +757,6 @@ class _Onboarding3State extends State<Onboarding3> {
                   size: SizeButton.sm,
                   msg: const Text("Valider"),
                   onPressed: () {
-                    postTraitement(traitments);
                     widget.updateSelectedIndex(3);
                   }),
               const SizedBox(height: 8),
@@ -1011,7 +1006,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
         const SizedBox(height: 8),
         Expanded(
           child: ListView.builder(
-            itemCount: widget.traitement['medicines'].length,
+            itemCount: widget.traitement['treatments'].length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -1019,7 +1014,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   builder: (context, constraints) {
                     return CardTraitementDay(
                       isClickable: false,
-                      data: widget.traitement['medicines'][index],
+                      data: widget.traitement['treatments'][index],
                       name: "Doliprane 500 mg",
                       onTap: () {},
                     );
@@ -1334,11 +1329,9 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
 
   Future<void> fetchData() async {
     medicaments = await getMedecines();
-    Logger().i(" medica = $medicaments");
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
-    Logger().i("medic name = $nameMedic");
   }
 
   @override

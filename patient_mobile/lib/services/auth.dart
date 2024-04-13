@@ -67,7 +67,7 @@ Future<List<Map<String, dynamic>>> getMedecines() async {
   }
 }
 
-Future<bool> postTraitement(List<Map<String, dynamic>> traitement) async {
+Future<bool> postTraitement(Map<String, dynamic> traitement) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await dotenv.load();
   final token = prefs.getString("token");
