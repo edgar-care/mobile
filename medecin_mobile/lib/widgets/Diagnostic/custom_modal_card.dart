@@ -29,7 +29,7 @@ class CustomModalCard extends StatelessWidget {
               const SizedBox(width: 16,),
               Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.bold),),
               const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 12,)
+              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 15,)
             ]
           ),
         ),
