@@ -19,7 +19,8 @@ class CustomList extends StatefulWidget {
   final Function deletePatientList;
   final Function updatePatient;
   final Function setPages;
-  const CustomList({super.key, required this.patients, required this.deletePatientList, required this.updatePatient, required this.setPages});
+  final Function setId;
+  const CustomList({super.key, required this.patients, required this.deletePatientList, required this.updatePatient, required this.setPages, required this.setId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -49,7 +50,7 @@ class _CustomListState extends State<CustomList> {
                 context: context,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    patientNavigation(context, widget.patients[index], index, widget.setPages),
+                    patientNavigation(context, widget.patients[index], index, widget.setPages, widget.setId),
                   ];
                 },
               );
@@ -60,7 +61,7 @@ class _CustomListState extends State<CustomList> {
     );
   }
 
-  SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index, Function setPages){
+  SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index, Function setPages, Function setId) {
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -72,13 +73,13 @@ class _CustomListState extends State<CustomList> {
             children: [
               Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
               const SizedBox(height: 16),
-              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 4),
+              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 4, id: patient['id'], setId: setId),
               const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 5),
+              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 5, id: patient['id'], setId: setId),
               const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 6),
+              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 6, id: patient['id'], setId: setId),
               const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 7),
+              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 7, id: patient['id'], setId: setId),
               const SizedBox(height: 12),
               Container(height: 2,color: AppColors.blue200),
               const SizedBox(height: 12),

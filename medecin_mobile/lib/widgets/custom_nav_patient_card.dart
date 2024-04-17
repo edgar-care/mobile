@@ -1,7 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class CustomNavPatientCard extends StatelessWidget {
@@ -9,7 +8,9 @@ class CustomNavPatientCard extends StatelessWidget {
   String text;
   IconData? icon;
   int pageTo;
-  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo});
+  String id;
+  Function setId;
+  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo, required this.id, required this.setId});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class CustomNavPatientCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Logger().d('Page to: $pageTo');
+          setId(id);
           setPages(pageTo);
           Navigator.pop(context);
         },
