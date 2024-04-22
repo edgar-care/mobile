@@ -14,7 +14,9 @@ import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:edgar/widget/snackbar.dart';
 
 String name = "";
 String lastname = "";
@@ -23,7 +25,7 @@ String sexe = "";
 String height = "";
 String weight = "";
 String primaryDoctorId = "";
-bool isHealth = false;
+bool isHealths = false;
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -72,7 +74,7 @@ class _OnboardingState extends State<Onboarding> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
             decoration: const BoxDecoration(
               color: AppColors.blue700,
               borderRadius: BorderRadius.only(
@@ -83,8 +85,7 @@ class _OnboardingState extends State<Onboarding> {
             child: IntrinsicWidth(
               child: Row(
                 children: [
-                  Image.asset('assets/images/logo/edgar_basic.png',
-                      width: 64, height: 75),
+                  SvgPicture.asset("assets/images/logo/edgar_staying.svg"),
                   const SizedBox(width: 16),
                   const Expanded(
                     child: Text(
@@ -139,11 +140,12 @@ class _Onboarding1State extends State<Onboarding1> {
     initializeDateFormatting('fr', null);
   }
 
+  final DateTime today = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 140,
+      height: MediaQuery.of(context).size.height - 172,
       child: Padding(
         padding: const EdgeInsets.only(
           left: 24,
@@ -197,7 +199,7 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             const SizedBox(height: 8),
             CustomField(
-              label: 'Prénom',
+              label: 'Edgar',
               action: TextInputAction.next,
               onChanged: (value) => name = value,
               keyboardType: TextInputType.name,
@@ -212,7 +214,7 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             const SizedBox(height: 8),
             CustomField(
-              label: 'Nom',
+              label: "L'assistant numerique",
               action: TextInputAction.next,
               onChanged: (value) => lastname = value,
               keyboardType: TextInputType.name,
@@ -228,6 +230,8 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomDatePiker(
               onChanged: (value) => birthdate = value,
+              placeHolder: "26/09/2022",
+              lastDate: today,
             ),
             const SizedBox(height: 16),
             const Text(
@@ -243,30 +247,37 @@ class _Onboarding1State extends State<Onboarding1> {
               builder: (context, value, child) {
                 return Row(
                   children: [
-                    AddButton(
+                    AddButtonSpe(
                         onTap: () => updateSelection('Masculin'),
                         label: "Masculin",
-                        color: value == 'Masculin'
+                        background: value == 'Masculin'
                             ? AppColors.blue700
-                            : AppColors.white),
+                            : AppColors.white,
+                        color: value == "Masculin"
+                            ? AppColors.white
+                            : AppColors.grey400),
                     const SizedBox(
                       width: 16,
                     ),
-                    AddButton(
+                    AddButtonSpe(
                         onTap: () => updateSelection('Féminin'),
                         label: "Féminin",
+                        background: value == 'Féminin' ? AppColors.blue700 : AppColors.white,
                         color: value == "Féminin"
-                            ? AppColors.blue700
-                            : AppColors.white),
+                            ? AppColors.white
+                            : AppColors.grey400),
                     const SizedBox(
                       width: 16,
                     ),
-                    AddButton(
+                    AddButtonSpe(
                         onTap: () => updateSelection('Autre'),
                         label: "Autre",
-                        color: value == "Autre"
+                        background: value == 'Autre'
                             ? AppColors.blue700
-                            : AppColors.white),
+                            : AppColors.white,
+                        color: value == "Autre"
+                            ? AppColors.white
+                            : AppColors.grey400),
                   ],
                 );
               },
@@ -289,7 +300,7 @@ class _Onboarding1State extends State<Onboarding1> {
                       ),
                       const SizedBox(height: 8),
                       CustomField(
-                        label: 'Taille',
+                        label: '183cm',
                         action: TextInputAction.next,
                         onChanged: (value) => height = value,
                         keyboardType: TextInputType.number,
@@ -304,7 +315,7 @@ class _Onboarding1State extends State<Onboarding1> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Votre poids',
+                        'Votre poid',
                         style: TextStyle(
                             color: AppColors.black,
                             fontSize: 14,
@@ -312,10 +323,10 @@ class _Onboarding1State extends State<Onboarding1> {
                       ),
                       const SizedBox(height: 8),
                       CustomField(
-                        label: 'Poids',
+                        label: '75kg',
                         action: TextInputAction.next,
                         onChanged: (value) => weight = value,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.number ,
                       ),
                     ],
                   ),
@@ -366,7 +377,7 @@ class _Onboarding1State extends State<Onboarding1> {
             Expanded(child: Container()),
             Buttons(
                 variant: Variante.primary,
-                size: SizeButton.sm,
+                size: SizeButton.md,
                 msg: const Text("Continuer"),
                 onPressed: () async {
                   if (name != "" &&
@@ -374,26 +385,35 @@ class _Onboarding1State extends State<Onboarding1> {
                       birthdate != "" &&
                       height != "" &&
                       weight != "") {
-                    int age = DateTime.now().year -
-                        int.parse(birthdate.split('/')[2]);
-                    int currentMonth = DateTime.now().month;
-                    int currentDay = DateTime.now().day;
+                        int age =
+                      DateTime.now().year - int.parse(birthdate.split('/')[2]);
+                      int currentMonth = DateTime.now().month;
+                      int currentDay = DateTime.now().day;
 
-                    if (currentMonth < int.parse(birthdate.split('/')[1]) ||
-                        (currentMonth == int.parse(birthdate.split('/')[1]) &&
-                            currentDay < int.parse(birthdate.split('/')[0]))) {
-                      age--;
-                    }
-
-                    var response = Register(name, lastname, age, sexe,
-                        int.parse(height), int.parse(weight));
-                    response.then((value) {
-                      if (value == true) {
-                        widget.updateSelectedIndex(1);
+                      if (currentMonth < int.parse(birthdate.split('/')[1]) ||
+                          (currentMonth == int.parse(birthdate.split('/')[1]) &&
+                              currentDay < int.parse(birthdate.split('/')[0]))) {
+                        age--;
                       }
-                    });
+
+                      var response = Register(name, lastname, age, sexe,
+                          int.parse(height), int.parse(weight));
+                      response.then((value) async {
+                        if (value == true) {
+                          isHealths = isHealth.value;
+                          widget.updateSelectedIndex(1);
+                        }
+                      });
+                    }
+                  else {
+                    ErrorLoginSnackBar(
+                      context: context,
+                      message: "Completer tout les champs avant de valider",
+                    );
+                    Logger().i("Completer tout les champs avant");
                   }
-                })
+                },
+                )
           ],
         ),
       ),
@@ -413,13 +433,13 @@ class Onboarding2 extends StatefulWidget {
 
 // ignore: camel_case_types
 class _onboarding2State extends State<Onboarding2> {
+    int selectedDoctor = -1;
   @override
   Widget build(BuildContext context) {
     String nameFilter = "";
-
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 140,
+      height: MediaQuery.of(context).size.height - 172,
       child: Padding(
         padding: const EdgeInsets.only(
           left: 24,
@@ -510,7 +530,14 @@ class _onboarding2State extends State<Onboarding2> {
                               return CardDoctor(
                                 name: filteredDocteurs[index]['name'],
                                 address: filteredDocteurs[index]['address'],
-                                selected: false,
+                                selected: index == selectedDoctor ? true : false,
+                                onclick: () {
+                                  setState(() {
+                                    selectedDoctor = index;
+                                    Logger().i(index);
+                                    Logger().i(selectedDoctor);
+                                  });
+                                },
                               );
                             },
                           ),
@@ -524,15 +551,40 @@ class _onboarding2State extends State<Onboarding2> {
             const SizedBox(height: 16),
             Buttons(
                 variant: Variante.primary,
-                size: SizeButton.sm,
+                size: SizeButton.md,
                 msg: const Text("Continuer"),
-                onPressed: () {
-                  widget.updateSelectedIndex(2);
+                onPressed: () async {
+                  Logger().i(isHealths);
+                  if (selectedDoctor != -1) {
+                    if (isHealths == true) {
+                      widget.updateSelectedIndex(2);
+                    }
+                    else {
+                      List<String> parts = birthdate.split('/');
+                      String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
+                        final birth = DateTime.parse(americanDate);
+                        final integerDate = birth.millisecondsSinceEpoch;
+                        final Map<String, Object> body = {
+                          "Name": name,
+                          "FirstName": lastname,
+                          "Birthday": integerDate,
+                          "Sex": sexe,
+                          "Weight": int.parse(weight),
+                          "Height": int.parse(height),
+                          "Primary_doctor_id": "edgar",
+                          "Medical_antecedents": [],
+                        };
+
+                              // ignore: unused_local_variable
+                      bool medicalinfo = await postMedicalInfo(body);
+                      widget.updateSelectedIndex(3);
+                    }
+                  }
                 }),
             const SizedBox(height: 8),
             Buttons(
                 variant: Variante.secondary,
-                size: SizeButton.sm,
+                size: SizeButton.md,
                 msg: const Text("Précédent"),
                 onPressed: () {
                   widget.updateSelectedIndex(0);
@@ -568,19 +620,14 @@ class _Onboarding3State extends State<Onboarding3> {
   List<Map<String, dynamic>> traitments = [];
 
   void addNewTraitement(
-      String name, Map<String, dynamic> medicines, bool stillRelevant) {
+      String name, Map<String, dynamic> medicines, bool stillRelevant) async {
     setState(() {
-      traitments = List.from(traitments);
       traitments.add({
-        "name": name,
+        "Name": name,
         "treatments": medicines["treatments"],
-        "still_relevant": stillRelevant,
+        "Still_relevant": stillRelevant,
       });
-      postTraitement({
-        "name": name,
-        "treatments": medicines["treatments"],
-        "still_relevant": stillRelevant,
-      });
+      Logger().i(traitments);
     });
   }
 
@@ -588,7 +635,7 @@ class _Onboarding3State extends State<Onboarding3> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 140,
+      height: MediaQuery.of(context).size.height - 172,
       child: Padding(
           padding: const EdgeInsets.only(
             left: 24,
@@ -728,15 +775,15 @@ class _Onboarding3State extends State<Onboarding3> {
                                             );
                                           },
                                           child: CardTraitementSmall(
-                                            name: traitments[i]['name'],
+                                            name: traitments[i]['Name'],
                                             isEnCours: traitments[i]
-                                                ['still_relevant'],
+                                                ['Still_relevant'],
                                             onTap: () {
                                               setState(() {
                                                 traitments[i]
-                                                        ['still_relevant'] =
+                                                        ['Still_relevant'] =
                                                     traitments[i]
-                                                        ['still_relevant'];
+                                                        ['Still_relevant'];
                                               });
                                             },
                                           ),
@@ -754,15 +801,34 @@ class _Onboarding3State extends State<Onboarding3> {
               const SizedBox(height: 16),
               Buttons(
                   variant: Variante.validate,
-                  size: SizeButton.sm,
+                  size: SizeButton.md,
                   msg: const Text("Valider"),
-                  onPressed: () {
+                  onPressed: () async {
+
+                      List<String> parts = birthdate.split('/');
+                    String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
+                      final birth = DateTime.parse(americanDate);
+                      final integerDate = birth.millisecondsSinceEpoch;
+
+                      // ignore: unused_local_variable
+                      final Map<String, Object> body = {
+                        "Name": name,
+                        "FirstName": lastname,
+                        "Birthday": integerDate,
+                        "Sex": sexe,
+                        "Weight": int.parse(weight),
+                        "Height": int.parse(height),
+                        "Primary_doctor_id": "edgar",
+                        "Medical_antecedents": traitments,
+                      };
+
+
                     widget.updateSelectedIndex(3);
                   }),
               const SizedBox(height: 8),
               Buttons(
                   variant: Variante.secondary,
-                  size: SizeButton.sm,
+                  size: SizeButton.md,
                   msg: const Text("Précédent"),
                   onPressed: () {
                     widget.updateSelectedIndex(1);
@@ -802,7 +868,7 @@ class _OnboardingFinishState extends State<OnboardingFinish> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 140,
+      height: MediaQuery.of(context).size.height - 172,
       child: Padding(
           padding: const EdgeInsets.only(
             left: 24,
@@ -867,7 +933,7 @@ class _OnboardingFinishState extends State<OnboardingFinish> {
                     const SizedBox(height: 16),
                     Buttons(
                         variant: Variante.primary,
-                        size: SizeButton.sm,
+                        size: SizeButton.md,
                         msg: const Text("Commencer"),
                         onPressed: () {
                           Navigator.pushNamed(context, '/dashboard');
@@ -925,8 +991,9 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<bool> isHealth =
-        ValueNotifier(widget.traitement['still_relevant']);
+        ValueNotifier(widget.traitement['Still_relevant']);
 
+    Logger().i(widget.traitement);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -948,13 +1015,13 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   width: 16,
                   height: 16,
                   // ignore: deprecated_member_use
-                  color: widget.traitement['still_relevant']
+                  color: widget.traitement['Still_relevant']
                       ? AppColors.blue700
                       : AppColors.grey300,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  widget.traitement['name'],
+                  widget.traitement['Name'],
                   style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14,
@@ -1075,19 +1142,19 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   String name = "";
   bool stillRelevant = false;
 
-  Map<String, dynamic> medicines = {"medecines": [], "name": "Parasetamole"};
+  Map<String, dynamic> medicines = {"treatments": [], "name": "Parasetamole"};
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      medicines = {"medecines": [], "name": name};
+      medicines = {"treatments": [], "name": name};
     });
   }
 
   void updateMedicament(Map<String, dynamic> medicament) {
     setState(() {
-      medicines['medecines'].add(medicament);
+      medicines['treatments'].add(medicament);
     });
   }
 
@@ -1217,20 +1284,20 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 height: widget.screenSize.height - 650,
                 child: Expanded(
                   child: ListView.builder(
-                    itemCount: medicines['medecines'].length,
+                    itemCount: medicines['treatments'].length,
                     itemBuilder: (context, index) {
-                      if (medicines['medecines'].isEmpty) {
+                      if (medicines['treatments'].isEmpty) {
                         return const SizedBox();
                       }
                       return Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: CardTraitementDay(
                           isClickable: false,
-                          data: medicines['medecines'][index],
+                          data: medicines['treatments'][index],
                           name: "Doliprane 500 mg",
                           onTap: () {
                             setState(() {
-                              medicines['medecines'] = medicines['medecines'];
+                              medicines['treatments'] = medicines['treatments'];
                             });
                           },
                         ),
@@ -1251,7 +1318,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 child: Buttons(
                     variant: Variante.secondary,
                     size: SizeButton.sm,
-                    msg: const Text("Anuller"),
+                    msg: const Text("Annuler"),
                     onPressed: () {
                       Navigator.pop(context);
                     }),
@@ -1692,22 +1759,52 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                     child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (medicament['period'].contains('AFTERNOON')) {
-                              medicament['period'].remove('AFTERNOON');
+                            if (medicament['period'].contains('NOON')) {
+                              medicament['period'].remove('NOON');
                             } else {
-                              medicament['period'].add('AFTERNOON');
+                              medicament['period'].add('NOON');
                             }
                           });
                         },
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: medicament['period'].contains('AFTERNOON')
+                            color: medicament['period'].contains('NOON')
                                 ? AppColors.blue700
                                 : AppColors.grey300,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text('Midi',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        )),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (medicament['period'].contains('EVENING')) {
+                              medicament['period'].remove('EVENING');
+                            } else {
+                              medicament['period'].add('EVENING');
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: medicament['period'].contains('EVENING')
+                                ? AppColors.blue700
+                                : AppColors.grey300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('Soir',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: AppColors.white,
@@ -1733,36 +1830,6 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: medicament['period'].contains('NIGHT')
-                                ? AppColors.blue700
-                                : AppColors.grey300,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text('Soir',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              )),
-                        )),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (medicament['period'].contains('EVERNING')) {
-                              medicament['period'].remove('EVERNING');
-                            } else {
-                              medicament['period'].add('EVERNING');
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: medicament['period'].contains('EVERNING')
                                 ? AppColors.blue700
                                 : AppColors.grey300,
                             borderRadius: BorderRadius.circular(4),

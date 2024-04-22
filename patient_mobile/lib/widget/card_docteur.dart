@@ -7,11 +7,13 @@ class CardDoctor extends StatefulWidget {
   bool selected;
   final String name;
   final String address;
+  Function()? onclick;
   CardDoctor(
       {super.key,
       required this.name,
       required this.address,
-      required this.selected});
+      required this.selected,
+      required this.onclick,});
 
   @override
   State<CardDoctor> createState() => _CardDoctorState();
@@ -21,11 +23,7 @@ class _CardDoctorState extends State<CardDoctor> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          widget.selected = !widget.selected;
-        });
-      },
+      onTap: widget.onclick,
       child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
