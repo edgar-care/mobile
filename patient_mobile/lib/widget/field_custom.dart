@@ -51,9 +51,7 @@ class _CustomFieldState extends State<CustomField> {
               Expanded(
                 child: TextFormField(
                   obscureText: widget.isPassword && !_isPasswordVisible,
-                  keyboardType: _isPasswordVisible
-                      ? TextInputType.text
-                      : TextInputType.emailAddress,
+                  keyboardType: widget.keyboardType,
                   textInputAction: widget.action,
                   initialValue: widget.value,
                   style: const TextStyle(

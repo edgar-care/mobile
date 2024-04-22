@@ -36,7 +36,7 @@ Future<bool> Register(String name, String lastName, int age, String sex,
   }
 }
 
-Future<List<Map<String, dynamic>>> getTraitement() async {
+Future<Map<String, dynamic>> getTraitement() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await dotenv.load();
   final token = prefs.getString("token");
@@ -47,9 +47,9 @@ Future<List<Map<String, dynamic>>> getTraitement() async {
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    return List<Map<String, dynamic>>.from(jsonDecode(body)["treatments"]);
+    return Map<String, dynamic>.from(jsonDecode(body));
   } else {
-    return [];
+    return {};
   }
 }
 
@@ -72,12 +72,34 @@ Future<bool> postTraitement(Map<String, dynamic> traitement) async {
   await dotenv.load();
   final token = prefs.getString("token");
   final url = '${dotenv.env['URL']}dashboard/treatment';
+  Logger().i(traitement);
   final response = await http.post(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
     body: jsonEncode(traitement),
   );
-  if (response.statusCode == 200) {
+  Logger().i(response.body);
+  Logger().i(response.statusCode);
+  if (response.statusCode == 201) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
+  await dotenv.load();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
+  Logger().i(traitement);
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+    body: jsonEncode(traitement),
+  );
+  Logger().i(response.body);
+  if (response.statusCode == 201) {
     return true;
   } else {
     return false;

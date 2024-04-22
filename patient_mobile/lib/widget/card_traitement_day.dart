@@ -67,7 +67,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
                       child: const Icon(
                         BootstrapIcons.x,
                         color: AppColors.black,
-                        size: 16,
+                        size: 24,
                       ),
                     )
                   : Container()
@@ -272,7 +272,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      color: widget.data["period"].contains("LUNCH")
+                      color: widget.data["period"].contains("NOON")
                           ? AppColors.blue700
                           : AppColors.grey300,
                     ),
