@@ -7,7 +7,7 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/services/getResponseConversation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -28,10 +28,13 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> getSessionId() async {
     await dotenv.load();
     final url = '${dotenv.env['URL']}diagnostic/initiate';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     final response = await http.post(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
     );
     setState(() {
@@ -48,14 +51,10 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> parseUserInput(String userInput) async {
     final response = await getResponseMessage(context, userInput, sessionId);
-    Logger().d(response);
     final Map<String, dynamic> jsonData = json.decode(response.toString());
 
     final question = jsonData['question'];
-    Logger().d(jsonData['done']);
     bool done = jsonData['done'] as bool;
-    Logger().d(done);
-    Logger().d(question.toString());
     if (done) {
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/simulation/confirmation');
@@ -76,69 +75,61 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blue200,
+      backgroundColor: AppColors.white,
       body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: AppColors.white,
-            ),
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    reverse: false, // Reverse the order of the messages
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final item = messages[index][0];
-                      final isSender = messages[index][1];
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  reverse: false, // Reverse the order of the messages
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final item = messages[index][0];
+                    final isSender = messages[index][1];
 
-                      Widget content;
-                      if (item is String) {
-                        content = Text(
-                          item,
-                          style: TextStyle(
-                            color:
-                                isSender ? AppColors.grey700 : AppColors.black,
-                            fontSize: 12,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        );
-                      } else if (item is Widget) {
-                        content = item;
-                      } else {
-                        content = const Text('Unsupported item type');
-                      }
-
-                      return ListTile(
-                        title: Align(
-                          alignment: isSender
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: content,
+                    Widget content;
+                    if (item is String) {
+                      content = Text(
+                        item,
+                        style: TextStyle(
+                          color: isSender ? AppColors.grey700 : AppColors.black,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
                         ),
                       );
-                    },
-                  ),
-                ),
-                CustomFieldSearch(
-                  onValidate: (value) {
-                    if (value.isEmpty) {
-                      return;
+                    } else if (item is Widget) {
+                      content = item;
+                    } else {
+                      content = const Text('Unsupported item type');
                     }
-                    sendMessage(true, value);
-                    parseUserInput(value);
+
+                    return ListTile(
+                      title: Align(
+                        alignment: isSender
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: content,
+                      ),
+                    );
                   },
-                  label: 'Votre réponse',
-                  icon: BootstrapIcons.send_fill,
-                  keyboardType: TextInputType.text,
                 ),
-              ],
-            )),
-      ),
+              ),
+              CustomFieldSearch(
+                onValidate: (value) {
+                  if (value.isEmpty) {
+                    return;
+                  }
+                  sendMessage(true, value);
+                  parseUserInput(value);
+                },
+                label: 'Ecriver votre message ici...',
+                icon: BootstrapIcons.send_fill,
+                keyboardType: TextInputType.text,
+              ),
+            ],
+          )),
     );
   }
 }

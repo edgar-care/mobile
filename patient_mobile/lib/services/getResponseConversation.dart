@@ -39,7 +39,6 @@ Future<Object> getResponseMessage(
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    Logger().d(body);
     return body;
   } else {
     Logger().e(response.statusCode);
