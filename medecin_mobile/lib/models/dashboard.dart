@@ -53,7 +53,7 @@ class _DashBoardState extends State<DashBoard> {
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
       Text('Dossier médical: ${getId()}',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
       Text('Rendez-vous: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const DocumentPage(),
+      DocumentPage(id: _id, setPages: updateSelectedIndex, setId: updateId,),
       Text('Messagerie: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];
     return Scaffold(

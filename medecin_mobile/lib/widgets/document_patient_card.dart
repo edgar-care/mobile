@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
@@ -9,7 +12,8 @@ class DocumentPatientCard extends StatelessWidget {
   final String type;
   final String date;
   final String name;
-  DocumentPatientCard({super.key, required this.type, required this.date, required this.name});
+  final String url;
+  DocumentPatientCard({super.key, required this.type, required this.date, required this.name, required this.url});
   Color? color;
 
   @override
@@ -42,7 +46,7 @@ class DocumentPatientCard extends StatelessWidget {
                 context: context,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    modal(context, name, date)
+                    modal(context, name, date, url)
                   ];
                 },
               );
@@ -60,13 +64,7 @@ class DocumentPatientCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold)),
-                  Text("Ajouté le $date", style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600), ),
-                ],
-              ),
+              Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold)),
               const Spacer(),
               const Icon(BootstrapIcons.chevron_right, size: 17,)
             ],
@@ -76,7 +74,14 @@ class DocumentPatientCard extends StatelessWidget {
     );
   }
 
-  SliverWoltModalSheetPage modal(BuildContext context, String name, String date){
+  Future<File> downloadFile(String url, String savePath) async {
+  var response = await http.get(Uri.parse(url));
+  var file = File(savePath);
+  await file.writeAsBytes(response.bodyBytes);
+  return file;
+}
+
+  SliverWoltModalSheetPage modal(BuildContext context, String name, String date, String url){
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -85,11 +90,15 @@ class DocumentPatientCard extends StatelessWidget {
           child: Column(
             children: [
               Text(name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
-              Text('Ajouté le $date', style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
               const SizedBox(height: 12),
               Container(height: 2,color: AppColors.blue200),
               const SizedBox(height: 12),
-              Buttons(variant: Variante.primary,size: SizeButton.sm, msg: const Text('Télécharger le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),), onPressed: (){Navigator.pop(context);}),
+              Buttons(variant: Variante.primary,size: SizeButton.sm, msg: const Text('Télécharger le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),),
+              onPressed: (){FileDownloader.downloadFile(
+                  url: url,
+                  name: name,
+                  notificationType: NotificationType.all,
+                );}),
               const SizedBox(height: 4),
               Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),), onPressed: (){Navigator.pop(context);},),
             ]
