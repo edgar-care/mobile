@@ -73,7 +73,7 @@ class Warnig extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -203,7 +203,7 @@ class Warning2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -333,7 +333,7 @@ class Warning3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -463,7 +463,7 @@ class Warning4 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -593,7 +593,7 @@ class Warning5 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
