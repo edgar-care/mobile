@@ -1,4 +1,3 @@
-import 'package:edgar/screens/dashboard/traitement_page.dart';
 import 'package:edgar/widget/custom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
@@ -30,7 +29,6 @@ class _DashBoardPageState extends State<DashBoardPage>
     const GestionRendezVous(),
     const InformationPersonnel(),
     const ChatPage(),
-    const TraitmentPage(),
   ];
 
   void updateSelectedIndex(int index) {
