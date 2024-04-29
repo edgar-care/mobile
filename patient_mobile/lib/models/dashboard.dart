@@ -42,22 +42,16 @@ class _DashBoardPageState extends State<DashBoardPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Stack(
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 600),
-                  child: pages[_selectedIndex],
-                  ),
-              ],
-            )),
-      ),
-      bottomNavigationBar: Navbar(
-        callback: updateSelectedIndex,
-        getSelected: getSelectedIndex,
-      )
-    );
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: pages[_selectedIndex],
+          ),
+        ),
+        bottomNavigationBar: Navbar(
+          callback: updateSelectedIndex,
+          getSelected: getSelectedIndex,
+        ));
   }
 }
