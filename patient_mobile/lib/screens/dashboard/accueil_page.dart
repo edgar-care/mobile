@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchData(context);
+    // fetchData(context);
   }
 
   Map<String, Object>? infoMedical = {};
@@ -241,7 +241,6 @@ class _HomePageState extends State<HomePage> {
               ],
             );
           }
-        }
-      );
+        });
   }
 }
