@@ -565,6 +565,14 @@ class _onboarding2State extends State<Onboarding2> {
                     // ignore: unused_local_variable
                     var response = await Register(name, lastname, age, sexe,
                         int.parse(height), int.parse(weight));
+                    if (response) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SuccessLoginSnackBar(
+                              message: "Création de l'espace patient réussie",
+                              // ignore: use_build_context_synchronously
+                              context: context));
+                    }
                     if (isHealths == true) {
                       widget.updateSelectedIndex(2);
                     } else {
@@ -585,6 +593,15 @@ class _onboarding2State extends State<Onboarding2> {
 
                       // ignore: unused_local_variable
                       bool medicalinfo = await postMedicalInfo(body);
+                      if (!medicalinfo) {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            ErrorLoginSnackBar(
+                                message:
+                                    "Erreur lors de l'ajout des informations",
+                                // ignore: use_build_context_synchronously
+                                context: context));
+                      }
                       widget.updateSelectedIndex(3);
                     }
                   }
