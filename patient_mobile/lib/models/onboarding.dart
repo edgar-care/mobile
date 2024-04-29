@@ -431,6 +431,13 @@ class Onboarding2 extends StatefulWidget {
 // ignore: camel_case_types
 class _onboarding2State extends State<Onboarding2> {
   int selectedDoctor = -1;
+
+  final List<Map<String, dynamic>> docteurs = [
+    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
+    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
+    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     String nameFilter = "";
@@ -492,9 +499,7 @@ class _onboarding2State extends State<Onboarding2> {
               },
             ),
             FutureBuilder(
-              future: Future.delayed(const Duration(seconds: 0), () {
-                return widget.docteurs;
-              }),
+              future: Future.delayed(const Duration(seconds: 1), () {}),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -508,7 +513,7 @@ class _onboarding2State extends State<Onboarding2> {
                 } else if (snapshot.hasError) {
                   return Text('Erreur: ${snapshot.error}');
                 } else {
-                  var filteredDocteurs = widget.docteurs
+                  var filteredDocteurs = docteurs
                       .where((element) => element['name']
                           .toString()
                           .toLowerCase()
