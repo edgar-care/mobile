@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/auth.dart';
 import 'package:edgar/styles/colors.dart';
@@ -14,7 +12,6 @@ import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar/widget/snackbar.dart';
 
@@ -43,6 +40,19 @@ class _OnboardingState extends State<Onboarding> {
     {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
     {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    name = "";
+    lastname = "";
+    birthdate = "";
+    sexe = "";
+    height = "";
+    weight = "";
+    primaryDoctorId = "";
+    isHealths = false;
+  }
 
   _OnboardingState() {
     pages = [
@@ -131,6 +141,7 @@ class _Onboarding1State extends State<Onboarding1> {
   ) {
     setState(() {
       selected.value = value;
+      birthdate = birthdate;
     });
   }
 
@@ -200,6 +211,7 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomField(
               label: 'Edgar',
+              value: name,
               action: TextInputAction.next,
               onChanged: (value) => name = value,
               keyboardType: TextInputType.name,
@@ -215,6 +227,7 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomField(
               label: "L'assistant numerique",
+              value: lastname,
               action: TextInputAction.next,
               onChanged: (value) => lastname = value,
               keyboardType: TextInputType.name,
@@ -230,6 +243,7 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomDatePiker(
               onChanged: (value) => birthdate = value,
+              value: birthdate != "" ? birthdate : null,
               placeHolder: "26/09/2022",
               lastDate: today,
             ),
@@ -262,7 +276,9 @@ class _Onboarding1State extends State<Onboarding1> {
                     AddButtonSpe(
                         onTap: () => updateSelection('Féminin'),
                         label: "Féminin",
-                        background: value == 'Féminin' ? AppColors.blue700 : AppColors.white,
+                        background: value == 'Féminin'
+                            ? AppColors.blue700
+                            : AppColors.white,
                         color: value == "Féminin"
                             ? AppColors.white
                             : AppColors.grey400),
@@ -302,6 +318,7 @@ class _Onboarding1State extends State<Onboarding1> {
                       CustomField(
                         label: '183cm',
                         action: TextInputAction.next,
+                        value: height,
                         onChanged: (value) => height = value,
                         keyboardType: TextInputType.number,
                       ),
@@ -315,7 +332,7 @@ class _Onboarding1State extends State<Onboarding1> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Votre poid',
+                        'Votre poids',
                         style: TextStyle(
                             color: AppColors.black,
                             fontSize: 14,
@@ -324,9 +341,10 @@ class _Onboarding1State extends State<Onboarding1> {
                       const SizedBox(height: 8),
                       CustomField(
                         label: '75kg',
+                        value: weight,
                         action: TextInputAction.next,
                         onChanged: (value) => weight = value,
-                        keyboardType: TextInputType.number ,
+                        keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
@@ -340,7 +358,7 @@ class _Onboarding1State extends State<Onboarding1> {
                   color: AppColors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.left,
+              textAlign: TextAlign.left,
             ),
             const SizedBox(height: 8),
             ValueListenableBuilder<bool>(
@@ -355,7 +373,7 @@ class _Onboarding1State extends State<Onboarding1> {
                             isHealth.value = true;
                           });
                         }),
-                        label: "oui",
+                        label: "Oui",
                         color: value == true
                             ? AppColors.blue700
                             : AppColors.white),
@@ -366,7 +384,7 @@ class _Onboarding1State extends State<Onboarding1> {
                             isHealth.value = false;
                           });
                         }),
-                        label: "non",
+                        label: "Non",
                         color: value == false
                             ? AppColors.blue700
                             : AppColors.white),
@@ -376,44 +394,23 @@ class _Onboarding1State extends State<Onboarding1> {
             ),
             Expanded(child: Container()),
             Buttons(
-                variant: Variante.primary,
-                size: SizeButton.md,
-                msg: const Text("Continuer"),
-                onPressed: () async {
-                  if (name != "" &&
-                      lastname != "" &&
-                      birthdate != "" &&
-                      height != "" &&
-                      weight != "") {
-                        int age =
-                      DateTime.now().year - int.parse(birthdate.split('/')[2]);
-                      int currentMonth = DateTime.now().month;
-                      int currentDay = DateTime.now().day;
-
-                      if (currentMonth < int.parse(birthdate.split('/')[1]) ||
-                          (currentMonth == int.parse(birthdate.split('/')[1]) &&
-                              currentDay < int.parse(birthdate.split('/')[0]))) {
-                        age--;
-                      }
-
-                      var response = Register(name, lastname, age, sexe,
-                          int.parse(height), int.parse(weight));
-                      response.then((value) async {
-                        if (value == true) {
-                          isHealths = isHealth.value;
-                          widget.updateSelectedIndex(1);
-                        }
-                      });
-                    }
-                  else {
-                    ErrorLoginSnackBar(
-                      context: context,
-                      message: "Completer tout les champs avant de valider",
-                    );
-                    Logger().i("Completer tout les champs avant");
-                  }
-                },
-                )
+              variant: Variante.primary,
+              size: SizeButton.md,
+              msg: const Text("Continuer"),
+              onPressed: () async {
+                if (name != "" &&
+                    lastname != "" &&
+                    birthdate != "" &&
+                    height != "" &&
+                    weight != "") {
+                  isHealths = isHealth.value;
+                  widget.updateSelectedIndex(1);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Completer tout les champs", context: context));
+                }
+              },
+            )
           ],
         ),
       ),
@@ -433,7 +430,7 @@ class Onboarding2 extends StatefulWidget {
 
 // ignore: camel_case_types
 class _onboarding2State extends State<Onboarding2> {
-    int selectedDoctor = -1;
+  int selectedDoctor = -1;
   @override
   Widget build(BuildContext context) {
     String nameFilter = "";
@@ -530,12 +527,11 @@ class _onboarding2State extends State<Onboarding2> {
                               return CardDoctor(
                                 name: filteredDocteurs[index]['name'],
                                 address: filteredDocteurs[index]['address'],
-                                selected: index == selectedDoctor ? true : false,
+                                selected:
+                                    index == selectedDoctor ? true : false,
                                 onclick: () {
                                   setState(() {
                                     selectedDoctor = index;
-                                    Logger().i(index);
-                                    Logger().i(selectedDoctor);
                                   });
                                 },
                               );
@@ -554,28 +550,40 @@ class _onboarding2State extends State<Onboarding2> {
                 size: SizeButton.md,
                 msg: const Text("Continuer"),
                 onPressed: () async {
-                  Logger().i(isHealths);
                   if (selectedDoctor != -1) {
+                    int age = DateTime.now().year -
+                        int.parse(birthdate.split('/')[2]);
+                    int currentMonth = DateTime.now().month;
+                    int currentDay = DateTime.now().day;
+
+                    if (currentMonth < int.parse(birthdate.split('/')[1]) ||
+                        (currentMonth == int.parse(birthdate.split('/')[1]) &&
+                            currentDay < int.parse(birthdate.split('/')[0]))) {
+                      age--;
+                    }
+
+                    // ignore: unused_local_variable
+                    var response = await Register(name, lastname, age, sexe,
+                        int.parse(height), int.parse(weight));
                     if (isHealths == true) {
                       widget.updateSelectedIndex(2);
-                    }
-                    else {
+                    } else {
                       List<String> parts = birthdate.split('/');
                       String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
-                        final birth = DateTime.parse(americanDate);
-                        final integerDate = birth.millisecondsSinceEpoch;
-                        final Map<String, Object> body = {
-                          "Name": name,
-                          "FirstName": lastname,
-                          "Birthday": integerDate,
-                          "Sex": sexe,
-                          "Weight": int.parse(weight),
-                          "Height": int.parse(height),
-                          "Primary_doctor_id": "edgar",
-                          "Medical_antecedents": [],
-                        };
+                      final birth = DateTime.parse(americanDate);
+                      final integerDate = birth.millisecondsSinceEpoch;
+                      final Map<String, Object> body = {
+                        "Name": name,
+                        "FirstName": lastname,
+                        "Birthday": integerDate,
+                        "Sex": sexe,
+                        "Weight": int.parse(weight),
+                        "Height": int.parse(height),
+                        "Primary_doctor_id": "edgar",
+                        "Medical_antecedents": [],
+                      };
 
-                              // ignore: unused_local_variable
+                      // ignore: unused_local_variable
                       bool medicalinfo = await postMedicalInfo(body);
                       widget.updateSelectedIndex(3);
                     }
@@ -627,7 +635,6 @@ class _Onboarding3State extends State<Onboarding3> {
         "treatments": medicines["treatments"],
         "Still_relevant": stillRelevant,
       });
-      Logger().i(traitments);
     });
   }
 
@@ -804,24 +811,22 @@ class _Onboarding3State extends State<Onboarding3> {
                   size: SizeButton.md,
                   msg: const Text("Valider"),
                   onPressed: () async {
-
-                      List<String> parts = birthdate.split('/');
+                    List<String> parts = birthdate.split('/');
                     String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
-                      final birth = DateTime.parse(americanDate);
-                      final integerDate = birth.millisecondsSinceEpoch;
+                    final birth = DateTime.parse(americanDate);
+                    final integerDate = birth.millisecondsSinceEpoch;
 
-                      // ignore: unused_local_variable
-                      final Map<String, Object> body = {
-                        "Name": name,
-                        "FirstName": lastname,
-                        "Birthday": integerDate,
-                        "Sex": sexe,
-                        "Weight": int.parse(weight),
-                        "Height": int.parse(height),
-                        "Primary_doctor_id": "edgar",
-                        "Medical_antecedents": traitments,
-                      };
-
+                    // ignore: unused_local_variable
+                    final Map<String, Object> body = {
+                      "Name": name,
+                      "FirstName": lastname,
+                      "Birthday": integerDate,
+                      "Sex": sexe,
+                      "Weight": int.parse(weight),
+                      "Height": int.parse(height),
+                      "Primary_doctor_id": "edgar",
+                      "Medical_antecedents": traitments,
+                    };
 
                     widget.updateSelectedIndex(3);
                   }),
@@ -993,7 +998,6 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
     ValueNotifier<bool> isHealth =
         ValueNotifier(widget.traitement['Still_relevant']);
 
-    Logger().i(widget.traitement);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
