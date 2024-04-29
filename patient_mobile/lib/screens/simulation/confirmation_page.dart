@@ -38,7 +38,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
           Container(
             padding:
                 const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-            height: MediaQuery.of(context).size.height * 0.5 - 24,
+            height: MediaQuery.of(context).size.height * 0.5 - 28,
             decoration: const BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.only(
