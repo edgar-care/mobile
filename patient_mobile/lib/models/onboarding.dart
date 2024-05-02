@@ -498,56 +498,30 @@ class _onboarding2State extends State<Onboarding2> {
                 });
               },
             ),
-            FutureBuilder(
-              future: Future.delayed(const Duration(seconds: 1), () {}),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child: Expanded(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(AppColors.blue700),
-                      strokeWidth: 2,
-                      backgroundColor: AppColors.white,
-                    ),
-                  ));
-                } else if (snapshot.hasError) {
-                  return Text('Erreur: ${snapshot.error}');
-                } else {
-                  var filteredDocteurs = docteurs
-                      .where((element) => element['name']
-                          .toString()
-                          .toLowerCase()
-                          .contains(nameFilter.toLowerCase()))
-                      .toList();
-
-                  return Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: filteredDocteurs.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return CardDoctor(
-                                name: filteredDocteurs[index]['name'],
-                                address: filteredDocteurs[index]['address'],
-                                selected:
-                                    index == selectedDoctor ? true : false,
-                                onclick: () {
-                                  setState(() {
-                                    selectedDoctor = index;
-                                  });
-                                },
-                              );
-                            },
-                          ),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: docteurs.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return CardDoctor(
+                          name: docteurs[index]['name'],
+                          address: docteurs[index]['address'],
+                          selected: index == selectedDoctor ? true : false,
+                          onclick: () {
+                            setState(() {
+                              selectedDoctor = index;
+                            });
+                          },
                         );
                       },
                     ),
                   );
-                }
-              },
+                },
+              ),
             ),
             const SizedBox(height: 16),
             Buttons(
@@ -753,78 +727,53 @@ class _Onboarding3State extends State<Onboarding3> {
                 ),
               ),
               Expanded(
-                child: FutureBuilder(
-                  future: Future.delayed(const Duration(seconds: 0), () {
-                    return true;
-                  }),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Expanded(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(AppColors.blue700),
-                            strokeWidth: 2,
-                            backgroundColor: AppColors.white,
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Erreur: ${snapshot.error}');
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: [
-                            if (traitments.isNotEmpty)
-                              for (var i = 0; i < traitments.length; i++)
-                                if (i < 3)
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return IntrinsicWidth(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            WoltModalSheet.show<void>(
-                                              context: context,
-                                              pageIndexNotifier: pageIndex,
-                                              pageListBuilder:
-                                                  (modalSheetContext) {
-                                                return [
-                                                  infoTraitement(
-                                                    context,
-                                                    pageIndex,
-                                                    updateData,
-                                                    traitments[i],
-                                                  ),
-                                                ];
-                                              },
-                                            );
-                                          },
-                                          child: CardTraitementSmall(
-                                            name: traitments[i]['Name'],
-                                            isEnCours: traitments[i]
-                                                ['Still_relevant'],
-                                            onTap: () {
-                                              setState(() {
-                                                traitments[i]
-                                                        ['Still_relevant'] =
-                                                    traitments[i]
-                                                        ['Still_relevant'];
-                                              });
-                                            },
-                                          ),
-                                        ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      if (traitments.isNotEmpty)
+                        for (var i = 0; i < traitments.length; i++)
+                          if (i < 3)
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                return IntrinsicWidth(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      WoltModalSheet.show<void>(
+                                        context: context,
+                                        pageIndexNotifier: pageIndex,
+                                        pageListBuilder: (modalSheetContext) {
+                                          return [
+                                            infoTraitement(
+                                              context,
+                                              pageIndex,
+                                              updateData,
+                                              traitments[i],
+                                            ),
+                                          ];
+                                        },
                                       );
                                     },
+                                    child: CardTraitementSmall(
+                                      name: traitments[i]['Name'],
+                                      isEnCours: traitments[i]
+                                          ['Still_relevant'],
+                                      onTap: () {
+                                        setState(() {
+                                          traitments[i]['Still_relevant'] =
+                                              traitments[i]['Still_relevant'];
+                                        });
+                                      },
+                                    ),
                                   ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                                );
+                              },
+                            ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
