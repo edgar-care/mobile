@@ -196,19 +196,11 @@ Future deletePatientService(String id, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/patient/$id';
-  final response = await http.delete(
+  await http.delete(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
-        message: 'Patient supprimé avec succès', context: context));
-  }
-  else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-        message: 'Erreur lors de la suppression du patient', context: context));
-  }
 }

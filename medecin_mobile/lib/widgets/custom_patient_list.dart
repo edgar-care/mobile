@@ -1,6 +1,4 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
@@ -16,11 +14,11 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
-  final Function deletePatientList;
   final Function updatePatient;
   final Function setPages;
   final Function setId;
-  const CustomList({super.key, required this.patients, required this.deletePatientList, required this.updatePatient, required this.setPages, required this.setId});
+  final Function deletePatientList;
+  const CustomList({super.key, required this.patients, required this.updatePatient, required this.setPages, required this.setId, required this.deletePatientList});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -89,7 +87,7 @@ class _CustomListState extends State<CustomList> {
                 context: context,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    deletePatient(context, patient, widget.deletePatientList)
+                    deletePatient(context, patient, widget.deletePatientList),
                   ];
                 },
               );},)
@@ -537,9 +535,10 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        deletePatientList(patient['id']);
-                        deletePatientService(patient['id'], context);
                         Navigator.pop(context);
+                        Navigator.pop(context);
+                        deletePatientService(patient['id'], context);
+                        deletePatientList(patient['id']);
                       },
                     ),
                   ),

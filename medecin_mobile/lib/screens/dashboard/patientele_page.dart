@@ -539,10 +539,10 @@ class _PatientState extends State<Patient> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomList(
+                            deletePatientList: deletePatientList,
                             setId: widget.setId,
                             setPages: widget.setPages,
                             patients: patients,
-                            deletePatientList: deletePatientList,
                             updatePatient: updatePatient,
                           );
                         } else {
