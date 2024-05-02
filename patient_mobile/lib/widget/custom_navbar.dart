@@ -17,8 +17,7 @@ class _NavbarState extends State<Navbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Padding(
+    return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Wrap(
         children: [
@@ -131,7 +130,7 @@ class _NavbarState extends State<Navbar> {
                         callback: widget.callback,
                         index: 4,
                         icon: const Icon(
-                          BootstrapIcons.chat ,
+                          BootstrapIcons.chat,
                           color: AppColors.white,
                         ),
                       ),
@@ -150,7 +149,7 @@ class _NavbarState extends State<Navbar> {
               : Container(),
         ],
       ),
-    ));
+    );
   }
 }
 
@@ -161,7 +160,14 @@ class CardNavbar extends StatelessWidget {
   final int index;
   final Icon icon;
   bool? isDeconnexion = false;
-  CardNavbar({super.key, required this.text, required this.callback, required this.index, required this.icon, this.isDeconnexion,});
+  CardNavbar({
+    super.key,
+    required this.text,
+    required this.callback,
+    required this.index,
+    required this.icon,
+    this.isDeconnexion,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -172,35 +178,34 @@ class CardNavbar extends StatelessWidget {
           prefs.remove('token');
           // ignore: use_build_context_synchronously
           Navigator.pushNamed(context, '/login');
-        }
-        else if (isDeconnexion == false) {
+        } else if (isDeconnexion == false) {
           callback(index);
         }
       },
       child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.blue700,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      width: MediaQuery.of(context).size.width / 2 - 32,
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              color: AppColors.white,
-              fontSize: 12,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
+        decoration: BoxDecoration(
+          color: AppColors.blue700,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        width: MediaQuery.of(context).size.width / 2 - 32,
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 12,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
-          ),
-          icon,
-        ],
+            icon,
+          ],
+        ),
       ),
-    ),
     );
   }
 }
