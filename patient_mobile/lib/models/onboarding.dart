@@ -440,6 +440,7 @@ class _onboarding2State extends State<Onboarding2> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     String nameFilter = "";
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -727,53 +728,78 @@ class _Onboarding3State extends State<Onboarding3> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: [
-                      if (traitments.isNotEmpty)
-                        for (var i = 0; i < traitments.length; i++)
-                          if (i < 3)
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                return IntrinsicWidth(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      WoltModalSheet.show<void>(
-                                        context: context,
-                                        pageIndexNotifier: pageIndex,
-                                        pageListBuilder: (modalSheetContext) {
-                                          return [
-                                            infoTraitement(
-                                              context,
-                                              pageIndex,
-                                              updateData,
-                                              traitments[i],
-                                            ),
-                                          ];
-                                        },
+                child: FutureBuilder(
+                  future: Future.delayed(const Duration(seconds: 0), () {
+                    return true;
+                  }),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Expanded(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation(AppColors.blue700),
+                            strokeWidth: 2,
+                            backgroundColor: AppColors.white,
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Erreur: ${snapshot.error}');
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: [
+                            if (traitments.isNotEmpty)
+                              for (var i = 0; i < traitments.length; i++)
+                                if (i < 3)
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return IntrinsicWidth(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            WoltModalSheet.show<void>(
+                                              context: context,
+                                              pageIndexNotifier: pageIndex,
+                                              pageListBuilder:
+                                                  (modalSheetContext) {
+                                                return [
+                                                  infoTraitement(
+                                                    context,
+                                                    pageIndex,
+                                                    updateData,
+                                                    traitments[i],
+                                                  ),
+                                                ];
+                                              },
+                                            );
+                                          },
+                                          child: CardTraitementSmall(
+                                            name: traitments[i]['Name'],
+                                            isEnCours: traitments[i]
+                                                ['Still_relevant'],
+                                            onTap: () {
+                                              setState(() {
+                                                traitments[i]
+                                                        ['Still_relevant'] =
+                                                    traitments[i]
+                                                        ['Still_relevant'];
+                                              });
+                                            },
+                                          ),
+                                        ),
                                       );
                                     },
-                                    child: CardTraitementSmall(
-                                      name: traitments[i]['Name'],
-                                      isEnCours: traitments[i]
-                                          ['Still_relevant'],
-                                      onTap: () {
-                                        setState(() {
-                                          traitments[i]['Still_relevant'] =
-                                              traitments[i]['Still_relevant'];
-                                        });
-                                      },
-                                    ),
                                   ),
-                                );
-                              },
-                            ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 16),
