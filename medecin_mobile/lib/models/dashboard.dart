@@ -15,6 +15,7 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0;
+  String _id = "";
 
   void updateSelectedIndex(int index) {
     setState(() {
@@ -26,6 +27,17 @@ class _DashBoardState extends State<DashBoard> {
     return _selectedIndex;
   }
 
+  void updateId(String id) {
+    setState(() {
+      _id = id;
+    });
+  }
+
+  String getId()
+  {
+    return _id;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +47,13 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      const Patient(),
+      Patient(setPages: updateSelectedIndex, setId: updateId,),
       const Rdv(),
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      Text('Dossier médical: ${getId()}',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      Text('Rendez-vous: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      Text('Documents: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      Text('Messagerie: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,
