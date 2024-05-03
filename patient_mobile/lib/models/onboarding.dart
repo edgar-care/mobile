@@ -824,7 +824,8 @@ class _Onboarding3State extends State<Onboarding3> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Expanded(
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: FutureBuilder(
                   future: Future.delayed(const Duration(seconds: 0), () {
                     return true;
@@ -1111,31 +1112,36 @@ class BodyInfoModal extends StatefulWidget {
 }
 
 class _BodyInfoModalState extends State<BodyInfoModal> {
+  late Future<bool> _futureData;
+
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _futureData = fetchData();
   }
 
   List<Map<String, dynamic>> medicaments = [];
 
   List<String> medNames = [];
 
-  Future<void> fetchData() async {
-    medicaments = await getMedecines();
+  Future<bool> fetchData() async {
+    try {
+      medicaments = await getMedecines();
+      Logger().i(widget.traitement['treatments']);
+      Logger().i(medicaments);
 
-    Logger().i(widget.traitement['treatments']);
-    Logger().i(medicaments);
-
-    for (var i = 0; i < widget.traitement['treatments'].length; i++) {
-      var medname = medicaments.firstWhere(
-          (med) =>
-              med['id'] == widget.traitement['treatments'][i]['medicine_id'],
-          orElse: () => {'name': ''})['name'];
-      Logger().i(medname);
-      medNames.add(medname);
+      for (var i = 0; i < widget.traitement['treatments'].length; i++) {
+        var medname = medicaments.firstWhere(
+            (med) =>
+                med['id'] == widget.traitement['treatments'][i]['medicine_id'],
+            orElse: () => {'name': ''})['name'];
+        medNames.add(medname);
+      }
+      return true;
+    } catch (e) {
+      Logger().e("Error fetching data: $e");
+      return false;
     }
-    Logger().i(medNames[0]);
   }
 
   @override
@@ -1220,9 +1226,11 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontFamily: 'Poppins'),
         ),
         const SizedBox(height: 8),
-        Expanded(
-          child: FutureBuilder(
-            future: fetchData(),
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: FutureBuilder<bool>(
+            future: _futureData,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -1250,7 +1258,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               }
             },
           ),
-        ),
+        )
       ],
     );
   }
@@ -1323,15 +1331,15 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
     fetchData();
   }
 
-  Future<void> fetchData() async {
+  Future<bool> fetchData() async {
     medicaments = await getMedecines();
     for (var i = 0; i < medicines['treatments'].length; i++) {
       var medname = medicaments.firstWhere(
           (med) => med['id'] == medicines['treatments'][i]['medicine_id'],
           orElse: () => {'name': ''})['name'];
-      Logger().i(medname);
       medNames.add(medname);
     }
+    return true;
   }
 
   @override
@@ -1479,39 +1487,32 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               const SizedBox(height: 16),
               SizedBox(
                 height: widget.screenSize.height - 650,
-                child: Expanded(
-                  child: FutureBuilder(
-                    future: fetchData(), // Simulate some async operation
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return ListView.builder(
-                          itemCount: medicines['treatments'].length,
-                          itemBuilder: (context, index) {
-                            if (medicines['treatments'].isEmpty) {
-                              return const SizedBox();
-                            }
-
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: CardTraitementDay(
-                                isClickable: false,
-                                data: medicines['treatments'][index],
-                                name: medNames[index],
-                                onTap: () {
-                                  setState(() {
-                                    medicines['treatments'] =
-                                        medicines['treatments'];
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
+                width: widget.screenSize.width,
+                child: FutureBuilder(
+                  future: fetchData(), // Simulate some async operation
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return ListView.builder(
+                        itemCount: medicines['treatments'].length,
+                        itemBuilder: (context, index) {
+                          if (medicines['treatments'].isEmpty) {
+                            return const SizedBox();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: CardTraitementDay(
+                              isClickable: false,
+                              data: medicines['treatments'][index],
+                              name: medNames[index],
+                              onTap: () {},
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 16),
