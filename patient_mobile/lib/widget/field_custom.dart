@@ -53,11 +53,12 @@ class _CustomFieldState extends State<CustomField> {
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,
                   textInputAction: widget.action,
+                  textCapitalization: TextCapitalization.sentences,
                   initialValue: widget.value,
                   style: const TextStyle(
                     color: AppColors.grey950,
                     fontFamily: 'Poppins',
-                    fontSize: 16,
+                    fontSize: 14,
                     textBaseline: TextBaseline.ideographic,
                   ),
                   decoration: InputDecoration(
@@ -69,7 +70,7 @@ class _CustomFieldState extends State<CustomField> {
                     hintStyle: const TextStyle(
                       color: AppColors.grey400,
                       fontFamily: 'Poppins',
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       textBaseline: TextBaseline.ideographic,
                     ),

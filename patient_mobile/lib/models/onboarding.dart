@@ -12,6 +12,7 @@ import 'package:edgar/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar/widget/snackbar.dart';
 
@@ -134,7 +135,7 @@ class Onboarding1 extends StatefulWidget {
 class _Onboarding1State extends State<Onboarding1> {
   ValueNotifier<String> selected = ValueNotifier('Masculin');
 
-  ValueNotifier<bool> isHealth = ValueNotifier(false);
+  ValueNotifier<bool> isHealth = ValueNotifier(isHealths);
 
   void updateSelection(
     String value,
@@ -229,7 +230,9 @@ class _Onboarding1State extends State<Onboarding1> {
               label: "L'assistant numerique",
               value: lastname,
               action: TextInputAction.next,
-              onChanged: (value) => lastname = value,
+              onChanged: (value) {
+                lastname = value;
+              },
               keyboardType: TextInputType.name,
             ),
             const SizedBox(height: 16),
@@ -367,25 +370,29 @@ class _Onboarding1State extends State<Onboarding1> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    AddButton(
+                    AddButtonSpeHealth(
                         onTap: (() {
                           setState(() {
                             isHealth.value = true;
                           });
                         }),
                         label: "Oui",
-                        color: value == true
+                        color:
+                            value == true ? AppColors.white : AppColors.blue700,
+                        background: value == true
                             ? AppColors.blue700
                             : AppColors.white),
                     const SizedBox(width: 16),
-                    AddButton(
+                    AddButtonSpeHealth(
                         onTap: (() {
                           setState(() {
                             isHealth.value = false;
                           });
                         }),
                         label: "Non",
-                        color: value == false
+                        color:
+                            value == false ? Colors.white : AppColors.blue700,
+                        background: value == false
                             ? AppColors.blue700
                             : AppColors.white),
                   ],
@@ -393,6 +400,7 @@ class _Onboarding1State extends State<Onboarding1> {
               },
             ),
             Expanded(child: Container()),
+            const SizedBox(height: 8),
             Buttons(
               variant: Variante.primary,
               size: SizeButton.md,
@@ -430,18 +438,34 @@ class Onboarding2 extends StatefulWidget {
 
 // ignore: camel_case_types
 class _onboarding2State extends State<Onboarding2> {
-  int selectedDoctor = -1;
+  List<dynamic> docs = [];
+  Future? _fetchDocsFuture;
+  String nameFilter = "";
 
-  final List<Map<String, dynamic>> docteurs = [
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchDocsFuture = fetchData();
+  }
+
+  Future<List<dynamic>> fetchData() async {
+    var tmp = await getAllDoctor();
+    setState(() {
+      docs = tmp;
+    });
+    Logger().i(docs);
+    Logger().i(primaryDoctorId);
+    if (primaryDoctorId != "") {
+      selectedDoctor = docs.indexWhere((doc) => doc['id'] == primaryDoctorId);
+    }
+    return docs;
+  }
+
+  int selectedDoctor = -1;
 
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
-    String nameFilter = "";
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height - 172,
@@ -497,30 +521,72 @@ class _onboarding2State extends State<Onboarding2> {
                 setState(() {
                   nameFilter = value;
                 });
+                Logger().i(nameFilter);
               },
             ),
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: docteurs.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return CardDoctor(
-                          name: docteurs[index]['name'],
-                          address: docteurs[index]['address'],
-                          selected: index == selectedDoctor ? true : false,
-                          onclick: () {
-                            setState(() {
-                              selectedDoctor = index;
-                            });
-                          },
+              child: FutureBuilder(
+                future: _fetchDocsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                        child: Text("Erreur lors du chargement des données"));
+                  } else if (snapshot.hasData) {
+                    // Filtrer les docs basés sur nameFilter
+                    var filteredDocs = docs.where((doc) {
+                      return doc['name']
+                          .toLowerCase()
+                          .contains(nameFilter.toLowerCase());
+                    }).toList();
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: filteredDocs.length,
+                      itemBuilder: (context, index) {
+                        var doc = filteredDocs[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return CardDoctor(
+                                name: doc['name'] == ""
+                                    ? "Dr. Edgar"
+                                    : "Dr. ${doc['name']}",
+                                street: doc['address']['street'] == ""
+                                    ? "1 rue de la paix"
+                                    : doc['address']['street'],
+                                city: doc['address']['city'] == ""
+                                    ? "Paris"
+                                    : doc['address']['city'],
+                                zipCode: doc['address']['zip_code'] == ""
+                                    ? "75000"
+                                    : doc['address']['zip_code'],
+                                country: doc['address']['country'] == ""
+                                    ? "France"
+                                    : doc['address']['country'],
+                                selected:
+                                    index == selectedDoctor ? true : false,
+                                onclick: () {
+                                  setState(() {
+                                    selectedDoctor = index;
+                                    if (selectedDoctor != -1) {
+                                      primaryDoctorId = doc['id'];
+                                    }
+                                    Logger().i(primaryDoctorId);
+                                  });
+                                },
+                              );
+                            },
+                          ),
                         );
                       },
-                    ),
-                  );
+                    );
+                  } else {
+                    return const Center(
+                        child: Text("Aucune donnée disponible"));
+                  }
                 },
               ),
             ),
@@ -531,31 +597,40 @@ class _onboarding2State extends State<Onboarding2> {
                 msg: const Text("Continuer"),
                 onPressed: () async {
                   if (selectedDoctor != -1) {
-                    int age = DateTime.now().year -
-                        int.parse(birthdate.split('/')[2]);
-                    int currentMonth = DateTime.now().month;
-                    int currentDay = DateTime.now().day;
-
-                    if (currentMonth < int.parse(birthdate.split('/')[1]) ||
-                        (currentMonth == int.parse(birthdate.split('/')[1]) &&
-                            currentDay < int.parse(birthdate.split('/')[0]))) {
-                      age--;
-                    }
-
-                    // ignore: unused_local_variable
-                    var response = await Register(name, lastname, age, sexe,
-                        int.parse(height), int.parse(weight));
-                    if (response) {
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SuccessLoginSnackBar(
-                              message: "Création de l'espace patient réussie",
-                              // ignore: use_build_context_synchronously
-                              context: context));
-                    }
                     if (isHealths == true) {
                       widget.updateSelectedIndex(2);
                     } else {
+                      int age = DateTime.now().year -
+                          int.parse(birthdate.split('/')[2]);
+                      int currentMonth = DateTime.now().month;
+                      int currentDay = DateTime.now().day;
+
+                      if (currentMonth < int.parse(birthdate.split('/')[1]) ||
+                          (currentMonth == int.parse(birthdate.split('/')[1]) &&
+                              currentDay <
+                                  int.parse(birthdate.split('/')[0]))) {
+                        age--;
+                      }
+
+                      // ignore: unused_local_variable
+                      var response = await Register(name, lastname, age, sexe,
+                          int.parse(height), int.parse(weight));
+                      if (response) {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SuccessLoginSnackBar(
+                                message: "Création de l'espace patient réussie",
+                                // ignore: use_build_context_synchronously
+                                context: context));
+                      } else {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            ErrorLoginSnackBar(
+                                message:
+                                    "Erreur lors de la création de l'espace patient",
+                                // ignore: use_build_context_synchronously
+                                context: context));
+                      }
                       List<String> parts = birthdate.split('/');
                       String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
                       final birth = DateTime.parse(americanDate);
@@ -695,27 +770,49 @@ class _Onboarding3State extends State<Onboarding3> {
                 ),
               ),
               const SizedBox(height: 8),
-              CustomFieldSearch(
-                label: 'Renseigner vos informations',
-                icon: BootstrapIcons.plus,
-                keyboardType: TextInputType.name,
-                onValidate: (value) {
-                  setState(() {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            addTraitement(
-                              context,
-                              pageIndex,
-                              updateData,
-                              addNewTraitement,
-                            ),
-                          ];
-                        });
-                  });
+              GestureDetector(
+                onTap: () {
+                  WoltModalSheet.show<void>(
+                    context: context,
+                    pageIndexNotifier: pageIndex,
+                    pageListBuilder: (modalSheetContext) {
+                      return [
+                        addTraitement(
+                          context,
+                          pageIndex,
+                          updateData,
+                          addNewTraitement,
+                        ),
+                      ];
+                    },
+                  );
                 },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.blue500, width: 2),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Renseigner vos informations",
+                        style: TextStyle(
+                          color: AppColors.grey400,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Icon(
+                        BootstrapIcons.plus,
+                        color: AppColors.grey700,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               const Text(
@@ -808,22 +905,46 @@ class _Onboarding3State extends State<Onboarding3> {
                   size: SizeButton.md,
                   msg: const Text("Valider"),
                   onPressed: () async {
-                    List<String> parts = birthdate.split('/');
-                    String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
-                    final birth = DateTime.parse(americanDate);
-                    final integerDate = birth.millisecondsSinceEpoch;
+                    int age = DateTime.now().year -
+                        int.parse(birthdate.split('/')[2]);
+                    int currentMonth = DateTime.now().month;
+                    int currentDay = DateTime.now().day;
+
+                    if (currentMonth < int.parse(birthdate.split('/')[1]) ||
+                        (currentMonth == int.parse(birthdate.split('/')[1]) &&
+                            currentDay < int.parse(birthdate.split('/')[0]))) {
+                      age--;
+                    }
 
                     // ignore: unused_local_variable
-                    final Map<String, Object> body = {
-                      "Name": name,
-                      "FirstName": lastname,
-                      "Birthday": integerDate,
-                      "Sex": sexe,
-                      "Weight": int.parse(weight),
-                      "Height": int.parse(height),
-                      "Primary_doctor_id": "edgar",
-                      "Medical_antecedents": traitments,
-                    };
+                    var response = await Register(name, lastname, age, sexe,
+                        int.parse(height), int.parse(weight));
+                    if (response) {
+                      List<String> parts = birthdate.split('/');
+                      String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
+                      final birth = DateTime.parse(americanDate);
+                      final integerDate = birth.millisecondsSinceEpoch;
+
+                      // ignore: unused_local_variable
+                      final Map<String, Object> body = {
+                        "Name": name,
+                        "FirstName": lastname,
+                        "Birthday": integerDate,
+                        "Sex": sexe,
+                        "Weight": int.parse(weight),
+                        "Height": int.parse(height),
+                        "Primary_doctor_id": "edgar",
+                        "Medical_antecedents": traitments,
+                      };
+                    } else {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          ErrorLoginSnackBar(
+                              message:
+                                  "Erreur lors de la création de l'espace patient",
+                              // ignore: use_build_context_synchronously
+                              context: context));
+                    }
 
                     widget.updateSelectedIndex(3);
                   }),
@@ -991,6 +1112,33 @@ class BodyInfoModal extends StatefulWidget {
 
 class _BodyInfoModalState extends State<BodyInfoModal> {
   @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  List<Map<String, dynamic>> medicaments = [];
+
+  List<String> medNames = [];
+
+  Future<void> fetchData() async {
+    medicaments = await getMedecines();
+
+    Logger().i(widget.traitement['treatments']);
+    Logger().i(medicaments);
+
+    for (var i = 0; i < widget.traitement['treatments'].length; i++) {
+      var medname = medicaments.firstWhere(
+          (med) =>
+              med['id'] == widget.traitement['treatments'][i]['medicine_id'],
+          orElse: () => {'name': ''})['name'];
+      Logger().i(medname);
+      medNames.add(medname);
+    }
+    Logger().i(medNames[0]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     ValueNotifier<bool> isHealth =
         ValueNotifier(widget.traitement['Still_relevant']);
@@ -1073,22 +1221,33 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: ListView.builder(
-            itemCount: widget.traitement['treatments'].length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return CardTraitementDay(
-                      isClickable: false,
-                      data: widget.traitement['treatments'][index],
-                      name: "Doliprane 500 mg",
-                      onTap: () {},
+          child: FutureBuilder(
+            future: fetchData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Erreur: ${snapshot.error}');
+              } else {
+                return ListView.builder(
+                  itemCount: widget.traitement['treatments'].length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return CardTraitementDay(
+                            isClickable: false,
+                            data: widget.traitement['treatments'][index],
+                            name: medNames[index],
+                            onTap: () {},
+                          );
+                        },
+                      ),
                     );
                   },
-                ),
-              );
+                );
+              }
             },
           ),
         ),
@@ -1153,10 +1312,26 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
     });
   }
 
-  void updateMedicament(Map<String, dynamic> medicament) {
+  List<Map<String, dynamic>> medicaments = [];
+  List<String> medNames = [];
+
+  void updateMedicament(Map<String, dynamic> medicament) async {
     setState(() {
       medicines['treatments'].add(medicament);
     });
+    Logger().i(medicines);
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    medicaments = await getMedecines();
+    for (var i = 0; i < medicines['treatments'].length; i++) {
+      var medname = medicaments.firstWhere(
+          (med) => med['id'] == medicines['treatments'][i]['medicine_id'],
+          orElse: () => {'name': ''})['name'];
+      Logger().i(medname);
+      medNames.add(medname);
+    }
   }
 
   @override
@@ -1257,52 +1432,84 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 },
               ),
               const SizedBox(height: 16),
-              CustomFieldSearch(
-                label: 'Ajouter un médicament',
-                icon: BootstrapIcons.plus,
-                keyboardType: TextInputType.name,
-                onValidate: (value) {
-                  setState(() {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: widget.pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            addMedicament(
-                              context,
-                              widget.pageIndex,
-                              widget.updateData,
-                              widget.addNewTraitement,
-                              updateMedicament,
-                            ),
-                          ];
-                        });
-                  });
+              GestureDetector(
+                onTap: () {
+                  WoltModalSheet.show<void>(
+                      context: context,
+                      pageIndexNotifier: widget.pageIndex,
+                      pageListBuilder: (modalSheetContext) {
+                        return [
+                          addMedicament(
+                            context,
+                            widget.pageIndex,
+                            widget.updateData,
+                            widget.addNewTraitement,
+                            updateMedicament,
+                          ),
+                        ];
+                      });
                 },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.blue500, width: 2),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Ajouter un médicament",
+                        style: TextStyle(
+                          color: AppColors.grey400,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Icon(
+                        BootstrapIcons.plus,
+                        color: AppColors.grey700,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               SizedBox(
                 height: widget.screenSize.height - 650,
                 child: Expanded(
-                  child: ListView.builder(
-                    itemCount: medicines['treatments'].length,
-                    itemBuilder: (context, index) {
-                      if (medicines['treatments'].isEmpty) {
-                        return const SizedBox();
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: CardTraitementDay(
-                          isClickable: false,
-                          data: medicines['treatments'][index],
-                          name: "Doliprane 500 mg",
-                          onTap: () {
-                            setState(() {
-                              medicines['treatments'] = medicines['treatments'];
-                            });
+                  child: FutureBuilder(
+                    future: fetchData(), // Simulate some async operation
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView.builder(
+                          itemCount: medicines['treatments'].length,
+                          itemBuilder: (context, index) {
+                            if (medicines['treatments'].isEmpty) {
+                              return const SizedBox();
+                            }
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: CardTraitementDay(
+                                isClickable: false,
+                                data: medicines['treatments'][index],
+                                name: medNames[index],
+                                onTap: () {
+                                  setState(() {
+                                    medicines['treatments'] =
+                                        medicines['treatments'];
+                                  });
+                                },
+                              ),
+                            );
                           },
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                 ),
@@ -1382,7 +1589,7 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
     "quantity": 0,
     "period": [],
     "day": [],
-    "medicine_id": "66116f1a5ee223d8f1b39c00"
+    "medicine_id": ""
   };
 
   List<Map<String, dynamic>> medicaments = [];
@@ -1400,6 +1607,7 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
+    Logger().i(medicaments);
   }
 
   @override
@@ -1455,7 +1663,13 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                 icon: BootstrapIcons.search,
                 keyboardType: TextInputType.name,
                 onValidate: (value) {
-                  setState(() {});
+                  var selectedMedicament = medicaments.firstWhere(
+                      (med) => med['name'] == value,
+                      orElse: () => {'id': null});
+                  setState(() {
+                    medicament['medicine_id'] = selectedMedicament['id'];
+                  });
+                  Logger().i(medicament);
                 },
                 suggestions: nameMedic),
             const SizedBox(height: 16),
@@ -1476,7 +1690,13 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                 action: TextInputAction.next,
                 onChanged: (value) {
                   setState(() {
-                    medicament['quantity'] = int.parse(value);
+                    try {
+                      medicament['quantity'] = int.parse(value);
+                    } catch (e) {
+                      Logger().i("Invalid input for quantity: $value");
+                      value = value.replaceAll(RegExp(r'[^0-9]'), '');
+                      medicament['quantity'] = int.tryParse(value) ?? 0;
+                    }
                   });
                 },
                 keyboardType: TextInputType.number,

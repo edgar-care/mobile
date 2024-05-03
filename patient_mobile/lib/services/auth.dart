@@ -55,12 +55,13 @@ Future<Map<String, dynamic>> getTraitement() async {
 
 Future<List<Map<String, dynamic>>> getMedecines() async {
   await dotenv.load();
-  final url = '${dotenv.env['URL']}medicaments';
+  final url = '${dotenv.env['URL']}medicine';
   final response = await http.get(
     Uri.parse(url),
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     final body = response.body;
+    Logger().i(jsonDecode(body));
     return List<Map<String, dynamic>>.from(jsonDecode(body)["medicament"]);
   } else {
     return [];
@@ -103,5 +104,20 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
     return true;
   } else {
     return false;
+  }
+}
+
+Future<List<dynamic>> getAllDoctor() async {
+  await dotenv.load();
+  final url = '${dotenv.env['URL']}doctors';
+  final response = await http.get(
+    Uri.parse(url),
+  );
+  Logger().i(response.body);
+  if (response.statusCode == 200) {
+    final body = response.body;
+    return jsonDecode(body)["Doctors"];
+  } else {
+    return [];
   }
 }

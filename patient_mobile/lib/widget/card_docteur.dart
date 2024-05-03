@@ -6,14 +6,21 @@ import 'package:flutter/material.dart';
 class CardDoctor extends StatefulWidget {
   bool selected;
   final String name;
-  final String address;
+  final String street;
+  final String city;
+  final String zipCode;
+  final String country;
   Function()? onclick;
-  CardDoctor(
-      {super.key,
-      required this.name,
-      required this.address,
-      required this.selected,
-      required this.onclick,});
+  CardDoctor({
+    super.key,
+    required this.name,
+    required this.street,
+    required this.city,
+    required this.zipCode,
+    required this.country,
+    required this.selected,
+    required this.onclick,
+  });
 
   @override
   State<CardDoctor> createState() => _CardDoctorState();
@@ -51,7 +58,7 @@ class _CardDoctorState extends State<CardDoctor> {
                     ),
                   ),
                   Text(
-                    widget.address,
+                    "${widget.street}, ${widget.city}, ${widget.zipCode}, ${widget.country}",
                     style: TextStyle(
                       color:
                           widget.selected ? AppColors.white : AppColors.black,
