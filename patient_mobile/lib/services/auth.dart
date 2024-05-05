@@ -5,8 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // ignore: non_constant_identifier_names
-Future<bool> Register(String name, String lastName, int age, String sex,
-    int height, int weight) async {
+Future<bool> RegisterUser(String email, String password) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await dotenv.load();
   final url = '${dotenv.env['URL']}auth/p/register';
@@ -15,16 +14,11 @@ Future<bool> Register(String name, String lastName, int age, String sex,
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
-      'email': prefs.getString('email'),
-      'password': prefs.getString('password'),
-      'name': name,
-      'lastName': lastName,
-      'age': age,
-      'sex': sex,
-      'height': height,
-      'weight': weight,
+      'email': email,
+      'password': password,
     }),
   );
+  Logger().i(response.body);
   if (response.statusCode == 200) {
     final body = response.body;
     final token = jsonDecode(body)['token'];

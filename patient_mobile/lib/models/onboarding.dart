@@ -19,7 +19,7 @@ import 'package:edgar/widget/snackbar.dart';
 String name = "";
 String lastname = "";
 String birthdate = "";
-String sexe = "";
+String sexe = "MALE";
 String height = "";
 String weight = "";
 String primaryDoctorId = "";
@@ -265,36 +265,51 @@ class _Onboarding1State extends State<Onboarding1> {
                 return Row(
                   children: [
                     AddButtonSpe(
-                        onTap: () => updateSelection('Masculin'),
+                        onTap: () {
+                          updateSelection('MALE');
+                          setState(() {
+                            sexe = "MALE";
+                          });
+                        },
                         label: "Masculin",
-                        background: value == 'Masculin'
+                        background: value == 'MALE'
                             ? AppColors.blue700
                             : AppColors.white,
-                        color: value == "Masculin"
+                        color: value == "MALE"
                             ? AppColors.white
                             : AppColors.grey400),
                     const SizedBox(
                       width: 16,
                     ),
                     AddButtonSpe(
-                        onTap: () => updateSelection('Féminin'),
+                        onTap: () {
+                          updateSelection('FEMALE');
+                          setState(() {
+                            sexe = "FEMALE";
+                          });
+                        },
                         label: "Féminin",
-                        background: value == 'Féminin'
+                        background: value == 'FEMALE'
                             ? AppColors.blue700
                             : AppColors.white,
-                        color: value == "Féminin"
+                        color: value == "FEMALE"
                             ? AppColors.white
                             : AppColors.grey400),
                     const SizedBox(
                       width: 16,
                     ),
                     AddButtonSpe(
-                        onTap: () => updateSelection('Autre'),
+                        onTap: () {
+                          updateSelection('OTHER');
+                          setState(() {
+                            sexe = "OTHER";
+                          });
+                        },
                         label: "Autre",
-                        background: value == 'Autre'
+                        background: value == 'OTHER'
                             ? AppColors.blue700
                             : AppColors.white,
-                        color: value == "Autre"
+                        color: value == "OTHER"
                             ? AppColors.white
                             : AppColors.grey400),
                   ],
@@ -611,50 +626,21 @@ class _onboarding2State extends State<Onboarding2> {
                     if (isHealths == true) {
                       widget.updateSelectedIndex(2);
                     } else {
-                      int age = DateTime.now().year -
-                          int.parse(birthdate.split('/')[2]);
-                      int currentMonth = DateTime.now().month;
-                      int currentDay = DateTime.now().day;
-
-                      if (currentMonth < int.parse(birthdate.split('/')[1]) ||
-                          (currentMonth == int.parse(birthdate.split('/')[1]) &&
-                              currentDay <
-                                  int.parse(birthdate.split('/')[0]))) {
-                        age--;
-                      }
-
-                      // ignore: unused_local_variable
-                      var response = await Register(name, lastname, age, sexe,
-                          int.parse(height), int.parse(weight));
-                      if (response) {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SuccessLoginSnackBar(
-                                message: "Création de l'espace patient réussie",
-                                // ignore: use_build_context_synchronously
-                                context: context));
-                      } else {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorLoginSnackBar(
-                                message:
-                                    "Erreur lors de la création de l'espace patient",
-                                // ignore: use_build_context_synchronously
-                                context: context));
-                      }
                       List<String> parts = birthdate.split('/');
-                      String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
+                      String americanDate =
+                          '${parts[2]}-${parts[1]}-${parts[0]}';
                       final birth = DateTime.parse(americanDate);
-                      final integerDate = birth.millisecondsSinceEpoch;
+                      final integerDate =
+                          (birth.millisecondsSinceEpoch / 1000).round();
                       final Map<String, Object> body = {
-                        "Name": name,
-                        "FirstName": lastname,
-                        "Birthday": integerDate,
-                        "Sex": sexe,
-                        "Weight": int.parse(weight),
-                        "Height": int.parse(height),
-                        "Primary_doctor_id": "edgar",
-                        "Medical_antecedents": [],
+                        "name": name,
+                        "firstName": lastname,
+                        "birthdate": integerDate,
+                        "sex": sexe,
+                        "weight": int.parse(weight) * 100,
+                        "height": int.parse(height),
+                        "primary_doctor_id": primaryDoctorId,
+                        "medical_antecedents": [],
                       };
 
                       // ignore: unused_local_variable
@@ -930,44 +916,32 @@ class _Onboarding3State extends State<Onboarding3> {
                             message: "Ajoutez des informations",
                             context: context));
                     return;
-                  } else {}
-                  int age =
-                      DateTime.now().year - int.parse(birthdate.split('/')[2]);
-                  int currentMonth = DateTime.now().month;
-                  int currentDay = DateTime.now().day;
-
-                  if (currentMonth < int.parse(birthdate.split('/')[1]) ||
-                      (currentMonth == int.parse(birthdate.split('/')[1]) &&
-                          currentDay < int.parse(birthdate.split('/')[0]))) {
-                    age--;
                   }
+                  List<String> parts = birthdate.split('/');
+                  String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+                  final birth = DateTime.parse(americanDate);
+                  final integerDate =
+                      (birth.millisecondsSinceEpoch / 1000).round();
 
-                  // ignore: unused_local_variable
-                  var response = await Register(name, lastname, age, sexe,
-                      int.parse(height), int.parse(weight));
-                  if (response) {
-                    List<String> parts = birthdate.split('/');
-                    String americanDate = '${parts[2]}${parts[1]}${parts[0]}';
-                    final birth = DateTime.parse(americanDate);
-                    final integerDate = birth.millisecondsSinceEpoch;
+                  final Map<String, Object> body = {
+                    "name": name,
+                    "firstName": lastname,
+                    "birthdate": integerDate,
+                    "sex": sexe,
+                    "weight": int.parse(weight) * 100,
+                    "height": int.parse(height),
+                    "primary_doctor_id": primaryDoctorId,
+                    "medical_antecedents": traitments,
+                  };
 
-                    // ignore: unused_local_variable
-                    final Map<String, Object> body = {
-                      "Name": name,
-                      "FirstName": lastname,
-                      "Birthday": integerDate,
-                      "Sex": sexe,
-                      "Weight": int.parse(weight),
-                      "Height": int.parse(height),
-                      "Primary_doctor_id": "edgar",
-                      "Medical_antecedents": traitments,
-                    };
+                  var reponse = await postMedicalInfo(body);
+                  if (reponse == true) {
+                    widget.updateSelectedIndex(3);
                   } else {
                     // ignore: use_build_context_synchronously
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        ErrorLoginSnackBar(
-                            message:
-                                "Erreur lors de la création de l'espace patient",
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(ErrorLoginSnackBar(
+                            message: "Erreur lors de l'ajout des informations",
                             // ignore: use_build_context_synchronously
                             context: context));
                   }

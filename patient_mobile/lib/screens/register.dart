@@ -1,7 +1,9 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/auth.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
@@ -11,6 +13,10 @@ class Register extends StatelessWidget {
     String email = "";
     String password = "";
     Color borderColor = AppColors.blue800;
+
+    bool emailValidityChecker(String email) {
+      return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
+    }
 
     return Scaffold(
       body: Center(
@@ -61,18 +67,55 @@ class Register extends StatelessWidget {
             ]),
             const SizedBox(height: 20),
             PlainButton(
-                text: "Inscrivez-vous",
-                onPressed: () async {
-                  if (password != "" && email != "") {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setString('email', email);
-                    prefs.setString('password', password);
-                    
-                    // ignore: use_build_context_synchronously
-                    Navigator.pushNamed(context, '/onboarding');
-                  }
-                }),
+              text: "Inscrivez-vous",
+              onPressed: () async {
+                Logger().i("Email: $email, Password: $password");
+                if (password == "" || email == "") {
+                  // ignore: use_build_context_synchronously
+
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Veuillez remplir tous les champs",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                  return;
+                }
+                if (password.length < 8) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                  return;
+                }
+                Logger().i(emailValidityChecker(email));
+                if (!emailValidityChecker(email)) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Adresse mail invalide",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                }
+
+                var reponse = await RegisterUser(email, password);
+                if (reponse) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SuccessLoginSnackBar(
+                          message: "Inscription réussie",
+                          // ignore: use_build_context_synchronously
+                          context: context));
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamed(context, '/onboarding');
+                } else {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Erreur lors de l'inscription",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                }
+              },
+            ),
             const SizedBox(height: 20),
             const Text("Déjà inscrit ?",
                 style: TextStyle(

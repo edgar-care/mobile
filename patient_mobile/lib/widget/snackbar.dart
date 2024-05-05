@@ -1,9 +1,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-
-
-
+import 'package:flutter/widgets.dart';
 
 class ErrorSnackBar extends SnackBar {
   ErrorSnackBar({
@@ -23,23 +21,25 @@ class ErrorSnackBar extends SnackBar {
           content: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   color: AppColors.red700,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: const Column(
                   children: [
-                    Icon(BootstrapIcons.exclamation_triangle, color: Colors.white, size: 28),
+                    Icon(BootstrapIcons.exclamation_triangle,
+                        color: Colors.white, size: 28),
                     SizedBox(height: 8),
                   ],
                 ),
               ),
-              const SizedBox(width: 8 ),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min  ,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
                     'Une erreur est survenue',
@@ -55,7 +55,7 @@ class ErrorSnackBar extends SnackBar {
                     softWrap: true,
                     style: const TextStyle(
                       color: AppColors.grey950,
-                      fontSize: 10  ,
+                      fontSize: 10,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w300,
                     ),
@@ -91,14 +91,14 @@ class ValidateSnackBar extends SnackBar {
                   color: AppColors.green400,
                   borderRadius: BorderRadius.circular(50),
                 ),
-                child: const
-                    Icon(BootstrapIcons.check, color: Colors.white, size: 32),
+                child: const Icon(BootstrapIcons.check,
+                    color: Colors.white, size: 32),
               ),
-              const SizedBox(width: 8 ),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min  ,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     message,
@@ -109,7 +109,6 @@ class ValidateSnackBar extends SnackBar {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-
                 ],
               )
             ],
@@ -143,7 +142,7 @@ class WaittingSnackBar extends SnackBar {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min  ,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     message,
@@ -154,7 +153,6 @@ class WaittingSnackBar extends SnackBar {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-
                 ],
               )
             ],
@@ -228,8 +226,12 @@ class ErrorLoginSnackBar extends SnackBar {
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.bold)),
-              Text(message,
-                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 12)),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(message,
+                    style:
+                        const TextStyle(fontFamily: 'Poppins', fontSize: 12)),
+              ),
             ]),
           ]),
         );
