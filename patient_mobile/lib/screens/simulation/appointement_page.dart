@@ -3,6 +3,7 @@ import 'package:edgar/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:flutter_svg/svg.dart';
 
 class AppointementPage extends StatefulWidget {
   const AppointementPage({super.key});
@@ -110,7 +111,7 @@ class _AppointementPageState extends State<AppointementPage> {
               ),
               CustomFieldSearch(
                 label: "Rechercher par le nom du médecin",
-                icon: BootstrapIcons.search,
+                icon: SvgPicture.asset("assets/images/utils/search.svg"),
                 keyboardType: TextInputType.text,
                 onValidate: (value) {},
               ),

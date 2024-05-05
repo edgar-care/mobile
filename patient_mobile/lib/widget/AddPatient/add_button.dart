@@ -24,6 +24,7 @@ class _AddButtonState extends State<AddButton> {
     return ElevatedButton(
       onPressed: widget.onTap,
       style: ElevatedButton.styleFrom(
+        elevation: 0,
         side: BorderSide(
             width: 2.0,
             color: widget.color == AppColors.blue700

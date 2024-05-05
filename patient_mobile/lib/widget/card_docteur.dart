@@ -9,7 +9,6 @@ class CardDoctor extends StatefulWidget {
   final String street;
   final String city;
   final String zipCode;
-  final String country;
   Function()? onclick;
   CardDoctor({
     super.key,
@@ -17,7 +16,6 @@ class CardDoctor extends StatefulWidget {
     required this.street,
     required this.city,
     required this.zipCode,
-    required this.country,
     required this.selected,
     required this.onclick,
   });
@@ -58,7 +56,7 @@ class _CardDoctorState extends State<CardDoctor> {
                     ),
                   ),
                   Text(
-                    "${widget.street}, ${widget.city}, ${widget.zipCode}, ${widget.country}",
+                    "${widget.street}, ${widget.zipCode} - ${widget.city}",
                     style: TextStyle(
                       color:
                           widget.selected ? AppColors.white : AppColors.black,
@@ -77,6 +75,7 @@ class _CardDoctorState extends State<CardDoctor> {
                 child: Icon(
                   BootstrapIcons.chevron_right,
                   color: widget.selected ? AppColors.white : AppColors.black,
+                  size: 16,
                 ),
               )
             ],

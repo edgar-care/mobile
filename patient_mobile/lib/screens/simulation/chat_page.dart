@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/services/getResponseConversation.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -125,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
                   parseUserInput(value);
                 },
                 label: 'Ecriver votre message ici...',
-                icon: BootstrapIcons.send_fill,
+                icon: SvgPicture.asset("assets/images/utils/search.svg"),
                 keyboardType: TextInputType.text,
               ),
             ],

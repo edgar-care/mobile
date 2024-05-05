@@ -105,7 +105,7 @@ class _CustomFieldState extends State<CustomField> {
 
 class CustomFieldSearch extends StatefulWidget {
   final String label;
-  final IconData
+  final Widget
       icon; // Utilisation de IconData au lieu de Icon pour la cohérence
   final TextInputType keyboardType;
   final Function(String) onValidate;
@@ -167,10 +167,13 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                   onFieldSubmitted: (value) {
                     widget.onValidate(value);
                   },
+                  onChanged: (value) {
+                    widget.onValidate(value);
+                  },
                 ),
               ),
               GestureDetector(
-                child: Icon(widget.icon, color: AppColors.grey950, size: 16),
+                child: widget.icon,
                 onTap: () {
                   widget.onValidate(_controller.text);
                 },
@@ -226,6 +229,7 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
             children: [
               Expanded(
                 child: Autocomplete<String>(
+                  displayStringForOption: (String option) => option,
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     return widget.suggestions.where((suggestion) => suggestion
                         .toLowerCase()
@@ -253,15 +257,21 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
                         border: InputBorder
                             .none, // Remove border for seamless appearance
                       ),
+                      onChanged: (value) {
+                        widget.onValidate(value);
+                      },
                     );
                   },
                   optionsViewBuilder: (context, onSelected, options) {
                     return Material(
-                      elevation: 4.0,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                       child: ListView.separated(
-                        // Improved suggestion list presentation
-                        padding: EdgeInsets.zero, // Remove default padding
+                        padding: EdgeInsets.zero,
                         itemCount: options.length,
+                        shrinkWrap: true,
                         separatorBuilder: (context, index) =>
                             const Divider(height: 0.5),
                         itemBuilder: (context, index) => ListTile(
