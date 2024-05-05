@@ -1,7 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:flutter/widgets.dart';
 
 class ErrorSnackBar extends SnackBar {
   ErrorSnackBar({
