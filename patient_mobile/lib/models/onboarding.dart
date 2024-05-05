@@ -1278,7 +1278,7 @@ WoltModalSheetPage addTraitement(
     hasSabGradient: true,
     enableDrag: true,
     child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.85,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: BodyAddTraitement(
@@ -1366,7 +1366,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Ajouter un sujet de santé',
+            'Ajoutez un sujet de santé',
             style: TextStyle(
               color: AppColors.black,
               fontFamily: 'Poppins',
@@ -1488,7 +1488,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 ),
               ),
               SizedBox(
-                height: widget.screenSize.height - 590,
+                height: widget.screenSize.height - 548,
                 width: widget.screenSize.width,
                 child: FutureBuilder(
                   future: fetchData(), // Simulate some async operation
@@ -1545,6 +1545,12 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                     size: SizeButton.sm,
                     msg: const Text("Ajouter"),
                     onPressed: () {
+                      if (name == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            ErrorLoginSnackBar(
+                                message: "Ajoutez un nom", context: context));
+                        return;
+                      }
                       widget.addNewTraitement(name, medicines, stillRelevant);
                       Navigator.pop(context);
                     }),
