@@ -897,13 +897,13 @@ class _Onboarding3State extends State<Onboarding3> {
                                           child: CardTraitementSmall(
                                             name: traitments[i]['Name'],
                                             isEnCours: traitments[i]
-                                                ['Still_relevant'],
+                                                        ['treatments']
+                                                    .isEmpty
+                                                ? false
+                                                : true,
                                             onTap: () {
                                               setState(() {
-                                                traitments[i]
-                                                        ['Still_relevant'] =
-                                                    traitments[i]
-                                                        ['Still_relevant'];
+                                                traitments.removeAt(i);
                                               });
                                             },
                                           ),
@@ -1194,9 +1194,9 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   width: 16,
                   height: 16,
                   // ignore: deprecated_member_use
-                  color: widget.traitement['Still_relevant']
-                      ? AppColors.blue700
-                      : AppColors.grey300,
+                  color: widget.traitement['treatments'].isEmpty
+                      ? AppColors.grey300
+                      : AppColors.blue700,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1246,7 +1246,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
           style: TextStyle(
               color: AppColors.black,
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               fontFamily: 'Poppins'),
         ),
         const SizedBox(height: 8),
