@@ -1,12 +1,11 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/AddPatient/custom_preload_field.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
+import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/patient_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -15,9 +14,11 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
-  final Function deletePatientList;
   final Function updatePatient;
-  const CustomList({super.key, required this.patients, required this.deletePatientList, required this.updatePatient});
+  final Function setPages;
+  final Function setId;
+  final Function deletePatientList;
+  const CustomList({super.key, required this.patients, required this.updatePatient, required this.setPages, required this.setId, required this.deletePatientList});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -26,7 +27,6 @@ class CustomList extends StatefulWidget {
 // ignore: must_be_immutable
 class _CustomListState extends State<CustomList> {
 
-  ValueNotifier<int> pageIndexNotifier = ValueNotifier(2);
   ValueNotifier<int> selected = ValueNotifier(2);
 
   void updateSelection(int newSelection) {
@@ -35,7 +35,6 @@ class _CustomListState extends State<CustomList> {
 
   @override
   Widget build(BuildContext context) {
-  Map<String, dynamic> templist;
     return Expanded(
         child: ListView.separated(
           separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -45,28 +44,11 @@ class _CustomListState extends State<CustomList> {
             return PatientListCard(
             patientData: widget.patients[index],
             onTap: () {
-              templist = Map.of(widget.patients[index]);
               WoltModalSheet.show(
-                onModalDismissedWithBarrierTap: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    pageIndexNotifier.value = 2;
-                  });
-                },
-                onModalDismissedWithDrag: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    pageIndexNotifier.value = 2;
-                  });
-                },
                 context: context,
-                pageIndexNotifier: pageIndexNotifier,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    fixPatient(context, pageIndexNotifier, widget.patients[index], templist),
-                    fixPatient2(context, pageIndexNotifier, ValueNotifier(widget.patients[index]), ValueNotifier(templist), selected, index, widget.updatePatient),
-                    patientInfo(context, widget.patients[index], context, pageIndexNotifier),
-                    deletePatient(context, pageIndexNotifier, widget.patients[index], widget.deletePatientList),
+                    patientNavigation(context, widget.patients[index], index, widget.setPages, widget.setId),
                   ];
                 },
               );
@@ -77,13 +59,51 @@ class _CustomListState extends State<CustomList> {
     );
   }
 
+  SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index, Function setPages, Function setId) {
+    return WoltModalSheetPage(
+      backgroundColor: AppColors.white,
+      hasTopBarLayer: false,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+          child: Column(
+            children: [
+              Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 16),
+              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 4, id: patient['id'], setId: setId),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 5, id: patient['id'], setId: setId),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 6, id: patient['id'], setId: setId),
+              const SizedBox(height: 4),
+              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 7, id: patient['id'], setId: setId),
+              const SizedBox(height: 12),
+              Container(height: 2,color: AppColors.blue200),
+              const SizedBox(height: 12),
+              Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text('Revenir à la patientèle', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {Navigator.pop(context);}),
+              const SizedBox(height: 4),
+              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le patient', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {WoltModalSheet.show(
+                context: context,
+                pageListBuilder: (BuildContext context) {
+                  return [
+                    deletePatient(context, patient, widget.deletePatientList),
+                  ];
+                },
+              );},)
+            ]),
+        ),
+      ),
+    );
+  }
+
+
   SliverWoltModalSheetPage patientInfo(
       BuildContext context,
       Map<String, dynamic> patient,
       BuildContext modalSheetContext,
       ValueNotifier<int> pageIndexNotifier) {
     return WoltModalSheetPage(
-      
       stickyActionBar: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
         child: Wrap(
@@ -137,7 +157,7 @@ class _CustomListState extends State<CustomList> {
       ),
       backgroundColor: AppColors.white,
       enableDrag: true,
-      hasSabGradient: true,
+      hasSabGradient: false,
       hasTopBarLayer: false,
     );
 }
@@ -268,6 +288,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   text: widget.templist['Prenom'],
                   label: widget.templist['Prenom'],
                   onChanged: (value) => {
@@ -287,6 +308,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   label: widget.templist['Nom'],
                   text: widget.templist['Nom'],
                   onChanged: (value) => {
@@ -306,6 +328,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                   height: 4,
                 ),
                 CustomDatePiker(
+                  endDate: DateTime.now(),
                   value: widget.templist['date_de_naissance'].toString(),
                   onChanged: (value) {
                     setState(() {
@@ -387,10 +410,11 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
-                            text: widget.templist['taille'].toString(),
+                            startUppercase: false,
+                            text: (double.parse(widget.templist['taille']) / 100).toString(),
                             label: widget.templist['taille'].toString(),
                             onChanged: (value) => {
-                                  widget.templist['taille'] = value,
+                                  widget.templist['taille'] = (double.parse(value) * 100).round().toString(),
                               },
                             isPassword: false,
                             keyboardType: TextInputType.number,
@@ -415,10 +439,11 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                             height: 4,
                           ),
                           CustomPreloadField(
-                            text: widget.templist['poids'].toString(),
+                            startUppercase: false,
+                            text: (double.parse(widget.templist['poids']) / 100).toString(),
                             label: widget.templist['poids'].toString(),
                             onChanged: (value) => {
-                                  widget.templist['poids'] = value,
+                                  widget.templist['poids'] = (double.parse(value) * 100).round().toString(),
                             },
                             isPassword: false,
                             keyboardType: TextInputType.number,
@@ -436,8 +461,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
   }
 }
 
-  SliverWoltModalSheetPage deletePatient(BuildContext context,
-      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient, Function deletePatient) {
+  SliverWoltModalSheetPage deletePatient(BuildContext context, Map<String, dynamic> patient, Function deletePatientList) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -497,7 +521,7 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       size: SizeButton.sm,
                       msg: const Text('Annuler'),
                       onPressed: () {
-                        pageIndexNotifier.value = 2;
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -511,10 +535,10 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        pageIndexNotifier.value = 2;
-                        deletePatient(patient['id']);
-                        deletePatientService(patient['id'], context);
                         Navigator.pop(context);
+                        Navigator.pop(context);
+                        deletePatientService(patient['id'], context);
+                        deletePatientList(patient['id']);
                       },
                     ),
                   ),
@@ -559,8 +583,20 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
   }
   
   class _BodyInfoState extends State<BodyInfo> {
+    String sexe = '';
     @override
     Widget build(BuildContext context) {
+      switch (widget.patient['sexe']) {
+        case 'MALE':
+          sexe = 'Masculin';
+          break;
+        case 'FEMALE':
+          sexe = 'Feminin';
+          break;
+        case 'OTHER':
+          sexe = 'Autre';
+          break;
+      }
       return Row(
                     children: [
                       Wrap(
@@ -631,7 +667,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['sexe'],
+                                sexe,
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -649,7 +685,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['taille'].toString(),
+                                '${(int.parse(widget.patient['taille'])/100).toString()} m',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -667,7 +703,7 @@ SliverWoltModalSheetPage fixPatient2(BuildContext context,
                                 ),
                               ),
                               Text(
-                                widget.patient['poids'].toString(),
+                                '${(int.parse(widget.patient['poids'])/100).toString()} Kg',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -835,6 +871,7 @@ class _BodyFixPatient2State extends State<BodyFixPatient2> {
                   height: 4,
                 ),
                 CustomPreloadField(
+                  startUppercase: true,
                   text: widget.templist.value['medecin_traitant'].toString(),
                   label: "Dr. Edgar",
                   onChanged: (value) => widget.templist.value['medecin_traitant'] = value,

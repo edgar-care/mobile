@@ -12,8 +12,11 @@ import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+// ignore: must_be_immutable
 class Patient extends StatefulWidget {
-  const Patient({super.key});
+  Function setPages;
+  Function setId;
+  Patient({super.key, required this.setPages, required this.setId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -150,12 +153,13 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre adresse mail",
+                  "Adresse mail",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
-                  label: "prenom.nom@gmail.com",
+                  startUppercase: false,
+                  label: "Prenom.nom@gmail.com",
                   onChanged: (value) => info.value['email'] = value,
                   isPassword: false,
                   keyboardType: TextInputType.emailAddress,
@@ -164,11 +168,12 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre prénom",
+                  "Prénom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Prénom",
                   onChanged: (value) => info.value['prenom'] = value,
                   isPassword: false,
@@ -178,11 +183,12 @@ class _PatientState extends State<Patient> {
                   height: 16,
                 ),
                 const Text(
-                  "Votre nom",
+                  "Nom",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Nom",
                   onChanged: (value) => info.value['nom'] = value,
                   isPassword: false,
@@ -196,12 +202,12 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
-                CustomDatePiker(onChanged: (value) => info.value['date'] = value),
+                CustomDatePiker(onChanged: (value) => info.value['date'] = value, endDate: DateTime.now()),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
-                  "Votre sexe",
+                  "Sexe",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
@@ -249,14 +255,15 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre taille",
+                            "Taille",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
+                            startUppercase: false,
                             label: "1,52m",
-                            onChanged: (value) => info.value['taille'] = value,
+                            onChanged: (value) => info.value['taille'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -272,14 +279,15 @@ class _PatientState extends State<Patient> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Votre poids",
+                            "Poids",
                             style:
                                 TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4,),
                           CustomField(
+                            startUppercase: false,
                             label: "45kg",
-                            onChanged: (value) => info.value['poids'] = value,
+                            onChanged: (value) => info.value['poids'] = (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -419,11 +427,12 @@ class _PatientState extends State<Patient> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Votre médecin traitant",
+                  "Médecin traitant",
                   style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4,),
                 CustomField(
+                  startUppercase: true,
                   label: "Dr. Edgar",
                   onChanged: (value) => info.value['medecin_traitant'] = value,
                   isPassword: false,
@@ -460,6 +469,9 @@ class _PatientState extends State<Patient> {
         }
       }
     });
+    Future.delayed(const Duration(milliseconds: 50), () {
+      refresh();
+    });
   }
 
   void updatePatient(Map<String, dynamic> patient, String id) {
@@ -469,6 +481,9 @@ class _PatientState extends State<Patient> {
           patients[i] = patient;
         }
       }
+    });
+    Future.delayed(const Duration(milliseconds: 50), () {
+      refresh();
     });
   }
 
@@ -524,8 +539,10 @@ class _PatientState extends State<Patient> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomList(
-                            patients: patients,
                             deletePatientList: deletePatientList,
+                            setId: widget.setId,
+                            setPages: widget.setPages,
+                            patients: patients,
                             updatePatient: updatePatient,
                           );
                         } else {

@@ -13,11 +13,6 @@ class CustomListRdv extends StatefulWidget {
 class _CustomListRdvState extends State<CustomListRdv> {
   int pressed = 0;
   List<Map<String, dynamic>> bAppointment = [];
-  @override
-    initState() {
-    super.initState();
-    _loadAppointment();
-  }
 
   void deleteAppointmentList(int index) {
     setState(() {
@@ -26,25 +21,30 @@ class _CustomListRdvState extends State<CustomListRdv> {
   }
 
   Future<void> _loadAppointment() async {
-    var tempAp = await getAppointments();
-    for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == "" && tempAp[i]['start_date'] >= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-        setState(() {
-          bAppointment.add(tempAp[i]);
-        });
-      }
-    }
+    bAppointment = await getAppointments();
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ListView.separated(
-          itemCount: bAppointment.length,
-          separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 4),
-          itemBuilder: (context, index) {
-          return CustomListRdvCard(rdvInfo: bAppointment[index], delete: () => {deleteAppointmentList(index)}, old: false,);
+    return FutureBuilder(
+        future: _loadAppointment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Expanded(
+              child: ListView.separated(
+                itemCount: bAppointment.length,
+                separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 4),
+                itemBuilder: (context, index) {
+                return CustomListRdvCard(rdvInfo: bAppointment[index], delete: () => {deleteAppointmentList(index)}, old: false,);
+              },
+          ));
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
-    ));
+      );
   }
 }

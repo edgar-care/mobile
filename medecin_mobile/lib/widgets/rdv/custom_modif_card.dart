@@ -45,9 +45,9 @@ class _CustomModifCardState extends State<CustomModifCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(DateFormat('yMMMMEEEEd', 'fr').format(DateTime.fromMillisecondsSinceEpoch(widget.dateList[0]['start_date'] * 1000)), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
-                    const Row(children: [
-                        Text("nbr horaires", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
-                        Text(" disponibles", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
+                    Row(children: [
+                        Text( widget.dateList.length > 1 ? "${widget.dateList.length} horaires" : "${widget.dateList.length} horaire", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.blue700),),
+                        Text(widget.dateList.length > 1 ? " disponibles" : " disponible", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                     ],)
                 ],),
                 const Spacer(),

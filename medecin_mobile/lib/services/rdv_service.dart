@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<dynamic>> getAppointments() async {
+Future<List<Map<String, dynamic>>> getAppointments() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments';
@@ -18,8 +18,15 @@ Future<List<dynamic>> getAppointments() async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
-    return jsonDecode(response.body)['appointments'];
+  if (response.statusCode == 200) {
+    List<Map<String, dynamic>> bAppointment = [];
+    var tempAp = jsonDecode(response.body)['appointments'];
+    for (var i = 0; i < tempAp.length; i++) {
+      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == "" && tempAp[i]['start_date'] >= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+          bAppointment.add(tempAp[i]);
+      }
+    }
+    return bAppointment;
   }
   if (response.statusCode != 201) {
     return [];
@@ -31,7 +38,7 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
-  final response = await http.put(
+  await http.put(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
@@ -39,12 +46,6 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
     },
     body: jsonEncode({'id': newSlotId}),
   );
-  if (response.statusCode == 201) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Votre rendez-vous a bien été modifié', context: context,));
-  }
-  else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Une erreur est survenue, veuillez réessayer', context: context,));
-  }
 }
 
 Future cancelAppointments(String id, BuildContext context) async {
