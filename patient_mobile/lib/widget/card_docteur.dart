@@ -52,17 +52,18 @@ class _CardDoctorState extends State<CardDoctor> {
                       color:
                           widget.selected ? AppColors.white : AppColors.black,
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
                     ),
                   ),
                   Text(
                     "${widget.street}, ${widget.zipCode} - ${widget.city}",
                     style: TextStyle(
-                      color:
-                          widget.selected ? AppColors.white : AppColors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        color:
+                            widget.selected ? AppColors.white : AppColors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins'),
                   ),
                 ],
               ),

@@ -721,7 +721,7 @@ class _Onboarding3State extends State<Onboarding3> {
           padding: const EdgeInsets.only(
             left: 24,
             right: 24,
-            bottom: 24,
+            bottom: 12,
             top: 16,
           ),
           child: Column(
@@ -768,7 +768,7 @@ class _Onboarding3State extends State<Onboarding3> {
                 style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 8),
@@ -825,11 +825,11 @@ class _Onboarding3State extends State<Onboarding3> {
                 style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.429,
                 child: FutureBuilder(
                   future: Future.delayed(const Duration(seconds: 0), () {
                     return true;
@@ -864,21 +864,24 @@ class _Onboarding3State extends State<Onboarding3> {
                                       return IntrinsicWidth(
                                         child: GestureDetector(
                                           onTap: () {
-                                            WoltModalSheet.show<void>(
-                                              context: context,
-                                              pageIndexNotifier: pageIndex,
-                                              pageListBuilder:
-                                                  (modalSheetContext) {
-                                                return [
-                                                  infoTraitement(
-                                                    context,
-                                                    pageIndex,
-                                                    updateData,
-                                                    traitments[i],
-                                                  ),
-                                                ];
-                                              },
-                                            );
+                                            if (traitments[i]['treatments']
+                                                .isNotEmpty) {
+                                              WoltModalSheet.show<void>(
+                                                context: context,
+                                                pageIndexNotifier: pageIndex,
+                                                pageListBuilder:
+                                                    (modalSheetContext) {
+                                                  return [
+                                                    infoTraitement(
+                                                      context,
+                                                      pageIndex,
+                                                      updateData,
+                                                      traitments[i],
+                                                    ),
+                                                  ];
+                                                },
+                                              );
+                                            }
                                           },
                                           child: CardTraitementSmall(
                                             name: traitments[i]['Name'],
@@ -913,7 +916,7 @@ class _Onboarding3State extends State<Onboarding3> {
                   if (traitments.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         ErrorLoginSnackBar(
-                            message: "Ajoutez des informations",
+                            message: "Ajouter des informations",
                             context: context));
                     return;
                   }
@@ -1156,7 +1159,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: AppColors.blue200,
-                width: 2,
+                width: 1,
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -1226,7 +1229,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
         const SizedBox(height: 8),
         SizedBox(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.56,
+          height: MediaQuery.of(context).size.height * 0.55,
           child: FutureBuilder<bool>(
             future: _futureData,
             builder: (context, snapshot) {
@@ -1245,6 +1248,9 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
+                            Logger().i(
+                                "the med name at the index : $index ${medNames[index]}");
+
                             return CardTraitementDay(
                               isClickable: false,
                               data: widget.traitement['treatments'][index],
@@ -1334,11 +1340,14 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 
   Future<bool> fetchData() async {
     medicaments = await getMedecines();
-    for (var i = 0; i < medicines['treatments'].length; i++) {
-      var medname = medicaments.firstWhere(
-          (med) => med['id'] == medicines['treatments'][i]['medicine_id'],
-          orElse: () => {'name': ''})['name'];
-      medNames.add(medname);
+    medNames.clear(); // Effacer la liste existante pour éviter les doublons
+
+    for (var treatment in medicines['treatments']) {
+      var medId = treatment['medicine_id'];
+      var med = medicaments.firstWhere((med) => med['id'] == medId,
+          orElse: () => {'name': ''});
+      var medName = med['name'];
+      medNames.add(medName);
     }
     return true;
   }
@@ -1371,7 +1380,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               color: AppColors.black,
               fontFamily: 'Poppins',
               fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 32),
@@ -1469,7 +1478,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        "Ajoutez un médicament",
+                        "Ajouter un médicament",
                         style: TextStyle(
                           color: AppColors.grey400,
                           fontSize: 14,
@@ -1488,7 +1497,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 ),
               ),
               SizedBox(
-                height: widget.screenSize.height - 548,
+                height: widget.screenSize.height - 539.6,
                 width: widget.screenSize.width,
                 child: FutureBuilder(
                   future: fetchData(), // Simulate some async operation
@@ -1502,6 +1511,9 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                           if (medicines['treatments'].isEmpty) {
                             return const SizedBox();
                           }
+                          Logger().i(
+                              "the med name at the index : $index ${medNames[index]}");
+                          Logger().i(medNames);
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: CardTraitementDay(
@@ -1651,7 +1663,7 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                 color: AppColors.black,
                 fontFamily: 'Poppins',
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -1661,7 +1673,7 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
           children: [
             const SizedBox(height: 32),
             const Text(
-              'Nom du votre médicament',
+              'Nom de votre médicament',
               style: TextStyle(
                 color: AppColors.black,
                 fontFamily: 'Poppins',

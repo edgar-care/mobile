@@ -29,7 +29,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
         color: AppColors.blue50,
         border: Border.all(
           color: AppColors.blue200,
-          width: 2,
+          width: 1,
         ),
       ),
       child: Column(
@@ -44,12 +44,12 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
                     style: const TextStyle(
                       color: AppColors.black,
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontFamily: "Poppins",
                     ),
                   ),
                   Text(
-                    " - ${widget.data["quantity"]} comprimé",
+                    " - ${widget.data["quantity"] > 1 ? "${widget.data["quantity"]} comprimés" : "${widget.data["quantity"]} comprimé"}",
                     style: const TextStyle(
                       color: AppColors.black,
                       fontSize: 14,

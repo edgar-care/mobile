@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:easy_autocomplete/easy_autocomplete.dart';
 
 class CustomField extends StatefulWidget {
   final String label;
@@ -186,7 +187,6 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
   }
 }
 
-// ignore: must_be_immutable
 class CustomAutoComplete extends StatefulWidget {
   final String label;
   final IconData icon;
@@ -204,10 +204,10 @@ class CustomAutoComplete extends StatefulWidget {
   });
 
   @override
-  State<CustomAutoComplete> createState() => _CustomAutoCompleteState();
+  State<CustomAutoComplete> createState() => _CustomAutoComplete2State();
 }
 
-class _CustomAutoCompleteState extends State<CustomAutoComplete> {
+class _CustomAutoComplete2State extends State<CustomAutoComplete> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -228,62 +228,33 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
           child: Row(
             children: [
               Expanded(
-                child: Autocomplete<String>(
-                  displayStringForOption: (String option) => option,
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    return widget.suggestions.where((suggestion) => suggestion
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase()));
-                  },
-                  onSelected: (String value) {
-                    _controller.text = value;
-                    widget.onValidate(value);
-                  },
-                  fieldViewBuilder:
-                      (context, controller, focusNode, onFieldSubmitted) {
-                    return TextFormField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      keyboardType: widget.keyboardType,
-                      textInputAction: TextInputAction.search,
-                      style: const TextStyle(
-                        color: AppColors.grey950,
-                        fontFamily: 'Poppins',
-                        fontSize: 14.0,
-                        textBaseline: TextBaseline.ideographic,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: widget.label,
-                        border: InputBorder
-                            .none, // Remove border for seamless appearance
-                      ),
-                      onChanged: (value) {
-                        widget.onValidate(value);
-                      },
-                    );
-                  },
-                  optionsViewBuilder: (context, onSelected, options) {
-                    return Material(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListView.separated(
-                        padding: EdgeInsets.zero,
-                        itemCount: options.length,
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) =>
-                            const Divider(height: 0.5),
-                        itemBuilder: (context, index) => ListTile(
-                          title: Text(options.elementAt(
-                              index)), // Use elementAt to access elements
-                          onTap: () => onSelected(options.elementAt(
-                              index)), // Use elementAt to access elements
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                child: EasyAutocomplete(
+                    controller: _controller,
+                    suggestions: widget.suggestions,
+                    textCapitalization: TextCapitalization.sentences,
+                    keyboardType: widget.keyboardType,
+                    decoration: InputDecoration(
+                      hintText: widget.label,
+                      border: InputBorder
+                          .none, // Remove border for seamless appearance
+                    ),
+                    onChanged: (value) {
+                      widget.onValidate(value);
+                    },
+                    suggestionBuilder: (data) {
+                      return Container(
+                          margin: const EdgeInsets.all(1),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(data,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins')));
+                    }),
               ),
               GestureDetector(
                 child: Icon(widget.icon, color: AppColors.grey950, size: 16.0),
