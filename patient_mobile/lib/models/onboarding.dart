@@ -1690,9 +1690,16 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                   var selectedMedicament = medicaments.firstWhere(
                       (med) => med['name'] == value,
                       orElse: () => {'id': null});
-                  setState(() {
-                    medicament['medicine_id'] = selectedMedicament['id'];
-                  });
+
+                  if (selectedMedicament['id'] != null) {
+                    setState(() {
+                      medicament['medicine_id'] = selectedMedicament['id'];
+                    });
+                  } else {
+                    setState(() {
+                      medicament['medicine_id'] = "";
+                    });
+                  }
                 },
                 suggestions: nameMedic),
             const SizedBox(height: 16),
@@ -2113,8 +2120,14 @@ class _BodyAddMedicState extends State<BodyAddMedic> {
                   size: SizeButton.sm,
                   msg: const Text("Ajouter"),
                   onPressed: () {
-                    if (medicament['medicine_id'].isEmpty ||
-                        medicament['quantity'] == 0 ||
+                    if (medicament['medicine_id'].isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                          message:
+                              "Veuillez choisir un médicament ou entrer un medicament valide",
+                          context: context));
+                      return;
+                    }
+                    if (medicament['quantity'] == 0 ||
                         medicament['day'].isEmpty ||
                         medicament['period'].isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
