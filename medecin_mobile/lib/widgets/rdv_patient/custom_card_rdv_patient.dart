@@ -150,6 +150,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
   }
 
    SliverWoltModalSheetPage deleteRdv(BuildContext context, String id){
+    String reason = '';
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -203,7 +204,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                   const SizedBox(
                     height: 4,
                   ),
-                  CustomField(startUppercase: false, label: 'Renseignez la raison de l\'annulation', keyboardType: TextInputType.text, onChanged: (value){}),
+                  CustomField(startUppercase: false, label: 'Renseignez la raison de l\'annulation', keyboardType: TextInputType.text, onChanged: (value){reason = value;}),
               ]),
               const SizedBox(
                 height: 32,
@@ -233,7 +234,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        cancelAppointments(id, context);
+                        cancelAppointments(id, context, reason);
                         widget.delete();
                         Navigator.pop(context);
                       },

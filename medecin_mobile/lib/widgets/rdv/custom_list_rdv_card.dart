@@ -5,6 +5,7 @@ import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -50,14 +51,14 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
    SliverWoltModalSheetPage deleteAppointment(BuildContext context, String id) {
+    String reason = '';
     return WoltModalSheetPage(
-      hasTopBarLayer: false,
       backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
+      hasTopBarLayer: false,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(
             children: [
               Container(
@@ -86,7 +87,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 height: 8,
               ),
               const Text(
-                "Si vous supprimez le rendez-vous, vous ne pourrez plus revenir en arrière.",
+                "Si vous supprimez ce rendez-vous, vous ne pourrez plus revenir en arrière",
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 14,
@@ -97,12 +98,24 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
               const SizedBox(
                 height: 32,
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  const Text('La raison de l\'annulation', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.start,),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  CustomField(startUppercase: false, label: 'Renseignez la raison de l\'annulation', keyboardType: TextInputType.text, onChanged: (value){reason = value;}),
+              ]),
+              const SizedBox(
+                height: 32,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
+                    width: MediaQuery.of(context).size.width * 0.427,
                     child: Buttons(
                       variant: Variante.secondary,
                       size: SizeButton.sm,
@@ -116,13 +129,13 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     width: 12,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
+                    width: MediaQuery.of(context).size.width * 0.427,
                     child: Buttons(
                       variant: Variante.delete,
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        cancelAppointments(id, context);
+                        cancelAppointments(id, context, reason);
                         widget.delete();
                         Navigator.pop(context);
                       },
@@ -130,12 +143,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                   ),
                 ],
               ),
-            ],
-          ),
+            ]),
         ),
       ),
     );
-  }
+   }
 
    SliverWoltModalSheetPage updateAppointmentModal(BuildContext context, Map<String, dynamic> rdvInfo, Function updateAppointment) {
     
