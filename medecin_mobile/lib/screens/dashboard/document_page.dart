@@ -31,9 +31,9 @@ class _DocumentPageState extends State<DocumentPage> {
   }
 
   Future<void> updateData() async {
-    setState(() {
-      _loadDoc();
-    });
+      setState(() {
+        _loadDoc();
+      });
   }
 
   @override
@@ -123,7 +123,7 @@ class _DocumentPageState extends State<DocumentPage> {
                       context: context,
                       pageListBuilder: (modalSheetContext) {
                         return [
-                          addDocument(updateData),
+                          addDocument(updateData, patientInfo),
                         ];
                       });
                 },
@@ -168,10 +168,10 @@ class _DocumentPageState extends State<DocumentPage> {
     );
   }
 
-  SliverWoltModalSheetPage addDocument(Function updateData) {
+  SliverWoltModalSheetPage addDocument(Function updateData, Map<String, dynamic> patientInfo) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
-      child: BodyModal(updateData: updateData,),
+      child: BodyModal(updateData: updateData, patientInfo: patientInfo),
     );
   }
 }
@@ -179,7 +179,8 @@ class _DocumentPageState extends State<DocumentPage> {
 // ignore: must_be_immutable
 class BodyModal extends StatefulWidget {
   Function updateData;
-  BodyModal({super.key, required this.updateData});
+  Map<String, dynamic> patientInfo;
+  BodyModal({super.key, required this.updateData, required this.patientInfo});
 
   @override
   State<BodyModal> createState() => _BodyModalState();
@@ -193,7 +194,7 @@ class _BodyModalState extends State<BodyModal> {
    void openFileExplorer() async {
       final file = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'png', 'jpg', 'jpeg', 'docx', 'odt'],
+        allowedExtensions: ['pdf', 'doc', 'png', 'docx', 'odt'],
         dialogTitle: 'Choisir un fichier',
       );
       if (file != null) {
@@ -233,7 +234,7 @@ class _BodyModalState extends State<BodyModal> {
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.w600),
               ),
               const SizedBox(
                 height: 16,
@@ -307,7 +308,7 @@ class _BodyModalState extends State<BodyModal> {
                   height: 16,
                 ),
                 const Text(
-                  "Type de document",
+                  "Le type de votre document",
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
@@ -393,7 +394,6 @@ class _BodyModalState extends State<BodyModal> {
                     },
                     items: <String>[
                       'Général',
-                      'Finance',
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -435,9 +435,10 @@ class _BodyModalState extends State<BodyModal> {
                           postDocument(
                             dropdownValue,
                             dropdownValue2,
+                            widget.patientInfo["id"],
                             fileSelected!,
-                          );
-                          widget.updateData();
+                          ).then((value) => 
+                          widget.updateData());
                         }
                         Navigator.pop(context);
                       },
