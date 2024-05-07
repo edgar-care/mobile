@@ -3,33 +3,26 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// ignore: non_constant_identifier_names
-Future<bool> RegisterUser(String email, String password) async {
+Future<Map<String, dynamic>> getTraitement() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  final url = '${dotenv.env['URL']}auth/p/register';
-
-  final response = await http.post(
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/treatments';
+  final response = await http.get(
     Uri.parse(url),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email': email,
-      'password': password,
-    }),
+    headers: {'Authorization': 'Bearer $token'},
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    final token = jsonDecode(body)['token'];
-    prefs.setString('token', token);
-    return true;
+    return Map<String, dynamic>.from(jsonDecode(body));
   } else {
-    return false;
+    return {};
   }
 }
 
-Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
+Future<bool> postTraitement(Map<String, dynamic> traitement) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}dashboard/medical-info';
+  final url = '${dotenv.env['URL']}dashboard/treatment';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},

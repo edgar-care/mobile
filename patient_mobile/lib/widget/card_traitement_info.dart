@@ -72,7 +72,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                       ),
                       child: const Text(
                         'Doliprane 500 mg',
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: AppColors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,

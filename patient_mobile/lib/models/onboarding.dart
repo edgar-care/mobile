@@ -1,5 +1,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/auth.dart';
+import 'package:edgar/services/doctor.dart';
+import 'package:edgar/services/medecine.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/AddPatient/add_button.dart';
 import 'package:edgar/widget/buttons.dart';
@@ -36,11 +38,6 @@ class _OnboardingState extends State<Onboarding> {
   late final List<Widget> pages;
 
   int _selectedIndex = 0;
-  final List<Map<String, dynamic>> docteurs = [
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-    {'name': 'Dr. Edgar', 'address': '1 rue de la paix, 75000 Paris'},
-  ];
 
   @override
   void initState() {
@@ -62,7 +59,7 @@ class _OnboardingState extends State<Onboarding> {
       ),
       Onboarding2(
         updateSelectedIndex: updateSelectedIndex,
-        docteurs: docteurs,
+        docteurs: const [],
       ),
       Onboarding3(
         updateSelectedIndex: updateSelectedIndex,
@@ -430,7 +427,7 @@ class _Onboarding1State extends State<Onboarding1> {
                   widget.updateSelectedIndex(1);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-                      message: "Completer tout les champs", context: context));
+                      message: "Compléter tous les champs", context: context));
                 }
               },
             )
@@ -707,7 +704,7 @@ class _Onboarding3State extends State<Onboarding3> {
       traitments.add({
         "Name": name,
         "treatments": medicines["treatments"],
-        "Still_relevant": stillRelevant,
+        "still_relevant": stillRelevant,
       });
     });
   }
@@ -1148,7 +1145,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<bool> isHealth =
-        ValueNotifier(widget.traitement['Still_relevant']);
+        ValueNotifier(widget.traitement['still_relevant']);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
