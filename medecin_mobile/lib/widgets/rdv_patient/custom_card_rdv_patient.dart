@@ -6,10 +6,10 @@ import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+// ignore: must_be_immutable
 class CustomCardRdvPatient extends StatefulWidget {
   final Map<String, dynamic> rdvInfo;
   bool old = false;
@@ -105,9 +105,23 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                   Text('de $timeStringStart à $timeStringEnd', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
                 ]),
               const SizedBox(height: 16),
-              CustomNavPatientCard(text: 'Diagnostic', icon: BootstrapIcons.heart_pulse_fill, ontap: () {}),
+              CustomCardModal(text: 'Diagnostic', icon: BootstrapIcons.heart_pulse_fill, onTap: () {WoltModalSheet.show(
+                context: context,
+                pageListBuilder: (BuildContext context) {
+                  return [
+                    
+                  ];
+                },
+              );}),
               const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Retranscription du chat', icon: BootstrapIcons.file_text_fill, ontap: () {}),
+              CustomCardModal(text: 'Retranscription du chat', icon: BootstrapIcons.file_text_fill, onTap: () {WoltModalSheet.show(
+                context: context,
+                pageListBuilder: (BuildContext context) {
+                  return [
+                    
+                  ];
+                },
+              );}),
               if(!widget.old) Column (children:[
               const SizedBox(height: 12),
               Container(height: 2,color: AppColors.blue200),
@@ -189,7 +203,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                   const SizedBox(
                     height: 4,
                   ),
-                  CustomField(label: 'Renseignez la raison de l\'annulation', keyboardType: TextInputType.text, onChanged: (value){}),
+                  CustomField(startUppercase: false, label: 'Renseignez la raison de l\'annulation', keyboardType: TextInputType.text, onChanged: (value){}),
               ]),
               const SizedBox(
                 height: 32,

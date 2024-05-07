@@ -1,11 +1,12 @@
 import 'package:edgar_pro/services/rdv_service.dart';
-import 'package:edgar_pro/widgets/rdv/custom_list_rdv_card.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_card_rdv_patient.dart';
 import 'package:flutter/material.dart';
 
 
+// ignore: must_be_immutable
 class CustomListOldPatient extends StatefulWidget {
-  const CustomListOldPatient({super.key});
+  String id;
+  CustomListOldPatient({super.key, required this.id});
 
   @override
   State<CustomListOldPatient> createState() => _CustomListRdvPatientState();
@@ -38,7 +39,7 @@ class _CustomListRdvPatientState extends State<CustomListOldPatient> {
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments();
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == "" && tempAp[i]['start_date'] <= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+      if (tempAp[i]['id_patient'].toString() == widget.id && tempAp[i]['cancelation_reason'] == "" && tempAp[i]['start_date'] <= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {
           bAppointment.add(tempAp[i]);
         });

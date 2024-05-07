@@ -28,7 +28,7 @@ Future<List<Map<String, dynamic>>> getAppointments() async {
     }
     return bAppointment;
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return [];
   }
   return [];
