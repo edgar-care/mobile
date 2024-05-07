@@ -1,12 +1,14 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:edgar/services/get_appointement.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+
+import 'package:edgar/services/get_appointement.dart';
 import 'package:edgar/services/put_appoitement.dart';
+import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/buttons.dart';
 
 enum RdvFilter {
   aVenir,
@@ -38,8 +40,10 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   Future<void> fetchData(BuildContext context) async {
     final Map<String, dynamic>? rdvs = await getAppointement(context);
     if (rdvs != null) {
-      final uniqueRdv = <Map<String,
-          String>>{}; // Utiliser un Set pour stocker les rendez-vous uniques
+      final uniqueRdv = <Map<String, String>>{};
+      if (rdvs['rdv'] == null) {
+        return;
+      }
       rdvs['rdv'].forEach((dynamic rdv) {
         final rendezVous = {
           'id': rdv['id'] as String,
@@ -59,6 +63,12 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
     } else {
       throw Exception('Failed to fetch data');
     }
+  }
+
+  Future<void> updateDate(BuildContext context) async {
+    setState(() {
+      fetchData(context);
+    });
   }
 
   @override
@@ -122,7 +132,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               final appointment = filteredRdv[index];
-              return CardRdv(rdv: appointment);
+              return CardRdv(rdv: appointment, updataData: updateDate);
             },
           ),
         ),
@@ -319,10 +329,15 @@ class _SwitchThreeElementsState extends State<SwitchThreeElements> {
   }
 }
 
+// ignore: must_be_immutable
 class CardRdv extends StatefulWidget {
   final Map<String, String> rdv;
-
-  const CardRdv({super.key, required this.rdv});
+  Function updataData;
+  CardRdv({
+    super.key,
+    required this.rdv,
+    required this.updataData,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -460,11 +475,13 @@ class _CardRdvState extends State<CardRdv> {
                                     openRDV(
                                       context,
                                       pageIndexRDV,
+                                      widget.updataData,
                                     ),
                                     deleteRDV(
                                       context,
                                       pageIndexRDV,
                                       widget.rdv['id']!,
+                                      widget.updataData,
                                     ),
                                   ];
                                 });
@@ -532,6 +549,7 @@ final pageIndexRDV = ValueNotifier(0);
 WoltModalSheetPage openRDV(
   BuildContext context,
   ValueNotifier<int> pageIndex,
+  Function updataData,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
@@ -566,6 +584,7 @@ WoltModalSheetPage deleteRDV(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String id,
+  Function updataData,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
@@ -634,8 +653,8 @@ WoltModalSheetPage deleteRDV(
                 msg: const Text('Supprimer'),
                 onPressed: () async {
                   putAppointement(context, id);
+                  updataData(context);
                   pageIndexRDV.value = 0;
-                  Navigator.pop(context);
                 },
                 widthBtn: 140,
               ),

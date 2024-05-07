@@ -14,9 +14,11 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
       .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
+    if (jsonDecode(body)["document"] == null) {
+      return [];
+    }
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
-    Logger().e(response.statusCode);
     return [];
   }
 }
@@ -35,7 +37,6 @@ Future<Object?> changeFavorite(String id) async {
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(token);
     return null;
   }
 }
@@ -71,7 +72,6 @@ Future<Object?> postDocument(
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-
     return null;
   }
 }
@@ -90,7 +90,6 @@ Future<Object?> deleteDocument(String id) async {
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(url);
     return null;
   }
 }
@@ -110,7 +109,6 @@ Future<Object?> modifyDocument(String id, String name) async {
     return jsonDecode(body);
   } else {
     Logger().e(response.statusCode);
-    Logger().e(url);
     return null;
   }
 }
