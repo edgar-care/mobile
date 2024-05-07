@@ -42,14 +42,14 @@ void populatePatientInfoAll(List<dynamic> data) {
   for(int i = 0; i < data.length; i++){
     patientInfo.add({
       'id': data[i]['id'] ?? 'Inconnu',
-      'Prenom': data[i]['medical_info']['firstname'] ?? 'Inconnu',
-      'Nom': data[i]['medical_info']['name'] ?? 'Inconnu',
-      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data[i]['medical_info']['birthdate'] * 1000)).toString(),
-      'sexe': data[i]['medical_info']['sex'] ?? 'Inconnu',
-      'taille': (data[i]['medical_info']['height']).toString(),
-      'poids': (data[i]['medical_info']['weight']).toString(),
-      'medecin_traitant': data[i]['medical_info']['primary_doctor_id'] ?? 'Inconnu',
-      'medical_antecedents': data[i]['medical_info']['medical_antecedents'] ?? [],
+      'Prenom': data[i]['medical_folder']['firstname'] ?? 'Inconnu',
+      'Nom': data[i]['medical_folder']['name'] ?? 'Inconnu',
+      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data[i]['medical_folder']['birthdate'] * 1000)).toString(),
+      'sexe': data[i]['medical_folder']['sex'] ?? 'Inconnu',
+      'taille': (data[i]['medical_folder']['height']).toString(),
+      'poids': (data[i]['medical_folder']['weight']).toString(),
+      'medecin_traitant': data[i]['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data[i]['medical_folder']['medical_antecedents'] ?? [],
     });
   }
 }
@@ -61,14 +61,14 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
   if (data != null) {
     patientInfoById = {
       'id': data['id'] ?? 'Inconnu',
-      'Prenom': data['medical_info']['firstname'] ?? 'Inconnu',
-      'Nom': data['medical_info']['name'] ?? 'Inconnu',
-      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data['medical_info']['birthdate'] * 1000)).toString(),
-      'sexe': data['medical_info']['sex'] ?? 'Inconnu',
-      'taille': (data['medical_info']['height']).toString(),
-      'poids': (data['medical_info']['weight']).toString(),
-      'medecin_traitant': data['medical_info']['primary_doctor_id'] ?? 'Inconnu',
-      'medical_antecedents': data['medical_info']['medical_antecedents'] ?? [],
+      'Prenom': data['medical_folder']['firstname'] ?? 'Inconnu',
+      'Nom': data['medical_folder']['name'] ?? 'Inconnu',
+      'date_de_naissance': DateFormat('yMd', "fr").format(DateTime.fromMillisecondsSinceEpoch(data['medical_folder']['birthdate'] * 1000)).toString(),
+      'sexe': data['medical_folder']['sex'] ?? 'Inconnu',
+      'taille': (data['medical_folder']['height']).toString(),
+      'poids': (data['medical_folder']['weight']).toString(),
+      'medecin_traitant': data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
+      'medical_antecedents': data['medical_folder']['medical_antecedents'] ?? [],
     };
   }
 }
@@ -164,7 +164,7 @@ Future addPatientService(BuildContext context, Map<String, dynamic>? info) async
 
   final body = {
     'email' : info?['email'],
-    'medical_info': {
+    'medical_folder': {
       'name': info?['nom'],
       'firstname': info?['prenom'],
       'birthdate': date,
@@ -196,19 +196,11 @@ Future deletePatientService(String id, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/patient/$id';
-  final response = await http.delete(
+  await http.delete(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
-        message: 'Patient supprimé avec succès', context: context));
-  }
-  else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-        message: 'Erreur lors de la suppression du patient', context: context));
-  }
 }
