@@ -99,8 +99,6 @@ class DocumentPatientCard extends StatelessWidget {
                   name: name,
                   notificationType: NotificationType.all,
                 );}),
-              const SizedBox(height: 4),
-              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le document', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.bold),), onPressed: (){Navigator.pop(context);},),
             ]
           ),
         ),

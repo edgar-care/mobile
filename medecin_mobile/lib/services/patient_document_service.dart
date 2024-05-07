@@ -17,7 +17,7 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
   );
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> documents = [];
-    var tmp = jsonDecode(response.body)['patient']['documents_ids'];
+    var tmp = jsonDecode(response.body)['document_ids'];
     for(int i = 0; i < tmp.length; i++) {
         documents.add(await getDocumentsbyId(tmp[i]));
     }
@@ -39,7 +39,6 @@ Future <Map<String, dynamic>> getDocumentsbyId (String id) async {
       'Authorization': 'Bearer $token',
     },
   );
-
   if (response.statusCode == 201) {
     return jsonDecode(response.body)['download'];
   }
@@ -81,4 +80,7 @@ Future<Object?> postDocument(
   } else {
     return null;
   }
+
+
+
 }

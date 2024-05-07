@@ -8,7 +8,6 @@ import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/document_patient_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
@@ -29,7 +28,6 @@ class _DocumentPageState extends State<DocumentPage> {
   Future<void> _loadDoc() async {
     patientInfo = await getPatientById(widget.id);
     documents = await getDocumentsIds(widget.id);
-    Logger().i(documents);
   }
 
   Future<void> updateData() async {
