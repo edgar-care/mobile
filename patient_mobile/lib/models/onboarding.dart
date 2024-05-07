@@ -1245,9 +1245,6 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            Logger().i(
-                                "the med name at the index : $index ${medNames[index]}");
-
                             return CardTraitementDay(
                               isClickable: false,
                               data: widget.traitement['treatments'][index],
@@ -1508,9 +1505,6 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                           if (medicines['treatments'].isEmpty) {
                             return const SizedBox();
                           }
-                          Logger().i(
-                              "the med name at the index : $index ${medNames[index]}");
-                          Logger().i(medNames);
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: CardTraitementDay(

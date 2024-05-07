@@ -17,10 +17,8 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
     if (jsonDecode(body)["document"] == null) {
       return [];
     }
-    Logger().i(jsonDecode(body));
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
-    Logger().e(response.statusCode);
     return [];
   }
 }

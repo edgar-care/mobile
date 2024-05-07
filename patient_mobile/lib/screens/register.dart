@@ -3,7 +3,6 @@ import 'package:edgar/services/auth.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:logger/logger.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
@@ -69,7 +68,6 @@ class Register extends StatelessWidget {
             PlainButton(
               text: "Inscrivez-vous",
               onPressed: () async {
-                Logger().i("Email: $email, Password: $password");
                 if (password == "" || email == "") {
                   // ignore: use_build_context_synchronously
 
