@@ -214,7 +214,7 @@ class _Onboarding1State extends State<Onboarding1> {
               label: 'Edgar',
               value: name,
               action: TextInputAction.next,
-              onChanged: (value) => name = value,
+              onChanged: (value) => name = value.trim(),
               keyboardType: TextInputType.name,
             ),
             const SizedBox(height: 16),
@@ -231,7 +231,7 @@ class _Onboarding1State extends State<Onboarding1> {
               value: lastname,
               action: TextInputAction.next,
               onChanged: (value) {
-                lastname = value;
+                lastname = value.trim();
               },
               keyboardType: TextInputType.name,
             ),
@@ -337,7 +337,7 @@ class _Onboarding1State extends State<Onboarding1> {
                         label: '183cm',
                         action: TextInputAction.next,
                         value: height,
-                        onChanged: (value) => height = value,
+                        onChanged: (value) => height = value.trim(),
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -361,7 +361,7 @@ class _Onboarding1State extends State<Onboarding1> {
                         label: '75kg',
                         value: weight,
                         action: TextInputAction.next,
-                        onChanged: (value) => weight = value,
+                        onChanged: (value) => weight = value.trim(),
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -768,7 +768,7 @@ class _Onboarding3State extends State<Onboarding3> {
                 style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
@@ -825,7 +825,7 @@ class _Onboarding3State extends State<Onboarding3> {
                 style: TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               SizedBox(
@@ -1194,7 +1194,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
           style: TextStyle(
               color: AppColors.black,
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
         ValueListenableBuilder<bool>(
@@ -1223,7 +1223,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
           style: TextStyle(
               color: AppColors.black,
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
         const SizedBox(height: 8),
@@ -1402,7 +1402,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 action: TextInputAction.next,
                 onChanged: (value) {
                   setState(() {
-                    name = value;
+                    name = value.trim();
                   });
                 },
                 keyboardType: TextInputType.name,
@@ -1497,7 +1497,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 ),
               ),
               SizedBox(
-                height: widget.screenSize.height - 539.6,
+                height: widget.screenSize.height - 547.6,
                 width: widget.screenSize.width,
                 child: FutureBuilder(
                   future: fetchData(), // Simulate some async operation

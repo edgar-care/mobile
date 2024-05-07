@@ -41,7 +41,7 @@ class _AddButtonState extends State<AddButton> {
           style: TextStyle(
               fontSize: 14,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: widget.color == AppColors.blue700
                   ? AppColors.white
                   : AppColors.blue700)),
@@ -138,7 +138,7 @@ class _AddButtonSpeHealthState extends State<AddButtonSpeHealth> {
           style: TextStyle(
             fontSize: 16,
             fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: widget.color,
           ),
         ),

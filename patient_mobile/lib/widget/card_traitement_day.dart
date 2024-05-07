@@ -39,15 +39,25 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
             children: [
               Row(
                 children: [
-                  Text(
-                    widget.name,
-                    style: const TextStyle(
-                      color: AppColors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Poppins",
-                    ),
-                  ),
+                  widget.name.length > 18
+                      ? Text(
+                          "${widget.name.substring(0, 18)}...",
+                          style: const TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Poppins",
+                          ),
+                        )
+                      : Text(
+                          widget.name,
+                          style: const TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Poppins",
+                          ),
+                        ),
                   Text(
                     " - ${widget.data["quantity"] > 1 ? "${widget.data["quantity"]} comprimés" : "${widget.data["quantity"]} comprimé"}",
                     style: const TextStyle(

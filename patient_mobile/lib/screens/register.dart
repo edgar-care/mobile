@@ -88,15 +88,14 @@ class Register extends StatelessWidget {
                       context: context));
                   return;
                 }
-                Logger().i(emailValidityChecker(email));
                 if (!emailValidityChecker(email)) {
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
                       message: "Adresse mail invalide",
                       // ignore: use_build_context_synchronously
                       context: context));
+                  return;
                 }
-
                 var reponse = await RegisterUser(email, password);
                 if (reponse) {
                   // ignore: use_build_context_synchronously
