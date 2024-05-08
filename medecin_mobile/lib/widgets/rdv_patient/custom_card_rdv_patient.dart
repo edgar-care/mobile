@@ -239,6 +239,8 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                         cancelAppointments(id, context, reason);
                         widget.delete();
                         Navigator.pop(context);
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Votre rendez-vous à bien été supprimé', context: context,));
                         }
                         else{
                           ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez rentrez une raison d\'annulation', context: context,));
