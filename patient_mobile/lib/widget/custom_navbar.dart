@@ -17,8 +17,7 @@ class _NavbarState extends State<Navbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Padding(
+    return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Wrap(
         children: [
@@ -125,6 +124,7 @@ class _NavbarState extends State<Navbar> {
                     direction: Axis.horizontal,
                     alignment: WrapAlignment.spaceBetween,
                     spacing: 26,
+                    runSpacing: 16,
                     children: [
                       CardNavbar(
                         text: 'Vos conversation',
@@ -150,7 +150,7 @@ class _NavbarState extends State<Navbar> {
               : Container(),
         ],
       ),
-    ));
+    );
   }
 }
 

@@ -28,7 +28,7 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
         color: AppColors.blue50,
         border: Border.all(
           color: AppColors.blue200,
-          width: 2,
+          width: 1,
         ),
       ),
       child: Row(
@@ -46,8 +46,9 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
             widget.name,
             style: const TextStyle(
               color: AppColors.black,
-              fontSize: 12, 
+              fontSize: 12,
               fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
             ),
             overflow: TextOverflow.ellipsis,
           ),
