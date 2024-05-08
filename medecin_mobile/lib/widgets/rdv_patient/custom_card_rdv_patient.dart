@@ -4,6 +4,7 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
+import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -234,9 +235,14 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
+                        if (reason.isNotEmpty) {
                         cancelAppointments(id, context, reason);
                         widget.delete();
                         Navigator.pop(context);
+                        }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez rentrez une raison d\'annulation', context: context,));
+                        }
                       },
                     ),
                   ),
