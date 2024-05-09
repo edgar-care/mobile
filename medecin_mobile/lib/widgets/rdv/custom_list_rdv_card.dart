@@ -2,16 +2,17 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
+import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class CustomListRdvCard extends StatefulWidget {
-  CustomListRdvCard({super.key, required this.rdvInfo, required this.delete});
+  CustomListRdvCard({super.key, required this.rdvInfo, required this.delete, required this.old});
+  bool old;
   Function delete;
   Map<String, dynamic> rdvInfo;
 
@@ -121,8 +122,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        Logger().d(id);
-                        //cancelAppointments(id, context);
+                        cancelAppointments(id, context);
                         widget.delete();
                         Navigator.pop(context);
                       },
@@ -147,19 +147,18 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
   Future<void> _loadAppointment() async {
-  var temp = await getPatientById(widget.rdvInfo['id_patient']);
-      if (temp.isNotEmpty) {
-        setState(() {
-          patientInfo = temp;
-        });
-      }
+    patientInfo = await getPatientById(widget.rdvInfo['id_patient']);
   }
 
   @override
   Widget build(BuildContext context) {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
     DateTime end =  DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
-    return Container(
+    return FutureBuilder(
+        future: _loadAppointment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(8.0),
@@ -190,11 +189,14 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     const SizedBox(width: 4,),
                     Row(children: [
                       Text(DateFormat('jm', 'fr').format(start), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                      const Text(" --> ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                      const SizedBox(width: 2,),
+                      const Icon(BootstrapIcons.arrow_right, size: 16,),
+                      const SizedBox(width: 2,),
                       Text(DateFormat('jm', 'fr').format(end), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
                     ]),
                   ]
                 ),
+                if (!widget.old) Column(children:[
                 const SizedBox(height: 8,),
                 Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -238,12 +240,21 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     ),
                   ),
                 ],
-              ), 
+              ),
               ],
-            ),
+            ),]),
           ),
         ),
       );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      );
+    
+    
     }
 }
 
@@ -257,8 +268,22 @@ class PatienInfo extends StatefulWidget {
 }
 
 class _PatienInfoState extends State<PatienInfo> {
+  String sexe = '';
   @override
   Widget build(BuildContext context) {
+    switch (widget.patient['sexe']) {
+      case 'MALE':
+        sexe = 'Masculin';
+        break;
+      case 'FEMALE':
+        sexe = 'Feminin';
+        break;
+      case 'OTHER':
+        sexe = 'Autre';
+        break;
+      default:
+        sexe = 'Inconnu';
+    }
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
@@ -327,7 +352,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                 DateFormat("yMd", "fr").format(DateTime.fromMillisecondsSinceEpoch(widget.patient['date_de_naissance'] * 1000)).toString(),
+                                 widget.patient['date_de_naissance'],
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -345,7 +370,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                widget.patient['sexe'],
+                                sexe,
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -363,7 +388,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                "${(widget.patient['taille'] / 100).toString()} m",
+                                "${(int.parse(widget.patient['taille']) / 100).toString()} m",
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -381,7 +406,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                "${widget.patient['poids'].toString()} kg",
+                                "${(int.parse(widget.patient['poids']) / 100).toString()} kg",
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -399,7 +424,7 @@ class _PatienInfoState extends State<PatienInfo> {
                                 ),
                               ),
                               Text(
-                                widget.patient['medecin_traitant'],
+                                widget.patient['medecin_traitant'].toString(),
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,

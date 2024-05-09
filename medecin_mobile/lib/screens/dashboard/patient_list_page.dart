@@ -4,14 +4,18 @@ import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+// ignore: must_be_immutable
 class PatientPage extends StatefulWidget {
-  const PatientPage({super.key});
+  String id;
+  final Function setPages;
+  final Function setId;
+  PatientPage({super.key, required this.id, required this.setPages, required this.setId});
 
   @override
   State<PatientPage> createState() => _PatientPageState();
 }
-
 class _PatientPageState extends State<PatientPage> {
+
   @override
   Widget build(BuildContext context) {
     return Column(

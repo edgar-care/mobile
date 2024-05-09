@@ -1,5 +1,6 @@
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/rdv/custom_list_old.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_rdv.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,9 @@ class _RdvState extends State<Rdv> {
   ValueNotifier<int> selected = ValueNotifier(0);
 
   void updateSelection(int newSelection) {
-    selected.value = newSelection;
+    setState(() {
+      selected.value = newSelection;
+    });
   }
 
   @override
@@ -77,12 +80,11 @@ class _RdvState extends State<Rdv> {
               );
               }),
 
-              //ici refaire une page en fonction de si c'est ancien ou actuel rdv reprendre code actuel en gros
         const SizedBox(height: 8,),
          ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
-                return const CustomListRdv();
+                return selected.value == 0 ? const CustomListRdv() : const CustomListOld();
           }),
       ],
     );

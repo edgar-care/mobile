@@ -1,5 +1,6 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
@@ -30,7 +31,7 @@ class _ModifListState extends State<ModifList> {
   Future<void> _loadAppointment() async {
   var temp = await getSlot();
     for (var i = 0; i < temp.length; i++) {
-      if (temp[i]['start_date'] > widget.rdvInfo['start_date'] && temp[i]["id_patient"] == "" && temp[i]['cancelation_reason'] == null) {
+      if ((temp[i]['start_date'] * 1000) > (DateTime.now().millisecondsSinceEpoch) && temp[i]["id_patient"] == "") {
         bool added = false;
         for(var j = 0; j < freeslots.length; j++) {
           if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(freeslots[j][0]['start_date'] * 1000), DateTime.fromMillisecondsSinceEpoch(temp[i]['start_date'] * 1000))) {
@@ -46,6 +47,7 @@ class _ModifListState extends State<ModifList> {
           });}
       }
     }
+    freeslots.sort((a, b) => a[0]['start_date'].compareTo(b[0]['start_date']));
   }
 
   Map<String,int> selected = {"first" : 400, "second" : 400};
@@ -70,13 +72,13 @@ class _ModifListState extends State<ModifList> {
               Column(
                 children: [
                   Container(
-                    height: 32,
-                    width: 32,
+                    height: 50,
+                    width: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(60),
                       color: AppColors.grey200,
                     ),
-                    child : const Icon(BootstrapIcons.calendar2_week_fill, size: 16, color: AppColors.grey700,)),
+                    child : const Icon(BootstrapIcons.calendar2_week_fill,size: 16, color: AppColors.grey700,)),
                   const SizedBox(height: 8,),
                   const Text("Modification du rendez-vous", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
                   Text(DateFormat('yMMMMEEEEd', 'fr').format(start), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: AppColors.green500),),
@@ -96,8 +98,7 @@ class _ModifListState extends State<ModifList> {
                     size: SizeButton.sm,
                     msg: const Text("Valider le changement"),
                     onPressed: () {
-                      //updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context);
-                      widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000));
+                      updateAppointment(widget.rdvInfo['id'], freeslots[selected["first"]!][selected["second"]!]['id'], context).then((value) =>{widget.updateFunc(DateTime.fromMillisecondsSinceEpoch(freeslots[selected["first"]!][selected["second"]!]['start_date']* 1000))});
                       Navigator.pop(context);
                     }),
                 ],)

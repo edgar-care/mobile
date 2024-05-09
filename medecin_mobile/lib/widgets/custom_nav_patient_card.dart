@@ -2,34 +2,44 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomNavPatientCard extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final Function ontap;
-  const CustomNavPatientCard({super.key, required this.text, required this.icon, required this.ontap});
+  Function setPages;
+  String text;
+  IconData? icon;
+  int pageTo;
+  String id;
+  Function setId;
+  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo, required this.id, required this.setId});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.blue50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: AppColors.blue200, width: 2),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child:InkWell( 
-        onTap: (){ontap;},
-        child:
-          Row(
-          children:[
-            Icon(icon, color: AppColors.blue950, size: 16),
-            const SizedBox(width: 16),
-            Text(text, style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.w600),),
-            const Spacer(),
-            const Icon(BootstrapIcons.chevron_right, color: AppColors.blue950, size: 12),
-          ]
+      child: InkWell(
+        onTap: () {
+          setId(id);
+          setPages(pageTo);
+          Navigator.pop(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16,8,10,8),
+          child: Row(
+            children:[
+              Icon(icon, color: AppColors.blue950, size: 17,),
+              const SizedBox(width: 16,),
+              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
+              const Spacer(),
+              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 16, )
+            ]
+          ),
         ),
       ),
+
     );
   }
 }

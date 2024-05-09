@@ -3,7 +3,6 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 import 'package:edgar/services/get_information_patient.dart';
@@ -325,12 +324,11 @@ class _Bodymodify1State extends State<Bodymodify1> {
               onChanged: (value) {
                 setState(() {
                   info?['Prenom'] = value;
-                  Logger().i(info);
                 });
-                Logger().i(info);
               },
               isPassword: false,
               value: info!['Prenom'].toString(),
+              action: TextInputAction.next,
             ),
             const SizedBox(
               height: 16,
@@ -346,6 +344,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
               }),
               isPassword: false,
               value: info!['Nom'].toString(),
+              action: TextInputAction.next,
             ),
             const SizedBox(
               height: 16,
@@ -358,7 +357,6 @@ class _Bodymodify1State extends State<Bodymodify1> {
                 label: "10 / 09 / 2023",
                 onChanged: (value) => setState(() {
                       info?['Anniversaire'] = value;
-                      Logger().i(info);
                     }),
                 add: false,
                 value: info!['Anniversaire'].toString()),
@@ -420,6 +418,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
                         }),
                         isPassword: false,
                         value: info!['Taille'].toString(),
+                        action: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -443,6 +442,7 @@ class _Bodymodify1State extends State<Bodymodify1> {
                         }),
                         isPassword: false,
                         value: info!['Poids'].toString(),
+                        action: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -611,6 +611,7 @@ class _BodyModify2State extends State<BodyModify2> {
                 }),
                 isPassword: false,
                 value: info!['Medecin_traitant'].toString(),
+                action: TextInputAction.next,
               ),
               const SizedBox(
                 height: 16,

@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class PatientListCard extends StatelessWidget {
           onTap();
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          padding: const EdgeInsets.fromLTRB(8, 4, 4, 4),
           child: Row(
             children: [
               Container(
@@ -35,11 +36,14 @@ class PatientListCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(patientData['Prenom'] + ' ' + patientData['Nom'] ?? 'Nom Prénom', style: const TextStyle(fontSize: 16, fontFamily: 'Poppins', color: AppColors.black)),
+              Expanded(
+                child: Text(patientData['Nom'] + ' ' + patientData['Prenom'] ?? 'Nom Prénom', style: const TextStyle(fontSize: 16, fontFamily: 'Poppins', color: AppColors.black, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis,),
+              ),
               const Spacer(),
               const Icon(
-                Icons.arrow_forward_ios,
+                BootstrapIcons.chevron_right,
                 color: AppColors.black,
+                size: 15,
               ),
             ]
             )
