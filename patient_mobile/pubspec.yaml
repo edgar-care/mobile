@@ -8,13 +8,13 @@
 # following page: https://dart.dev/tools/pub/pubspec
 
 dependencies:
-  intl: ^0.18.1
+  intl: 0.18.1
   cupertino_icons: ^1.0.2
   flutter_dotenv: ^5.0.2
   shared_preferences: ^2.0.8
   simple_gradient_text: ^1.3.0
   dart_jsonwebtoken: ^2.11.0
-  font_awesome_flutter: ^10.3.0
+  font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
   http: ^1.1.0
   path_provider: ^2.0.5
@@ -22,14 +22,20 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
-  flutter_local_notifications: ^16.1.0
+  flutter_local_notifications: ^17.0.0
+  flutter_localizations:
+    sdk: flutter  
   bootstrap_icons: ^1.11.1
   auto_size_text: ^3.0.0
   aligned_dialog: ^0.0.7
   logger: ^2.0.2+1
-  wolt_modal_sheet: ^0.3.0
+  wolt_modal_sheet: ^0.5.0
   flutter_file_downloader: ^1.2.0
-  file_picker: ^6.1.1
+  flutter_datetime_picker: ^1.5.1
+  file_picker: ^8.0.0+1
+  confetti: ^0.7.0
+  flutter_typeahead: ^5.2.0
+  easy_autocomplete: ^1.6.0
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^3.0.0
@@ -54,6 +60,14 @@ flutter:
         - asset: assets/font/Poppins/Poppins-Regular.ttf
         - asset: assets/font/Poppins/Poppins-Medium.ttf
         - asset: assets/font/Poppins/Poppins-Italic.ttf
+        - asset: assets/font/Poppins/Poppins-Bold.ttf
+        - asset: assets/font/Poppins/Poppins-SemiBold.ttf
+        - asset: assets/font/Poppins/Poppins-Light.ttf
+        - asset: assets/font/Poppins/Poppins-ExtraLight.ttf
+        - asset: assets/font/Poppins/Poppins-ExtraBold.ttf
+        - asset: assets/font/Poppins/Poppins-Thin.ttf
+        - asset: assets/font/Poppins/Poppins-Black.ttf
+        - asset: assets/font/Poppins/Poppins-BlackItalic.ttf
   assets:
     - assets/images/logo/
     - assets/images/utils/
