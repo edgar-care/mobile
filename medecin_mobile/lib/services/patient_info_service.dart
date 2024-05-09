@@ -85,7 +85,7 @@ Future <Map<String,dynamic>> getPatientById(String id) async{
     },
   );
   if (response.statusCode == 200) {
-    populatePatientInfobyId(jsonDecode(response.body)['patient']);
+    populatePatientInfobyId(jsonDecode(response.body));
     return patientInfoById;
   }
   if (response.statusCode != 200) {
