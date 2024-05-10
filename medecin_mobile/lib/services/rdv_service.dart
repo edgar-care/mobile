@@ -48,18 +48,20 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   );
 }
 
-Future cancelAppointments(String id, BuildContext context) async {
+Future cancelAppointments(String id, BuildContext context, String reason) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/appointment/$id';
+  String url = '${dotenv.env['URL']}doctor/appointments/$id';
   final response = await http.delete(
     Uri.parse(url),
     headers: {
       'Authorization': 'Bearer $token'
     },
-  );
-
-  if (response.statusCode == 201) {
+    body: jsonEncode({
+      'reason': reason
+    }
+  ));
+  if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Votre rendez-vous a bien été annulé', context: context,));
   }
   else {
