@@ -136,6 +136,15 @@ class _NavbarState extends State<Navbar> {
                         ),
                       ),
                       CardNavbar(
+                        text: 'Vos traitement',
+                        callback: widget.callback,
+                        index: 5,
+                        icon: const Icon(
+                          BootstrapIcons.file_text,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      CardNavbar(
                         text: 'Déconnexion',
                         callback: widget.callback,
                         index: 0,

@@ -937,14 +937,7 @@ class _Onboarding3State extends State<Onboarding3> {
                   var reponse = await postMedicalInfo(body);
                   if (reponse == true) {
                     widget.updateSelectedIndex(3);
-                  } else {
-                    // ignore: use_build_context_synchronously
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(ErrorLoginSnackBar(
-                            message: "Erreur lors de l'ajout des informations",
-                            // ignore: use_build_context_synchronously
-                            context: context));
-                  }
+                  } else {}
 
                   widget.updateSelectedIndex(3);
                 },

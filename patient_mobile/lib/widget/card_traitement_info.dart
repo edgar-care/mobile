@@ -5,8 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CardTraitementSimplify extends StatefulWidget {
-  final Map<String, Object> traitement;
-  const CardTraitementSimplify({super.key, required this.traitement});
+  final Map<String, dynamic> traitement;
+  final List<String> medNames;
+  const CardTraitementSimplify(
+      {super.key, required this.traitement, required this.medNames});
 
   @override
   State<CardTraitementSimplify> createState() => _CardTraitementSimplifyState();
@@ -28,7 +30,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
             height: 40,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: widget.traitement['still_relevant'] as bool
+              color: widget.traitement['antedisease']['still_relevant'] as bool
                   ? AppColors.blue200
                   : AppColors.grey200,
               borderRadius: const BorderRadius.all(Radius.circular(50)),
@@ -37,9 +39,10 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               child: SvgPicture.asset(
                 'assets/images/utils/Subtract.svg',
                 // ignore: deprecated_member_use
-                color: widget.traitement['still_relevant'] as bool
-                    ? AppColors.blue700
-                    : AppColors.grey700,
+                color:
+                    widget.traitement['antedisease']['still_relevant'] as bool
+                        ? AppColors.blue700
+                        : AppColors.grey700,
               ),
             ),
           ),
@@ -49,7 +52,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                widget.traitement['name'] as String,
+                widget.traitement['antedisease']['name'] as String,
                 style: const TextStyle(
                   color: AppColors.black,
                   fontSize: 16,
@@ -59,36 +62,36 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  for (var i = 0;
-                      i < (widget.traitement['treatments'] as List).length &&
-                          i < 2;
-                      i++) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: const BoxDecoration(
-                        color: AppColors.blue100,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                      ),
-                      child: const Text(
-                        'Doliprane 500 mg',
-                        style: TextStyle(
-                          color: AppColors.black,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
+                  if (widget.traitement['treatments'] != null) ...[
+                    for (var i = 0;
+                        i < (widget.traitement['treatments'] as List).length &&
+                            i < 2;
+                        i++) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: const BoxDecoration(
+                          color: AppColors.blue100,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        child: Text(
+                          widget.medNames[i],
+                          style: const TextStyle(
+                            color: AppColors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 2),
-                    if (i == 2 &&
-                        (widget.traitement['treatments'] as List).length >
-                            3) ...[
+                      const SizedBox(width: 2),
+                    ],
+                    if (widget.traitement['treatments'].length > 2) ...[
                       const Icon(
                         BootstrapIcons.plus,
                         color: AppColors.black,
                         size: 16,
                       ),
-                    ],
+                    ]
                   ],
                 ],
               ),

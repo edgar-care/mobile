@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 class ConverstationPatient extends StatefulWidget {
   const ConverstationPatient({super.key});
@@ -16,7 +15,6 @@ class _ConverstationPatientState extends State<ConverstationPatient> {
         ModalRoute.of(context)!.settings.arguments as Map?; // Allow null
 
     final name = args?['name'] as String?;
-    Logger().d(name);
     return Scaffold(
       appBar: AppBar(
         title: Text("Conversation avec $name"),
