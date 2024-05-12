@@ -6,12 +6,19 @@ import 'package:flutter/material.dart';
 class CardDoctor extends StatefulWidget {
   bool selected;
   final String name;
-  final String address;
-  CardDoctor(
-      {super.key,
-      required this.name,
-      required this.address,
-      required this.selected});
+  final String street;
+  final String city;
+  final String zipCode;
+  Function()? onclick;
+  CardDoctor({
+    super.key,
+    required this.name,
+    required this.street,
+    required this.city,
+    required this.zipCode,
+    required this.selected,
+    required this.onclick,
+  });
 
   @override
   State<CardDoctor> createState() => _CardDoctorState();
@@ -21,11 +28,7 @@ class _CardDoctorState extends State<CardDoctor> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          widget.selected = !widget.selected;
-        });
-      },
+      onTap: widget.onclick,
       child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -49,17 +52,18 @@ class _CardDoctorState extends State<CardDoctor> {
                       color:
                           widget.selected ? AppColors.white : AppColors.black,
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins',
                     ),
                   ),
                   Text(
-                    widget.address,
+                    "${widget.street}, ${widget.zipCode} - ${widget.city}",
                     style: TextStyle(
-                      color:
-                          widget.selected ? AppColors.white : AppColors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        color:
+                            widget.selected ? AppColors.white : AppColors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins'),
                   ),
                 ],
               ),
@@ -72,6 +76,7 @@ class _CardDoctorState extends State<CardDoctor> {
                 child: Icon(
                   BootstrapIcons.chevron_right,
                   color: widget.selected ? AppColors.white : AppColors.black,
+                  size: 16,
                 ),
               )
             ],

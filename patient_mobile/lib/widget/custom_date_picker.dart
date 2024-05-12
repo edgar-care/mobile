@@ -6,8 +6,10 @@ import 'package:intl/date_symbol_data_local.dart';
 // ignore: must_be_immutable
 class CustomDatePiker extends StatefulWidget {
   String? value;
+  final String placeHolder;
+  DateTime? lastDate;
   final Function(String)? onChanged;
-  CustomDatePiker({super.key, this.value, this.onChanged});
+  CustomDatePiker({super.key, this.value, this.onChanged, required this.placeHolder, this.lastDate});
 
   @override
   State<CustomDatePiker> createState() => _CustomDatePikerState();
@@ -40,7 +42,7 @@ class _CustomDatePikerState extends State<CustomDatePiker> {
                   )
                 : DateTime.now(),
             firstDate: DateTime(1900),
-            lastDate: DateTime(2100),
+            lastDate: widget.lastDate != null ? widget.lastDate! : DateTime(2100),
             locale: const Locale('fr', 'FR'),
           ).then((value) {
             if (value != null) {
@@ -56,7 +58,7 @@ class _CustomDatePikerState extends State<CustomDatePiker> {
         child: Row(
           children: [
             Text(
-              widget.value ?? 'Séléctionner une date',
+              widget.value ?? widget.placeHolder,
               style: TextStyle(
                 color:
                     widget.value != null ? AppColors.black : AppColors.grey400,

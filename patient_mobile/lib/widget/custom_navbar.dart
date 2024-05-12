@@ -124,6 +124,7 @@ class _NavbarState extends State<Navbar> {
                     direction: Axis.horizontal,
                     alignment: WrapAlignment.spaceBetween,
                     spacing: 26,
+                    runSpacing: 16,
                     children: [
                       CardNavbar(
                         text: 'Vos conversation',

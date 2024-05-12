@@ -10,7 +10,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-
   List<Map<String, dynamic>> conv = [
     {
       'name': 'Edgar',
@@ -50,9 +49,7 @@ class _ChatPageState extends State<ChatPage> {
     fetchData();
   }
 
-  Future<void> fetchData() async {
-  }
-
+  Future<void> fetchData() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -81,27 +78,29 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ]),
         ),
-        const SizedBox(height: 24),
-        Expanded(child:
-        FutureBuilder(future: fetchData(), builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-            return ListView.builder(
-              itemCount: conv.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(padding: const EdgeInsets.only(bottom: 8)
-                  , child: CardConversation(
-                    name: conv[index]['name'],
-                    lastMsg: conv[index]['message'],
-                    time: DateTime.now(),
-                    unread: conv[index]['unread'],
-                  ),
-                );
-              },
-            );
-          })
-        ),
+        const SizedBox(height: 8),
+        Expanded(
+            child: FutureBuilder(
+                future: fetchData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return ListView.builder(
+                    itemCount: conv.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: CardConversation(
+                          name: conv[index]['name'],
+                          lastMsg: conv[index]['message'],
+                          time: DateTime.now(),
+                          unread: conv[index]['unread'],
+                        ),
+                      );
+                    },
+                  );
+                })),
       ],
     );
   }

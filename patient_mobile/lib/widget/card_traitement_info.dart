@@ -60,8 +60,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               Row(
                 children: [
                   for (var i = 0;
-                      i < (widget.traitement['medicines'] as List).length &&
-                          i < 3;
+                      i < (widget.traitement['treatments'] as List).length &&
+                          i < 2;
                       i++) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -70,9 +70,9 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                         color: AppColors.blue100,
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                       ),
-                      child: Text(
-                        '${widget.traitement['name']}',
-                        style: const TextStyle(
+                      child: const Text(
+                        'Doliprane 500 mg',
+                        style: TextStyle(
                           color: AppColors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -81,7 +81,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                     ),
                     const SizedBox(width: 2),
                     if (i == 2 &&
-                        (widget.traitement['medicines'] as List).length >
+                        (widget.traitement['treatments'] as List).length >
                             3) ...[
                       const Icon(
                         BootstrapIcons.plus,

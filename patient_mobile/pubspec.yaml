@@ -35,6 +35,7 @@ dependencies:
   file_picker: ^8.0.0+1
   confetti: ^0.7.0
   flutter_typeahead: ^5.2.0
+  easy_autocomplete: ^1.6.0
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^3.0.0
@@ -59,6 +60,14 @@ flutter:
         - asset: assets/font/Poppins/Poppins-Regular.ttf
         - asset: assets/font/Poppins/Poppins-Medium.ttf
         - asset: assets/font/Poppins/Poppins-Italic.ttf
+        - asset: assets/font/Poppins/Poppins-Bold.ttf
+        - asset: assets/font/Poppins/Poppins-SemiBold.ttf
+        - asset: assets/font/Poppins/Poppins-Light.ttf
+        - asset: assets/font/Poppins/Poppins-ExtraLight.ttf
+        - asset: assets/font/Poppins/Poppins-ExtraBold.ttf
+        - asset: assets/font/Poppins/Poppins-Thin.ttf
+        - asset: assets/font/Poppins/Poppins-Black.ttf
+        - asset: assets/font/Poppins/Poppins-BlackItalic.ttf
   assets:
     - assets/images/logo/
     - assets/images/utils/
