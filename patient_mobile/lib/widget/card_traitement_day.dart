@@ -29,7 +29,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
         color: AppColors.blue50,
         border: Border.all(
           color: AppColors.blue200,
-          width: 2,
+          width: 1,
         ),
       ),
       child: Column(
@@ -39,17 +39,27 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
             children: [
               Row(
                 children: [
+                  widget.name.length > 18
+                      ? Text(
+                          "${widget.name.substring(0, 18)}...",
+                          style: const TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Poppins",
+                          ),
+                        )
+                      : Text(
+                          widget.name,
+                          style: const TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Poppins",
+                          ),
+                        ),
                   Text(
-                    widget.name,
-                    style: const TextStyle(
-                      color: AppColors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Poppins",
-                    ),
-                  ),
-                  Text(
-                    " - ${widget.data["quantity"]} comprimé",
+                    " - ${widget.data["quantity"] > 1 ? "${widget.data["quantity"]} comprimés" : "${widget.data["quantity"]} comprimé"}",
                     style: const TextStyle(
                       color: AppColors.black,
                       fontSize: 14,
@@ -67,7 +77,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
                       child: const Icon(
                         BootstrapIcons.x,
                         color: AppColors.black,
-                        size: 16,
+                        size: 24,
                       ),
                     )
                   : Container()
@@ -272,7 +282,7 @@ class _CardTraitementDayState extends State<CardTraitementDay> {
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      color: widget.data["period"].contains("LUNCH")
+                      color: widget.data["period"].contains("NOON")
                           ? AppColors.blue700
                           : AppColors.grey300,
                     ),

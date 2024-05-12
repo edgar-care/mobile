@@ -21,13 +21,10 @@ class Agenda extends StatefulWidget {
 }
 
 class _AgendaState extends State<Agenda> {
-  ValueNotifier<int> selected = ValueNotifier(0);
   DateTime date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
+  ValueNotifier<int> selected = ValueNotifier(0);
+  List<dynamic> slots = [];
   List<dynamic> tempslot = [];
-
-  void updateSelection(int newSelection) {
-    selected.value = newSelection;
-  }
 
 @override
     initState() {
@@ -35,18 +32,20 @@ class _AgendaState extends State<Agenda> {
     _loadSlots();
   }
 
-  Future<void> _loadSlots() async {
-    var tempslots = await getSlot();
-    setState(() {
-      tempslot = tempslots;
-    });
+  void updateSelection(int newSelection) {
+    selected.value = newSelection;
   }
 
   String capitalise(String date){
       return date.split(' ').map((word) => toBeginningOfSentenceCase(word)).join(' ');
     }
 
-  List<dynamic> slots = [];
+  Future<void> _loadSlots() async {
+    var tempslots = await getSlot();
+    setState(() {
+      tempslot = tempslots;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +191,7 @@ class _AgendaState extends State<Agenda> {
                   const SizedBox(height: 16,),
                   const Text("Date du créneau", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),),
                   const SizedBox(height: 4,),
-                  CustomDatePiker(value: DateFormat("yMd", "fr").format(date), onChanged: (value) {
+                  CustomDatePiker(value: DateFormat("yMd", "fr").format(date),startDate: DateTime.now() ,onChanged: (value) {
                     setState(() {
                     if (value.length == 10 && value[2] == '/' && value[5] == '/') {
                       year = int.parse(value.substring(6));
@@ -282,9 +281,9 @@ class _AgendaState extends State<Agenda> {
    }
  }
 
-WoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
+SliverWoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot){
  
-  return WoltModalSheetPage.withSingleChild(
+  return WoltModalSheetPage(
     hasTopBarLayer: false,
     child: Addslot(tempslot: tempslot,),
     );

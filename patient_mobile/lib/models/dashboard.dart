@@ -16,11 +16,6 @@ class DashBoardPage extends StatefulWidget {
 
 class _DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   int _selectedIndex = 0;
 
   final List<Widget> pages = <Widget>[
@@ -28,7 +23,7 @@ class _DashBoardPageState extends State<DashBoardPage>
     const FilePage(),
     const GestionRendezVous(),
     const InformationPersonnel(),
-    const ChatPage()
+    const ChatPage(),
   ];
 
   void updateSelectedIndex(int index) {
@@ -45,15 +40,12 @@ class _DashBoardPageState extends State<DashBoardPage>
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Stack(
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 600),
-                  child: pages[_selectedIndex],
-                ),
-              ],
-            )),
+          padding: const EdgeInsets.all(16),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: pages[_selectedIndex],
+          ),
+        ),
         bottomNavigationBar: Navbar(
           callback: updateSelectedIndex,
           getSelected: getSelectedIndex,
