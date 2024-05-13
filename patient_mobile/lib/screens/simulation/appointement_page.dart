@@ -26,6 +26,7 @@ class _AppointementPageState extends State<AppointementPage> {
   }
 
   List<Appointment> appointements = [];
+  List<Appointment> appointementsFilter = [];
 
   List<dynamic> doctors = [];
 
@@ -67,6 +68,9 @@ class _AppointementPageState extends State<AppointementPage> {
         }
       }
     });
+    setState(() {
+      appointementsFilter = appointements;
+    });
   }
 
   void updateAppointementSelected(String id) {
@@ -78,6 +82,20 @@ class _AppointementPageState extends State<AppointementPage> {
       idSelected = id;
     });
     Logger().i('idSelected: $idSelected');
+  }
+
+  void filterAppointementDoctor(String name) {
+    if (name.isEmpty) {
+      setState(() {
+        appointementsFilter = appointements;
+      });
+      return;
+    }
+    setState(() {
+      appointementsFilter = appointements
+          .where((element) => element.doctor.toLowerCase().contains(name))
+          .toList();
+    });
   }
 
   @override
@@ -108,17 +126,19 @@ class _AppointementPageState extends State<AppointementPage> {
                   label: "Rechercher par le nom du médecin",
                   icon: SvgPicture.asset("assets/images/utils/search.svg"),
                   keyboardType: TextInputType.text,
-                  onValidate: (value) {},
+                  onValidate: (value) {
+                    filterAppointementDoctor(value);
+                  },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: appointements.length,
+                    itemCount: appointementsFilter.length,
                     itemBuilder: (context, index) {
                       return CardAppointementDoxtorHour(
-                        appointements: appointements[index],
+                        appointements: appointementsFilter[index],
                         updateId: updateAppointementSelected,
                         idSelected: idSelected,
                       );
