@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      initialRoute: "/simulation/appointement",
+      initialRoute: "/",
       routes: {
         '/': (context) => const LandingPage(),
         '/login': (context) => const Login(),
