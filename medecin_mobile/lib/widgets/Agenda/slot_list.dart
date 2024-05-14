@@ -50,12 +50,11 @@ class _SlotListState extends State<SlotList> {
   Widget checktypeslot (List<dynamic> slots, DateTime date) {
     for (var i = 0; i < slots.length; i++) {
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch && slots[i]['id_patient'] != "") {
-         getName(slots[i]['id_patient']);
-        Future.delayed(const Duration(seconds: 2), () {
-          return  Slot(type: SlotType.taken, name: name, firstname: firstname,);
-        });
+        getName(slots[i]['id_patient']);
+        return  Slot(type: SlotType.taken, name: name, firstname: firstname,);
+
       }
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
+      else if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
         return  Slot(type: SlotType.create, date: date, slots: slots,);
       }
     }

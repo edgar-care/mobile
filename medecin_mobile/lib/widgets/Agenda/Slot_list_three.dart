@@ -106,9 +106,8 @@ initState() {
     for (var i = 0; i < slots.length; i++) {
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch && slots[i]['id_patient'] != "") {
         getName(slots[i]['id_patient']);
-        Future.delayed(const Duration(seconds: 2), () {
-          return Slot(type: SlotType.taken, date: date, slots: slots, three: true, name: name, firstname: firstname,);
-        });
+        return Slot(type: SlotType.taken, date: date, slots: slots, three: true, name: name, firstname: firstname,);
+
       }
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
         return  Slot(type: SlotType.create, date: date, slots: slots, three: true,);

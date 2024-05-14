@@ -148,46 +148,23 @@ Future putInformationPatient(BuildContext context, Map<String, dynamic>? info, S
   }
 }
 
-Future addPatientService(BuildContext context, Map<String, dynamic>? info) async {
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}doctor/patient';
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-
-  int poids = int.parse(info?['poids']);
-  int taille = int.parse(info?['taille']);
-
-  String day = info?['date']?.substring(0, 2) ?? '00';
-  String month = info?['date']?.substring(3, 5) ?? '00';
-  String year = info?['date']?.substring(6, 10) ?? '0000';
-  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch ~/ 1000;
-
-  final body = {
-    'email' : info?['email'],
-    'medical_folder': {
-      'name': info?['nom'],
-      'firstname': info?['prenom'],
-      'birthdate': date,
-      'sex': info?['sexe'],
-      'weight': poids,
-      'height': taille,
-      'primary_doctor_id': info?['medecin_traitant'],
-      'medical_antecedents': info?['medical_antecedents'],
-      'onboarding_status': 'DONE'
-    },
-  };
- 
+Future addPatientService(BuildContext context, Map<String, dynamic>traitement) async {
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
   final response = await http.post(
     Uri.parse(url),
-    body: jsonEncode(body),
     headers: {'Authorization': 'Bearer $token'},
+    body: jsonEncode(traitement),
   );
   if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient ajouté avec succès', context: context));
+        return true;
   } else {
     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
         message: 'Erreur lors de l\'ajout du patient', context: context));
+        return false;
   }
 
 }
