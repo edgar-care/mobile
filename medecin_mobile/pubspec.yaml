@@ -17,8 +17,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter  
-  wolt_modal_sheet: ^0.4.1
-  intl: ^0.18.1
+  wolt_modal_sheet: ^0.5.0
+  intl: ^0.19.0
   flutter_datetime_picker: ^1.5.1
   file_picker: ^8.0.0+1
   flutter_file_downloader: ^1.2.1
@@ -28,7 +28,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
 flutter_launcher_icons:
   android: launcher_icon
   ios: true
