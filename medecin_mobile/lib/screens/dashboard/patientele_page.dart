@@ -976,7 +976,10 @@ class _Onboarding3State extends State<Body3> {
                                     child: CardTraitementSmall(
                                       name: traitments[i]['Name'],
                                       isEnCours: traitments[i]
-                                                  ['still_relevant'],
+                                                    ['treatments']
+                                                    .isEmpty
+                                                ? false
+                                                : true,
                                       onTap: () {
                                         setState(() {
                                           traitments.removeAt(i);
