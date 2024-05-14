@@ -7,23 +7,23 @@ import 'package:intl/intl.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
-class CardAppointementDoxtorHour extends StatefulWidget {
+class CardAppointementDoctorHour extends StatefulWidget {
   final Appointment appointements;
   Function updateId;
   final String idSelected;
-  CardAppointementDoxtorHour(
+  CardAppointementDoctorHour(
       {super.key,
       required this.appointements,
       required this.updateId,
       required this.idSelected});
 
   @override
-  State<CardAppointementDoxtorHour> createState() =>
-      _CardAppointementDoxtorHourState();
+  State<CardAppointementDoctorHour> createState() =>
+      _CardAppointementDoctorHourState();
 }
 
-class _CardAppointementDoxtorHourState
-    extends State<CardAppointementDoxtorHour> {
+class _CardAppointementDoctorHourState
+    extends State<CardAppointementDoctorHour> {
   @override
   void initState() {
     super.initState();
@@ -49,8 +49,7 @@ class _CardAppointementDoxtorHourState
     return Container(
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(bottom: 8),
-        width: double.infinity,
-        height: 318,
+        constraints: const BoxConstraints(maxHeight: 317),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(8),
@@ -94,94 +93,111 @@ class _CardAppointementDoxtorHourState
               height: 4,
             ),
             const Divider(
-              color: AppColors.blue200,
-              thickness: 2,
+              color: AppColors.blue700,
+              thickness: 1,
             ),
             const SizedBox(
               height: 4,
             ),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.appointements.dates.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right: BorderSide(
-                          color: index == widget.appointements.dates.length - 1
-                              ? AppColors.white
-                              : AppColors.blue200,
-                          width: 2,
+            if (widget.appointements.dates.isEmpty) ...[
+              const Text(
+                'Aucun rendez-vous disponible',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                  color: AppColors.black,
+                ),
+              ),
+            ] else ...[
+              Flexible(
+                fit: FlexFit.loose,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.appointements.dates.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          right: BorderSide(
+                            color:
+                                index == widget.appointements.dates.length - 1
+                                    ? AppColors.white
+                                    : AppColors.blue200,
+                            width: 1,
+                          ),
                         ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          getAbbreviatedWeekday(
-                            DateFormat('EEEE', 'fr').format(
-                              DateFormat('dd/MM/yyyy').parse(
-                                // ignore: collection_methods_unrelated_type
-                                widget.appointements.dates[index].day,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            getAbbreviatedWeekday(
+                              DateFormat('EEEE', 'fr').format(
+                                DateFormat('dd/MM/yyyy').parse(
+                                  // ignore: collection_methods_unrelated_type
+                                  widget.appointements.dates[index].day,
+                                ),
                               ),
                             ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                              color: AppColors.black,
+                            ),
                           ),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: AppColors.black,
+                          Text(
+                            DateFormat('dd MMMM', 'fr')
+                                .format(DateFormat('dd/MM/yyyy').parse(
+                              // ignore: collection_methods_unrelated_type
+                              widget.appointements.dates[index].day,
+                            )),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                              color: AppColors.black,
+                            ),
                           ),
-                        ),
-                        Text(
-                          DateFormat('dd MMMM', 'fr')
-                              .format(DateFormat('dd/MM/yyyy').parse(
-                            // ignore: collection_methods_unrelated_type
-                            widget.appointements.dates[index].day,
-                          )),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: AppColors.black,
+                          const SizedBox(
+                            height: 4,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        for (var hour
-                            in widget.appointements.dates[index].hour.take(3))
-                          HourItem(
-                            hour: hour.hour,
-                            onTap: () => widget.updateId(hour.id),
-                            isSelect: hour.id == widget.idSelected,
-                          ),
-                      ],
-                    ),
-                  );
-                },
+                          for (var hour
+                              in widget.appointements.dates[index].hour.take(3))
+                            HourItem(
+                              hour: hour.hour,
+                              onTap: () => widget.updateId(hour.id),
+                              isSelect: hour.id == widget.idSelected,
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Buttons(
-                variant: Variante.secondary,
-                size: SizeButton.sm,
-                msg: const Text("Voir plus d'horaires"),
-                onPressed: () {
-                  WoltModalSheet.show<void>(
-                      context: context,
-                      pageIndexNotifier: pageIndex,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          seeMore(context, widget.updateId,
-                              widget.appointements, widget.idSelected),
-                        ];
-                      });
-                }),
+            ],
+            if (widget.appointements.dates.isNotEmpty) ...[
+              const SizedBox(
+                height: 8,
+              ),
+              Buttons(
+                  variant: Variante.secondary,
+                  size: SizeButton.sm,
+                  msg: const Text("Voir plus d'horaires"),
+                  onPressed: () {
+                    WoltModalSheet.show<void>(
+                        context: context,
+                        pageIndexNotifier: pageIndex,
+                        pageListBuilder: (modalSheetContext) {
+                          return [
+                            seeMore(context, widget.updateId,
+                                widget.appointements, widget.idSelected),
+                          ];
+                        });
+                  }),
+            ],
           ],
         ));
   }

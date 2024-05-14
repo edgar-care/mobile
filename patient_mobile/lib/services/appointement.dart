@@ -40,9 +40,11 @@ Future<Map<String, dynamic>> getAppoitementDoctorById(String id) async {
   );
 
   if (response.statusCode == 201) {
+    Logger().i('response: ${response.body}');
     final body = jsonDecode(response.body);
     return body;
   } else {
+    Logger().e('error: ${response.body}');
     return {};
   }
 }

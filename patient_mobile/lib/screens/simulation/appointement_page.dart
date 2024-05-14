@@ -3,6 +3,7 @@ import 'package:edgar/services/doctor.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/utils/traitement_utils.dart';
 import 'package:edgar/widget/card_doctor_appoitement.dart';
+import 'package:edgar/widget/pagination.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/widget/field_custom.dart';
@@ -26,20 +27,37 @@ class _AppointementPageState extends State<AppointementPage> {
   }
 
   List<Appointment> appointements = [];
-  List<Appointment> appointementsFilter = [];
+  List<Map<Doctor, String>> allDoctors = [];
+  List<Map<Doctor, String>> allDoctorsFilter = [];
 
-  List<dynamic> doctors = [];
+  List<dynamic> doctorstmp = [];
 
   String idSelected = '';
+
+  int currentPage = 0;
+  int totalPages = 30;
 
   Future<void> fetchData() async {
     var value = await getAllDoctor();
     if (value.isNotEmpty) {
       setState(() {
-        doctors = value;
+        doctorstmp = value;
       });
-      for (var doctor in doctors) {
-        getAppointementDoctor(doctor['id']);
+      getAllDoctors();
+      get3Appointement(currentPage);
+    }
+  }
+
+  void get3Appointement(int currentPage) async {
+    setState(() {
+      appointements = [];
+    });
+    for (var i = 0; i < 2; i++) {
+      if (2 * currentPage + i < allDoctorsFilter.length) {
+        await getAppointementDoctor(
+            allDoctorsFilter[2 * currentPage + i].values.first);
+      } else {
+        break;
       }
     }
   }
@@ -56,10 +74,29 @@ class _AppointementPageState extends State<AppointementPage> {
     return formatter.format(dateTime);
   }
 
+  void getAllDoctors() {
+    for (var element in doctorstmp) {
+      var id = element['id'];
+      Doctor? doctor = findDoctorById(doctorstmp, id);
+      setState(() {
+        if (doctor != null) {
+          allDoctors.add({doctor: id});
+        }
+      });
+    }
+    setState(() {
+      allDoctorsFilter = allDoctors;
+      totalPages = (allDoctorsFilter.length / 2 - 1).ceil();
+      if (allDoctorsFilter.length % 2 != 0) {
+        totalPages++;
+      }
+    });
+  }
+
   Future<void> getAppointementDoctor(String id) async {
     await getAppoitementDoctorById(id).then((value) {
       if (value.isEmpty) {
-        Doctor? doctor = findDoctorById(doctors, id);
+        Doctor? doctor = findDoctorById(doctorstmp, id);
         Appointment appointement = Appointment(
           doctor: doctor != null ? doctor.name : 'Edgar',
           address: doctor != null
@@ -78,16 +115,35 @@ class _AppointementPageState extends State<AppointementPage> {
         return;
       }
       if (value.isNotEmpty && value.containsKey('rdv')) {
-        Appointment? appointement = transformAppointments(doctors, value);
+        Appointment? appointement = transformAppointments(doctorstmp, value);
         if (appointement != null) {
           setState(() {
             appointements.add(appointement);
           });
         }
+        if (appointement == null) {
+          Doctor? doctor = findDoctorById(doctorstmp, id);
+          Appointment appointement = Appointment(
+            doctor: doctor!.name == "" ? 'Edgar' : doctor.name,
+            address: Address(
+              city: doctor.address.city == "" ? 'Lyon' : doctor.address.city,
+              country: doctor.address.country == ""
+                  ? 'France'
+                  : doctor.address.country,
+              zipCode: doctor.address.zipCode == ""
+                  ? '69000'
+                  : doctor.address.zipCode,
+              street: doctor.address.street == ""
+                  ? '1 rue du Paradis'
+                  : doctor.address.street,
+            ),
+            dates: [],
+          );
+          setState(() {
+            appointements.add(appointement);
+          });
+        }
       }
-    });
-    setState(() {
-      appointementsFilter = appointements;
     });
   }
 
@@ -99,21 +155,29 @@ class _AppointementPageState extends State<AppointementPage> {
       }
       idSelected = id;
     });
-    Logger().i('idSelected: $idSelected');
   }
 
   void filterAppointementDoctor(String name) {
-    if (name.isEmpty) {
-      setState(() {
-        appointementsFilter = appointements;
-      });
-      return;
-    }
     setState(() {
-      appointementsFilter = appointements
-          .where((element) => element.doctor.toLowerCase().contains(name))
+      currentPage = 0;
+      allDoctorsFilter = allDoctors
+          .where((element) => element.keys.first.name.contains(name))
           .toList();
+      totalPages = (allDoctorsFilter.length / 2 - 1).floor();
+      if (allDoctorsFilter.length % 2 != 0) {
+        totalPages++;
+      }
+      Logger().i('totalPages: $totalPages');
+      Logger().i('allDoctorsFilter: ${allDoctorsFilter.length}');
     });
+    get3Appointement(currentPage);
+  }
+
+  void onPageChanged(int page) {
+    setState(() {
+      currentPage = page;
+    });
+    get3Appointement(currentPage);
   }
 
   @override
@@ -153,15 +217,22 @@ class _AppointementPageState extends State<AppointementPage> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: appointementsFilter.length,
+                    itemCount: appointements.length,
                     itemBuilder: (context, index) {
-                      return CardAppointementDoxtorHour(
-                        appointements: appointementsFilter[index],
+                      return CardAppointementDoctorHour(
+                        appointements: appointements[index],
                         updateId: updateAppointementSelected,
                         idSelected: idSelected,
                       );
                     },
                   ),
+                ),
+                Pagination(
+                    currentPage: currentPage,
+                    totalPages: totalPages,
+                    onPageChanged: onPageChanged),
+                const SizedBox(
+                  height: 16,
                 ),
                 GestureDetector(
                   onTap: () async {
