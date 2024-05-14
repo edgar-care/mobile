@@ -110,6 +110,7 @@ class CustomFieldSearch extends StatefulWidget {
       icon; // Utilisation de IconData au lieu de Icon pour la cohérence
   final TextInputType keyboardType;
   final Function(String) onValidate;
+  final bool? onlyOnValidate;
 
   const CustomFieldSearch({
     super.key,
@@ -117,6 +118,7 @@ class CustomFieldSearch extends StatefulWidget {
     required this.icon,
     required this.keyboardType,
     required this.onValidate,
+    this.onlyOnValidate = false,
   });
 
   @override
@@ -131,7 +133,7 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
@@ -166,6 +168,9 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                     ),
                   ),
                   onFieldSubmitted: (value) {
+                    if (widget.onlyOnValidate!) {
+                      return;
+                    }
                     widget.onValidate(value);
                   },
                   onChanged: (value) {
