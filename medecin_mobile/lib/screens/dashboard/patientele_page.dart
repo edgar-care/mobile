@@ -176,7 +176,6 @@ class _PatientState extends State<Patient> {
                             pageIndexNotifier: pageindex,
                             pageListBuilder: (modalSheetContext) {
                               return [
-                                //patientNavigation(context, Map<String, dynamic>.of(<String, dynamic>{'Mercury': 1,'Venus' : 2,'Earth': 3}), 2),
                                 addPatient(context, pageindex),
                                 addPatient2(updateModalIndex, context),
                                 addPatient3(updateModalIndex, context)
@@ -262,7 +261,7 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             const Text(
-              "Ajoutez les informations d'un patient",
+              "Ajoutez les informations du patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
@@ -540,7 +539,7 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             const Text(
-              "Ajoutez les informations d'un patient",
+              "Ajoutez les informations du patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
@@ -619,7 +618,7 @@ class _PatientState extends State<Patient> {
               height: 8,
             ),
             const Text(
-              "Ajoutez les informations d'un patient",
+              "Ajoutez les informations du patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,

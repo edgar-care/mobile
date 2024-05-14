@@ -111,31 +111,11 @@ void populateInfoMedical(Map<String, dynamic>? data) {
   }
 }
 
-Future putInformationPatient(BuildContext context, Map<String, dynamic>? info, String id) async {
+Future putInformationPatient(BuildContext context, Map<String, Object> body, String id) async {
   await dotenv.load();
   final url = '${dotenv.env['URL']}doctor/patient/$id';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-
-  int poids = int.tryParse(info?['poids'] ?? 0) ?? 0;
-  int taille = int.tryParse(info?['taille'] ?? 0) ?? 0;
-
-  String day = info?['date_de_naissance']?.substring(0, 2) ?? '00';
-  String month = info?['date_de_naissance']?.substring(3, 5) ?? '00';
-  String year = info?['date_de_naissance']?.substring(6, 10) ?? '0000';
-  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch ~/ 1000;
-
-  final body = {
-    'firstname': info?['Prenom'],
-    'name': info?['Nom'],
-    'birthdate': date,
-    'sex': info?['sexe'],
-    'height': taille,
-    'weight': poids,
-    'primary_doctor_id': info?['medecin_traitant'],
-    'medical_antecedents': info?['medical_antecedents'],
-    'onboarding_status': 'DONE'
-  };
   final response = await http.put(
     Uri.parse(url),
     body: jsonEncode(body),

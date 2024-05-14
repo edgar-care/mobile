@@ -342,10 +342,10 @@ class _BodyModalState extends State<BodyModal> {
                       });
                     },
                     items: <String>[
-                      'Ordonnance',
                       'Certificat',
-                      'Autre',
-                      'Radio'
+                      'Ordonnance',
+                      'Radio',
+                      'Autre'
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
