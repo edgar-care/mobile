@@ -111,6 +111,7 @@ class CustomFieldSearch extends StatefulWidget {
   final TextInputType keyboardType;
   final Function(String) onValidate;
   final bool? onlyOnValidate;
+  final Function()? onOpen;
 
   const CustomFieldSearch({
     super.key,
@@ -119,6 +120,7 @@ class CustomFieldSearch extends StatefulWidget {
     required this.keyboardType,
     required this.onValidate,
     this.onlyOnValidate = false,
+    this.onOpen,
   });
 
   @override
@@ -168,12 +170,16 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                     ),
                   ),
                   onFieldSubmitted: (value) {
-                    if (widget.onlyOnValidate!) {
-                      return;
-                    }
                     widget.onValidate(value);
+                    _controller.clear();
                   },
                   onChanged: (value) {
+                    if (widget.onOpen != null) {
+                      widget.onOpen!();
+                    }
+                    if (widget.onlyOnValidate == true) {
+                      return;
+                    }
                     widget.onValidate(value);
                   },
                 ),
@@ -182,6 +188,7 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                 child: widget.icon,
                 onTap: () {
                   widget.onValidate(_controller.text);
+                  _controller.clear();
                 },
               ),
             ],

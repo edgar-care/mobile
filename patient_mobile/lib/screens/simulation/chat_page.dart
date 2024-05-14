@@ -1,12 +1,11 @@
-import 'dart:convert';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/diagnotic.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/services/getResponseConversation.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -17,6 +16,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   var sessionId = '';
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -34,60 +35,57 @@ class _ChatPageState extends State<ChatPage> {
 
   List<dynamic> messages = [
     [
-      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation.Pour commencer, pouvez-vous me dire où vous avez mal ?',
+      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
       false,
     ]
   ];
 
-  Future<void> parseUserInput(String userInput) async {
-    final response = await getResponseMessage(context, userInput, sessionId);
-    final Map<String, dynamic> jsonData = json.decode(response.toString());
-
-    final question = jsonData['question'];
-    bool done = jsonData['done'] as bool;
-    if (done) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/simulation/confirmation');
-    } else {
-      setState(() {
-        messages.add([question, false]);
-      });
-    }
-  }
-
   void sendMessage(bool isSender, String message) async {
     setState(() {
-      messages.add([message, true]);
+      messages.add([message[0].toUpperCase() + message.substring(1), true]);
     });
     await getDiagnostic(sessionId, message).then((value) {
       if (value.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erreur lors de la récupération des données'),
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+            message: "Erreur lors de l'envoie", context: context));
         return;
       }
-      Logger().i(value);
       if (value['done'] == true) {
-        Logger().i("here");
         setState(() {
-          messages.add(Buttons(
-            variant: Variante.primary,
-            size: SizeButton.sm,
-            msg: const Text('Continuer la simulation'),
-            onPressed: () {
-              Navigator.pushNamed(context, '/simulation/appointement');
-            },
-          ));
+          messages.add(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text('Continuer la simulation'),
+                onPressed: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString('sessionId', sessionId);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamed(context, '/simulation/appointement');
+                },
+              ),
+            ),
+          );
         });
+        goDown();
         return;
       }
       setState(() {
-        Logger().i('no here');
         messages.add([value['question'], false]);
       });
+      goDown();
     });
+  }
+
+  void goDown() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+    );
   }
 
 // Controller for the text input field
@@ -101,25 +99,28 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Expanded(
                 child: ListView.builder(
+                  controller: _scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   reverse: false, // Reverse the order of the messages
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
-                    if (message[0] is Buttons) {
-                      return message[0];
+                    if (message is Padding) {
+                      return message;
                     } else if (message[1] == false) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
                             width: MediaQuery.of(context).size.width - 48,
-                            padding: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.only(bottom: 16),
                             child: Text(
                               message[0],
                               style: const TextStyle(
                                 color: AppColors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: 'Poppins',
                               ),
                             ),
@@ -132,13 +133,13 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           Container(
                             width: MediaQuery.of(context).size.width - 48,
-                            padding: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.only(bottom: 32),
                             child: Text(
                               message[0],
                               style: const TextStyle(
                                 color: AppColors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: 'Poppins',
                               ),
                               textAlign: TextAlign.right,
@@ -155,15 +156,21 @@ class _ChatPageState extends State<ChatPage> {
                   if (value.isEmpty) {
                     return;
                   }
-                  sendMessage(true, value);
-                  setState(() {
-                    value = '';
-                  });
+                  if (messages.last is! Buttons) {
+                    sendMessage(true, value.trim());
+                  }
                 },
                 label: 'Ecriver votre message ici...',
-                icon: SvgPicture.asset("assets/images/utils/search.svg"),
+                icon: const Icon(
+                  BootstrapIcons.send_fill,
+                  color: AppColors.black,
+                  size: 16,
+                ),
                 keyboardType: TextInputType.text,
                 onlyOnValidate: true,
+                onOpen: () {
+                  goDown();
+                },
               ),
             ],
           )),
