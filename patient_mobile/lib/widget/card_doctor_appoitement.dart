@@ -247,10 +247,10 @@ class _BodySeeMoreState extends State<BodySeeMore> {
                     decoration: BoxDecoration(
                       border: Border(
                         right: BorderSide(
-                          color: index == widget.appointements.dates.length - 1
-                              ? AppColors.white
-                              : AppColors.blue200,
-                          width: 2,
+                          color: AppColors.blue200,
+                          width: index == widget.appointements.dates.length - 1
+                              ? 0
+                              : 2,
                         ),
                       ),
                     ),

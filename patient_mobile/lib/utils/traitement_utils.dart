@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 class Hour {
   final String hour;
@@ -111,8 +110,6 @@ Appointment? transformAppointments(
       appointment = _extractDayHour(appointment, tmp, doctor.address,
           '${doctor.firstname} ${doctor.name}');
     }
-    Logger().i(
-        'Doctor: ${appointment.doctor}, Address: ${appointment.address}, Dates: ${appointment.dates}');
   }
 
   if (appointment.dates.isEmpty) {
@@ -128,7 +125,6 @@ Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
     if (id == doctorId) {
       String firstname = doctorMap['firstname'] ?? "Test";
       String name = doctorMap['name'] ?? "Edgar";
-      Logger().i('Doctor found: $doctorMap');
       Address address = Address(
         street: doctorMap['address']['street'] ?? '1 rue de la Paix',
         zipCode: doctorMap['address']['zip_code'] ?? '69000',
@@ -138,17 +134,14 @@ Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
       return Doctor(id: id, firstname: firstname, name: name, address: address);
     }
   }
-  Logger().i('Doctor not found for id: $doctorId');
   return null; // Doctor not found
 }
 
 List<Map<String, dynamic>> extractAppointmentDatesWithHours(
     List<Map<String, dynamic>>? datesList) {
-  Logger().i('datesList: $datesList');
   List<Map<String, dynamic>> formattedDates = [];
 
   if (datesList == null || datesList.isEmpty) {
-    Logger().i('datesList is null or empty');
     return formattedDates; // Return empty list if datesList is null or empty
   }
 

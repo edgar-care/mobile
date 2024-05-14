@@ -58,8 +58,26 @@ class _AppointementPageState extends State<AppointementPage> {
 
   Future<void> getAppointementDoctor(String id) async {
     await getAppoitementDoctorById(id).then((value) {
+      if (value.isEmpty) {
+        Doctor? doctor = findDoctorById(doctors, id);
+        Appointment appointement = Appointment(
+          doctor: doctor != null ? doctor.name : 'Edgar',
+          address: doctor != null
+              ? doctor.address
+              : Address(
+                  city: 'Lyon',
+                  country: 'France',
+                  zipCode: '69000',
+                  street: '1 rue du Paradis',
+                ),
+          dates: [],
+        );
+        setState(() {
+          appointements.add(appointement);
+        });
+        return;
+      }
       if (value.isNotEmpty && value.containsKey('rdv')) {
-        Logger().i('value: $value');
         Appointment? appointement = transformAppointments(doctors, value);
         if (appointement != null) {
           setState(() {

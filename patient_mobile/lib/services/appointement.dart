@@ -40,7 +40,6 @@ Future<Map<String, dynamic>> getAppoitementDoctorById(String id) async {
   );
 
   if (response.statusCode == 201) {
-    Future.delayed(const Duration(milliseconds: 10));
     final body = jsonDecode(response.body);
     return body;
   } else {
