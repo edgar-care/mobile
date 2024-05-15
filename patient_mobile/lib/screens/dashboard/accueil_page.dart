@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                           const Spacer(),
                           IconButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                   AppColors.grey200),
                             ),
                             icon: const Icon(
