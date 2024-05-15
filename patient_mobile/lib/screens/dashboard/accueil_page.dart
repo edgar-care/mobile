@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchData(context);
+    // fetchData(context);
   }
 
   Map<String, Object>? infoMedical = {};
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                           const Spacer(),
                           IconButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                   AppColors.grey200),
                             ),
                             icon: const Icon(
