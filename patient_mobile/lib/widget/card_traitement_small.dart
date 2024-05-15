@@ -8,11 +8,13 @@ class CardTraitementSmall extends StatefulWidget {
   final String name;
   bool isEnCours;
   final Function() onTap;
+  bool withDelete;
   CardTraitementSmall(
       {super.key,
       required this.name,
       required this.isEnCours,
-      required this.onTap});
+      required this.onTap,
+      this.withDelete = true});
 
   @override
   State<CardTraitementSmall> createState() => _CardTraitementSmallState();
@@ -52,15 +54,17 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: widget.onTap,
-            child: const Icon(
-              BootstrapIcons.x,
-              color: AppColors.black,
-              size: 16,
+          if (widget.withDelete) ...[
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: widget.onTap,
+              child: const Icon(
+                BootstrapIcons.x,
+                color: AppColors.black,
+                size: 16,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

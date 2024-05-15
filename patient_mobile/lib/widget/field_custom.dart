@@ -40,7 +40,7 @@ class _CustomFieldState extends State<CustomField> {
         return AnimatedContainer(
           // ignore: prefer_null_aware_operators
           width: widget.maxSize != null ? widget.maxSize?.toDouble() : null,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(

@@ -1,13 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/get_information_patient.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:edgar/services/get_appointement.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/plain_button.dart';
 import 'package:edgar/widget/pdf_card.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,68 +17,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    // fetchData(context);
-  }
-
-  Map<String, Object>? infoMedical = {};
+  Map<String, dynamic> infoMedical = {};
 
   final List<Map<String, String>> rdv = [];
 
-  Map<String, Object> info = {
-    'd': '',
-    'nom': 'Noé',
-    'next_rdv_date': 'Lundi 24 octobre',
-    'next_rdv_horraire': '14 h 30',
-  };
-
-  Future<void> fetchData(BuildContext context) async {
-    Logger().i(MediaQuery.of(context).size.width);
-    final Map<String, dynamic>? rdvs = await getAppointement(context);
-    if (rdvs != null) {
-      if (rdvs['rdv'] == null) {
-        return;
+  Future<void> fetchData() async {
+    await getMedicalFolder().then((value) {
+      if (value.isNotEmpty) {
+        infoMedical = value;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+            message: "Error on fetching name", context: context));
       }
-      final uniqueRdv = <Map<String,
-          String>>{}; // Créer un Set pour stocker les rendez-vous uniques
-      rdvs['rdv'].forEach((dynamic rdv) {
-        final rendezVous = {
-          'date': DateFormat('dd/MM/yyyy').format(
-              DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-          'heure': DateFormat('HH:mm:ss').format(
-              DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
-          'fin': DateFormat('HH:mm:ss').format(
-              DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
-          'medecin': 'Dr. ${rdv['doctor_id'] as String}',
-          'adresse': '123 Rue de la Santé, Paris',
-        };
-        uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
-      });
-      rdv.addAll(uniqueRdv
-          .toList()); // Convertir le Set en une liste et l'ajouter à rdv
-    } else {
-      throw Exception('Failed to fetch data');
-    }
-    initializeDateFormatting('fr_FR', null);
-    final lastRdv = rdv.isNotEmpty ? rdv.last : null;
-    if (lastRdv != null) {
-      final rdvDate = DateFormat('dd/MM/yyyy').parse(lastRdv['date']!);
-      final rdvHour = lastRdv['heure']!
-          .substring(0, lastRdv['heure']!.length - 3)
-          .replaceAll(':', ' h ');
-      info['next_rdv_date'] =
-          DateFormat('d MMMM yyyy', 'fr_FR').format(rdvDate);
-      info['next_rdv_horraire'] = rdvHour;
-    }
+    });
+    return;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchData(context),
+      future: fetchData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        Logger().i(snapshot.connectionState);
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
             child: Center(
@@ -100,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   const SizedBox(width: 10),
                   Text(
-                    'Bonjour mr.Duc',
+                    'Bonjour ${infoMedical['name']}',
                     style: TextStyle(
                       color: Colors.blue[900],
                       fontSize: 16,
@@ -134,17 +94,17 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.blue[700],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           'Prochain rendez-vous le',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -152,30 +112,30 @@ class _HomePageState extends State<HomePage> {
                           TextSpan(
                             children: <TextSpan>[
                               TextSpan(
-                                text: '${info['next_rdv_date']} ',
-                                style: const TextStyle(
+                                text: 'Jeudi 12 Août',
+                                style: TextStyle(
                                   color: Color(0xFF5AAF33),
                                   fontSize: 24,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const TextSpan(
-                                text: ' à  ',
+                              TextSpan(
+                                text: '  à  ',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               TextSpan(
-                                text: '${info['next_rdv_horraire']}',
-                                style: const TextStyle(
+                                text: '14 h 30',
+                                style: TextStyle(
                                   color: Color(0xFF5AAF33),
                                   fontSize: 20,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ],
@@ -190,7 +150,7 @@ class _HomePageState extends State<HomePage> {
               const Text(
                 'Vous voulez prendre un nouveau\nrendez-vous ?',
                 style: TextStyle(
-                  color: Color(0xFF1E2B4D),
+                  color: AppColors.black,
                   fontSize: 16,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
@@ -207,7 +167,7 @@ class _HomePageState extends State<HomePage> {
               const Text(
                 'Vos dernier documents reçus',
                 style: TextStyle(
-                  color: Color(0xFF1E2B4D),
+                  color: AppColors.black,
                   fontSize: 16,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,

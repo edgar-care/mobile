@@ -1,6 +1,11 @@
 import 'package:edgar/models/dashboard.dart';
+import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/styles/colors.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NavbarPLus extends StatefulWidget {
@@ -14,6 +19,33 @@ class NavbarPLus extends StatefulWidget {
 }
 
 class _NavbarPLusState extends State<NavbarPLus> {
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Map<String, dynamic> infoMedical = {};
+  String birthdate = '';
+
+  Future<void> fetchData() async {
+    await getMedicalFolder().then((value) {
+      Logger().i(value);
+      if (value.isNotEmpty) {
+        setState(() {
+          infoMedical = value;
+          birthdate = DateFormat('dd/MM/yyyy').format(
+              DateTime.fromMillisecondsSinceEpoch(
+                  infoMedical['birthdate'] * 1000));
+        });
+        Logger().i(infoMedical);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+            message: "Error on fetching name", context: context));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -94,13 +126,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                     ),
                                     const SizedBox(width: 16),
-                                    const Column(
+                                    Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'John Doe',
-                                          style: TextStyle(
+                                          infoMedical['name'] ?? 'Inconnu',
+                                          style: const TextStyle(
                                             fontSize: 16,
                                             color: AppColors.white,
                                             fontWeight: FontWeight.w600,
@@ -108,8 +140,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           ),
                                         ),
                                         Text(
-                                          'Né le 23/04/2024',
-                                          style: TextStyle(
+                                          'Né le $birthdate',
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             color: AppColors.white,
                                             fontWeight: FontWeight.w500,
@@ -142,8 +174,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
-                                      icon: const Icon(Icons.medical_services,
-                                          color: AppColors.black, size: 16),
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/MedicalFolder.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 16,
+                                      ),
                                       title: 'Dossier médical',
                                       onTap: () {
                                         widget.onItemTapped(4);
@@ -152,10 +188,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       type: 'Middle',
                                     ),
                                     NavbarPLusTab(
-                                      icon: const Icon(
-                                          Icons.chat_bubble_rounded,
-                                          color: AppColors.black,
-                                          size: 16),
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/Messagerie.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 16,
+                                      ),
                                       title: 'Messagerie',
                                       onTap: () {
                                         widget.onItemTapped(5);
@@ -182,10 +220,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
-                                      icon: const Icon(
-                                          Icons.arrow_circle_right_rounded,
-                                          color: AppColors.black,
-                                          size: 16),
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/ArrowRightCircle.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 16,
+                                      ),
                                       title: 'Deconnexion',
                                       onTap: () async {
                                         SharedPreferences prefs =
