@@ -4,6 +4,7 @@ import 'package:edgar/screens/dashboard/accueil_page.dart';
 import 'package:edgar/screens/dashboard/information_personnel.dart';
 import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar/screens/dashboard/file_page.dart';
+import 'package:edgar/screens/dashboard/chat_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -15,11 +16,6 @@ class DashBoardPage extends StatefulWidget {
 
 class _DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   int _selectedIndex = 0;
 
   final List<Widget> pages = <Widget>[
@@ -27,6 +23,7 @@ class _DashBoardPageState extends State<DashBoardPage>
     const FilePage(),
     const GestionRendezVous(),
     const InformationPersonnel(),
+    const ChatPage(),
   ];
 
   void updateSelectedIndex(int index) {
@@ -44,13 +41,9 @@ class _DashBoardPageState extends State<DashBoardPage>
     return Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 600),
-                child: pages[_selectedIndex],
-              ),
-            ],
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: pages[_selectedIndex],
           ),
         ),
         bottomNavigationBar: Navbar(

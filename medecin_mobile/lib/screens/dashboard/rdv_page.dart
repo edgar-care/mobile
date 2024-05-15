@@ -1,5 +1,6 @@
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/rdv/custom_list_old.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_rdv.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +13,12 @@ class Rdv extends StatefulWidget {
 }
 
 class _RdvState extends State<Rdv> {
-
   ValueNotifier<int> selected = ValueNotifier(0);
 
   void updateSelection(int newSelection) {
-    selected.value = newSelection;
+    setState(() {
+      selected.value = newSelection;
+    });
   }
 
   @override
@@ -77,14 +79,14 @@ class _RdvState extends State<Rdv> {
                 ],
               );
               }),
+
         const SizedBox(height: 8,),
          ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
-                return CustomListRdv(pressed: selected.value,);
+                return selected.value == 0 ? const CustomListRdv() : const CustomListOld();
           }),
       ],
     );
   }
-
 }

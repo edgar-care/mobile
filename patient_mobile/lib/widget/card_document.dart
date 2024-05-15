@@ -77,7 +77,7 @@ class _CardDocumentState extends State<CardDocument> {
               },
               child: Container(
                 child: widget.isfavorite
-                    ? const Icon(Icons.star, color: AppColors.blue300)
+                    ? const Icon(Icons.star, color: AppColors.blue700)
                     : const Icon(Icons.star_border, color: AppColors.blue300),
               ),
             ),
@@ -199,9 +199,7 @@ WoltModalSheetPage openPatient(
                 FileDownloader.downloadFile(
                   url: url,
                   name: name,
-                  onDownloadCompleted: (String id) {
-                    Logger().i('Télécharger');
-                  },
+                  onDownloadCompleted: (String id) {},
                   onDownloadError: (String error) {
                     Logger().e(error);
                   },
@@ -291,6 +289,7 @@ WoltModalSheetPage modifierPatient(
                   name = value;
                 },
                 maxSize: maxSize,
+                action: TextInputAction.done,
               ),
             ],
           ),

@@ -107,6 +107,7 @@ class _LoginState extends State<Login> {
                   headers: {'Content-Type': 'application/json'},
                   body: jsonEncode({'email': email, 'password': password}),
                 );
+
                 if (response.statusCode == 200) {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   final token = jsonDecode(response.body)['token'];

@@ -68,12 +68,13 @@ class _LoginState extends State<Login> {
                         const Text("Adresse mail", style: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600), textAlign: TextAlign.left,),
                         const SizedBox(height: 8,),
                         CustomField(
+                          startUppercase: false,
                           text: email,
                           label: "prenom.nom@gmail.com",
-                          keyboardType : TextInputType.text,
+                          keyboardType : TextInputType.emailAddress,
                           onChanged: (value) {
                             setState(() {
-                              email = value;
+                              email = value.trim();
                             });
                           },
                         ),
@@ -81,12 +82,13 @@ class _LoginState extends State<Login> {
                         const Text("Mot de passe", style: TextStyle(fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600), textAlign: TextAlign.left ,),
                         const SizedBox(height: 8,),
                         CustomField(
+                          startUppercase: false,
                           label: "Minimum 8 caractères",
                           keyboardType: TextInputType.text,
                           isPassword: true,
                           onChanged: (value) {
                             setState(() {
-                              password = value;
+                              password = value.trim();
                             });
                           },
                         ),
