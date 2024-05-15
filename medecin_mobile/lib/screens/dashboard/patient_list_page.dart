@@ -11,6 +11,7 @@ import 'package:edgar_pro/widgets/card_traitement_day.dart';
 import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
+import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -23,245 +24,272 @@ class PatientPage extends StatefulWidget {
   String id;
   final Function setPages;
   final Function setId;
-  PatientPage({super.key, required this.id, required this.setPages, required this.setId});
+  PatientPage(
+      {super.key,
+      required this.id,
+      required this.setPages,
+      required this.setId});
 
   @override
   State<PatientPage> createState() => _PatientPageState();
 }
+
 class _PatientPageState extends State<PatientPage> {
-    Map<String, dynamic> patientInfo = {};
-    Map<String, dynamic> tmpInfo = {};
-    List<Map<String, dynamic>> tmpTraitments = [];
-    List<Map<String, dynamic>> traitments = [];
-    List<dynamic> docs = [];
-    int doctorindex = -1;
-    ValueNotifier<int> selected = ValueNotifier(0);
-    var pageIndex = ValueNotifier(0);
+  Map<String, dynamic> patientInfo = {};
+  Map<String, dynamic> tmpInfo = {};
+  List<Map<String, dynamic>> tmpTraitments = [];
+  List<dynamic> docs = [];
+  int doctorindex = -1;
+  ValueNotifier<int> selected = ValueNotifier(0);
+  var pageIndex = ValueNotifier(0);
 
-    void updateModalIndex(int index) {
-      pageIndex.value = index;
-    }
+  void updateModalIndex(int index) {
+    pageIndex.value = index;
+  }
 
-    void updateSelection(int newSelection) {
+  void updateSelection(int newSelection) {
     selected.value = newSelection;
   }
 
-    Future<void> _loadInfo() async{
-      patientInfo = await getPatientById(widget.id);
-      tmpInfo = Map.of(patientInfo);
-      var tmp = await getAllDoctor();
-      traitments = patientInfo['medical_antecedents'];
-      tmpTraitments = traitments;
-      setState(() {
-        docs = tmp;
-      });
-      if (patientInfo['medecin_traitant'] != "") {
-        doctorindex = (docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']));
-      }
+  Future<void> _loadInfo() async {
+    patientInfo = await getPatientById(widget.id);
+    docs = await getAllDoctor();
+    tmpInfo = Map.of(patientInfo);
+    doctorindex =
+        docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
+    switch (patientInfo['sexe']) {
+      case 'MALE':
+        selected.value = 0;
+        break;
+      case 'FEMALE':
+        selected.value = 1;
+        break;
+      case 'OTHER':
+        selected.value = 2;
+        break;
     }
+  }
 
-    void updateData() async {
-      setState(() {
-        _loadInfo();
-      });
-    }
-
-    String sexe(String sexe) {
-      switch (sexe) {
-        case 'MALE':
-          return 'Masculin';
-        case 'FEMALE':
-          return 'Feminin';
-        default:
-          return 'Autre';
-      }
-    }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return FutureBuilder(
-      future: _loadInfo(),
-      builder:  (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.blue100,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: AppColors.blue200,
-                  width: 2,
-                ),
-              ),
-              child: InkWell(
-                onTap: () {
-                   WoltModalSheet.show<void>(
-                        context: context,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            patientNavigation(context, patientInfo, widget.setPages, widget.setId),
-                          ];
-                        });
-                },
-                child : Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 3,
-                        decoration: BoxDecoration(
-                          color: AppColors.green500,
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                      ),
-                      const SizedBox(width: 8,),
-                      Text(
-                        '${patientInfo['Nom']} ${patientInfo['Prenom']}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins'
-                        ),
-                      ),
-                      const Spacer(),
-                      const Text(
-                        'Voir Plus',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins'
-                        ),
-                      ),
-                      const SizedBox(width: 8,),
-                      const Icon(
-                        BootstrapIcons.chevron_right,
-                        size: 12,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16,),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue200, width: 2)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Expanded(
-                          child:
-                            Wrap(
-                              alignment: WrapAlignment.start,
-                              direction: Axis.vertical,
-                              spacing: 12,
-                              children: [
-                                Text('Prénom: ${patientInfo['Prenom']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                Text('Nom: ${patientInfo['Nom']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                Text('Date de naissance: ${patientInfo['date_de_naissance']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                Text('Sexe: ${sexe(patientInfo['sexe'])}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                Text('Taille: ${patientInfo['taille']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                Text('Poids: ${patientInfo['poids']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                if (doctorindex != -1)
-                                Text('Médecin traitant: ${docs[doctorindex]['firstname']} ${docs[doctorindex]['name']}', style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                if (doctorindex == -1)
-                                const Text('Médecin traitant: Non indiqué', style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                const Text('Antécédants médicaux et sujets de santé: ', style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                                if (traitments.isNotEmpty)
-                                  for (var i = 0; i < traitments.length; i++)
-                                    if (i < 3)
-                                      LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          return IntrinsicWidth(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (traitments[i]['treatments']
-                                                    .isNotEmpty) {
-                                                  WoltModalSheet.show<void>(
-                                                    context: context,
-                                                    pageListBuilder:
-                                                        (modalSheetContext) {
-                                                      return [
-                                                        infoTraitement(
-                                                          context,
-                                                          traitments[i],
-                                                        ),
-                                                      ];
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                              child: CardTraitementSmall(
-                                                name: traitments[i]['Name'],
-                                                isEnCours: traitments[i]
-                                                              ['treatments']
-                                                              .isEmpty
-                                                          ? false
-                                                          : true,
-                                                onTap: () {
-                                                  setState(() {
-                                                    traitments.removeAt(i);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              ],
-                            )
-                        ),
-                        Buttons(
-                          variant: Variante.primary,
-                          size: SizeButton.md,
-                          msg: const Text('Modifier le dossier médical'),
-                          onPressed: () {
-                            WoltModalSheet.show<void>(
-                              onModalDismissedWithDrag: () {
-                                Navigator.pop(context);
-                                tmpInfo = Map.of(patientInfo);
-                              },
-                              onModalDismissedWithBarrierTap: () {
-                                Navigator.pop(context);
-                                tmpInfo = Map.of(patientInfo);
-                              },
-                                context: context,
-                                pageIndexNotifier: pageIndex,
-                                pageListBuilder: (modalSheetContext) {
-                                  return [
-                                    addPatient(context, pageIndex, tmpInfo),
-                                    addPatient2(updateModalIndex, context, tmpInfo),
-                                    addPatient3(updateModalIndex, context, tmpTraitments),
-                                  ];
-                                });
-                          },
-                        ),
-                      ],),
-                      ),
-                ),
-              ),
-          ],
-        );
-      } else {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+  void updateData() async {
+    setState(() {
+      _loadInfo();
     });
   }
 
-    SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, Function setPages, Function setId) {
+  String sexe(String sexe) {
+    switch (sexe) {
+      case 'MALE':
+        return 'Masculin';
+      case 'FEMALE':
+        return 'Feminin';
+      default:
+        return 'Autre';
+    }
+  }
+
+  String taille(String taille) {
+    int tailleInt = int.parse(taille);
+    return (tailleInt / 100).toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: _loadInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.blue100,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.blue200,
+                      width: 2,
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      WoltModalSheet.show<void>(
+                          context: context,
+                          pageListBuilder: (modalSheetContext) {
+                            return [
+                              patientNavigation(context, patientInfo,
+                                  widget.setPages, widget.setId),
+                            ];
+                          });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: 3,
+                            decoration: BoxDecoration(
+                              color: AppColors.green500,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins'),
+                          ),
+                          const Spacer(),
+                          const Text(
+                            'Voir Plus',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins'),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          const Icon(
+                            BootstrapIcons.chevron_right,
+                            size: 12,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.blue200, width: 2)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                              child: Wrap(
+                            alignment: WrapAlignment.start,
+                            direction: Axis.vertical,
+                            spacing: 12,
+                            children: [
+                              Text('Prénom: ${patientInfo['Prenom']}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              Text('Nom: ${patientInfo['Nom']}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              Text(
+                                  'Date de naissance: ${patientInfo['date_de_naissance']}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              Text('Sexe: ${sexe(patientInfo['sexe'])}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              Text('Taille: ${taille(patientInfo['taille'])} m',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              Text('Poids: ${taille(patientInfo['poids'])} kg',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              if (doctorindex != -1)
+                                Text(
+                                    'Médecin traitant: ${docs[doctorindex]['firstname']} ${docs[doctorindex]['name']}',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600)),
+                              if (doctorindex == -1)
+                                const Text('Médecin traitant: Non indiqué',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600)),
+                              const Text(
+                                  'Antécédants médicaux et sujets de santé: ',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
+                              PatientInfoCard(
+                                  context: context,
+                                  tmpTraitments:
+                                      patientInfo['medical_antecedents']),
+                            ],
+                          )),
+                          Buttons(
+                            variant: Variante.primary,
+                            size: SizeButton.md,
+                            msg: const Text('Modifier le dossier médical'),
+                            onPressed: () {
+                              WoltModalSheet.show<void>(
+                                  onModalDismissedWithDrag: () {
+                                    Navigator.pop(context);
+                                    tmpInfo = Map.of(patientInfo);
+                                  },
+                                  onModalDismissedWithBarrierTap: () {
+                                    Navigator.pop(context);
+                                    tmpInfo = Map.of(patientInfo);
+                                  },
+                                  context: context,
+                                  pageIndexNotifier: pageIndex,
+                                  pageListBuilder: (modalSheetContext) {
+                                    return [
+                                      addPatient(context, pageIndex, tmpInfo),
+                                      addPatient2(
+                                          updateModalIndex, context, tmpInfo),
+                                      addPatient3(updateModalIndex, context,
+                                          tmpTraitments),
+                                    ];
+                                  });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.blue700),
+                  strokeWidth: 2.0,
+                ),
+              ),
+            );
+          }
+        });
+  }
+
+  SliverWoltModalSheetPage patientNavigation(BuildContext context,
+      Map<String, dynamic> patient, Function setPages, Function setId) {
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -269,29 +297,68 @@ class _PatientPageState extends State<PatientPage> {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-              Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 16),
-              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 4, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 5, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 6, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 7, id: patient['id'], setId: setId),
-              const SizedBox(height: 12),
-              Container(height: 2,color: AppColors.blue200),
-              const SizedBox(height: 12),
-              Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text('Revenir à la patientèle', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {setPages(1); Navigator.pop(context);}),
-            ]),
+          child: Column(children: [
+            Text(
+              '${patient['Nom']} ${patient['Prenom']}',
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            CustomNavPatientCard(
+                text: 'Dossier médical',
+                icon: BootstrapIcons.postcard_heart_fill,
+                setPages: setPages,
+                pageTo: 4,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Rendez-vous',
+                icon: BootstrapIcons.calendar2_week_fill,
+                setPages: setPages,
+                pageTo: 5,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Documents',
+                icon: BootstrapIcons.file_earmark_text_fill,
+                setPages: setPages,
+                pageTo: 6,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Messagerie',
+                icon: BootstrapIcons.chat_dots_fill,
+                setPages: setPages,
+                pageTo: 7,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 12),
+            Container(height: 2, color: AppColors.blue200),
+            const SizedBox(height: 12),
+            Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Revenir à la patientèle',
+                  style: TextStyle(fontFamily: 'Poppins'),
+                ),
+                onPressed: () {
+                  setPages(1);
+                  Navigator.pop(context);
+                }),
+          ]),
         ),
       ),
     );
   }
 
-SliverWoltModalSheetPage addPatient(
-      BuildContext context, ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> info) {
+  SliverWoltModalSheetPage addPatient(BuildContext context,
+      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> info) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -335,7 +402,7 @@ SliverWoltModalSheetPage addPatient(
                       info['sexe'] = "OTHER";
                       break;
                     default:
-                  }           
+                  }
                   pageIndexNotifier.value = pageIndexNotifier.value + 1;
                 },
               ),
@@ -371,41 +438,41 @@ SliverWoltModalSheetPage addPatient(
               height: 8,
             ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  const SizedBox(
-                    width: 16,
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue200,
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue200,
-                    ),
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue200,
                   ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue200,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 32,
             ),
@@ -414,9 +481,14 @@ SliverWoltModalSheetPage addPatient(
               children: [
                 const Text(
                   "Prénom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8,),
+                const SizedBox(
+                  height: 8,
+                ),
                 CustomPreloadField(
                   startUppercase: true,
                   label: "Prénom",
@@ -430,9 +502,14 @@ SliverWoltModalSheetPage addPatient(
                 ),
                 const Text(
                   "Nom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8,),
+                const SizedBox(
+                  height: 8,
+                ),
                 CustomPreloadField(
                   startUppercase: true,
                   label: "Nom",
@@ -446,47 +523,61 @@ SliverWoltModalSheetPage addPatient(
                 ),
                 const Text(
                   "Date de naissance",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
-                CustomDatePiker(onChanged: (value) => info['date_de_naissance'] = value, endDate: DateTime.now(), value: info['date_de_naissance'], ),
+                const SizedBox(
+                  height: 4,
+                ),
+                CustomDatePiker(
+                  onChanged: (value) => info['date_de_naissance'] = value,
+                  endDate: DateTime.now(),
+                  value: info['date_de_naissance'],
+                ),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
                   "Sexe",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8,),
+                const SizedBox(
+                  height: 8,
+                ),
                 ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
                     return Row(
                       children: [
-                            AddButton(
-                                onTap: () => updateSelection(0),
-                                label: "Masculin",
-                                color: value == 0
-                                      ? AppColors.blue700
-                                      : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(0),
+                            label: "Masculin",
+                            color: value == 0
+                                ? AppColors.blue700
+                                : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                            AddButton(
-                                onTap: () => updateSelection(1),
-                                label: "Féminin",
-                                color: value == 1
-                                    ? AppColors.blue700
-                                    : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(1),
+                            label: "Féminin",
+                            color: value == 1
+                                ? AppColors.blue700
+                                : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                            AddButton(
-                                onTap: () => updateSelection(2),
-                                label: "Autre",
-                                color: value == 2
-                                    ? AppColors.blue700
-                                    : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(2),
+                            label: "Autre",
+                            color: value == 2
+                                ? AppColors.blue700
+                                : AppColors.white),
                       ],
                     );
                   },
@@ -503,15 +594,21 @@ SliverWoltModalSheetPage addPatient(
                         children: [
                           const Text(
                             "Taille",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 8,),
+                          const SizedBox(
+                            height: 8,
+                          ),
                           CustomPreloadField(
                             startUppercase: false,
-                            text: info['taille'].toString(),
+                            text:
+                                (double.parse(info['taille']) / 100).toString(),
                             label: "1,52m",
-                            onChanged: (value) => info['taille'] = (double.parse(value) * 100).round().toString(),
+                            onChanged: (value) => info['taille'] =
+                                (double.parse(value) * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -528,15 +625,21 @@ SliverWoltModalSheetPage addPatient(
                         children: [
                           const Text(
                             "Poids",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 8,),
+                          const SizedBox(
+                            height: 8,
+                          ),
                           CustomPreloadField(
                             startUppercase: false,
                             label: "45kg",
-                            text: info['poids'].toString(),
-                            onChanged: (value) => info['poids'] = (double.parse(value) * 100).round().toString(),
+                            text:
+                                (double.parse(info['poids']) / 100).toString(),
+                            onChanged: (value) => info['poids'] =
+                                (double.parse(value) * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -553,22 +656,22 @@ SliverWoltModalSheetPage addPatient(
     );
   }
 
-  SliverWoltModalSheetPage addPatient2(
-      final Function(int) updateSelectedIndex,
+  SliverWoltModalSheetPage addPatient2(final Function(int) updateSelectedIndex,
       BuildContext context, Map<String, dynamic> tmpInfo) {
-        int selectedDoctor = -1;
+    int selectedDoctor = -1;
 
-        void updateSelectedDoctor(int index) {
-          selectedDoctor = index;
-        }
+    void updateSelectedDoctor(int index) {
+      selectedDoctor = index;
+    }
 
-        int getDoctor() {
-          return selectedDoctor;
-        }
+    int getDoctor() {
+      return selectedDoctor;
+    }
 
-        return WoltModalSheetPage(
-          hasTopBarLayer: false,
-          stickyActionBar: Padding(
+    return WoltModalSheetPage(
+      hasTopBarLayer: false,
+      backgroundColor: AppColors.white,
+      stickyActionBar: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
         child: Wrap(
           alignment: WrapAlignment.center,
@@ -582,7 +685,7 @@ SliverWoltModalSheetPage addPatient(
                 size: SizeButton.sm,
                 msg: const Text('Précedent'),
                 onPressed: () {
-                   updateSelectedIndex(0);
+                  updateSelectedIndex(0);
                 },
               ),
             ),
@@ -592,9 +695,9 @@ SliverWoltModalSheetPage addPatient(
                 variant: Variante.primary,
                 size: SizeButton.sm,
                 msg: const Text('Continuer'),
-                onPressed: () {     
-                  if(getDoctor() != -1){
-                  updateSelectedIndex(2);
+                onPressed: () {
+                  if (getDoctor() != -1) {
+                    updateSelectedIndex(2);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       ErrorLoginSnackBar(
@@ -637,57 +740,60 @@ SliverWoltModalSheetPage addPatient(
               height: 8,
             ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  const SizedBox(
-                    width: 16,
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue200,
                   ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue200,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 32,
             ),
-            Body2(updateSelectedIndex: updateSelectedIndex, getDoctor: getDoctor, setDoctor: updateSelectedDoctor, tmpInfo: tmpInfo, ),
+            Body2(
+              updateSelectedIndex: updateSelectedIndex,
+              getDoctor: getDoctor,
+              setDoctor: updateSelectedDoctor,
+              tmpInfo: tmpInfo,
+            ),
           ]),
         ),
       ),
     );
   }
 
-  SliverWoltModalSheetPage addPatient3(
-      final Function(int) updateSelectedIndex,
+  SliverWoltModalSheetPage addPatient3(final Function(int) updateSelectedIndex,
       BuildContext context, List<Map<String, dynamic>> traitments) {
-
-        return WoltModalSheetPage(
-          hasTopBarLayer: false,
+    return WoltModalSheetPage(
+      hasTopBarLayer: false,
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
@@ -716,45 +822,48 @@ SliverWoltModalSheetPage addPatient(
               height: 8,
             ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  const SizedBox(
-                    width: 16,
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.blue700,
                   ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.23,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.blue700,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 32,
             ),
-            Body3(updateSelectedIndex: updateSelectedIndex, tmpInfo: tmpInfo, refresh: updateData),
+            Body3(
+                updateSelectedIndex: updateSelectedIndex,
+                tmpInfo: tmpInfo,
+                refresh: updateData),
           ]),
         ),
       ),
@@ -786,9 +895,7 @@ WoltModalSheetPage infoTraitement(
 // ignore: must_be_immutable
 class BodyInfoModal extends StatefulWidget {
   Map<String, dynamic> traitement;
-  BodyInfoModal(
-      {super.key,
-      required this.traitement});
+  BodyInfoModal({super.key, required this.traitement});
 
   @override
   State<BodyInfoModal> createState() => _BodyInfoModalState();
@@ -857,7 +964,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  widget.traitement['Name'],
+                  widget.traitement['name'],
                   style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14,
@@ -877,6 +984,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
+        const SizedBox(height: 8),
         ValueListenableBuilder<bool>(
           valueListenable: isHealth,
           builder: (context, value, child) {
@@ -956,7 +1064,11 @@ class Body2 extends StatefulWidget {
   final Function setDoctor;
   Map<String, dynamic> tmpInfo;
   Body2(
-      {required this.updateSelectedIndex, super.key, required this.getDoctor, required this.setDoctor, required this.tmpInfo});
+      {required this.updateSelectedIndex,
+      super.key,
+      required this.getDoctor,
+      required this.setDoctor,
+      required this.tmpInfo});
 
   @override
   State<Body2> createState() => _onboarding2State();
@@ -980,7 +1092,8 @@ class _onboarding2State extends State<Body2> {
       docs = tmp;
     });
     if (widget.tmpInfo['medecin_traitant'] != "") {
-      widget.setDoctor(docs.indexWhere((doc) => doc['id'] == widget.tmpInfo['medecin_traitant']));
+      widget.setDoctor(docs.indexWhere(
+          (doc) => doc['id'] == widget.tmpInfo['medecin_traitant']));
     }
     return docs;
   }
@@ -991,101 +1104,101 @@ class _onboarding2State extends State<Body2> {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height - 204,
-        child: Column(
-          children: [
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Nom du médecin traitant',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                ),
+      child: Column(
+        children: [
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Nom du médecin traitant',
+              style: TextStyle(
+                color: AppColors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins',
               ),
             ),
-            const SizedBox(height: 8),
-            CustomFieldSearch(
-              label: 'Docteur Edgar',
-              icon: SvgPicture.asset("assets/images/utils/search.svg"),
-              keyboardType: TextInputType.name,
-              onValidate: (value) {
-                setState(() {
-                  nameFilter = value;
-                });
+          ),
+          const SizedBox(height: 8),
+          CustomFieldSearch(
+            label: 'Docteur Edgar',
+            icon: SvgPicture.asset("assets/images/utils/search.svg"),
+            keyboardType: TextInputType.name,
+            onValidate: (value) {
+              setState(() {
+                nameFilter = value;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: FutureBuilder(
+              future: _fetchDocsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                      child: Text("Erreur lors du chargement des données"));
+                } else if (snapshot.hasData) {
+                  // Filtrer les docs basés sur nameFilter
+                  var filteredDocs = docs.where((doc) {
+                    return doc['name']
+                        .toLowerCase()
+                        .contains(nameFilter.toLowerCase());
+                  }).toList();
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: filteredDocs.length,
+                    itemBuilder: (context, index) {
+                      var doc = filteredDocs[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return CardDoctor(
+                              name: doc['name'] == ""
+                                  ? "Docteur Edgar"
+                                  : "Docteur ${doc['name']}",
+                              street: doc['address']['street'] == ""
+                                  ? "1 rue de la paix"
+                                  : doc['address']['street'],
+                              city: doc['address']['city'] == ""
+                                  ? "Paris"
+                                  : doc['address']['city'],
+                              zipCode: doc['address']['zip_code'] == ""
+                                  ? "75000"
+                                  : doc['address']['zip_code'],
+                              selected:
+                                  index == widget.getDoctor() ? true : false,
+                              onclick: () {
+                                setState(() {
+                                  if (widget.getDoctor() == index) {
+                                    widget.setDoctor(-1);
+                                    widget.tmpInfo['medecin_traitant'] = "";
+                                  } else {
+                                    widget.setDoctor(index);
+                                  }
+                                  if (widget.getDoctor() != -1) {
+                                    widget.tmpInfo['medecin_traitant'] =
+                                        doc['id'];
+                                  }
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(child: Text("Aucune donnée disponible"));
+                }
               },
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: FutureBuilder(
-                future: _fetchDocsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                        child: Text("Erreur lors du chargement des données"));
-                  } else if (snapshot.hasData) {
-                    // Filtrer les docs basés sur nameFilter
-                    var filteredDocs = docs.where((doc) {
-                      return doc['name']
-                          .toLowerCase()
-                          .contains(nameFilter.toLowerCase());
-                    }).toList();
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: filteredDocs.length,
-                      itemBuilder: (context, index) {
-                        var doc = filteredDocs[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return CardDoctor(
-                                name: doc['name'] == ""
-                                    ? "Docteur Edgar"
-                                    : "Docteur ${doc['name']}",
-                                street: doc['address']['street'] == ""
-                                    ? "1 rue de la paix"
-                                    : doc['address']['street'],
-                                city: doc['address']['city'] == ""
-                                    ? "Paris"
-                                    : doc['address']['city'],
-                                zipCode: doc['address']['zip_code'] == ""
-                                    ? "75000"
-                                    : doc['address']['zip_code'],
-                                selected:
-                                    index == widget.getDoctor() ? true : false,
-                                onclick: () {
-                                  setState(() {
-                                    if (widget.getDoctor() == index) {
-                                      widget.setDoctor(-1);
-                                      widget.tmpInfo['medecin_traitant'] = "";
-                                    } else {
-                                      widget.setDoctor(index);
-                                    }
-                                    if (widget.getDoctor() != -1) {
-                                      widget.tmpInfo['medecin_traitant'] = doc['id'];
-                                    }
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  } else {
-                    return const Center(
-                        child: Text("Aucune donnée disponible"));
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1119,7 +1232,7 @@ class _Onboarding3State extends State<Body3> {
       String name, Map<String, dynamic> medicines, bool stillRelevant) {
     setState(() {
       widget.tmpInfo['medical_antecedents'].add({
-        "Name": name,
+        "name": name,
         "treatments": medicines["treatments"],
         "still_relevant": stillRelevant,
       });
@@ -1128,154 +1241,157 @@ class _Onboarding3State extends State<Body3> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Vos antécédents médicaux et sujets de santé",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text(
+        "Vos antécédents médicaux et sujets de santé",
+        textAlign: TextAlign.start,
+        style: TextStyle(
+          color: AppColors.black,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
         ),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            WoltModalSheet.show<void>(
-              context: context,
-              pageIndexNotifier: pageIndex,
-              pageListBuilder: (modalSheetContext) {
-                return [
-                  addTraitement(
-                    context,
-                    pageIndex,
-                    updateData,
-                    addNewTraitement,
-                  ),
-                ];
-              },
-            );
-          },
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.blue500, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Renseigner vos informations",
-                  style: TextStyle(
-                    color: AppColors.grey400,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+      ),
+      const SizedBox(height: 8),
+      GestureDetector(
+        onTap: () {
+          WoltModalSheet.show<void>(
+            context: context,
+            pageIndexNotifier: pageIndex,
+            pageListBuilder: (modalSheetContext) {
+              return [
+                addTraitement(
+                  context,
+                  pageIndex,
+                  updateData,
+                  addNewTraitement,
                 ),
-                SvgPicture.asset(
-                  "assets/images/utils/plus-lg.svg",
-                  // ignore: deprecated_member_use
-                  color: AppColors.blue700,
-                  width: 16,
-                  height: 16,
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          "Vos antécédénts médicaux et sujets de santé renseignés",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: FutureBuilder(
-            future: Future.delayed(const Duration(seconds: 0), () {
-              return true;
-            }),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Expanded(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation(AppColors.blue700),
-                      strokeWidth: 2,
-                      backgroundColor: AppColors.white,
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Erreur: ${snapshot.error}');
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: [
-                      if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
-                        for (var i = 0; i < widget.tmpInfo['medical_antecedents'].length; i++)
-                          if (i < 3)
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                return IntrinsicWidth(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (widget.tmpInfo['medical_antecedents'][i]['treatments']
-                                          .isNotEmpty) {
-                                        WoltModalSheet.show<void>(
-                                          context: context,
-                                          pageIndexNotifier: pageIndex,
-                                          pageListBuilder:
-                                              (modalSheetContext) {
-                                            return [
-                                              infoTraitement(
-                                                context,
-                                               widget.tmpInfo['medical_antecedents'][i],
-                                              ),
-                                            ];
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: CardTraitementSmall(
-                                      name: widget.tmpInfo['medical_antecedents'][i]['Name'],
-                                      isEnCours: widget.tmpInfo['medical_antecedents'][i]
-                                                    ['treatments']
-                                                    .isEmpty
-                                                ? false
-                                                : true,
-                                      onTap: () {
-                                        setState(() {
-                                          widget.tmpInfo['medical_antecedents'].removeAt(i);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                    ],
-                  ),
-                );
-              }
+              ];
             },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Renseigner vos informations",
+                style: TextStyle(
+                  color: AppColors.grey400,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SvgPicture.asset(
+                "assets/images/utils/plus-lg.svg",
+                // ignore: deprecated_member_use
+                color: AppColors.blue700,
+                width: 16,
+                height: 16,
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
-        Wrap(
+      ),
+      const SizedBox(height: 16),
+      const Text(
+        "Vos antécédénts médicaux et sujets de santé renseignés",
+        textAlign: TextAlign.start,
+        style: TextStyle(
+          color: AppColors.black,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      SizedBox(
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: FutureBuilder(
+          future: Future.delayed(const Duration(seconds: 0), () {
+            return true;
+          }),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Expanded(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(AppColors.blue700),
+                    strokeWidth: 2,
+                    backgroundColor: AppColors.white,
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Erreur: ${snapshot.error}');
+            } else {
+              return Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
+                      for (var i = 0;
+                          i < widget.tmpInfo['medical_antecedents'].length;
+                          i++)
+                        if (i < 3)
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return IntrinsicWidth(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (widget
+                                        .tmpInfo['medical_antecedents'][i]
+                                            ['treatments']
+                                        .isNotEmpty) {
+                                      WoltModalSheet.show<void>(
+                                        context: context,
+                                        pageIndexNotifier: pageIndex,
+                                        pageListBuilder: (modalSheetContext) {
+                                          return [
+                                            infoTraitement(
+                                              context,
+                                              widget.tmpInfo[
+                                                  'medical_antecedents'][i],
+                                            ),
+                                          ];
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: CardTraitementSmall(
+                                    name: widget.tmpInfo['medical_antecedents']
+                                        [i]['name'],
+                                    isEnCours: widget
+                                            .tmpInfo['medical_antecedents'][i]
+                                                ['treatments']
+                                            .isEmpty
+                                        ? false
+                                        : true,
+                                    onTap: () {
+                                      setState(() {
+                                        widget.tmpInfo['medical_antecedents']
+                                            .removeAt(i);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+      ),
+      const SizedBox(height: 16),
+      Wrap(
         alignment: WrapAlignment.center,
         direction: Axis.horizontal,
         spacing: 12,
@@ -1287,7 +1403,7 @@ class _Onboarding3State extends State<Body3> {
               size: SizeButton.sm,
               msg: const Text('Revenir en arrière'),
               onPressed: () {
-                  widget.updateSelectedIndex(1);
+                widget.updateSelectedIndex(1);
               },
             ),
           ),
@@ -1301,10 +1417,18 @@ class _Onboarding3State extends State<Body3> {
                 int poids = int.parse(widget.tmpInfo['poids']);
                 int taille = int.parse(widget.tmpInfo['taille']);
 
-                String day = widget.tmpInfo['date_de_naissance']?.substring(0, 2) ?? '00';
-                String month = widget.tmpInfo['date_de_naissance']?.substring(3, 5) ?? '00';
-                String year = widget.tmpInfo['date_de_naissance']?.substring(6, 10) ?? '0000';
-                int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch ~/ 1000;
+                String day =
+                    widget.tmpInfo['date_de_naissance']?.substring(0, 2) ??
+                        '00';
+                String month =
+                    widget.tmpInfo['date_de_naissance']?.substring(3, 5) ??
+                        '00';
+                String year =
+                    widget.tmpInfo['date_de_naissance']?.substring(6, 10) ??
+                        '0000';
+                int date = DateTime.parse('$year-$month-$day')
+                        .millisecondsSinceEpoch ~/
+                    1000;
 
                 final Map<String, Object> body = {
                   "name": widget.tmpInfo['Nom'],
@@ -1316,31 +1440,37 @@ class _Onboarding3State extends State<Body3> {
                   "primary_doctor_id": widget.tmpInfo['medecin_traitant'],
                   "medical_antecedents": widget.tmpInfo['medical_antecedents'],
                 };
-                putInformationPatient(context,body, widget.tmpInfo['id']).then((value) => {
-                if (value == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorLoginSnackBar(
-                          message: "Informations mises à jour avec succès",
-                          context: context)),
-                  Navigator.pop(context),
-                  widget.refresh()
-                } else {
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(ErrorLoginSnackBar(
-                          message: "Erreur lors de la mises à jour des informations",
-                          // ignore: use_build_context_synchronously
-                          context: context))
-              }});
+                putInformationPatient(context, body, widget.tmpInfo['id'])
+                    .then((value) => {
+                          if (value == true)
+                            {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorLoginSnackBar(
+                                      message:
+                                          "Informations mises à jour avec succès",
+                                      context: context)),
+                              Navigator.pop(context),
+                              widget.refresh()
+                            }
+                          else
+                            {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorLoginSnackBar(
+                                      message:
+                                          "Erreur lors de la mises à jour des informations",
+                                      // ignore: use_build_context_synchronously
+                                      context: context))
+                            }
+                        });
               },
             ),
           ),
-          ],
-        ),
-      ]);
+        ],
+      ),
+    ]);
   }
 }
-
 
 WoltModalSheetPage addTraitement(
   BuildContext context,
@@ -1425,215 +1555,215 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   @override
   Widget build(BuildContext context) {
     return Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.green200,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: SvgPicture.asset(
-              'assets/images/utils/Subtract.svg',
-              // ignore: deprecated_member_use
-              color: AppColors.green700,
-            ),
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: AppColors.green200,
+            borderRadius: BorderRadius.circular(50),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Ajoutez un sujet de santé',
-            style: TextStyle(
-              color: AppColors.black,
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+          padding: const EdgeInsets.all(16),
+          child: SvgPicture.asset(
+            'assets/images/utils/Subtract.svg',
+            // ignore: deprecated_member_use
+            color: AppColors.green700,
           ),
-          const SizedBox(height: 32),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Nom de votre sujet de santé',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Ajoutez un sujet de santé',
+          style: TextStyle(
+            color: AppColors.black,
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 32),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Nom de votre sujet de santé',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 8),
-              CustomField(
-                label: 'Rhume',
-                onChanged: (value) {
-                  setState(() {
-                    name = value.trim();
-                  });
-                },
-                keyboardType: TextInputType.name,
-                startUppercase: false,
+            ),
+            const SizedBox(height: 8),
+            CustomField(
+              label: 'Rhume',
+              onChanged: (value) {
+                setState(() {
+                  name = value.trim();
+                });
+              },
+              keyboardType: TextInputType.name,
+              startUppercase: false,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Le sujet de santé est-il toujours en cours ?',
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Le sujet de santé est-il toujours en cours ?',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ValueListenableBuilder<bool>(
-                valueListenable: ValueNotifier(stillRelevant),
-                builder: (context, value, child) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      AddButton(
-                          onTap: (() {
-                            setState(() {
-                              stillRelevant = true;
-                            });
-                          }),
-                          label: "Oui",
-                          color: value == true
-                              ? AppColors.blue700
-                              : Colors.transparent),
-                      const SizedBox(width: 8),
-                      AddButton(
-                          onTap: (() {
-                            setState(() {
-                              stillRelevant = false;
-                            });
-                          }),
-                          label: "Non",
-                          color: value == false
-                              ? AppColors.blue700
-                              : Colors.transparent),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {
-                  WoltModalSheet.show<void>(
-                      context: context,
-                      pageIndexNotifier: widget.pageIndex,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          addMedicament(
-                            context,
-                            widget.pageIndex,
-                            widget.updateData,
-                            widget.addNewTraitement,
-                            updateMedicament,
-                          ),
-                        ];
-                      });
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue500, width: 2),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Ajouter un médicament",
-                        style: TextStyle(
-                          color: AppColors.grey400,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+            ),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<bool>(
+              valueListenable: ValueNotifier(stillRelevant),
+              builder: (context, value, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AddButton(
+                        onTap: (() {
+                          setState(() {
+                            stillRelevant = true;
+                          });
+                        }),
+                        label: "Oui",
+                        color: value == true
+                            ? AppColors.blue700
+                            : Colors.transparent),
+                    const SizedBox(width: 8),
+                    AddButton(
+                        onTap: (() {
+                          setState(() {
+                            stillRelevant = false;
+                          });
+                        }),
+                        label: "Non",
+                        color: value == false
+                            ? AppColors.blue700
+                            : Colors.transparent),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () {
+                WoltModalSheet.show<void>(
+                    context: context,
+                    pageIndexNotifier: widget.pageIndex,
+                    pageListBuilder: (modalSheetContext) {
+                      return [
+                        addMedicament(
+                          context,
+                          widget.pageIndex,
+                          widget.updateData,
+                          widget.addNewTraitement,
+                          updateMedicament,
                         ),
+                      ];
+                    });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.blue500, width: 2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Ajouter un médicament",
+                      style: TextStyle(
+                        color: AppColors.grey400,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
-                      SvgPicture.asset(
-                        "assets/images/utils/plus-lg.svg",
-                        // ignore: deprecated_member_use
-                        color: AppColors.blue700,
-                        width: 14,
-                        height: 14,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SvgPicture.asset(
+                      "assets/images/utils/plus-lg.svg",
+                      // ignore: deprecated_member_use
+                      color: AppColors.blue700,
+                      width: 14,
+                      height: 14,
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: widget.screenSize.height * 0.36,
-                width: widget.screenSize.width,
-                child: FutureBuilder(
-                  future: fetchData(), // Simulate some async operation
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return ListView.builder(
-                        itemCount: medicines['treatments'].length,
-                        itemBuilder: (context, index) {
-                          if (medicines['treatments'].isEmpty) {
-                            return const SizedBox();
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: CardTraitementDay(
-                              isClickable: true,
-                              data: medicines['treatments'][index],
-                              name: medNames[index],
-                              onTap: () {
-                                setState(() {
-                                  medicines['treatments'].removeAt(index);
-                                  medNames.removeAt(index);
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      );
+            ),
+            SizedBox(
+              height: widget.screenSize.height * 0.36,
+              width: widget.screenSize.width,
+              child: FutureBuilder(
+                future: fetchData(), // Simulate some async operation
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return ListView.builder(
+                      itemCount: medicines['treatments'].length,
+                      itemBuilder: (context, index) {
+                        if (medicines['treatments'].isEmpty) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: CardTraitementDay(
+                            isClickable: true,
+                            data: medicines['treatments'][index],
+                            name: medNames[index],
+                            onTap: () {
+                              setState(() {
+                                medicines['treatments'].removeAt(index);
+                                medNames.removeAt(index);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Buttons(
+                  variant: Variante.secondary,
+                  size: SizeButton.sm,
+                  msg: const Text("Annuler"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Buttons(
+                  variant: Variante.validate,
+                  size: SizeButton.sm,
+                  msg: const Text("Ajouter"),
+                  onPressed: () {
+                    if (name == "") {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          ErrorLoginSnackBar(
+                              message: "Ajoutez un nom", context: context));
+                      return;
                     }
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text("Annuler"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-              ),
-              const SizedBox(width: 12),
-              Flexible(
-                child: Buttons(
-                    variant: Variante.validate,
-                    size: SizeButton.sm,
-                    msg: const Text("Ajouter"),
-                    onPressed: () {
-                      if (name == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorLoginSnackBar(
-                                message: "Ajoutez un nom", context: context));
-                        return;
-                      }
-                      widget.addNewTraitement(name, medicines, stillRelevant);
-                      Navigator.pop(context);
-                    }),
-              ),
-            ],
-          ),
-        ],
+                    widget.addNewTraitement(name, medicines, stillRelevant);
+                    Navigator.pop(context);
+                  }),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -19,18 +19,17 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> documents = [];
     var tmp = jsonDecode(response.body)['document_ids'];
-    for(int i = 0; i < tmp.length; i++) {
-        documents.add(await getDocumentsbyId(tmp[i]));
+    for (int i = 0; i < tmp.length; i++) {
+      documents.add(await getDocumentsbyId(tmp[i]));
     }
     return documents;
-  }
-  else {
+  } else {
     return [];
   }
 }
 
-Future <Map<String, dynamic>> getDocumentsbyId (String id) async {
- SharedPreferences prefs = await SharedPreferences.getInstance();
+Future<Map<String, dynamic>> getDocumentsbyId(String id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/doctor/document/$id';
   final response = await http.get(
@@ -42,11 +41,9 @@ Future <Map<String, dynamic>> getDocumentsbyId (String id) async {
   );
   if (response.statusCode == 201) {
     return jsonDecode(response.body)['download'];
-  }
-  else {
+  } else {
     return {};
-  } 
-
+  }
 }
 
 Future<Object?> postDocument(

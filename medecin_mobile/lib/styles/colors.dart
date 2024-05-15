@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const white = Color(0xFFFFFFFF);
   static const black = Color(0xFF000000);
-  
+
   static const darkBlue = Color.fromRGBO(30, 43, 77, 1);
   static const buttonBlue = Color.fromRGBO(51, 95, 194, 1);
   static const textBlue = Color.fromRGBO(46, 76, 154, 1);
@@ -44,7 +44,7 @@ class AppColors {
   static const red100 = Color(0xFFFFE0E0);
   static const red200 = Color(0xFFFFC7C7);
   static const red300 = Color(0xFFFF9F9F);
-  static const red400 = Color.fromRGBO(255,104,104, 1);
+  static const red400 = Color.fromRGBO(255, 104, 104, 1);
   static const red500 = Color.fromRGBO(250, 57, 57, 1);
   static const red600 = Color(0xFFDA1616);
   static const red700 = Color(0xFFC31212);

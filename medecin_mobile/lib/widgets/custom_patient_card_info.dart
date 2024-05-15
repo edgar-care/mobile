@@ -1,20 +1,14 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class PatientInfoCard extends StatefulWidget {
   final BuildContext context;
-  final Map<String, dynamic> patient;
-  final String champ;
-  final bool isDeletable;
+  List<dynamic> tmpTraitments;
 
-  const PatientInfoCard({
-    super.key,
-    required this.context,
-    required this.patient,
-    required this.champ,
-    required this.isDeletable,
-  });
+  PatientInfoCard(
+      {super.key, required this.context, required this.tmpTraitments});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -32,7 +26,7 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
         runSpacing: 8,
         direction: Axis.horizontal,
         children: [
-          for (var i = 0; i < widget.patient[widget.champ].length; i++)
+          for (var i = 0; i < widget.tmpTraitments.length; i++)
             Card(
               elevation: 0,
               margin: const EdgeInsets.all(0),
@@ -44,35 +38,41 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
                   width: 2,
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      widget.patient[widget.champ][i],
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                      ),
-                    ),
-                    if (widget.isDeletable)
-                      GestureDetector(
-                        child: const Icon(
-                          BootstrapIcons.x,
-                          color: AppColors.black,
+              child: GestureDetector(
+                onTap: () {
+                  if (widget.tmpTraitments[i].isNotEmpty) {
+                    WoltModalSheet.show<void>(
+                      context: context,
+                      pageListBuilder: (modalSheetContext) {
+                        return [
+                          infoTraitement(
+                            context,
+                            widget.tmpTraitments[i],
+                          ),
+                        ];
+                      },
+                    );
+                  }
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        widget.tmpTraitments[i]['name'],
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
                         ),
-                        onTap: () {
-                          setState(() {
-                            widget.patient[widget.champ].removeAt(i);
-                          });
-                        },
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+            )
         ],
       ),
     );

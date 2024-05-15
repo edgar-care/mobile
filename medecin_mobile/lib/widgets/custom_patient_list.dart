@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-
 // ignore: must_be_immutable
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
@@ -16,15 +15,21 @@ class CustomList extends StatefulWidget {
   final Function setPages;
   final Function setId;
   final Function deletePatientList;
-  const CustomList({super.key, required this.patients, required this.updatePatient, required this.setPages, required this.setId, required this.deletePatientList});
+  const CustomList(
+      {super.key,
+      required this.patients,
+      required this.updatePatient,
+      required this.setPages,
+      required this.setId,
+      required this.deletePatientList});
 
   @override
   // ignore: library_private_types_in_public_api
   _CustomListState createState() => _CustomListState();
 }
+
 // ignore: must_be_immutable
 class _CustomListState extends State<CustomList> {
-
   ValueNotifier<int> selected = ValueNotifier(2);
 
   void updateSelection(int newSelection) {
@@ -35,29 +40,33 @@ class _CustomListState extends State<CustomList> {
   Widget build(BuildContext context) {
     return Expanded(
         child: ListView.separated(
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
-          itemCount: widget.patients.length,
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
-            return PatientListCard(
-            patientData: widget.patients[index],
-            onTap: () {
-              WoltModalSheet.show(
-                context: context,
-                pageListBuilder: (BuildContext context) {
-                  return [
-                    patientNavigation(context, widget.patients[index], index, widget.setPages, widget.setId),
-                  ];
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemCount: widget.patients.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return PatientListCard(
+                patientData: widget.patients[index],
+                onTap: () {
+                  WoltModalSheet.show(
+                    context: context,
+                    pageListBuilder: (BuildContext context) {
+                      return [
+                        patientNavigation(context, widget.patients[index],
+                            index, widget.setPages, widget.setId),
+                      ];
+                    },
+                  );
                 },
               );
-            },
-          );
-        }
-      )
-    );
+            }));
   }
 
-  SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index, Function setPages, Function setId) {
+  SliverWoltModalSheetPage patientNavigation(
+      BuildContext context,
+      Map<String, dynamic> patient,
+      int index,
+      Function setPages,
+      Function setId) {
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -65,37 +74,86 @@ class _CustomListState extends State<CustomList> {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-              Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 16),
-              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 4, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 5, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 6, id: patient['id'], setId: setId),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 7, id: patient['id'], setId: setId),
-              const SizedBox(height: 12),
-              Container(height: 2,color: AppColors.blue200),
-              const SizedBox(height: 12),
-              Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text('Revenir à la patientèle', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {Navigator.pop(context);}),
-              const SizedBox(height: 4),
-              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le patient', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {WoltModalSheet.show(
-                context: context,
-                pageListBuilder: (BuildContext context) {
-                  return [
-                    deletePatient(context, patient, widget.deletePatientList),
-                  ];
-                },
-              );},)
-            ]),
+          child: Column(children: [
+            Text(
+              '${patient['Nom']} ${patient['Prenom']}',
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            CustomNavPatientCard(
+                text: 'Dossier médical',
+                icon: BootstrapIcons.postcard_heart_fill,
+                setPages: setPages,
+                pageTo: 4,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Rendez-vous',
+                icon: BootstrapIcons.calendar2_week_fill,
+                setPages: setPages,
+                pageTo: 5,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Documents',
+                icon: BootstrapIcons.file_earmark_text_fill,
+                setPages: setPages,
+                pageTo: 6,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Messagerie',
+                icon: BootstrapIcons.chat_dots_fill,
+                setPages: setPages,
+                pageTo: 7,
+                id: patient['id'],
+                setId: setId),
+            const SizedBox(height: 12),
+            Container(height: 2, color: AppColors.blue200),
+            const SizedBox(height: 12),
+            Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Revenir à la patientèle',
+                  style: TextStyle(fontFamily: 'Poppins'),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            const SizedBox(height: 4),
+            Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text(
+                'Supprimer le patient',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+              onPressed: () {
+                WoltModalSheet.show(
+                  context: context,
+                  pageListBuilder: (BuildContext context) {
+                    return [
+                      deletePatient(context, patient, widget.deletePatientList),
+                    ];
+                  },
+                );
+              },
+            )
+          ]),
         ),
       ),
     );
   }
 
-  SliverWoltModalSheetPage deletePatient(BuildContext context, Map<String, dynamic> patient, Function deletePatientList) {
+  SliverWoltModalSheetPage deletePatient(BuildContext context,
+      Map<String, dynamic> patient, Function deletePatientList) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,

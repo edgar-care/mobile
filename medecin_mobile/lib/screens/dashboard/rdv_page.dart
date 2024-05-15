@@ -23,7 +23,6 @@ class _RdvState extends State<Rdv> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Container(
@@ -34,19 +33,32 @@ class _RdvState extends State<Rdv> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Image.asset("assets/images/logo/edgar-high-five.png",height: 40,width: 37,),
-                const SizedBox(width: 16,),
-                const Text("Mes rendez-vous", style: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColors.white),
-                ),
+            child: Row(children: [
+              Image.asset(
+                "assets/images/logo/edgar-high-five.png",
+                height: 40,
+                width: 37,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              const Text(
+                "Mes rendez-vous",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.white),
+              ),
             ]),
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(
+          height: 16,
+        ),
         ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
+            valueListenable: selected,
+            builder: (context, value, child) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,7 +66,9 @@ class _RdvState extends State<Rdv> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.445,
                     child: Buttons(
-                      variant: selected.value == 0 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 0
+                          ? Variante.primary
+                          : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Prochain rendez-vous'),
                       onPressed: () {
@@ -68,7 +82,9 @@ class _RdvState extends State<Rdv> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.445,
                     child: Buttons(
-                      variant: selected.value == 1 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 1
+                          ? Variante.primary
+                          : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Rendez-vous passés'),
                       onPressed: () {
@@ -78,14 +94,17 @@ class _RdvState extends State<Rdv> {
                   ),
                 ],
               );
-              }),
-
-        const SizedBox(height: 8,),
-         ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
-                return selected.value == 0 ? const CustomListRdv() : const CustomListOld();
-          }),
+            }),
+        const SizedBox(
+          height: 8,
+        ),
+        ValueListenableBuilder<int>(
+            valueListenable: selected,
+            builder: (context, value, child) {
+              return selected.value == 0
+                  ? const CustomListRdv()
+                  : const CustomListOld();
+            }),
       ],
     );
   }

@@ -36,8 +36,7 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
-  String getId()
-  {
+  String getId() {
     return _id;
   }
 
@@ -52,11 +51,27 @@ class _DashBoardState extends State<DashBoard> {
       const Agenda(),
       Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
-      const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      PatientPage(id: getId(),setPages: updateSelectedIndex, setId: updateId),
-      PatientPageRdv(id: getId(), setPages: updateSelectedIndex, setId: updateId,),
-      DocumentPage(id: _id, setPages: updateSelectedIndex, setId: updateId,),
-      Text('Messagerie: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      const Text('Aide',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
+      PatientPageRdv(
+        id: getId(),
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      DocumentPage(
+        id: _id,
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      Text('Messagerie: $_id',
+          style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,
