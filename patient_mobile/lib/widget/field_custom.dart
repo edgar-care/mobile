@@ -104,10 +104,11 @@ class _CustomFieldState extends State<CustomField> {
   }
 }
 
+// CustomFieldSearch class for a customizable search field with validation
+
 class CustomFieldSearch extends StatefulWidget {
   final String label;
-  final Widget
-      icon; // Utilisation de IconData au lieu de Icon pour la cohérence
+  final Widget icon;
   final TextInputType keyboardType;
   final Function(String) onValidate;
   final bool? onlyOnValidate;
@@ -129,6 +130,8 @@ class CustomFieldSearch extends StatefulWidget {
 
 class _CustomFieldSearchState extends State<CustomFieldSearch> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode =
+      FocusNode(); // Create a FocusNode for requesting focus
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +148,11 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
           child: Row(
             children: [
               Expanded(
-                child: TextFormField(
+                child: TextField(
                   controller: _controller,
                   keyboardType: widget.keyboardType,
                   textInputAction: TextInputAction.search,
+                  textCapitalization: TextCapitalization.sentences,
                   style: const TextStyle(
                     color: AppColors.grey950,
                     fontFamily: 'Poppins',
@@ -157,7 +161,9 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                   ),
                   decoration: InputDecoration(
                     constraints: BoxConstraints(
-                        minWidth: 0, maxWidth: constraints.maxWidth),
+                      minWidth: 0,
+                      maxWidth: constraints.maxWidth,
+                    ),
                     border: InputBorder.none,
                     isDense: true,
                     hintText: widget.label,
@@ -169,19 +175,20 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
                       textBaseline: TextBaseline.ideographic,
                     ),
                   ),
-                  onFieldSubmitted: (value) {
+                  onTap: widget.onOpen,
+                  onTapAlwaysCalled: true,
+                  onSubmitted: (value) {
                     widget.onValidate(value);
                     _controller.clear();
                   },
                   onChanged: (value) {
-                    if (widget.onOpen != null) {
-                      widget.onOpen!();
-                    }
                     if (widget.onlyOnValidate == true) {
                       return;
                     }
                     widget.onValidate(value);
                   },
+                  focusNode:
+                      _focusNode, // Associate the FocusNode with the TextField
                 ),
               ),
               GestureDetector(
