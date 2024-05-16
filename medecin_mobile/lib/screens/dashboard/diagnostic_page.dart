@@ -22,7 +22,6 @@ class _DiagnosticState extends State<Diagnostic> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Container(
@@ -33,19 +32,32 @@ class _DiagnosticState extends State<Diagnostic> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Image.asset("assets/images/logo/edgar-high-five.png",height: 40,width: 37,),
-                const SizedBox(width: 16,),
-                const Text("Mes Diagnostics", style: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColors.white),
-                ),
+            child: Row(children: [
+              Image.asset(
+                "assets/images/logo/edgar-high-five.png",
+                height: 40,
+                width: 37,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              const Text(
+                "Mes Diagnostics",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.white),
+              ),
             ]),
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(
+          height: 16,
+        ),
         ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
+            valueListenable: selected,
+            builder: (context, value, child) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,7 +65,9 @@ class _DiagnosticState extends State<Diagnostic> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
-                      variant: selected.value == 0 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 0
+                          ? Variante.primary
+                          : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('En attente'),
                       onPressed: () {
@@ -67,7 +81,9 @@ class _DiagnosticState extends State<Diagnostic> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
-                      variant: selected.value == 1 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 1
+                          ? Variante.primary
+                          : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Validés'),
                       onPressed: () {
@@ -81,7 +97,9 @@ class _DiagnosticState extends State<Diagnostic> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.285,
                     child: Buttons(
-                      variant: selected.value == 2 ? Variante.primary : Variante.secondary,
+                      variant: selected.value == 2
+                          ? Variante.primary
+                          : Variante.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Refusés'),
                       onPressed: () {
@@ -91,14 +109,15 @@ class _DiagnosticState extends State<Diagnostic> {
                   ),
                 ],
               );
-              }),
-
-        const SizedBox(height: 8,),
-         ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
-                    return DiagnosticList(type: selected.value);
-          }),
+            }),
+        const SizedBox(
+          height: 8,
+        ),
+        ValueListenableBuilder<int>(
+            valueListenable: selected,
+            builder: (context, value, child) {
+              return DiagnosticList(type: selected.value);
+            }),
       ],
     );
   }

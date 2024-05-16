@@ -36,14 +36,36 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      Patient(setPages: updateSelectedIndex,),
+      Patient(
+        setPages: updateSelectedIndex,
+      ),
       const Rdv(),
       const Diagnostic(),
-      const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Dossier médical',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Rendez-vous',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Documents',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Messagerie',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      const Text('Aide',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      const Text('Dossier médical',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      const Text('Rendez-vous',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      const Text('Documents',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      const Text('Messagerie',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

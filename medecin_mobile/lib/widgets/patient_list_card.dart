@@ -20,35 +20,40 @@ class PatientListCard extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: () {
-          onTap();
-        },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 4, 4),
-          child: Row(
-            children: [
-              Container(
-                height: 20,
-                width: 3,
-                decoration: BoxDecoration(
-                  color: AppColors.black,
-                  borderRadius: BorderRadius.circular(99),
+          onTap: () {
+            onTap();
+          },
+          child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 4, 4),
+              child: Row(children: [
+                Container(
+                  height: 20,
+                  width: 3,
+                  decoration: BoxDecoration(
+                    color: AppColors.black,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(patientData['Prenom'] + ' ' + patientData['Nom'] ?? 'Nom Prénom', style: const TextStyle(fontSize: 16, fontFamily: 'Poppins', color: AppColors.black, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis,),
-              ),
-              const Spacer(),
-              const Icon(
-                BootstrapIcons.chevron_right,
-                color: AppColors.black,
-                size: 15,
-              ),
-            ]
-            )
-        )
-      ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    patientData['Prenom'] + ' ' + patientData['Nom'] ??
+                        'Nom Prénom',
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        color: AppColors.black,
+                        fontWeight: FontWeight.w600),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(
+                  BootstrapIcons.chevron_right,
+                  color: AppColors.black,
+                  size: 15,
+                ),
+              ]))),
     );
   }
 }

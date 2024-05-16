@@ -17,13 +17,13 @@ class SlotListThree extends StatefulWidget {
 
 class _SlotListThreeState extends State<SlotListThree> {
   String patientName = "";
-List<dynamic> slots = [];
+  List<dynamic> slots = [];
 
   @override
-initState() {
-  super.initState();
-  _loadSlots();
-}
+  initState() {
+    super.initState();
+    _loadSlots();
+  }
 
   Future<void> _loadSlots() async {
     var tempslots = await getSlot();
@@ -38,69 +38,129 @@ initState() {
       slots = tempslots;
     });
   }
-   @override
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: RefreshIndicator(
         color: AppColors.blue200,
         onRefresh: _refreshSlots,
         child: ListView.builder(
-        itemCount: 24,
-        itemBuilder: (context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children : [
-              Container(height: 1,color: AppColors.blue200,),
-              const SizedBox(height: 4,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children : [
-                  SizedBox(
-                    width: 36,
-                    child:
-                  Text(index.toString().length == 1 ? "0$index:00" : "$index:00", style: const TextStyle(fontSize: 12, fontFamily: "Poppins", fontWeight: FontWeight.w600), textAlign: TextAlign.right,),),
-                  const SizedBox(width: 8,),
-                  Expanded(
-                    child: Column(
-                    children: [
-                      checktypeslot(slots, widget.date.add(Duration(hours: index))),
-                      const SizedBox(height: 2,),
-                      checktypeslot(slots, widget.date.add(Duration(hours: index, minutes: 30))),
-                  ]),),
-                const SizedBox(width: 8,),
-                Expanded(
-                  child: Column(
+            itemCount: 24,
+            itemBuilder: (context, index) {
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    checktypeslot(slots, widget.date.add(Duration(days: 1, hours: index))),
-                    const SizedBox(height: 2,),
-                    checktypeslot(slots, widget.date.add(Duration(days: 1,hours: index, minutes: 30))),
-                ]),),
-                const SizedBox(width: 8,),
-                Expanded(
-                  child: Column(
-                  children: [
-                    checktypeslot(slots, widget.date.add(Duration(days: 2, hours: index))),
-                    const SizedBox(height: 2,),
-                    checktypeslot(slots, widget.date.add(Duration(days: 2, hours: index, minutes: 30))),
-                ]),),
-            ],),
-            const SizedBox(height: 4,),
-        ])
-        ;}
+                    Container(
+                      height: 1,
+                      color: AppColors.blue200,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 36,
+                          child: Text(
+                            index.toString().length == 1
+                                ? "0$index:00"
+                                : "$index:00",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: "Poppins",
+                                fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: Column(children: [
+                            checktypeslot(
+                                slots, widget.date.add(Duration(hours: index))),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            checktypeslot(
+                                slots,
+                                widget.date
+                                    .add(Duration(hours: index, minutes: 30))),
+                          ]),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: Column(children: [
+                            checktypeslot(
+                                slots,
+                                widget.date
+                                    .add(Duration(days: 1, hours: index))),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            checktypeslot(
+                                slots,
+                                widget.date.add(Duration(
+                                    days: 1, hours: index, minutes: 30))),
+                          ]),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: Column(children: [
+                            checktypeslot(
+                                slots,
+                                widget.date
+                                    .add(Duration(days: 2, hours: index))),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            checktypeslot(
+                                slots,
+                                widget.date.add(Duration(
+                                    days: 2, hours: index, minutes: 30))),
+                          ]),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                  ]);
+            }),
       ),
-      ),
-      );
+    );
   }
-  Widget checktypeslot (List<dynamic> slots, DateTime date) {
+
+  Widget checktypeslot(List<dynamic> slots, DateTime date) {
     for (var i = 0; i < slots.length; i++) {
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch && slots[i]['id_patient'] != "") {
-        return  Slot(type: SlotType.taken, three: true,);
+      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch &&
+          slots[i]['id_patient'] != "") {
+        return Slot(
+          type: SlotType.taken,
+          three: true,
+        );
       }
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch){
-        return  Slot(type: SlotType.create, date: date, slots: slots, three: true,);
+      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch) {
+        return Slot(
+          type: SlotType.create,
+          date: date,
+          slots: slots,
+          three: true,
+        );
       }
     }
-    return Slot(type: SlotType.empty, date: date, slots: slots, three: true,);
-    }
+    return Slot(
+      type: SlotType.empty,
+      date: date,
+      slots: slots,
+      three: true,
+    );
+  }
 }

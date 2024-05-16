@@ -25,29 +25,23 @@ Future<Map<String, dynamic>> getSummary(String id) async {
   }
 }
 
-Future <void> postDiagValidation( BuildContext context, String id, bool validation, String reason) async {
+Future<void> postDiagValidation(
+    BuildContext context, String id, bool validation, String reason) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/diagnostic/$id';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({
-      if(reason != '')
-      'reason' : reason,
-      'validation': validation
-    })
-  );
+  final response = await http.post(Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(
+          {if (reason != '') 'reason': reason, 'validation': validation}));
   if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SuccessLoginSnackBar(message: "Réponse envoyée avec succes", context: context)
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+        message: "Réponse envoyée avec succes", context: context));
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      ErrorLoginSnackBar(message: "Une erreur est survenue", context: context)
-    );
+    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+        message: "Une erreur est survenue", context: context));
   }
 }

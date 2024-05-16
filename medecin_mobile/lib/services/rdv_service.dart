@@ -22,8 +22,9 @@ Future<List<Map<String, dynamic>>> getDiagnostics(String status) async {
     List<Map<String, dynamic>> bAppointment = [];
     var temp = jsonDecode(response.body)['appointments'];
     for (var i = 0; i < temp.length; i++) {
-      if (temp[i]['id_patient'].toString().isNotEmpty && temp[i]['appointment_status'] == status){
-          bAppointment.add(temp[i]);
+      if (temp[i]['id_patient'].toString().isNotEmpty &&
+          temp[i]['appointment_status'] == status) {
+        bAppointment.add(temp[i]);
       }
     }
     return bAppointment;
@@ -47,8 +48,11 @@ Future<List<Map<String, dynamic>>> getAppointments() async {
     List<Map<String, dynamic>> bAppointment = [];
     var tempAp = jsonDecode(response.body)['appointments'];
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty && tempAp[i]['cancelation_reason'] == "" && tempAp[i]['start_date'] >= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-          bAppointment.add(tempAp[i]);
+      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
+          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['start_date'] >=
+              DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+        bAppointment.add(tempAp[i]);
       }
     }
     return bAppointment;
@@ -59,7 +63,8 @@ Future<List<Map<String, dynamic>>> getAppointments() async {
   return [];
 }
 
-Future <void> updateAppointment(String appointmentId, String newSlotId, BuildContext context) async {
+Future<void> updateAppointment(
+    String appointmentId, String newSlotId, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
@@ -73,22 +78,26 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   );
 }
 
-Future cancelAppointments(String id, BuildContext context, String reason) async {
+Future cancelAppointments(
+    String id, BuildContext context, String reason) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointment/$id';
   final response = await http.delete(
     Uri.parse(url),
-    headers: {
-      'Authorization': 'Bearer $token'
-    },
+    headers: {'Authorization': 'Bearer $token'},
     body: jsonEncode({'reason': reason}),
   );
 
   if (response.statusCode == 201) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(message: 'Votre rendez-vous a bien été annulé', context: context,));
-  }
-  else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Une erreur est survenue, veuillez réessayer', context: context,));
+    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+      message: 'Votre rendez-vous a bien été annulé',
+      context: context,
+    ));
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+      message: 'Une erreur est survenue, veuillez réessayer',
+      context: context,
+    ));
   }
 }

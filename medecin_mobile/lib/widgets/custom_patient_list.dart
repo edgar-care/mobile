@@ -1,6 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
@@ -13,21 +12,25 @@ import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
   final Function deletePatientList;
   final Function updatePatient;
   final Function setPages;
-  const CustomList({super.key, required this.patients, required this.deletePatientList, required this.updatePatient, required this.setPages});
+  const CustomList(
+      {super.key,
+      required this.patients,
+      required this.deletePatientList,
+      required this.updatePatient,
+      required this.setPages});
 
   @override
   // ignore: library_private_types_in_public_api
   _CustomListState createState() => _CustomListState();
 }
+
 // ignore: must_be_immutable
 class _CustomListState extends State<CustomList> {
-
   ValueNotifier<int> selected = ValueNotifier(2);
 
   void updateSelection(int newSelection) {
@@ -38,29 +41,29 @@ class _CustomListState extends State<CustomList> {
   Widget build(BuildContext context) {
     return Expanded(
         child: ListView.separated(
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
-          itemCount: widget.patients.length,
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
-            return PatientListCard(
-            patientData: widget.patients[index],
-            onTap: () {
-              WoltModalSheet.show(
-                context: context,
-                pageListBuilder: (BuildContext context) {
-                  return [
-                    patientNavigation(context, widget.patients[index], index, widget.setPages),
-                  ];
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemCount: widget.patients.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return PatientListCard(
+                patientData: widget.patients[index],
+                onTap: () {
+                  WoltModalSheet.show(
+                    context: context,
+                    pageListBuilder: (BuildContext context) {
+                      return [
+                        patientNavigation(context, widget.patients[index],
+                            index, widget.setPages),
+                      ];
+                    },
+                  );
                 },
               );
-            },
-          );
-        }
-      )
-    );
+            }));
   }
 
-  SliverWoltModalSheetPage patientNavigation(BuildContext context, Map<String, dynamic> patient, int index, Function setPages){
+  SliverWoltModalSheetPage patientNavigation(BuildContext context,
+      Map<String, dynamic> patient, int index, Function setPages) {
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -68,36 +71,75 @@ class _CustomListState extends State<CustomList> {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-              Text('${patient['Nom']} ${patient['Prenom']}', style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 16),
-              CustomNavPatientCard(text: 'Dossier médical', icon: BootstrapIcons.postcard_heart_fill, setPages: setPages, pageTo: 5),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Rendez-vous', icon: BootstrapIcons.calendar2_week_fill, setPages: setPages, pageTo: 6),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Documents', icon: BootstrapIcons.file_earmark_text_fill, setPages: setPages, pageTo: 7),
-              const SizedBox(height: 4),
-              CustomNavPatientCard(text: 'Messagerie', icon: BootstrapIcons.chat_dots_fill, setPages: setPages, pageTo: 8),
-              const SizedBox(height: 12),
-              Container(height: 2,color: AppColors.blue200),
-              const SizedBox(height: 12),
-              Buttons(variant: Variante.primary, size: SizeButton.sm, msg: const Text('Revenir à la patientèle', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {Navigator.pop(context);}),
-              const SizedBox(height: 4),
-              Buttons(variant: Variante.delete, size: SizeButton.sm, msg: const Text('Supprimer le patient', style: TextStyle(fontFamily: 'Poppins'),), onPressed: () {WoltModalSheet.show(
-                context: context,
-                pageListBuilder: (BuildContext context) {
-                  return [
-                    deletePatient(context, patient, widget.deletePatientList)
-                  ];
-                },
-              );},)
-            ]),
+          child: Column(children: [
+            Text(
+              '${patient['Nom']} ${patient['Prenom']}',
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            CustomNavPatientCard(
+                text: 'Dossier médical',
+                icon: BootstrapIcons.postcard_heart_fill,
+                setPages: setPages,
+                pageTo: 5),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Rendez-vous',
+                icon: BootstrapIcons.calendar2_week_fill,
+                setPages: setPages,
+                pageTo: 6),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Documents',
+                icon: BootstrapIcons.file_earmark_text_fill,
+                setPages: setPages,
+                pageTo: 7),
+            const SizedBox(height: 4),
+            CustomNavPatientCard(
+                text: 'Messagerie',
+                icon: BootstrapIcons.chat_dots_fill,
+                setPages: setPages,
+                pageTo: 8),
+            const SizedBox(height: 12),
+            Container(height: 2, color: AppColors.blue200),
+            const SizedBox(height: 12),
+            Buttons(
+                variant: Variante.primary,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Revenir à la patientèle',
+                  style: TextStyle(fontFamily: 'Poppins'),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            const SizedBox(height: 4),
+            Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text(
+                'Supprimer le patient',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+              onPressed: () {
+                WoltModalSheet.show(
+                  context: context,
+                  pageListBuilder: (BuildContext context) {
+                    return [
+                      deletePatient(context, patient, widget.deletePatientList)
+                    ];
+                  },
+                );
+              },
+            )
+          ]),
         ),
       ),
     );
   }
-
 
   SliverWoltModalSheetPage patientInfo(
       BuildContext context,
@@ -161,9 +203,13 @@ class _CustomListState extends State<CustomList> {
       hasSabGradient: false,
       hasTopBarLayer: false,
     );
-}
-  SliverWoltModalSheetPage fixPatient(BuildContext context,
-      ValueNotifier<int> pageIndexNotifier, Map<String, dynamic> patient, Map<String, dynamic> templist) {
+  }
+
+  SliverWoltModalSheetPage fixPatient(
+      BuildContext context,
+      ValueNotifier<int> pageIndexNotifier,
+      Map<String, dynamic> patient,
+      Map<String, dynamic> templist) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -206,17 +252,18 @@ class _CustomListState extends State<CustomList> {
     );
   }
 }
+
 class FixPatientBody extends StatefulWidget {
   final Map<String, dynamic> templist;
   final ValueNotifier<int> selected;
-  const FixPatientBody({super.key, required this.templist, required this.selected});
+  const FixPatientBody(
+      {super.key, required this.templist, required this.selected});
 
   @override
   State<FixPatientBody> createState() => _FixPatientBodyState();
 }
 
 class _FixPatientBodyState extends State<FixPatientBody> {
-
   void updateSelection(int newSelection) {
     widget.selected.value = newSelection;
   }
@@ -224,133 +271,145 @@ class _FixPatientBodyState extends State<FixPatientBody> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
-          child: Column(children: [
-            Container(
-                height: 50,
-                width: 50,
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
+        child: Column(children: [
+          Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(60),
+                color: AppColors.grey200,
+              ),
+              child: const Icon(BootstrapIcons.postcard_heart_fill,
+                  color: AppColors.grey700)),
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            "Mettez à jour vos informations personelles",
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.35,
+                height: 7,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  color: AppColors.grey200,
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.blue700,
                 ),
-                child: const Icon(BootstrapIcons.postcard_heart_fill,
-                    color: AppColors.grey700)),
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "Mettez à jour vos informations personelles",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
-                  ),
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.35,
+                height: 7,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.blue200,
                 ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue200,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Votre Prénom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomPreloadField(
-                  startUppercase: true,
-                  text: widget.templist['Prenom'],
-                  label: widget.templist['Prenom'],
-                  onChanged: (value) => {
-                        widget.templist['Prenom'] = value,
-                  },
-                  isPassword: false,
-                  keyboardType: TextInputType.text,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Votre Nom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomPreloadField(
-                  startUppercase: true,
-                  label: widget.templist['Nom'],
-                  text: widget.templist['Nom'],
-                  onChanged: (value) => {
-                        widget.templist['Nom'] = value,
-                    },
-                  isPassword: false,
-                  keyboardType: TextInputType.text,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Date de naissance",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomDatePiker(
-                  endDate: DateTime.now(),
-                  value: widget.templist['date_de_naissance'].toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      widget.templist['date_de_naissance'] = value;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Votre sexe",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                ValueListenableBuilder<int>(
-                  valueListenable: widget.selected,
-                  builder: (context, value, child) {
-                    switch (widget.templist['sexe']) {
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 32,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Votre Prénom",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              CustomPreloadField(
+                startUppercase: true,
+                text: widget.templist['Prenom'],
+                label: widget.templist['Prenom'],
+                onChanged: (value) => {
+                  widget.templist['Prenom'] = value,
+                },
+                isPassword: false,
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              const Text(
+                "Votre Nom",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              CustomPreloadField(
+                startUppercase: true,
+                label: widget.templist['Nom'],
+                text: widget.templist['Nom'],
+                onChanged: (value) => {
+                  widget.templist['Nom'] = value,
+                },
+                isPassword: false,
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              const Text(
+                "Date de naissance",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              CustomDatePiker(
+                endDate: DateTime.now(),
+                value: widget.templist['date_de_naissance'].toString(),
+                onChanged: (value) {
+                  setState(() {
+                    widget.templist['date_de_naissance'] = value;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              const Text(
+                "Votre sexe",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              ValueListenableBuilder<int>(
+                valueListenable: widget.selected,
+                builder: (context, value, child) {
+                  switch (widget.templist['sexe']) {
                     case 'MALE':
                       updateSelection(0);
                       break;
@@ -362,525 +421,555 @@ class _FixPatientBodyState extends State<FixPatientBody> {
                       break;
                     default:
                   }
-                    return Row(
-                      children: [
-                        AddButton(
-                            onTap: () => {updateSelection(0), widget.templist['sexe'] = 'MALE'},
-                            label: "Masculin",
-                            color: value == 0
-                                ? AppColors.blue700
-                                : AppColors.white),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        AddButton(
-                            onTap: () => {updateSelection(1), widget.templist['sexe'] = 'FEMALE'},
-                            label: "Feminin",
-                            color: value == 1
-                                ? AppColors.blue700
-                                : AppColors.white),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        AddButton(
-                            onTap: () => {updateSelection(2), widget.templist['sexe'] = 'OTHER'},
-                            label: "Autre",
-                            color: value == 2
-                                ? AppColors.blue700
-                                : AppColors.white),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Votre taille",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          CustomPreloadField(
-                            startUppercase: false,
-                            text: (double.parse(widget.templist['taille']) / 100).toString(),
-                            label: widget.templist['taille'].toString(),
-                            onChanged: (value) => {
-                                  widget.templist['taille'] = (double.parse(value) * 100).round().toString(),
+                  return Row(
+                    children: [
+                      AddButton(
+                          onTap: () => {
+                                updateSelection(0),
+                                widget.templist['sexe'] = 'MALE'
                               },
-                            isPassword: false,
-                            keyboardType: TextInputType.number,
-                          ),
-                        ],
+                          label: "Masculin",
+                          color:
+                              value == 0 ? AppColors.blue700 : AppColors.white),
+                      const SizedBox(
+                        width: 16,
                       ),
-                    ),
-                    const SizedBox(
-                      width: 32,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Votre poids",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          CustomPreloadField(
-                            startUppercase: false,
-                            text: (double.parse(widget.templist['poids']) / 100).toString(),
-                            label: widget.templist['poids'].toString(),
-                            onChanged: (value) => {
-                                  widget.templist['poids'] = (double.parse(value) * 100).round().toString(),
-                            },
-                            isPassword: false,
-                            keyboardType: TextInputType.number,
-                          ),
-                        ],
+                      AddButton(
+                          onTap: () => {
+                                updateSelection(1),
+                                widget.templist['sexe'] = 'FEMALE'
+                              },
+                          label: "Feminin",
+                          color:
+                              value == 1 ? AppColors.blue700 : AppColors.white),
+                      const SizedBox(
+                        width: 16,
                       ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ]),
-        ),
-      );
-  }
-}
-
-  SliverWoltModalSheetPage deletePatient(BuildContext context, Map<String, dynamic> patient, Function deletePatientList) {
-    return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: Column(
-            children: [
-              Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.red200,
-                  ),
-                  child: const Icon(
-                    BootstrapIcons.x,
-                    color: AppColors.red700,
-                    size: 40,
-                  )),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Êtes-vous sûr ?",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
+                      AddButton(
+                          onTap: () => {
+                                updateSelection(2),
+                                widget.templist['sexe'] = 'OTHER'
+                              },
+                          label: "Autre",
+                          color:
+                              value == 2 ? AppColors.blue700 : AppColors.white),
+                    ],
+                  );
+                },
               ),
               const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Si vous supprimez ce patient, vous ne pourrez plus le consulter.",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 32,
+                height: 16,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Annuler'),
-                      onPressed: () {
-                      },
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Votre taille",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        CustomPreloadField(
+                          startUppercase: false,
+                          text: (double.parse(widget.templist['taille']) / 100)
+                              .toString(),
+                          label: widget.templist['taille'].toString(),
+                          onChanged: (value) => {
+                            widget.templist['taille'] =
+                                (double.parse(value) * 100).round().toString(),
+                          },
+                          isPassword: false,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(
-                    width: 12,
+                    width: 32,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.delete,
-                      size: SizeButton.sm,
-                      msg: const Text('Oui, je suis sûr'),
-                      onPressed: () {
-                        deletePatientList(patient['id']);
-                        deletePatientService(patient['id'], context);
-                        Navigator.pop(context);
-                      },
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Votre poids",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        CustomPreloadField(
+                          startUppercase: false,
+                          text: (double.parse(widget.templist['poids']) / 100)
+                              .toString(),
+                          label: widget.templist['poids'].toString(),
+                          onChanged: (value) => {
+                            widget.templist['poids'] =
+                                (double.parse(value) * 100).round().toString(),
+                          },
+                          isPassword: false,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
-        ),
+        ]),
       ),
     );
   }
+}
 
-SliverWoltModalSheetPage fixPatient2(BuildContext context,
-      ValueNotifier<int> pageIndexNotifier, ValueNotifier<Map<String, dynamic>> patient, ValueNotifier<Map<String, dynamic>> templist, ValueNotifier<int> selected, int index, Function updatePatient) {
+SliverWoltModalSheetPage deletePatient(BuildContext context,
+    Map<String, dynamic> patient, Function deletePatientList) {
+  return WoltModalSheetPage(
+    hasTopBarLayer: false,
+    backgroundColor: AppColors.white,
+    hasSabGradient: false,
+    enableDrag: true,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          children: [
+            Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(60),
+                  color: AppColors.red200,
+                ),
+                child: const Icon(
+                  BootstrapIcons.x,
+                  color: AppColors.red700,
+                  size: 40,
+                )),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Êtes-vous sûr ?",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Si vous supprimez ce patient, vous ne pourrez plus le consulter.",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey400),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.43,
+                  child: Buttons(
+                    variant: Variante.secondary,
+                    size: SizeButton.sm,
+                    msg: const Text('Annuler'),
+                    onPressed: () {},
+                  ),
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.43,
+                  child: Buttons(
+                    variant: Variante.delete,
+                    size: SizeButton.sm,
+                    msg: const Text('Oui, je suis sûr'),
+                    onPressed: () {
+                      deletePatientList(patient['id']);
+                      deletePatientService(patient['id'], context);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
-    return WoltModalSheetPage(
+SliverWoltModalSheetPage fixPatient2(
+    BuildContext context,
+    ValueNotifier<int> pageIndexNotifier,
+    ValueNotifier<Map<String, dynamic>> patient,
+    ValueNotifier<Map<String, dynamic>> templist,
+    ValueNotifier<int> selected,
+    int index,
+    Function updatePatient) {
+  return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
       hasSabGradient: true,
       enableDrag: true,
       stickyActionBar: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
-        child: Fix2patientButton(pageIndexNotifier: pageIndexNotifier, patient: patient, templist: templist, selected: selected, updatePatient: updatePatient),
+        child: Fix2patientButton(
+            pageIndexNotifier: pageIndexNotifier,
+            patient: patient,
+            templist: templist,
+            selected: selected,
+            updatePatient: updatePatient),
       ),
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 86),
-          child: BodyFixPatient2(patient: patient, templist: templist,),
-      ),
-    ));
-  }
+          child: BodyFixPatient2(
+            patient: patient,
+            templist: templist,
+          ),
+        ),
+      ));
+}
 
+// ignore: must_be_immutable
+class BodyInfo extends StatefulWidget {
+  Map<String, dynamic> patient;
+  BodyInfo({super.key, required this.patient});
 
-  // ignore: must_be_immutable
-  class BodyInfo extends StatefulWidget {
-    Map<String, dynamic> patient;
-    BodyInfo({super.key, required this.patient});
-  
-    @override
-    State<BodyInfo> createState() => _BodyInfoState();
-  }
-  
-  class _BodyInfoState extends State<BodyInfo> {
-    String sexe = '';
-    @override
-    Widget build(BuildContext context) {
-      switch (widget.patient['sexe']) {
-        case 'MALE':
-          sexe = 'Masculin';
-          break;
-        case 'FEMALE':
-          sexe = 'Feminin';
-          break;
-        case 'OTHER':
-          sexe = 'Autre';
-          break;
-      }
-      return Row(
-                    children: [
-                      Wrap(
-                        direction: Axis.vertical,
-                        spacing: 12,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                "Prénom: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                widget.patient['Prenom'],
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Nom: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                widget.patient['Nom'],
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Date de naissance: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                widget.patient['date_de_naissance'],
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Sexe: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                sexe,
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Taille: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '${(int.parse(widget.patient['taille'])/100).toString()} m',
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Poids: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '${(int.parse(widget.patient['poids'])/100).toString()} Kg',
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                "Médecin Traitant: ",
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                widget.patient['medecin_traitant'].toString(),
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  );
+  @override
+  State<BodyInfo> createState() => _BodyInfoState();
+}
+
+class _BodyInfoState extends State<BodyInfo> {
+  String sexe = '';
+  @override
+  Widget build(BuildContext context) {
+    switch (widget.patient['sexe']) {
+      case 'MALE':
+        sexe = 'Masculin';
+        break;
+      case 'FEMALE':
+        sexe = 'Feminin';
+        break;
+      case 'OTHER':
+        sexe = 'Autre';
+        break;
     }
-  }
-
-
-  // ignore: must_be_immutable
-  class Fix2patientButton extends StatefulWidget {
-    final ValueNotifier<int> pageIndexNotifier;
-    final ValueNotifier<Map<String, dynamic>> patient;
-    final ValueNotifier<Map<String, dynamic>> templist;
-    final ValueNotifier<int> selected;
-    final Function updatePatient;
-    const Fix2patientButton({super.key, required this.pageIndexNotifier, required this.patient, required this.templist, required this.selected, required this.updatePatient});
-  
-    @override
-    State<Fix2patientButton> createState() => _Fix2patientButtonState();
-  }
-  
-  class _Fix2patientButtonState extends State<Fix2patientButton> {
-    @override
-    Widget build(BuildContext context) {
-      return Wrap(
-          alignment: WrapAlignment.center,
-          direction: Axis.horizontal,
+    return Row(
+      children: [
+        Wrap(
+          direction: Axis.vertical,
           spacing: 12,
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.43,
-              child: Buttons(
-                variant: Variante.secondary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir en arrière',
+            Row(
+              children: [
+                const Text(
+                  "Prénom: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
                 ),
-                onPressed: () {
-                  widget.pageIndexNotifier.value = widget.pageIndexNotifier.value - 1;
-                },
-              ),
+                Text(
+                  widget.patient['Prenom'],
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.43,
-              child: Buttons(
-                variant: Variante.validate,
-                size: SizeButton.sm,
-                msg: const Text('Confirmer'),
-                onPressed: () {    
-                  widget.pageIndexNotifier.value = 2;
-                  var patient = Map.of(widget.templist.value);
-                  widget.updatePatient(patient, widget.patient.value['id']);
-                  Navigator.pop(context);
-                  putInformationPatient(context, patient, widget.patient.value['id']);
-                },
-              ),
+            Row(
+              children: [
+                const Text(
+                  "Nom: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  widget.patient['Nom'],
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  "Date de naissance: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  widget.patient['date_de_naissance'],
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  "Sexe: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  sexe,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  "Taille: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  '${(int.parse(widget.patient['taille']) / 100).toString()} m',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  "Poids: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  '${(int.parse(widget.patient['poids']) / 100).toString()} Kg',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text(
+                  "Médecin Traitant: ",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  widget.patient['medecin_traitant'].toString(),
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ],
-        );
-    }
+        )
+      ],
+    );
   }
+}
 
+// ignore: must_be_immutable
+class Fix2patientButton extends StatefulWidget {
+  final ValueNotifier<int> pageIndexNotifier;
+  final ValueNotifier<Map<String, dynamic>> patient;
+  final ValueNotifier<Map<String, dynamic>> templist;
+  final ValueNotifier<int> selected;
+  final Function updatePatient;
+  const Fix2patientButton(
+      {super.key,
+      required this.pageIndexNotifier,
+      required this.patient,
+      required this.templist,
+      required this.selected,
+      required this.updatePatient});
+
+  @override
+  State<Fix2patientButton> createState() => _Fix2patientButtonState();
+}
+
+class _Fix2patientButtonState extends State<Fix2patientButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      direction: Axis.horizontal,
+      spacing: 12,
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.43,
+          child: Buttons(
+            variant: Variante.secondary,
+            size: SizeButton.sm,
+            msg: const Text(
+              'Revenir en arrière',
+            ),
+            onPressed: () {
+              widget.pageIndexNotifier.value =
+                  widget.pageIndexNotifier.value - 1;
+            },
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.43,
+          child: Buttons(
+            variant: Variante.validate,
+            size: SizeButton.sm,
+            msg: const Text('Confirmer'),
+            onPressed: () {
+              widget.pageIndexNotifier.value = 2;
+              var patient = Map.of(widget.templist.value);
+              widget.updatePatient(patient, widget.patient.value['id']);
+              Navigator.pop(context);
+              putInformationPatient(
+                  context, patient, widget.patient.value['id']);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class BodyFixPatient2 extends StatefulWidget {
   final ValueNotifier<Map<String, dynamic>> patient;
   final ValueNotifier<Map<String, dynamic>> templist;
-  const BodyFixPatient2({super.key, required this.patient, required this.templist});
+  const BodyFixPatient2(
+      {super.key, required this.patient, required this.templist});
 
   @override
   State<BodyFixPatient2> createState() => _BodyFixPatient2State();
 }
 
 class _BodyFixPatient2State extends State<BodyFixPatient2> {
-
-    String alergie = "";
-    String maladie = "";
-    String traitement = "";
+  String alergie = "";
+  String maladie = "";
+  String traitement = "";
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-            Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  color: AppColors.grey200,
-                ),
-                child: const Icon(BootstrapIcons.postcard_heart_fill,
-                    color: AppColors.grey700)),
-            const SizedBox(
-              height: 8,
+      Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60),
+            color: AppColors.grey200,
+          ),
+          child: const Icon(BootstrapIcons.postcard_heart_fill,
+              color: AppColors.grey700)),
+      const SizedBox(
+        height: 8,
+      ),
+      const Text(
+        "Mettez à jour vos informations personelles",
+        style: TextStyle(
+            fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w700),
+      ),
+      const SizedBox(
+        height: 8,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * 0.35,
+            height: 7,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: AppColors.blue700,
             ),
-            const Text(
-              "Mettez à jour vos informations personelles",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(
+            width: 16,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.35,
+            height: 7,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: AppColors.blue700,
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.35,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.blue700,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Votre médecin traitant",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomPreloadField(
-                  startUppercase: true,
-                  text: widget.templist.value['medecin_traitant'].toString(),
-                  label: "Dr. Edgar",
-                  onChanged: (value) => widget.templist.value['medecin_traitant'] = value,
-                  isPassword: false,
-                  keyboardType: TextInputType.text,
-                ),
-                const SizedBox(
-                  height: 16,
-                )
-              ]),
+          ),
+        ],
+      ),
+      const SizedBox(
+        height: 32,
+      ),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text(
+          "Votre médecin traitant",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        CustomPreloadField(
+          startUppercase: true,
+          text: widget.templist.value['medecin_traitant'].toString(),
+          label: "Dr. Edgar",
+          onChanged: (value) =>
+              widget.templist.value['medecin_traitant'] = value,
+          isPassword: false,
+          keyboardType: TextInputType.text,
+        ),
+        const SizedBox(
+          height: 16,
+        )
+      ]),
     ]);
   }
 }

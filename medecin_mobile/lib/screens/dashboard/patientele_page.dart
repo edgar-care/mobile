@@ -24,16 +24,16 @@ class Patient extends StatefulWidget {
 
 class _PatientState extends State<Patient> {
   ValueNotifier<Map<String, dynamic>> info = ValueNotifier({
-      'email': '',
-      'prenom': '',
-      'nom': '',
-      'date': '',
-      'sexe': '',
-      'taille': '',
-      'poids': '',
-      'medecin_traitant': '',
-      'medical_antecedents': [],
-    });
+    'email': '',
+    'prenom': '',
+    'nom': '',
+    'date': '',
+    'sexe': '',
+    'taille': '',
+    'poids': '',
+    'medecin_traitant': '',
+    'medical_antecedents': [],
+  });
 
   ValueNotifier<int> selected = ValueNotifier(0);
 
@@ -85,7 +85,7 @@ class _PatientState extends State<Patient> {
                       info.value['sexe'] = "OTHER";
                       break;
                     default:
-                  }           
+                  }
                   pageIndexNotifier.value = pageIndexNotifier.value + 1;
                 },
               ),
@@ -153,9 +153,14 @@ class _PatientState extends State<Patient> {
               children: [
                 const Text(
                   "Adresse mail",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 CustomField(
                   startUppercase: false,
                   label: "Prenom.nom@gmail.com",
@@ -168,9 +173,14 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Prénom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 CustomField(
                   startUppercase: true,
                   label: "Prénom",
@@ -183,9 +193,14 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Nom",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 CustomField(
                   startUppercase: true,
                   label: "Nom",
@@ -198,47 +213,59 @@ class _PatientState extends State<Patient> {
                 ),
                 const Text(
                   "Date de naissance",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
-                CustomDatePiker(onChanged: (value) => info.value['date'] = value, endDate: DateTime.now()),
+                const SizedBox(
+                  height: 4,
+                ),
+                CustomDatePiker(
+                    onChanged: (value) => info.value['date'] = value,
+                    endDate: DateTime.now()),
                 const SizedBox(
                   height: 16,
                 ),
                 const Text(
                   "Sexe",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 ValueListenableBuilder<int>(
                   valueListenable: selected,
                   builder: (context, value, child) {
                     return Row(
                       children: [
-                            AddButton(
-                                onTap: () => updateSelection(0),
-                                label: "Masculin",
-                                color: value == 0
-                                      ? AppColors.blue700
-                                      : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(0),
+                            label: "Masculin",
+                            color: value == 0
+                                ? AppColors.blue700
+                                : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                            AddButton(
-                                onTap: () => updateSelection(1),
-                                label: "Féminin",
-                                color: value == 1
-                                    ? AppColors.blue700
-                                    : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(1),
+                            label: "Féminin",
+                            color: value == 1
+                                ? AppColors.blue700
+                                : AppColors.white),
                         const SizedBox(
                           width: 16,
                         ),
-                            AddButton(
-                                onTap: () => updateSelection(2),
-                                label: "Autre",
-                                color: value == 2
-                                    ? AppColors.blue700
-                                    : AppColors.white),
+                        AddButton(
+                            onTap: () => updateSelection(2),
+                            label: "Autre",
+                            color: value == 2
+                                ? AppColors.blue700
+                                : AppColors.white),
                       ],
                     );
                   },
@@ -255,14 +282,19 @@ class _PatientState extends State<Patient> {
                         children: [
                           const Text(
                             "Taille",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 4,),
+                          const SizedBox(
+                            height: 4,
+                          ),
                           CustomField(
                             startUppercase: false,
                             label: "1,52m",
-                            onChanged: (value) => info.value['taille'] = (double.parse(value) * 100).round().toString(),
+                            onChanged: (value) => info.value['taille'] =
+                                (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -279,14 +311,19 @@ class _PatientState extends State<Patient> {
                         children: [
                           const Text(
                             "Poids",
-                            style:
-                                TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 4,),
+                          const SizedBox(
+                            height: 4,
+                          ),
                           CustomField(
                             startUppercase: false,
                             label: "45kg",
-                            onChanged: (value) => info.value['poids'] = (double.parse(value) * 100).round().toString(),
+                            onChanged: (value) => info.value['poids'] =
+                                (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -318,7 +355,8 @@ class _PatientState extends State<Patient> {
     }
   }
 
-  SliverWoltModalSheetPage addPatient2(BuildContext context, ValueNotifier<int> pageIndexNotifier, Function() refresh){
+  SliverWoltModalSheetPage addPatient2(BuildContext context,
+      ValueNotifier<int> pageIndexNotifier, Function() refresh) {
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -351,13 +389,17 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Confirmer'),
                 onPressed: () {
-                  if(checkadd()){
+                  if (checkadd()) {
                     addPatientService(context, info.value);
                     Future.delayed(const Duration(seconds: 3), () {
                       refresh();
                     });
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(message: 'Veuillez remplir tous les champs', context: context,));
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(ErrorLoginSnackBar(
+                      message: 'Veuillez remplir tous les champs',
+                      context: context,
+                    ));
                   }
                   pageIndexNotifier.value = 0;
                   Navigator.pop(context);
@@ -427,9 +469,14 @@ class _PatientState extends State<Patient> {
               children: [
                 const Text(
                   "Médecin traitant",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 CustomField(
                   startUppercase: true,
                   label: "Dr. Edgar",
@@ -447,9 +494,9 @@ class _PatientState extends State<Patient> {
       ),
     );
   }
-  
-  List<Map<String,dynamic>> patients = [];
-  
+
+  List<Map<String, dynamic>> patients = [];
+
   Future<void> _loadInfo() async {
     patients = await getAllPatientId();
   }
@@ -459,11 +506,11 @@ class _PatientState extends State<Patient> {
       _loadInfo();
     });
   }
-  
+
   void deletePatientList(String id) {
     setState(() {
-      for(int i = 0; i < patients.length; i++) {
-        if(patients[i]['id'] == id) {
+      for (int i = 0; i < patients.length; i++) {
+        if (patients[i]['id'] == id) {
           patients.removeAt(i);
         }
       }
@@ -475,8 +522,8 @@ class _PatientState extends State<Patient> {
 
   void updatePatient(Map<String, dynamic> patient, String id) {
     setState(() {
-      for(int i = 0; i < patients.length; i++) {
-        if(patients[i]['id'] == id) {
+      for (int i = 0; i < patients.length; i++) {
+        if (patients[i]['id'] == id) {
           patients[i] = patient;
         }
       }
@@ -522,10 +569,10 @@ class _PatientState extends State<Patient> {
         const SizedBox(
           height: 8,
         ),
-      Expanded(
+        Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.blue200, width: 2)),
             child: Padding(

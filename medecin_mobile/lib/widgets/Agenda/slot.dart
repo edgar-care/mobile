@@ -4,8 +4,6 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-
-
 enum SlotType { empty, taken, create }
 
 // ignore: must_be_immutable
@@ -15,7 +13,7 @@ class Slot extends StatefulWidget {
   final bool? three;
   final DateTime? date;
   String? id;
-  List <dynamic>? slots;
+  List<dynamic>? slots;
   Slot(
       {super.key,
       required this.type,
@@ -87,8 +85,11 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
                   three: widget.three ?? false);
             case SlotType.create:
               return SlotCreate(
-                  three: widget.three ?? false,
-                  updateSlotType: updateSlotType, date: widget.date!, slots: widget.slots!,);
+                three: widget.three ?? false,
+                updateSlotType: updateSlotType,
+                date: widget.date!,
+                slots: widget.slots!,
+              );
             default:
               return Container(); // ou un autre widget par défaut
           }
@@ -102,18 +103,20 @@ class SlotEmpty extends Card {
   final bool three;
   final Function updateSlotType;
   final DateTime date;
-  const SlotEmpty(
-      {super.key,
-      required this.three,
-      required this.updateSlotType,
-      required this.date,});
+  const SlotEmpty({
+    super.key,
+    required this.three,
+    required this.updateSlotType,
+    required this.date,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.grey100,
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      ),
       width: three == false
           ? MediaQuery.of(context).size.width - 108
           : MediaQuery.of(context).size.width * 0.236,
@@ -124,8 +127,13 @@ class SlotEmpty extends Card {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: Row(
-            children: [ 
-              Text(!three ? "Ouvrir le créneau" : ( MediaQuery.of(context).size.width > 380 ? "Ouvrir" : ""),
+            children: [
+              Text(
+                  !three
+                      ? "Ouvrir le créneau"
+                      : (MediaQuery.of(context).size.width > 380
+                          ? "Ouvrir"
+                          : ""),
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -150,25 +158,28 @@ class SlotCreate extends Card {
       {super.key,
       required this.three,
       required this.updateSlotType,
-      required this.date, required this.slots});
+      required this.date,
+      required this.slots});
 
   @override
   Widget build(BuildContext context) {
     String id;
 
-  String parsing(DateTime date, List<dynamic> slots) {
-    for (var i = 0; i < slots.length; i++) {
-      if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch) {
-        return slots[i]['id'];
+    String parsing(DateTime date, List<dynamic> slots) {
+      for (var i = 0; i < slots.length; i++) {
+        if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch) {
+          return slots[i]['id'];
+        }
       }
+      return "";
     }
-    return "";
-  }
+
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.blue50,
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        border: Border.fromBorderSide(BorderSide(color: AppColors.blue200, width: 2)),
+        border: Border.fromBorderSide(
+            BorderSide(color: AppColors.blue200, width: 2)),
       ),
       width: three == false
           ? MediaQuery.of(context).size.width - 108
@@ -193,7 +204,12 @@ class SlotCreate extends Card {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(three == false ? "Fermer le créneau" : ( MediaQuery.of(context).size.width > 380 ? "Fermer" : ""),
+                Text(
+                    three == false
+                        ? "Fermer le créneau"
+                        : (MediaQuery.of(context).size.width > 380
+                            ? "Fermer"
+                            : ""),
                     style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -213,10 +229,11 @@ class SlotCreate extends Card {
 class SlotTaken extends Card {
   final String patientName;
   final bool three;
-  const SlotTaken(
-      {super.key,
-      required this.patientName,
-      required this.three,});
+  const SlotTaken({
+    super.key,
+    required this.patientName,
+    required this.three,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +260,12 @@ class SlotTaken extends Card {
               const SizedBox(
                 width: 8,
               ),
-              Text(three == false ? patientName :  ( MediaQuery.of(context).size.width > 380 ? "Réservé" : ""),
+              Text(
+                  three == false
+                      ? patientName
+                      : (MediaQuery.of(context).size.width > 380
+                          ? "Réservé"
+                          : ""),
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.bold)),
             ],

@@ -11,7 +11,7 @@ class ProgressBarDisease extends StatelessWidget {
   Color textColor = AppColors.red400;
   @override
   Widget build(BuildContext context) {
-    switch(value){
+    switch (value) {
       case < 30:
         barColor = AppColors.red700;
         backgroundColor = AppColors.red200;
@@ -31,10 +31,11 @@ class ProgressBarDisease extends StatelessWidget {
     return Row(
       children: [
         ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.15),
-          height: 6,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.15),
+            height: 6,
             child: LinearProgressIndicator(
               value: value / 100, // percent filled
               valueColor: AlwaysStoppedAnimation<Color>(barColor),
@@ -45,14 +46,27 @@ class ProgressBarDisease extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.08,
-          child: Text('$value %', style: TextStyle(color: textColor, fontSize: 12.0, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
+          child: Text(
+            '$value %',
+            style: TextStyle(
+                color: textColor,
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins'),
+          ),
         ),
         const SizedBox(width: 16),
         SizedBox(
-          width: MediaQuery.of(context).size.height * 0.155,
-          child:
-          Text(disease, style: const TextStyle(color: AppColors.black, fontSize: 12.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'), overflow: TextOverflow.ellipsis,)
-        )
+            width: MediaQuery.of(context).size.height * 0.155,
+            child: Text(
+              disease,
+              style: const TextStyle(
+                  color: AppColors.black,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins'),
+              overflow: TextOverflow.ellipsis,
+            ))
       ],
     );
   }

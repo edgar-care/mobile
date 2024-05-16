@@ -17,8 +17,8 @@ class _DiagnosticListState extends State<DiagnosticList> {
 
   @override
   Widget build(BuildContext context) {
-  Future<void> loadAppointment() async {
-    switch (widget.type) {
+    Future<void> loadAppointment() async {
+      switch (widget.type) {
         case 0:
           status = "WAITING_FOR_REVIEW";
           break;
@@ -28,26 +28,27 @@ class _DiagnosticListState extends State<DiagnosticList> {
         case 2:
           status = "CANCELED_DUE_TO_REVIEW";
           break;
-    }
-    bAppointment = await getDiagnostics(status);
-  }
-    return FutureBuilder(
-      future: loadAppointment(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          return Expanded(
-            child: ListView.separated(
-              itemCount: bAppointment.length,
-              separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 4),
-              itemBuilder: (context, index) {
-                return DiagnosticCard(rdvInfo: bAppointment[index], type: widget.type);
-              },
-            )
-          );
-        }
       }
-    );
+      bAppointment = await getDiagnostics(status);
+    }
+
+    return FutureBuilder(
+        future: loadAppointment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return Expanded(
+                child: ListView.separated(
+              itemCount: bAppointment.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(height: 4),
+              itemBuilder: (context, index) {
+                return DiagnosticCard(
+                    rdvInfo: bAppointment[index], type: widget.type);
+              },
+            ));
+          }
+        });
   }
 }

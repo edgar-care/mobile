@@ -8,7 +8,12 @@ class CustomNavPatientCard extends StatelessWidget {
   String text;
   IconData? icon;
   int pageTo;
-  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo});
+  CustomNavPatientCard(
+      {super.key,
+      required this.setPages,
+      required this.text,
+      required this.icon,
+      required this.pageTo});
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +30,31 @@ class CustomNavPatientCard extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children:[
-              Icon(icon, color: AppColors.blue950, size: 16,),
-              const SizedBox(width: 16,),
-              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.bold),),
-              const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 12,)
-            ]
-          ),
+          child: Row(children: [
+            Icon(
+              icon,
+              color: AppColors.blue950,
+              size: 16,
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Text(
+              text,
+              style: const TextStyle(
+                  color: AppColors.blue950,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            const Icon(
+              BootstrapIcons.chevron_right,
+              color: AppColors.black,
+              size: 12,
+            )
+          ]),
         ),
       ),
-
     );
   }
 }

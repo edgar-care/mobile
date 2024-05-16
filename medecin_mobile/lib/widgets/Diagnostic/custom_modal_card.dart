@@ -7,7 +7,12 @@ class CustomModalCard extends StatelessWidget {
   Function ontap;
   String text;
   IconData? icon;
-  CustomModalCard({super.key, required this.ontap ,required this.text, required this.icon,});
+  CustomModalCard({
+    super.key,
+    required this.ontap,
+    required this.text,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +28,31 @@ class CustomModalCard extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children:[
-              Icon(icon, color: AppColors.blue950, size: 16,),
-              const SizedBox(width: 16,),
-              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.bold),),
-              const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 15,)
-            ]
-          ),
+          child: Row(children: [
+            Icon(
+              icon,
+              color: AppColors.blue950,
+              size: 16,
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Text(
+              text,
+              style: const TextStyle(
+                  color: AppColors.blue950,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            const Icon(
+              BootstrapIcons.chevron_right,
+              color: AppColors.black,
+              size: 15,
+            )
+          ]),
         ),
       ),
-
     );
   }
 }
