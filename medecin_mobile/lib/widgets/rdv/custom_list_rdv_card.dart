@@ -5,6 +5,7 @@ import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -50,6 +51,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
    SliverWoltModalSheetPage deleteAppointment(BuildContext context, String id) {
+    String cancelreason = '';
+    String healthmethod = '';
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -86,7 +89,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 height: 8,
               ),
               const Text(
-                "Si vous supprimez le rendez-vous, vous ne pourrez plus revenir en arrière.",
+                "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 14,
@@ -94,6 +97,14 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     color: AppColors.grey400),
                 textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 32,),
+              const Text("La raison de l'annulation", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
+              const SizedBox(height: 4,),
+              CustomField(label: "Renseigner la raison de l'annulation", onChanged: (value) => cancelreason = value, keyboardType: TextInputType.text, startUppercase: false,),
+              const SizedBox(height: 16,),
+              const Text("Méthode de soins", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
+              const SizedBox(height: 4,),
+              CustomField(label: "Renseigner les methodes de soins pour diminuer les symptômes", onChanged: (value) => healthmethod = value, keyboardType: TextInputType.text, startUppercase: false,),
               const SizedBox(
                 height: 32,
               ),
@@ -122,8 +133,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        cancelAppointments(id, context);
-                        widget.delete();
+                        healthmethod = healthmethod;
+                        cancelAppointments(id, context, cancelreason);
                         Navigator.pop(context);
                       },
                     ),

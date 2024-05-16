@@ -3,29 +3,11 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class ChatList extends StatelessWidget {
-  ChatList({super.key});
-  List<Map<String, String>> chatList = [
-    {'question': 'Hello, how can I help you today?', 'answer': 'I need help with my account'},
-    {'question': 'What seems to be the problem?', 'answer': 'I can\'t log in'},
-    {'question': 'Have you tried resetting your password?', 'answer': 'Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work'},
-    {'question': 'Please provide me with your email address', 'answer': 'test@gmail.com'},
-    {'question': 'Thank you, I will look into this and get back to you shortly', 'answer': 'Thank you'},
-    {'question': 'Hello, how can I help you today?', 'answer': 'I need help with my account'},
-    {'question': 'What seems to be the problem?', 'answer': 'I can\'t log in'},
-    {'question': 'Have you tried resetting your password?', 'answer': 'Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work'},
-    {'question': 'Please provide me with your email address', 'answer': 'test@gmail.com'},
-    {'question': 'Thank you, I will look into this and get back to you shortly', 'answer': 'Thank you'},{'question': 'Hello, how can I help you today?', 'answer': 'I need help with my account'},
-    {'question': 'What seems to be the problem?', 'answer': 'I can\'t log in'},
-    {'question': 'Have you tried resetting your password?', 'answer': 'Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work'},
-    {'question': 'Please provide me with your email address', 'answer': 'test@gmail.com'},
-    {'question': 'Thank you, I will look into this and get back to you shortly', 'answer': 'Thank you'},{'question': 'Hello, how can I help you today?', 'answer': 'I need help with my account'},
-    {'question': 'What seems to be the problem?', 'answer': 'I can\'t log in'},
-    {'question': 'Have you tried resetting your password?', 'answer': 'Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work Yes, but it still doesn\'t work'},
-    {'question': 'Please provide me with your email address', 'answer': 'test@gmail.com'},
-    {'question': 'Thank you, I will look into this and get back to you shortly', 'answer': 'Thank you'},
-  ];
+  Map<String, dynamic> summary;
+  ChatList({super.key, required this.summary});
   @override
   Widget build(BuildContext context) {
+    List<dynamic> chatList = summary['logs'];
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.4,
       child:Expanded(

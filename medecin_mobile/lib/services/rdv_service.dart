@@ -73,7 +73,7 @@ Future <void> updateAppointment(String appointmentId, String newSlotId, BuildCon
   );
 }
 
-Future cancelAppointments(String id, BuildContext context) async {
+Future cancelAppointments(String id, BuildContext context, String reason) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointment/$id';
@@ -82,6 +82,7 @@ Future cancelAppointments(String id, BuildContext context) async {
     headers: {
       'Authorization': 'Bearer $token'
     },
+    body: jsonEncode({'reason': reason}),
   );
 
   if (response.statusCode == 201) {

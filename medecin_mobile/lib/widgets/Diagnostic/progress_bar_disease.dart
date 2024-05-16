@@ -33,7 +33,7 @@ class ProgressBarDisease extends StatelessWidget {
         ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.25),
+          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.15),
           height: 6,
             child: LinearProgressIndicator(
               value: value / 100, // percent filled
@@ -42,13 +42,17 @@ class ProgressBarDisease extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 8),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.08,
           child: Text('$value %', style: TextStyle(color: textColor, fontSize: 12.0, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),),
         ),
         const SizedBox(width: 16),
-        Text(disease, style: const TextStyle(color: AppColors.black, fontSize: 12.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
+        SizedBox(
+          width: MediaQuery.of(context).size.height * 0.155,
+          child:
+          Text(disease, style: const TextStyle(color: AppColors.black, fontSize: 12.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'), overflow: TextOverflow.ellipsis,)
+        )
       ],
     );
   }

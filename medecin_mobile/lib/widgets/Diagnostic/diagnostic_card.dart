@@ -1,4 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/services/diagnostic_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
@@ -58,8 +59,8 @@ Future<void> _loadAppointment() async {
                 pageListBuilder: (modalSheetContext) {
                   return [
                     navModal(modalSheetContext, patientInfo["Nom"], patientInfo["Prenom"], rdvInfo, pageIndexNotifier),
-                    validateModal(modalSheetContext, pageIndexNotifier),
-                    cancelModal(modalSheetContext, pageIndexNotifier),
+                    validateModal(modalSheetContext, pageIndexNotifier, rdvInfo),
+                    cancelModal(modalSheetContext, pageIndexNotifier, rdvInfo),
                   ];
                 },);
           },
@@ -115,6 +116,13 @@ Future<void> _loadAppointment() async {
     String dateString = DateFormat('yMMMd', 'fr').format(date).toString();
     String timeStringStart = DateFormat('HH:mm', 'fr').format(date).toString();
     String timeStringEnd = DateFormat('HH:mm', 'fr').format(date.add(const Duration(minutes: 30))).toString();
+    Map<String, dynamic> diagnostic = {};
+
+    Future<bool> loadInfo() async {
+      diagnostic = await getSummary(rdvInfo["session_id"]);
+      return true;
+    }
+
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -139,23 +147,27 @@ Future<void> _loadAppointment() async {
                 },
               );}),
               const SizedBox(height: 4),
-              CustomModalCard(text: 'Diagnostic', icon: BootstrapIcons.heart_pulse_fill, ontap: () {WoltModalSheet.show(
+              CustomModalCard(text: 'Diagnostic', icon: BootstrapIcons.heart_pulse_fill, ontap: () {
+                loadInfo().then((value) =>
+                WoltModalSheet.show(
                 context: context,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    diagnosticModal(context),
+                    diagnosticModal(context, diagnostic),
                   ];
                 },
-              );},),
+              ));},),
               const SizedBox(height: 4),
-              CustomModalCard(text: 'Retranscription du chat', icon: BootstrapIcons.file_text_fill, ontap: () {WoltModalSheet.show(
+              CustomModalCard(text: 'Retranscription du chat', icon: BootstrapIcons.file_text_fill, ontap: () {
+                 loadInfo().then((value) =>
+                WoltModalSheet.show(
                 context: context,
                 pageListBuilder: (BuildContext context) {
                   return [
-                    chatModal(context),
+                    chatModal(context, diagnostic),
                   ];
                 },
-              );} ,),
+              ));} ,),
               const SizedBox(height: 12),
               Container(height: 2,color: AppColors.blue200),
               const SizedBox(height: 12),
@@ -167,7 +179,7 @@ Future<void> _loadAppointment() async {
     );
   }
 
-  SliverWoltModalSheetPage validateModal(BuildContext context, ValueNotifier pageIndexNotifier){
+  SliverWoltModalSheetPage validateModal(BuildContext context, ValueNotifier pageIndexNotifier, Map<String, dynamic> rdvInfo){
     return WoltModalSheetPage(
       hasTopBarLayer: false,
       backgroundColor: AppColors.white,
@@ -240,6 +252,7 @@ Future<void> _loadAppointment() async {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
+                        postDiagValidation(context, rdvInfo['id'], true, '');
                         Navigator.pop(context);
                       },
                     ),
@@ -253,7 +266,7 @@ Future<void> _loadAppointment() async {
     );
   }
 
-  SliverWoltModalSheetPage cancelModal(BuildContext context, ValueNotifier pageIndexNotifier){
+  SliverWoltModalSheetPage cancelModal(BuildContext context, ValueNotifier pageIndexNotifier, Map<String, dynamic> rdvInfo){
     String cancelreason = '';
     String healthmethod = '';
     return WoltModalSheetPage(
@@ -336,6 +349,8 @@ Future<void> _loadAppointment() async {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
+                        healthmethod = healthmethod;
+                        postDiagValidation(context, rdvInfo['id'], false, cancelreason);
                         Navigator.pop(context);
                       },
                     ),
@@ -349,18 +364,7 @@ Future<void> _loadAppointment() async {
     );
   }
 
-  SliverWoltModalSheetPage diagnosticModal(BuildContext context) {
-    List<String> symptoms = ["Toux", "Fièvre", "Maux de tête", "Fatigue", "Courbatures", "Perte de goût", "Perte d'odorat", "Difficultés respiratoires", "Maux de gorge", "Nez qui coule", "Yeux rouges", "Maux de ventre", "Diarrhée", "Vomissements"];
-    Color circleColor;
-    int value = 60;
-    switch (value) {
-      case < 30:
-        circleColor = AppColors.red600;
-      case < 60:
-        circleColor = AppColors.orange600;
-      default:
-        circleColor = AppColors.green600;
-    }
+  SliverWoltModalSheetPage diagnosticModal(BuildContext context, Map<String, dynamic> summary) {
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -368,104 +372,13 @@ Future<void> _loadAppointment() async {
       width: MediaQuery.of(context).size.width * 0.9,
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.blue50,
-                borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: AppColors.blue200, width: 1.0),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(BootstrapIcons.heart_pulse_fill, color: AppColors.blue700, size: 16,),
-                      SizedBox(width: 8,),
-                      Text('Diagnostic', style: TextStyle(color: AppColors.black, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
-                    ],
-                  ),
-                )
-            ),
-            const SizedBox(height: 16,),
-            Wrap(
-              runSpacing: 8,
-              children: [
-                const Text('Maladies suggérées', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                Row(
-                  children: [
-                    Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: <Widget>[
-                        Center(
-                          child: SizedBox(
-                            width: 75,
-                            height: 75,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 7.0,
-                              strokeCap: StrokeCap.round,
-                              value: value / 100,
-                              valueColor: AlwaysStoppedAnimation<Color>(circleColor),
-                              backgroundColor: AppColors.blue100,
-                            ),
-                          ),
-                        ),
-                        Center(child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center,children:[const Text('Fiabilité', style: TextStyle(color: AppColors.black, fontSize: 12.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')), Text('$value%', style: TextStyle(color: circleColor, fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'Poppins'))])),
-                      ],
-                    ),
-                    const SizedBox(width: 32,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                       ProgressBarDisease(value: 65, disease: 'Grippe'),
-                       ProgressBarDisease(value: 30, disease: 'Rhume'),
-                       ProgressBarDisease(value: 4, disease: 'Rhume'),
-                       ProgressBarDisease(value: 1, disease: 'Autre'),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(height: 16,),
-            Wrap(
-              direction: Axis.vertical,
-              spacing: 4,
-              children: [
-                  const Text('Symptômes présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                  SymptomsList(symptoms: symptoms),
-              ],
-            ),
-            const SizedBox(height: 16,),
-            Wrap(
-              direction: Axis.vertical,
-              spacing: 4,
-              children: [
-                  const Text('Symptômes non présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                  SymptomsList(symptoms: symptoms),
-              ],
-            ),
-            const SizedBox(height: 16,),
-            Wrap(
-              direction: Axis.vertical,
-              spacing: 4,
-              children: [
-                  const Text('Symptômes potentiellement présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
-                  SymptomsList(symptoms: symptoms),
-              ],
-            ),
-            const SizedBox(height: 16,),
-            Buttons(variant: Variante.secondary, size: SizeButton.sm, msg: const Text("Revenir en arrière", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700, color: AppColors.blue700),), onPressed: () {Navigator.pop(context);},),
-          ],
-        ),
+        child: BodySummary(summary: summary),
       )
       ),
     );
   }
 
-  SliverWoltModalSheetPage chatModal(BuildContext context) {
+  SliverWoltModalSheetPage chatModal(BuildContext context, Map<String, dynamic> summary) {
     return  WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -495,7 +408,7 @@ Future<void> _loadAppointment() async {
                 )
             ),
             const SizedBox(height: 16,),
-           ChatList(),
+           ChatList(summary: summary),
            const SizedBox(height: 16,),
             Buttons(variant: Variante.secondary, size: SizeButton.sm, msg: const Text("Revenir en arrière", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700, color: AppColors.blue700),), onPressed: () {Navigator.pop(context);},),
           ]
@@ -560,3 +473,130 @@ Future<void> _loadAppointment() async {
   }
 }
 
+class BodySummary extends StatelessWidget {
+  final Map<String, dynamic> summary;
+  const BodySummary({super.key, required this.summary});
+
+  @override
+  Widget build(BuildContext context) {
+    Color circleColor;
+    List<Map<String, dynamic>> disease = [];
+        List<String> symptoms = [];
+    List<String> mbSymptoms = [];
+    List<String> notSymptoms = [];
+    int value = (summary['fiability'] * 100).round();
+    switch (value) {
+      case < 30:
+        circleColor = AppColors.red600;
+      case < 60:
+        circleColor = AppColors.orange600;
+      default:
+        circleColor = AppColors.green600;
+    }
+    for(int i = 0; i < summary['diseases'].length; i++) {
+        disease.add(summary['diseases'][i]);
+    }
+    for(int i = 0; i < summary['symptoms'].length; i++) {
+        if (summary['symptoms'][i]['presence'] == true) {
+          symptoms.add(summary['symptoms'][i]['name']);
+        } else if (summary['symptoms'][i]['presence'] == null){
+          mbSymptoms.add(summary['symptoms'][i]['name']);
+        }else {
+          notSymptoms.add(summary['symptoms'][i]['name']);
+        }
+    }
+    return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.blue50,
+                borderRadius: BorderRadius.circular(4.0),
+                border: Border.all(color: AppColors.blue200, width: 1.0),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(BootstrapIcons.heart_pulse_fill, color: AppColors.blue700, size: 16,),
+                      SizedBox(width: 8,),
+                      Text('Diagnostic', style: TextStyle(color: AppColors.black, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
+                    ],
+                  ),
+                )
+            ),
+            const SizedBox(height: 16,),
+            Wrap(
+              runSpacing: 8,
+              children: [
+                const Text('Maladies suggérées', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                Row(
+                  children: [
+                    Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        Center(
+                          child: SizedBox(
+                            width: 75,
+                            height: 75,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 7.0,
+                              strokeCap: StrokeCap.round,
+                              value: value / 100,
+                              valueColor: AlwaysStoppedAnimation<Color>(circleColor),
+                              backgroundColor: AppColors.blue100,
+                            ),
+                          ),
+                        ),
+                        Center(child: Wrap(direction: Axis.vertical, crossAxisAlignment: WrapCrossAlignment.center,children:[const Text('Fiabilité', style: TextStyle(color: AppColors.black, fontSize: 12.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')), Text('$value%', style: TextStyle(color: circleColor, fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'Poppins'))])),
+                      ],
+                    ),
+                    const SizedBox(width: 32,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for(int i = 0; i < disease.length; i++)
+                       ProgressBarDisease(value: (disease[i]['presence'] * 100).round(), disease: disease[i]['name']),
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 16,),
+            Wrap(
+              direction: Axis.vertical,
+              spacing: 4,
+              children: [
+                if(symptoms.isNotEmpty)
+                  const Text('Symptômes présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                  SymptomsList(symptoms: symptoms),
+              ],
+            ),
+            const SizedBox(height: 16,),
+            if(notSymptoms.isNotEmpty)
+            Wrap(
+              direction: Axis.vertical,
+              spacing: 4,
+              children: [
+                  const Text('Symptômes non présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                  SymptomsList(symptoms: notSymptoms),
+              ],
+            ),
+            const SizedBox(height: 16,),
+            if (mbSymptoms.isNotEmpty)
+            Wrap(
+              direction: Axis.vertical,
+              spacing: 4,
+              children: [
+                  const Text('Symptômes potentiellement présents', style: TextStyle(color: AppColors.black, fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins')),
+                  SymptomsList(symptoms: mbSymptoms),
+              ],
+            ),
+            const SizedBox(height: 16,),
+            Buttons(variant: Variante.secondary, size: SizeButton.sm, msg: const Text("Revenir en arrière", style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700, color: AppColors.blue700),), onPressed: () {Navigator.pop(context);},),
+          ],
+        );
+      }
+}
