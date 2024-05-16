@@ -5,9 +5,9 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class PatientInfoCard extends StatefulWidget {
   final BuildContext context;
-  List<dynamic> tmpTraitments;
+  final List<dynamic> tmpTraitments;
 
-  PatientInfoCard(
+  const PatientInfoCard(
       {super.key, required this.context, required this.tmpTraitments});
 
   @override
