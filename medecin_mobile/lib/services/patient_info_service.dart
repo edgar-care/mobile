@@ -76,19 +76,10 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
       'poids': (data['medical_folder']['weight']).toString(),
       'medecin_traitant':
           data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
-      'medical_antecedents': [
-        for (int i = 0;
-            i < data['medical_folder']['medical_antecedents'].length;
-            i++)
-          {
-            "id": data['medical_folder']['medical_antecedents'][i]['id'],
-            "treatments": data['medical_folder']['medical_antecedents'][i]
-                ['medicines'],
-            "name": data['medical_folder']['medical_antecedents'][i]['name'],
-            "still_relevant": data['medical_folder']['medical_antecedents'][i]
-                ['still_relevant'],
-          }
-      ],
+        if(data['medical_folder']['medical_antecedents'] == null)
+          'medical_antecedents': []
+         else 
+          'medical_antecedents': data['medical_folder']['medical_antecedents'],
     };
   }
 }

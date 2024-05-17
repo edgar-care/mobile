@@ -229,12 +229,14 @@ class _PatientPageState extends State<PatientPage> {
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w600)),
+                              if (patientInfo['medical_antecedents'] != null)
                               const Text(
                                   'Antécédants médicaux et sujets de santé: ',
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w600)),
+                              if (patientInfo['medical_antecedents'] != null)
                               PatientInfoCard(
                                   context: context,
                                   tmpTraitments:
@@ -250,10 +252,12 @@ class _PatientPageState extends State<PatientPage> {
                                   onModalDismissedWithDrag: () {
                                     Navigator.pop(context);
                                     tmpInfo = Map.of(patientInfo);
+                                    pageIndex.value = 0;
                                   },
                                   onModalDismissedWithBarrierTap: () {
                                     Navigator.pop(context);
                                     tmpInfo = Map.of(patientInfo);
+                                    pageIndex.value = 0;
                                   },
                                   context: context,
                                   pageIndexNotifier: pageIndex,
@@ -608,7 +612,7 @@ class _PatientPageState extends State<PatientPage> {
                                 (double.parse(info['taille']) / 100).toString(),
                             label: "1,52m",
                             onChanged: (value) => info['taille'] =
-                                (double.parse(value) * 100).toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -639,7 +643,7 @@ class _PatientPageState extends State<PatientPage> {
                             text:
                                 (double.parse(info['poids']) / 100).toString(),
                             onChanged: (value) => info['poids'] =
-                                (double.parse(value) * 100).toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100).toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -918,10 +922,10 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
     try {
       medicaments = await getMedecines();
 
-      for (var i = 0; i < widget.traitement['treatments'].length; i++) {
+      for (var i = 0; i < widget.traitement['medicines'].length; i++) {
         var medname = medicaments.firstWhere(
             (med) =>
-                med['id'] == widget.traitement['treatments'][i]['medicine_id'],
+                med['id'] == widget.traitement['medicines'][i]['medicine_id'],
             orElse: () => {'name': ''})['name'];
         medNames.add(medname);
       }
@@ -958,7 +962,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   width: 16,
                   height: 16,
                   // ignore: deprecated_member_use
-                  color: widget.traitement['treatments'].isEmpty
+                  color: widget.traitement['medicines'].isEmpty
                       ? AppColors.grey300
                       : AppColors.blue700,
                 ),
@@ -1030,7 +1034,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   context: context,
                   removeTop: true,
                   child: ListView.builder(
-                    itemCount: widget.traitement['treatments'].length,
+                    itemCount: widget.traitement['medicines'].length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
@@ -1038,7 +1042,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                           builder: (context, constraints) {
                             return CardTraitementDay(
                               isClickable: false,
-                              data: widget.traitement['treatments'][index],
+                              data: widget.traitement['medicines'][index],
                               name: medNames[index],
                               onTap: () {},
                             );
@@ -1233,7 +1237,7 @@ class _Onboarding3State extends State<Body3> {
     setState(() {
       widget.tmpInfo['medical_antecedents'].add({
         "name": name,
-        "treatments": medicines["treatments"],
+        "medicines": medicines["medicines"],
         "still_relevant": stillRelevant,
       });
     });
@@ -1346,8 +1350,8 @@ class _Onboarding3State extends State<Body3> {
                                   onTap: () {
                                     if (widget
                                         .tmpInfo['medical_antecedents'][i]
-                                            ['treatments']
-                                        .isNotEmpty) {
+                                            ['medicines']
+                                        .isNotEmpty ) {
                                       WoltModalSheet.show<void>(
                                         context: context,
                                         pageIndexNotifier: pageIndex,
@@ -1368,7 +1372,7 @@ class _Onboarding3State extends State<Body3> {
                                         [i]['name'],
                                     isEnCours: widget
                                             .tmpInfo['medical_antecedents'][i]
-                                                ['treatments']
+                                                ['medicines']
                                             .isEmpty
                                         ? false
                                         : true,
@@ -1518,13 +1522,13 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   String name = "";
   bool stillRelevant = false;
 
-  Map<String, dynamic> medicines = {"treatments": [], "name": "Parasetamole"};
+  Map<String, dynamic> medicines = {"medicines": [], "name": "Parasetamole"};
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      medicines = {"treatments": [], "name": name};
+      medicines = {"medicines": [], "name": name};
     });
   }
 
@@ -1533,7 +1537,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 
   void updateMedicament(Map<String, dynamic> medicament) async {
     setState(() {
-      medicines['treatments'].add(medicament);
+      medicines['medicines'].add(medicament);
     });
     fetchData();
   }
@@ -1542,7 +1546,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
     medicaments = await getMedecines();
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
-    for (var treatment in medicines['treatments']) {
+    for (var treatment in medicines['medicines']) {
       var medId = treatment['medicine_id'];
       var med = medicaments.firstWhere((med) => med['id'] == medId,
           orElse: () => {'name': ''});
@@ -1703,20 +1707,20 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                     return const Center(child: CircularProgressIndicator());
                   } else {
                     return ListView.builder(
-                      itemCount: medicines['treatments'].length,
+                      itemCount: medicines['medicines'].length,
                       itemBuilder: (context, index) {
-                        if (medicines['treatments'].isEmpty) {
+                        if (medicines['medicines'].isEmpty) {
                           return const SizedBox();
                         }
                         return Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: CardTraitementDay(
                             isClickable: true,
-                            data: medicines['treatments'][index],
+                            data: medicines['medicines'][index],
                             name: medNames[index],
                             onTap: () {
                               setState(() {
-                                medicines['treatments'].removeAt(index);
+                                medicines['medicines'].removeAt(index);
                                 medNames.removeAt(index);
                               });
                             },

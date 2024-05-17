@@ -19,6 +19,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+String email = "";
 String name = "";
 String lastname = "";
 String birthdate = "";
@@ -40,17 +41,6 @@ class Patient extends StatefulWidget {
 }
 
 class _PatientState extends State<Patient> {
-  ValueNotifier<Map<String, dynamic>> info = ValueNotifier({
-    'email': '',
-    'prenom': '',
-    'nom': '',
-    'date': '',
-    'sexe': '',
-    'taille': '',
-    'poids': '',
-    'medecin_traitant': '',
-    'medical_antecedents': [],
-  });
 
   ValueNotifier<int> selected = ValueNotifier(0);
   var pageindex = ValueNotifier(0);
@@ -176,7 +166,18 @@ class _PatientState extends State<Patient> {
                       size: SizeButton.md,
                       msg: const Text('Ajouter un patient +'),
                       onPressed: () {
+                        email = "";
+                        name = "";
+                        lastname = "";
+                        birthdate = "";
+                        sexe = "MALE";
+                        height = "";
+                        weight = "";
+                        primaryDoctorId = "";
+                        isHealths = false;
                         WoltModalSheet.show<void>(
+                            onModalDismissedWithBarrierTap: () => {Navigator.pop(context), pageindex.value = 0 },
+                            onModalDismissedWithDrag: () => {Navigator.pop(context), pageindex.value = 0 },
                             context: context,
                             pageIndexNotifier: pageindex,
                             pageListBuilder: (modalSheetContext) {
@@ -231,13 +232,13 @@ class _PatientState extends State<Patient> {
                 onPressed: () {
                   switch (selected.value) {
                     case 0:
-                      info.value['sexe'] = "MALE";
+                      sexe = "MALE";
                       break;
                     case 1:
-                      info.value['sexe'] = "FEMALE";
+                      sexe = "FEMALE";
                       break;
                     case 2:
-                      info.value['sexe'] = "OTHER";
+                      sexe = "OTHER";
                       break;
                     default:
                   }
@@ -330,7 +331,7 @@ class _PatientState extends State<Patient> {
                 CustomField(
                   startUppercase: false,
                   label: "prenom.nom@gmail.com",
-                  onChanged: (value) => info.value['email'] = value,
+                  onChanged: (value) => email = value,
                   isPassword: false,
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -350,7 +351,7 @@ class _PatientState extends State<Patient> {
                 CustomField(
                   startUppercase: true,
                   label: "Prénom",
-                  onChanged: (value) => info.value['prenom'] = value,
+                  onChanged: (value) => name = value,
                   isPassword: false,
                   keyboardType: TextInputType.text,
                 ),
@@ -370,7 +371,7 @@ class _PatientState extends State<Patient> {
                 CustomField(
                   startUppercase: true,
                   label: "Nom",
-                  onChanged: (value) => info.value['nom'] = value,
+                  onChanged: (value) => lastname = value,
                   isPassword: false,
                   keyboardType: TextInputType.text,
                 ),
@@ -388,7 +389,7 @@ class _PatientState extends State<Patient> {
                   height: 4,
                 ),
                 CustomDatePiker(
-                    onChanged: (value) => info.value['date'] = value,
+                    onChanged: (value) => birthdate = value,
                     endDate: DateTime.now()),
                 const SizedBox(
                   height: 16,
@@ -459,8 +460,9 @@ class _PatientState extends State<Patient> {
                           CustomField(
                             startUppercase: false,
                             label: "1,52m",
-                            onChanged: (value) => info.value['taille'] =
-                                (double.parse(value) * 100).round().toString(),
+                            onChanged: (value) => {
+                              height =
+                                (double.parse(value.replaceAll(',', '.')) * 100).round().toString()},
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -488,7 +490,7 @@ class _PatientState extends State<Patient> {
                           CustomField(
                             startUppercase: false,
                             label: "45kg",
-                            onChanged: (value) => info.value['poids'] =
+                            onChanged: (value) => weight =
                                 (double.parse(value) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
@@ -1062,31 +1064,31 @@ class _Onboarding3State extends State<Body3> {
               size: SizeButton.sm,
               msg: const Text('Confirmer'),
               onPressed: () async {
-                if (traitments.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-                      message: "Ajouter des informations", context: context));
-                  return;
-                }
                 List<String> parts = birthdate.split('/');
                 String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
                 final birth = DateTime.parse(americanDate);
-                final integerDate =
-                    (birth.millisecondsSinceEpoch / 1000).round();
-
+                final integerDate = (birth.millisecondsSinceEpoch / 1000).round();
                 final Map<String, Object> body = {
-                  "name": name,
-                  "firstname": lastname,
-                  "birthdate": integerDate,
-                  "sex": sexe,
-                  "weight": int.parse(weight) * 100,
-                  "height": int.parse(height),
-                  "primary_doctor_id": primaryDoctorId,
-                  "medical_antecedents": traitments,
+                  "email": email,
+                  "medical_info": {
+                      "name": name,
+                      "firstname": lastname,
+                      "birthdate": integerDate,
+                      "sex": sexe,
+                      "weight": weight,
+                      "height": height,
+                      "primary_doctor_id": primaryDoctorId,
+                      "medical_antecedents": traitments,
+                  }
                 };
-
                 var reponse = await addPatientService(context, body);
                 if (reponse == true) {
-                  widget.updateSelectedIndex(3);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+                      // ignore: use_build_context_synchronously
+                      message: "Patient ajouté avec succès", context: context));
                 } else {
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
@@ -1094,8 +1096,6 @@ class _Onboarding3State extends State<Body3> {
                       // ignore: use_build_context_synchronously
                       context: context));
                 }
-
-                widget.updateSelectedIndex(3);
               },
             ),
           ),
