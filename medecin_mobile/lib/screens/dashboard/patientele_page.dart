@@ -1082,7 +1082,6 @@ class _Onboarding3State extends State<Body3> {
               msg: const Text('Confirmer'),
               onPressed: () async {
               ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
-                      // ignore: use_build_context_synchronously
                       message: "Envoi en cours...", context: context));
                 List<String> parts = birthdate.split('/');
                 String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
