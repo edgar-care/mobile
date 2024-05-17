@@ -248,6 +248,7 @@ class _PatientPageState extends State<PatientPage> {
                             size: SizeButton.md,
                             msg: const Text('Modifier le dossier médical'),
                             onPressed: () {
+                              pageIndex.value = 0;
                               WoltModalSheet.show<void>(
                                   onModalDismissedWithDrag: () {
                                     Navigator.pop(context);
@@ -1463,7 +1464,7 @@ class _Onboarding3State extends State<Body3> {
                           if (value == true)
                             {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  ErrorLoginSnackBar(
+                                  SuccessLoginSnackBar(
                                       message:
                                           "Informations mises à jour avec succès",
                                       context: context)),

@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/medecines_services.dart';
@@ -175,6 +174,7 @@ class _PatientState extends State<Patient> {
                         weight = "";
                         primaryDoctorId = "";
                         isHealths = false;
+                        pageindex.value = 0;
                         WoltModalSheet.show<void>(
                             onModalDismissedWithBarrierTap: () => {Navigator.pop(context), pageindex.value = 0 },
                             onModalDismissedWithDrag: () => {Navigator.pop(context), pageindex.value = 0 },
@@ -184,7 +184,7 @@ class _PatientState extends State<Patient> {
                               return [
                                 addPatient(context, pageindex),
                                 addPatient2(updateModalIndex, context),
-                                addPatient3(updateModalIndex, context)
+                                addPatient3(updateModalIndex, context, refresh)
                               ];
                             });
                       },
@@ -236,8 +236,7 @@ class _PatientState extends State<Patient> {
                       birthdate != "" &&
                       sexe != "" &&
                       height != "" &&
-                      weight != "" &&
-                      primaryDoctorId != "") {
+                      weight != "") {
                     switch (selected.value) {
                     case 0:
                       sexe = "MALE";
@@ -507,7 +506,7 @@ class _PatientState extends State<Patient> {
                             startUppercase: false,
                             label: "45kg",
                             onChanged: (value) => weight =
-                                (double.parse(value) * 100).round().toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100).round().toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -659,7 +658,7 @@ SliverWoltModalSheetPage addPatient2(
 }
 
 SliverWoltModalSheetPage addPatient3(
-    final Function(int) updateSelectedIndex, BuildContext context) {
+    final Function(int) updateSelectedIndex, BuildContext context, Function refresh) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     child: SizedBox(
@@ -730,6 +729,7 @@ SliverWoltModalSheetPage addPatient3(
           ),
           Body3(
             updateSelectedIndex: updateSelectedIndex,
+            refresh: refresh
           ),
         ]),
       ),
@@ -880,9 +880,10 @@ class _onboarding2State extends State<Body2> {
 
 class Body3 extends StatefulWidget {
   final Function(int) updateSelectedIndex;
-
+  final Function refresh;
   const Body3({
     super.key,
+    required this.refresh,
     required this.updateSelectedIndex,
   });
 
@@ -1091,13 +1092,18 @@ class _Onboarding3State extends State<Body3> {
                       "firstname": lastname,
                       "birthdate": integerDate,
                       "sex": sexe,
-                      "weight": weight,
-                      "height": height,
+                      "weight": int.parse(weight),
+                      "height": int.parse(height),
                       "primary_doctor_id": primaryDoctorId,
                       "medical_antecedents": traitments,
-                  }
+                      "onboarding_status": "DONE",
+                  },
                 };
                 var reponse = await addPatientService(context, body);
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
+                      // ignore: use_build_context_synchronously
+                      message: "Envoi en cours...", context: context));
                 if (reponse == true) {
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
@@ -1105,6 +1111,7 @@ class _Onboarding3State extends State<Body3> {
                   ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
                       // ignore: use_build_context_synchronously
                       message: "Patient ajouté avec succès", context: context));
+                      widget.refresh();
                 } else {
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(

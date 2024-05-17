@@ -136,7 +136,11 @@ Future putInformationPatient(
   if (response.statusCode == 200) {
     final body = response.body;
     populateInfoMedical(jsonDecode(body));
+    return true;
     //modifié avec success
+  }
+  else {
+    return false;
   }
 }
 
@@ -144,7 +148,7 @@ Future addPatientService(
     BuildContext context, Map<String, dynamic> traitement) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}dashboard/medical-info';
+  final url = '${dotenv.env['URL']}doctor/patient';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
