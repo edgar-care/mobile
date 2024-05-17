@@ -230,7 +230,15 @@ class _PatientState extends State<Patient> {
                 size: SizeButton.sm,
                 msg: const Text('Continuer'),
                 onPressed: () {
-                  switch (selected.value) {
+                  if (email != "" &&
+                      name != "" &&
+                      lastname != "" &&
+                      birthdate != "" &&
+                      sexe != "" &&
+                      height != "" &&
+                      weight != "" &&
+                      primaryDoctorId != "") {
+                    switch (selected.value) {
                     case 0:
                       sexe = "MALE";
                       break;
@@ -243,6 +251,14 @@ class _PatientState extends State<Patient> {
                     default:
                   }
                   pageIndexNotifier.value = pageIndexNotifier.value + 1;
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      ErrorLoginSnackBar(
+                        message: "Veuillez remplir tous les champs",
+                        context: context,
+                      ),
+                    );
+                  }
                 },
               ),
             ),
