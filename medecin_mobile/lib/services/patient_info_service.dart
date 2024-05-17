@@ -176,7 +176,7 @@ Future deletePatientService(String id, BuildContext context) async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient supprimé avec succès', context: context));
   } else {

@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, use_build_context_synchronously
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/medecines_services.dart';
@@ -1081,6 +1081,9 @@ class _Onboarding3State extends State<Body3> {
               size: SizeButton.sm,
               msg: const Text('Confirmer'),
               onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
+                      // ignore: use_build_context_synchronously
+                      message: "Envoi en cours...", context: context));
                 List<String> parts = birthdate.split('/');
                 String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
                 final birth = DateTime.parse(americanDate);
@@ -1100,23 +1103,16 @@ class _Onboarding3State extends State<Body3> {
                   },
                 };
                 var reponse = await addPatientService(context, body);
-                // ignore: use_build_context_synchronously
-                ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
-                      // ignore: use_build_context_synchronously
-                      message: "Envoi en cours...", context: context));
                 if (reponse == true) {
-                  // ignore: use_build_context_synchronously
                   Navigator.pop(context);
-                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
-                      // ignore: use_build_context_synchronously
                       message: "Patient ajouté avec succès", context: context));
                       widget.refresh();
                 } else {
-                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
                       message: "Erreur lors de l'ajout des informations",
-                      // ignore: use_build_context_synchronously
                       context: context));
                 }
               },
@@ -1203,8 +1199,6 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
   Widget build(BuildContext context) {
     ValueNotifier<bool> isHealth =
         ValueNotifier(widget.traitement['still_relevant']);
-
-    Logger().d(widget.traitement);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

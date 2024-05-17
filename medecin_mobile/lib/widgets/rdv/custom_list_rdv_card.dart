@@ -28,12 +28,6 @@ class CustomListRdvCard extends StatefulWidget {
 class _CustomListRdvCardState extends State<CustomListRdvCard> {
   Map<String, dynamic> patientInfo = {};
 
-  @override
-  initState() {
-    super.initState();
-    _loadAppointment();
-  }
-
   void updateAppointment(DateTime start) {
     setState(() {
       widget.rdvInfo['start_date'] = (start.millisecondsSinceEpoch ~/ 1000);

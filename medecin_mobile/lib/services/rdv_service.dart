@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<Map<String, dynamic>>> getAppointments() async {
+Future<List<dynamic>> getAppointments() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments';
@@ -19,17 +19,9 @@ Future<List<Map<String, dynamic>>> getAppointments() async {
     },
   );
   if (response.statusCode == 200) {
-    List<Map<String, dynamic>> bAppointment = [];
     var tempAp = jsonDecode(response.body)['appointments'];
-    for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
-          tempAp[i]['cancelation_reason'] == "" &&
-          tempAp[i]['start_date'] >=
-              DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-        bAppointment.add(tempAp[i]);
-      }
-    }
-    return bAppointment;
+    
+    return tempAp;
   }
   if (response.statusCode != 200) {
     return [];
