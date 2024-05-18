@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:edgar/widget/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
@@ -11,15 +12,13 @@ class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _DashBoardPageState createState() => _DashBoardPageState();
+  DashBoardPageState createState() => DashBoardPageState();
 }
 
-class _DashBoardPageState extends State<DashBoardPage>
+class DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
   int _previousIndex = 0;
-  final PageController _pageController = PageController();
 
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
@@ -36,7 +35,6 @@ class _DashBoardPageState extends State<DashBoardPage>
     checkSession(context);
   }
 
-  // Pile pour suivre l'index des onglets visités
   final List<int> _navigationStack = [0];
 
   void checkSession(BuildContext context) async {
@@ -52,20 +50,10 @@ class _DashBoardPageState extends State<DashBoardPage>
     if (index != _selectedIndex) {
       setState(() {
         _previousIndex = _selectedIndex;
-      });
-      _pageController
-          .animateToPage(
-        index,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      )
-          .then((_) {
-        setState(() {
-          if (_navigationStack.isEmpty || _navigationStack.last != index) {
-            _navigationStack.add(index);
-          }
-          _selectedIndex = index;
-        });
+        _selectedIndex = index;
+        if (_navigationStack.isEmpty || _navigationStack.last != index) {
+          _navigationStack.add(index);
+        }
       });
     }
   }
@@ -74,7 +62,6 @@ class _DashBoardPageState extends State<DashBoardPage>
     if (_navigationStack.length > 1) {
       setState(() {
         _selectedIndex = _previousIndex;
-        _pageController.jumpToPage(_selectedIndex);
         if (_navigationStack.isNotEmpty) {
           _previousIndex = _navigationStack.last;
         }
@@ -95,15 +82,21 @@ class _DashBoardPageState extends State<DashBoardPage>
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 84),
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  onPageChanged: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
+                child: PageTransitionSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  reverse: _previousIndex > _selectedIndex,
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> primaryAnimation,
+                    Animation<double> secondaryAnimation,
+                  ) {
+                    return FadeThroughTransition(
+                      animation: primaryAnimation,
+                      secondaryAnimation: secondaryAnimation,
+                      child: child,
+                    );
                   },
-                  children: _widgetOptions,
+                  child: _widgetOptions[_selectedIndex],
                 ),
               ),
             ),
@@ -117,6 +110,7 @@ class _DashBoardPageState extends State<DashBoardPage>
     );
   }
 }
+
 
 // ignore: must_be_immutable
 

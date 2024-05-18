@@ -38,8 +38,6 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
       future: fetchData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        Logger().i(snapshot.connectionState);
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
             child: Center(

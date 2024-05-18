@@ -5,8 +5,8 @@ import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
 class NavbarPLus extends StatefulWidget {
   final void Function(int) onItemTapped;
@@ -19,26 +19,31 @@ class NavbarPLus extends StatefulWidget {
 }
 
 class _NavbarPLusState extends State<NavbarPLus> {
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
   Map<String, dynamic> infoMedical = {};
   String birthdate = '';
 
+  @override
+  void initState() {
+    super.initState();
+    checkToken();
+  }
+
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token == null) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/login');
+    }
+  }
+
   Future<void> fetchData() async {
     await getMedicalFolder().then((value) {
-      Logger().i(value);
       if (value.isNotEmpty) {
-        setState(() {
-          infoMedical = value;
-          birthdate = DateFormat('dd/MM/yyyy').format(
-              DateTime.fromMillisecondsSinceEpoch(
-                  infoMedical['birthdate'] * 1000));
-        });
-        Logger().i(infoMedical);
+        infoMedical = value;
+        birthdate = DateFormat('dd/MM/yyyy').format(
+            DateTime.fromMillisecondsSinceEpoch(
+                infoMedical['birthdate'] * 1000));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
             message: "Error on fetching name", context: context));
@@ -114,43 +119,98 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                     topRight: Radius.circular(16),
                                   ),
                                 ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(50)),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          infoMedical['name'] ?? 'Inconnu',
-                                          style: const TextStyle(
-                                            fontSize: 16,
+                                child: FutureBuilder(
+                                  future: fetchData(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Row(
+                                        children: [
+                                          CircularProgressIndicator(
                                             color: AppColors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: "Poppins",
+                                            semanticsValue: 'Loading...',
                                           ),
-                                        ),
-                                        Text(
-                                          'Né le $birthdate',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: "Poppins",
+                                          SizedBox(width: 16),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                height: 4,
+                                                child: LinearProgressIndicator(
+                                                  backgroundColor:
+                                                      AppColors.blue700,
+                                                  minHeight: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          AppColors.white),
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              SizedBox(
+                                                width: 120,
+                                                height: 4,
+                                                child: LinearProgressIndicator(
+                                                  backgroundColor:
+                                                      AppColors.blue700,
+                                                  minHeight: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          AppColors.white),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return Row(
+                                        children: [
+                                          Container(
+                                            width: 48,
+                                            height: 48,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors.white,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50)),
+                                            ),
+                                            child: BoringAvatars(
+                                              name:
+                                                  "${infoMedical['name']} ${infoMedical['firstname']}",
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                          const SizedBox(width: 16),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${infoMedical['name']} ${infoMedical['firstname']}",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: "Poppins",
+                                                ),
+                                              ),
+                                              Text(
+                                                'Né le $birthdate',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: "Poppins",
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                               Container(
@@ -178,7 +238,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/MedicalFolder.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 16,
+                                        height: 20,
                                       ),
                                       title: 'Dossier médical',
                                       onTap: () {
@@ -192,7 +252,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/Messagerie.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 16,
+                                        height: 20,
                                       ),
                                       title: 'Messagerie',
                                       onTap: () {
@@ -224,7 +284,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/ArrowRightCircle.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 16,
+                                        height: 20,
                                       ),
                                       title: 'Deconnexion',
                                       onTap: () async {
@@ -233,11 +293,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 .getInstance();
                                         prefs.remove('token');
                                         // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(widget.context);
+                                        Navigator.pushNamed(context, '/login');
                                       },
-                                      type: 'Bottom',
+                                      type: 'Only',
                                       color: AppColors.red600,
                                     ),
                                   ],
@@ -283,19 +341,25 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: AppColors.white,
           border: Border(
-            bottom: widget.type == 'Bottom'
+            bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
                 : const BorderSide(color: AppColors.blue200, width: 1),
           ),
           borderRadius: BorderRadius.only(
-            bottomLeft: widget.type == 'Bottom'
+            topLeft: widget.type == 'Only' || widget.type == 'Top'
+                ? const Radius.circular(16)
+                : const Radius.circular(0),
+            topRight: widget.type == 'Only' || widget.type == 'Top'
+                ? const Radius.circular(16)
+                : const Radius.circular(0),
+            bottomLeft: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const Radius.circular(18)
                 : const Radius.circular(0),
-            bottomRight: widget.type == 'Bottom'
+            bottomRight: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const Radius.circular(18)
                 : const Radius.circular(0),
           ),

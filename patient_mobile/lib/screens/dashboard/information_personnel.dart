@@ -119,7 +119,7 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.blue200,
           style: BorderStyle.solid,
@@ -141,7 +141,7 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
             ),
             const SizedBox(height: 8),
             ElementInfo(
-              title: 'Anniversaire: ',
+              title: 'Date de naissance: ',
               value: widget.birthdate,
             ),
             const SizedBox(height: 8),
@@ -169,10 +169,10 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
               value: widget.infoMedical['primary_doctor_id'],
             ),
             const Text(
-              'Traitement en cours: ',
+              'Antécédants médicaux et sujets de santé:',
               style: TextStyle(
                 color: AppColors.black,
-                fontSize: 16,
+                fontSize: 14,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
               ),
@@ -422,18 +422,18 @@ class ElementInfo extends StatelessWidget {
           title,
           style: const TextStyle(
             color: AppColors.black,
-            fontSize: 16,
+            fontSize: 14,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         Flexible(
           child: Text(
             value,
             style: const TextStyle(
               color: AppColors.black,
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
             ),

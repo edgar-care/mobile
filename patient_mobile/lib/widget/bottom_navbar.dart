@@ -71,9 +71,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               },
             ),
             NavBarItem(
-              color: widget.selectedIndex == 4
-                  ? AppColors.blue200
-                  : Colors.transparent,
+              color: Colors.transparent,
               icon: "assets/images/utils/More.svg",
               onTap: () {
                 Navigator.push(
@@ -125,7 +123,7 @@ class NavBarItem extends StatelessWidget {
       child: Container(
           width: 48,
           height: 48,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: color,
             borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -134,8 +132,8 @@ class NavBarItem extends StatelessWidget {
             icon,
             // ignore: deprecated_member_use
             color: AppColors.blue800,
-            width: 24,
             height: 24,
+            width: 24,
           )),
     );
   }
