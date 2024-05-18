@@ -69,3 +69,22 @@ Future<bool> putTraitement(Map<String, dynamic> traitement, String id) async {
     return false;
   }
 }
+
+Future<List<dynamic>> getFollowUp() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/treatment/follow-up';
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  if (response.statusCode == 200) {
+    final body = jsonDecode(response.body);
+    if (body != null) {
+      return body;
+    }
+    return [];
+  } else {
+    return [];
+  }
+}
