@@ -83,7 +83,6 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 2),
                     ],
                     if (widget.traitement['treatments'].length > 2) ...[
                       const Icon(
