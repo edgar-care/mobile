@@ -1,9 +1,10 @@
+import 'package:edgar/widget/custom_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/widget/bottom_navbar.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
 import 'package:edgar/screens/dashboard/information_personnel.dart';
 import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar/screens/dashboard/file_page.dart';
+import 'package:edgar/screens/dashboard/chat_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -17,61 +18,37 @@ class _DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
 
-  // ignore: unused_field
-  late AnimationController _animationControllers;
+  final List<Widget> pages = <Widget>[
+    const HomePage(),
+    const FilePage(),
+    const GestionRendezVous(),
+    const InformationPersonnel(),
+    const ChatPage(),
+  ];
 
-  @override
-  void initState() {
-    super.initState();
-    _animationControllers = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
+  void updateSelectedIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  int getSelectedIndex() {
+    return _selectedIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPageContent(),
-      bottomNavigationBar: CustomBottomNavigationBars(
-        selectedIndex: _selectedIndex,
-        onTap: (index) {
-          if (index == 4) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildPageContent() {
-    final pageOptions = [
-      const HomePage(),
-      const GestionRendezVous(),
-      const FilePage(),
-      const InformationPersonnel(),
-      const SettingsPage(),
-    ];
-
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: pageOptions[_selectedIndex],
-    );
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: pages[_selectedIndex],
+          ),
+        ),
+        bottomNavigationBar: Navbar(
+          callback: updateSelectedIndex,
+          getSelected: getSelectedIndex,
+        ));
   }
 }
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text('Settings Page');
-  }
-}
-// Ajoutez d'autres classes de page ici

@@ -23,20 +23,20 @@ enum TypeDeDocument {
 class CardDocument extends StatefulWidget {
   final TypeDeDocument typeDeDocument;
   final String nomDocument;
-  final DateTime dateDocument;
   final String nameDoctor;
   bool isfavorite;
   String id;
   String url;
+  Function updatedata;
   CardDocument(
       {super.key,
       required this.typeDeDocument,
       required this.nomDocument,
-      required this.dateDocument,
       required this.nameDoctor,
       required this.isfavorite,
       required this.id,
-      required this.url});
+      required this.url,
+      required this.updatedata});
 
   @override
   State<CardDocument> createState() => _CardDocumentState();
@@ -77,7 +77,7 @@ class _CardDocumentState extends State<CardDocument> {
               },
               child: Container(
                 child: widget.isfavorite
-                    ? const Icon(Icons.star, color: AppColors.blue300)
+                    ? const Icon(Icons.star, color: AppColors.blue700)
                     : const Icon(Icons.star_border, color: AppColors.blue300),
               ),
             ),
@@ -112,7 +112,7 @@ class _CardDocumentState extends State<CardDocument> {
                     SizedBox(
                       width: constraints.maxWidth * 0.7,
                       child: Text(
-                        "Ajouté le ${widget.dateDocument.day}/${widget.dateDocument.month}/${widget.dateDocument.year} par ${widget.nameDoctor}",
+                        "Ajouté par ${widget.nameDoctor}",
                         style: const TextStyle(
                           color: AppColors.black,
                           fontFamily: 'Poppins',
@@ -138,9 +138,14 @@ class _CardDocumentState extends State<CardDocument> {
                               widget.id,
                               widget.nomDocument,
                             ),
-                            modifierPatient(context, pageIndex,
-                                widget.nomDocument, widget.id),
-                            deletePatient(context, pageIndex, widget.id),
+                            modifierPatient(
+                                context,
+                                pageIndex,
+                                widget.nomDocument,
+                                widget.id,
+                                widget.updatedata),
+                            deletePatient(context, pageIndex, widget.id,
+                                widget.updatedata),
                           ];
                         });
                   },
@@ -194,9 +199,7 @@ WoltModalSheetPage openPatient(
                 FileDownloader.downloadFile(
                   url: url,
                   name: name,
-                  onDownloadCompleted: (String id) {
-                    Logger().i('Télécharger');
-                  },
+                  onDownloadCompleted: (String id) {},
                   onDownloadError: (String error) {
                     Logger().e(error);
                   },
@@ -228,6 +231,7 @@ WoltModalSheetPage modifierPatient(
   ValueNotifier<int> pageIndex,
   String name,
   String id,
+  Function updatedata,
 ) {
   int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
   int maxSize = (MediaQuery.of(context).size.width - 48).toInt();
@@ -285,6 +289,7 @@ WoltModalSheetPage modifierPatient(
                   name = value;
                 },
                 maxSize: maxSize,
+                action: TextInputAction.done,
               ),
             ],
           ),
@@ -307,6 +312,7 @@ WoltModalSheetPage modifierPatient(
                   onPressed: () {
                     modifyDocument(id, name);
                     pageIndex.value = 0;
+                    updatedata(context);
                   }),
             ],
           ),
@@ -320,6 +326,7 @@ WoltModalSheetPage deletePatient(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String id,
+  Function updatedata,
 ) {
   int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
   return WoltModalSheetPage(
@@ -392,6 +399,7 @@ WoltModalSheetPage deletePatient(
                     deleteDocument(id);
                     pageIndex.value = 0;
                     Navigator.pop(context);
+                    updatedata(context);
                   }),
             ],
           ),

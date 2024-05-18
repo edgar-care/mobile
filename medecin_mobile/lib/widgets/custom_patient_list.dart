@@ -14,9 +14,9 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
-  final Function deletePatientList;
   final Function updatePatient;
   final Function setPages;
+  final Function deletePatientList;
   const CustomList(
       {super.key,
       required this.patients,

@@ -63,13 +63,12 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     String cancelreason = '';
     String healthmethod = '';
     return WoltModalSheetPage(
-      hasTopBarLayer: false,
       backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
+      hasTopBarLayer: false,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(
             children: [
               Container(
@@ -153,7 +152,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
+                    width: MediaQuery.of(context).size.width * 0.427,
                     child: Buttons(
                       variant: Variante.secondary,
                       size: SizeButton.sm,
@@ -167,7 +166,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     width: 12,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
+                    width: MediaQuery.of(context).size.width * 0.427,
                     child: Buttons(
                       variant: Variante.delete,
                       size: SizeButton.sm,
@@ -181,12 +180,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                   ),
                 ],
               ),
-            ],
-          ),
+            ]),
         ),
       ),
     );
-  }
+   }
 
   SliverWoltModalSheetPage updateAppointmentModal(BuildContext context,
       Map<String, dynamic> rdvInfo, Function updateAppointment) {

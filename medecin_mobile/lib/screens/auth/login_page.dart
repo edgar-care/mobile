@@ -92,10 +92,10 @@ class _LoginState extends State<Login> {
                           startUppercase: false,
                           text: email,
                           label: "prenom.nom@gmail.com",
-                          keyboardType: TextInputType.text,
+                          keyboardType : TextInputType.emailAddress,
                           onChanged: (value) {
                             setState(() {
-                              email = value;
+                              email = value.trim();
                             });
                           },
                         ),
@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
                           isPassword: true,
                           onChanged: (value) {
                             setState(() {
-                              password = value;
+                              password = value.trim();
                             });
                           },
                         ),

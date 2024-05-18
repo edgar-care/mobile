@@ -15,7 +15,8 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 // ignore: must_be_immutable
 class Patient extends StatefulWidget {
   Function setPages;
-  Patient({super.key, required this.setPages});
+  Function setId;
+  Patient({super.key, required this.setPages, required this.setId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -585,9 +586,9 @@ class _PatientState extends State<Patient> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomList(
+                            deletePatientList: deletePatientList,
                             setPages: widget.setPages,
                             patients: patients,
-                            deletePatientList: deletePatientList,
                             updatePatient: updatePatient,
                           );
                         } else {
