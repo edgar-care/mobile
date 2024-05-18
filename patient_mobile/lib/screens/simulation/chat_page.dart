@@ -5,7 +5,6 @@ import 'package:edgar/widget/field_custom.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
@@ -58,7 +57,7 @@ class _ChatPageState extends State<ChatPage> {
               padding: const EdgeInsets.only(bottom: 16),
               child: Buttons(
                 variant: Variante.primary,
-                size: SizeButton.sm,
+                size: SizeButton.md,
                 msg: const Text('Continuer la simulation'),
                 onPressed: () async {
                   SharedPreferences prefs =
@@ -152,6 +151,7 @@ class _ChatPageState extends State<ChatPage> {
                 },
               ),
             ),
+            const SizedBox(height: 16),
             if (messages.last is! Padding)
               CustomFieldSearch(
                 onValidate: (value) {
@@ -172,7 +172,6 @@ class _ChatPageState extends State<ChatPage> {
                 onlyOnValidate: true,
                 onOpen: () {
                   goMid();
-                  Logger().i('Open');
                 },
               ),
           ],
