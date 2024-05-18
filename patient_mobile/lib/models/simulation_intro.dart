@@ -144,7 +144,7 @@ class Warnig extends StatelessWidget {
                 'Bienvenue dans votre simulation. Je m’appelle Edgar et je serai votre assistant tout au long de cette simulation.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -274,7 +274,7 @@ class Warning2 extends StatelessWidget {
                 'Avant de commencer votre simulation, notez que cette simulation n’a pas pour but de diagnostiquer une maladie.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -404,7 +404,7 @@ class Warning3 extends StatelessWidget {
                 'A l’issue de la simulation, notre échange sera transmis à un médecin afin d’être examiné.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -534,7 +534,7 @@ class Warning4 extends StatelessWidget {
                 'Si votre rendez-vous n’est pas utile alors il sera annulé par le médecin et il vous conseillera des méthodes de soins.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -664,7 +664,7 @@ class Warning5 extends StatelessWidget {
                 'Voilà, tout est prêt pour moi. Vous pouvez dès maintenant commencer votre simulation.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
