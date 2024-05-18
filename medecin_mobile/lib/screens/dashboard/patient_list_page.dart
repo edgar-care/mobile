@@ -15,8 +15,8 @@ import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
@@ -74,6 +74,7 @@ class _PatientPageState extends State<PatientPage> {
     setState(() {
       _loadInfo();
     });
+    tmpInfo = Map.of(patientInfo);
   }
 
   String sexe(String sexe) {
@@ -179,8 +180,7 @@ class _PatientPageState extends State<PatientPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                              child: Wrap(
+                          Wrap(
                             alignment: WrapAlignment.start,
                             direction: Axis.vertical,
                             spacing: 12,
@@ -229,20 +229,28 @@ class _PatientPageState extends State<PatientPage> {
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w600)),
-                              if (patientInfo['medical_antecedents'] != null)
-                              const Text(
-                                  'Antécédants médicaux et sujets de santé: ',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
-                              if (patientInfo['medical_antecedents'] != null)
-                              PatientInfoCard(
+                              if (patientInfo['medical_antecedents'].isNotEmpty)
+                                const Text(
+                                    'Antécédants médicaux et sujets de santé: ',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          if (patientInfo['medical_antecedents'].isNotEmpty)
+                            Expanded(
+                              child: PatientInfoCard(
                                   context: context,
                                   tmpTraitments:
                                       patientInfo['medical_antecedents']),
-                            ],
-                          )),
+                            ),
+                          const SizedBox(
+                            height: 16,
+                          ),
                           Buttons(
                             variant: Variante.primary,
                             size: SizeButton.md,
@@ -281,12 +289,10 @@ class _PatientPageState extends State<PatientPage> {
               ],
             );
           } else {
-            return const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.blue700),
-                  strokeWidth: 2.0,
-                ),
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.blue700),
+                strokeWidth: 2.0,
               ),
             );
           }
@@ -410,18 +416,18 @@ class _PatientPageState extends State<PatientPage> {
                     );
                   } else {
                     switch (selected.value) {
-                    case 0:
-                      info['sexe'] = "MALE";
-                      break;
-                    case 1:
-                      info['sexe'] = "FEMALE";
-                      break;
-                    case 2:
-                      info['sexe'] = "OTHER";
-                      break;
-                    default:
-                  }
-                  pageIndexNotifier.value = pageIndexNotifier.value + 1;
+                      case 0:
+                        info['sexe'] = "MALE";
+                        break;
+                      case 1:
+                        info['sexe'] = "FEMALE";
+                        break;
+                      case 2:
+                        info['sexe'] = "OTHER";
+                        break;
+                      default:
+                    }
+                    pageIndexNotifier.value = pageIndexNotifier.value + 1;
                   }
                 },
               ),
@@ -627,7 +633,8 @@ class _PatientPageState extends State<PatientPage> {
                                 (double.parse(info['taille']) / 100).toString(),
                             label: "1,52m",
                             onChanged: (value) => info['taille'] =
-                                (double.parse(value.replaceAll(',', '.')) * 100).toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100)
+                                    .toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -658,7 +665,8 @@ class _PatientPageState extends State<PatientPage> {
                             text:
                                 (double.parse(info['poids']) / 100).toString(),
                             onChanged: (value) => info['poids'] =
-                                (double.parse(value.replaceAll(',', '.')) * 100).toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100)
+                                    .toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -812,6 +820,7 @@ class _PatientPageState extends State<PatientPage> {
   SliverWoltModalSheetPage addPatient3(final Function(int) updateSelectedIndex,
       BuildContext context, List<Map<String, dynamic>> traitments) {
     return WoltModalSheetPage(
+      backgroundColor: AppColors.white,
       hasTopBarLayer: false,
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -937,16 +946,15 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
     try {
       medicaments = await getMedecines();
 
-      for (var i = 0; i < widget.traitement['medicines'].length; i++) {
+      for (var i = 0; i < widget.traitement['treatments'].length; i++) {
         var medname = medicaments.firstWhere(
             (med) =>
-                med['id'] == widget.traitement['medicines'][i]['medicine_id'],
+                med['id'] == widget.traitement['treatments'][i]['medicine_id'],
             orElse: () => {'name': ''})['name'];
         medNames.add(medname);
       }
       return true;
     } catch (e) {
-      Logger().e("Error fetching data: $e");
       return false;
     }
   }
@@ -977,7 +985,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   width: 16,
                   height: 16,
                   // ignore: deprecated_member_use
-                  color: widget.traitement['medicines'].isEmpty
+                  color: widget.traitement['treatments'].isEmpty
                       ? AppColors.grey300
                       : AppColors.blue700,
                 ),
@@ -1003,7 +1011,6 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
-        const SizedBox(height: 8),
         ValueListenableBuilder<bool>(
           valueListenable: isHealth,
           builder: (context, value, child) {
@@ -1041,7 +1048,11 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
             future: _futureData,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: AppColors.blue700,
+                  strokeWidth: 2,
+                ));
               } else if (snapshot.hasError) {
                 return Text('Erreur: ${snapshot.error}');
               } else {
@@ -1049,7 +1060,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                   context: context,
                   removeTop: true,
                   child: ListView.builder(
-                    itemCount: widget.traitement['medicines'].length,
+                    itemCount: widget.traitement['treatments'].length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
@@ -1057,7 +1068,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
                           builder: (context, constraints) {
                             return CardTraitementDay(
                               isClickable: false,
-                              data: widget.traitement['medicines'][index],
+                              data: widget.traitement['treatments'][index],
                               name: medNames[index],
                               onTap: () {},
                             );
@@ -1248,11 +1259,11 @@ class _Onboarding3State extends State<Body3> {
   }
 
   void addNewTraitement(
-      String name, Map<String, dynamic> medicines, bool stillRelevant) {
+      String name, Map<String, dynamic> treatments, bool stillRelevant) {
     setState(() {
       widget.tmpInfo['medical_antecedents'].add({
         "name": name,
-        "medicines": medicines["medicines"],
+        "treatments": treatments["treatments"],
         "still_relevant": stillRelevant,
       });
     });
@@ -1347,26 +1358,29 @@ class _Onboarding3State extends State<Body3> {
               return Text('Erreur: ${snapshot.error}');
             } else {
               return Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: [
-                    if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
-                      for (var i = 0;
-                          i < widget.tmpInfo['medical_antecedents'].length;
-                          i++)
-                        if (i < 3)
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              return IntrinsicWidth(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (widget
-                                        .tmpInfo['medical_antecedents'][i]
-                                            ['medicines']
-                                        .isNotEmpty ) {
+                  padding: const EdgeInsets.only(top: 16),
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width - 48,
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
+                          for (var i = 0;
+                              i < widget.tmpInfo['medical_antecedents'].length;
+                              i++)
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                return IntrinsicWidth(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (widget
+                                          .tmpInfo['medical_antecedents'][i]
+                                              ['treatments']
+                                          .isEmpty) {
+                                        return;
+                                      }
                                       WoltModalSheet.show<void>(
                                         context: context,
                                         pageIndexNotifier: pageIndex,
@@ -1380,31 +1394,31 @@ class _Onboarding3State extends State<Body3> {
                                           ];
                                         },
                                       );
-                                    }
-                                  },
-                                  child: CardTraitementSmall(
-                                    name: widget.tmpInfo['medical_antecedents']
-                                        [i]['name'],
-                                    isEnCours: widget
-                                            .tmpInfo['medical_antecedents'][i]
-                                                ['medicines']
-                                            .isEmpty
-                                        ? false
-                                        : true,
-                                    onTap: () {
-                                      setState(() {
-                                        widget.tmpInfo['medical_antecedents']
-                                            .removeAt(i);
-                                      });
                                     },
+                                    child: CardTraitementSmall(
+                                      name:
+                                          widget.tmpInfo['medical_antecedents']
+                                              [i]['name'],
+                                      isEnCours: widget
+                                              .tmpInfo['medical_antecedents'][i]
+                                                  ['treatments']
+                                              .isEmpty
+                                          ? false
+                                          : true,
+                                      onTap: () {
+                                        setState(() {
+                                          widget.tmpInfo['medical_antecedents']
+                                              .removeAt(i);
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                  ],
-                ),
-              );
+                                );
+                              },
+                            ),
+                      ],
+                    ),
+                  ));
             }
           },
         ),
@@ -1502,16 +1516,12 @@ WoltModalSheetPage addTraitement(
     backgroundColor: AppColors.white,
     hasSabGradient: true,
     enableDrag: true,
-    child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodyAddTraitement(
-          pageIndex: pageIndex,
-          updateData: updateData,
-          addNewTraitement: addNewTraitement,
-          screenSize: MediaQuery.of(context).size,
-        ),
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: BodyAddTraitement(
+        pageIndex: pageIndex,
+        updateData: updateData,
+        addNewTraitement: addNewTraitement,
       ),
     ),
   );
@@ -1521,13 +1531,11 @@ class BodyAddTraitement extends StatefulWidget {
   final ValueNotifier<int> pageIndex;
   final Function(int) updateData;
   final Function addNewTraitement;
-  final Size screenSize;
   const BodyAddTraitement(
       {super.key,
       required this.pageIndex,
       required this.updateData,
-      required this.addNewTraitement,
-      required this.screenSize});
+      required this.addNewTraitement});
 
   @override
   State<BodyAddTraitement> createState() => _BodyAddTraitementState();
@@ -1537,13 +1545,13 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   String name = "";
   bool stillRelevant = false;
 
-  Map<String, dynamic> medicines = {"medicines": [], "name": "Parasetamole"};
+  Map<String, dynamic> treatments = {"treatments": [], "name": "Parasetamole"};
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      medicines = {"medicines": [], "name": name};
+      treatments = {"treatments": [], "name": name};
     });
   }
 
@@ -1552,7 +1560,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 
   void updateMedicament(Map<String, dynamic> medicament) async {
     setState(() {
-      medicines['medicines'].add(medicament);
+      treatments['treatments'].add(medicament);
     });
     fetchData();
   }
@@ -1561,7 +1569,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
     medicaments = await getMedecines();
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
-    for (var treatment in medicines['medicines']) {
+    for (var treatment in treatments['treatments']) {
       var medId = treatment['medicine_id'];
       var med = medicaments.firstWhere((med) => med['id'] == medId,
           orElse: () => {'name': ''});
@@ -1574,178 +1582,185 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: AppColors.green200,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: SvgPicture.asset(
-            'assets/images/utils/Subtract.svg',
-            // ignore: deprecated_member_use
-            color: AppColors.green700,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Ajoutez un sujet de santé',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 32),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Nom de votre sujet de santé',
-              style: TextStyle(
-                color: AppColors.black,
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.green200,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: SvgPicture.asset(
+                'assets/images/utils/Subtract.svg',
+                // ignore: deprecated_member_use
+                color: AppColors.green700,
               ),
             ),
             const SizedBox(height: 8),
-            CustomField(
-              label: 'Rhume',
-              onChanged: (value) {
-                setState(() {
-                  name = value.trim();
-                });
-              },
-              keyboardType: TextInputType.name,
-              startUppercase: false,
-            ),
-            const SizedBox(height: 16),
             const Text(
-              'Le sujet de santé est-il toujours en cours ?',
+              'Ajoutez un sujet de santé',
               style: TextStyle(
                 color: AppColors.black,
                 fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
-            ValueListenableBuilder<bool>(
-              valueListenable: ValueNotifier(stillRelevant),
-              builder: (context, value, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    AddButton(
-                        onTap: (() {
-                          setState(() {
-                            stillRelevant = true;
-                          });
-                        }),
-                        label: "Oui",
-                        color: value == true
-                            ? AppColors.blue700
-                            : Colors.transparent),
-                    const SizedBox(width: 8),
-                    AddButton(
-                        onTap: (() {
-                          setState(() {
-                            stillRelevant = false;
-                          });
-                        }),
-                        label: "Non",
-                        color: value == false
-                            ? AppColors.blue700
-                            : Colors.transparent),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () {
-                WoltModalSheet.show<void>(
-                    context: context,
-                    pageIndexNotifier: widget.pageIndex,
-                    pageListBuilder: (modalSheetContext) {
-                      return [
-                        addMedicament(
-                          context,
-                          widget.pageIndex,
-                          widget.updateData,
-                          widget.addNewTraitement,
-                          updateMedicament,
-                        ),
-                      ];
+            const SizedBox(height: 32),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Nom de votre sujet de santé',
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                CustomField(
+                  label: 'Rhume',
+                  onChanged: (value) {
+                    setState(() {
+                      name = value.trim();
                     });
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.blue500, width: 2),
+                  },
+                  keyboardType: TextInputType.name,
+                  startUppercase: false,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Ajouter un médicament",
-                      style: TextStyle(
-                        color: AppColors.grey400,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SvgPicture.asset(
-                      "assets/images/utils/plus-lg.svg",
-                      // ignore: deprecated_member_use
-                      color: AppColors.blue700,
-                      width: 14,
-                      height: 14,
-                    ),
-                  ],
+                const SizedBox(height: 16),
+                const Text(
+                  'Le sujet de santé est-il toujours en cours ?',
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: widget.screenSize.height * 0.36,
-              width: widget.screenSize.width,
-              child: FutureBuilder(
-                future: fetchData(), // Simulate some async operation
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return ListView.builder(
-                      itemCount: medicines['medicines'].length,
-                      itemBuilder: (context, index) {
-                        if (medicines['medicines'].isEmpty) {
-                          return const SizedBox();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: CardTraitementDay(
-                            isClickable: true,
-                            data: medicines['medicines'][index],
-                            name: medNames[index],
-                            onTap: () {
+                const SizedBox(height: 8),
+                ValueListenableBuilder<bool>(
+                  valueListenable: ValueNotifier(stillRelevant),
+                  builder: (context, value, child) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AddButton(
+                            onTap: (() {
                               setState(() {
-                                medicines['medicines'].removeAt(index);
-                                medNames.removeAt(index);
+                                stillRelevant = true;
                               });
-                            },
-                          ),
-                        );
-                      },
+                            }),
+                            label: "Oui",
+                            color: value == true
+                                ? AppColors.blue700
+                                : Colors.transparent),
+                        const SizedBox(width: 8),
+                        AddButton(
+                            onTap: (() {
+                              setState(() {
+                                stillRelevant = false;
+                              });
+                            }),
+                            label: "Non",
+                            color: value == false
+                                ? AppColors.blue700
+                                : Colors.transparent),
+                      ],
                     );
-                  }
-                },
-              ),
+                  },
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    WoltModalSheet.show<void>(
+                        context: context,
+                        pageIndexNotifier: widget.pageIndex,
+                        pageListBuilder: (modalSheetContext) {
+                          return [
+                            addMedicament(
+                              context,
+                              widget.pageIndex,
+                              widget.updateData,
+                              widget.addNewTraitement,
+                              updateMedicament,
+                            ),
+                          ];
+                        });
+                  },
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.blue500, width: 2),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Ajouter un médicament",
+                          style: TextStyle(
+                            color: AppColors.grey400,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          "assets/images/utils/plus-lg.svg",
+                          // ignore: deprecated_member_use
+                          color: AppColors.blue700,
+                          width: 14,
+                          height: 14,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.3,
+                  ),
+                  child: FutureBuilder(
+                    future: fetchData(), // Simulate some async operation
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: treatments['treatments'].length,
+                          itemBuilder: (context, index) {
+                            if (treatments['treatments'].isEmpty) {
+                              return const SizedBox();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: CardTraitementDay(
+                                isClickable: true,
+                                data: treatments['treatments'][index],
+                                name: medNames[index],
+                                onTap: () {
+                                  setState(() {
+                                    treatments['treatments'].removeAt(index);
+                                    medNames.removeAt(index);
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -1776,7 +1791,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                               message: "Ajoutez un nom", context: context));
                       return;
                     }
-                    widget.addNewTraitement(name, medicines, stillRelevant);
+                    widget.addNewTraitement(name, treatments, stillRelevant);
                     Navigator.pop(context);
                   }),
             ),

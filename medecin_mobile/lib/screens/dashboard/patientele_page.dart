@@ -40,7 +40,6 @@ class Patient extends StatefulWidget {
 }
 
 class _PatientState extends State<Patient> {
-
   ValueNotifier<int> selected = ValueNotifier(0);
   var pageindex = ValueNotifier(0);
 
@@ -176,8 +175,10 @@ class _PatientState extends State<Patient> {
                         isHealths = false;
                         pageindex.value = 0;
                         WoltModalSheet.show<void>(
-                            onModalDismissedWithBarrierTap: () => {Navigator.pop(context), pageindex.value = 0 },
-                            onModalDismissedWithDrag: () => {Navigator.pop(context), pageindex.value = 0 },
+                            onModalDismissedWithBarrierTap: () =>
+                                {Navigator.pop(context), pageindex.value = 0},
+                            onModalDismissedWithDrag: () =>
+                                {Navigator.pop(context), pageindex.value = 0},
                             context: context,
                             pageIndexNotifier: pageindex,
                             pageListBuilder: (modalSheetContext) {
@@ -238,18 +239,18 @@ class _PatientState extends State<Patient> {
                       height != "" &&
                       weight != "") {
                     switch (selected.value) {
-                    case 0:
-                      sexe = "MALE";
-                      break;
-                    case 1:
-                      sexe = "FEMALE";
-                      break;
-                    case 2:
-                      sexe = "OTHER";
-                      break;
-                    default:
-                  }
-                  pageIndexNotifier.value = pageIndexNotifier.value + 1;
+                      case 0:
+                        sexe = "MALE";
+                        break;
+                      case 1:
+                        sexe = "FEMALE";
+                        break;
+                      case 2:
+                        sexe = "OTHER";
+                        break;
+                      default:
+                    }
+                    pageIndexNotifier.value = pageIndexNotifier.value + 1;
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       ErrorLoginSnackBar(
@@ -477,7 +478,11 @@ class _PatientState extends State<Patient> {
                             label: "1,52m",
                             onChanged: (value) => {
                               height =
-                                (double.parse(value.replaceAll(',', '.')) * 100).round().toString()},
+                                  (double.parse(value.replaceAll(',', '.')) *
+                                          100)
+                                      .round()
+                                      .toString()
+                            },
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -506,7 +511,9 @@ class _PatientState extends State<Patient> {
                             startUppercase: false,
                             label: "45kg",
                             onChanged: (value) => weight =
-                                (double.parse(value.replaceAll(',', '.')) * 100).round().toString(),
+                                (double.parse(value.replaceAll(',', '.')) * 100)
+                                    .round()
+                                    .toString(),
                             keyboardType: TextInputType.number,
                             isPassword: false,
                           ),
@@ -657,8 +664,8 @@ SliverWoltModalSheetPage addPatient2(
   );
 }
 
-SliverWoltModalSheetPage addPatient3(
-    final Function(int) updateSelectedIndex, BuildContext context, Function refresh) {
+SliverWoltModalSheetPage addPatient3(final Function(int) updateSelectedIndex,
+    BuildContext context, Function refresh) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     child: SizedBox(
@@ -727,10 +734,7 @@ SliverWoltModalSheetPage addPatient3(
           const SizedBox(
             height: 32,
           ),
-          Body3(
-            updateSelectedIndex: updateSelectedIndex,
-            refresh: refresh
-          ),
+          Body3(updateSelectedIndex: updateSelectedIndex, refresh: refresh),
         ]),
       ),
     ),
@@ -1081,33 +1085,36 @@ class _Onboarding3State extends State<Body3> {
               size: SizeButton.sm,
               msg: const Text('Confirmer'),
               onPressed: () async {
-              ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
-                      message: "Envoi en cours...", context: context));
+                ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
+                    message: "Envoi en cours...", context: context));
                 List<String> parts = birthdate.split('/');
                 String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
                 final birth = DateTime.parse(americanDate);
-                final integerDate = (birth.millisecondsSinceEpoch / 1000).round();
+                final integerDate =
+                    (birth.millisecondsSinceEpoch / 1000).round();
                 final Map<String, Object> body = {
                   "email": email,
                   "medical_info": {
-                      "name": name,
-                      "firstname": lastname,
-                      "birthdate": integerDate,
-                      "sex": sexe,
-                      "weight": int.parse(weight),
-                      "height": int.parse(height),
-                      "primary_doctor_id": primaryDoctorId,
-                      "medical_antecedents": traitments,
-                      "onboarding_status": "DONE",
+                    "name": name,
+                    "firstname": lastname,
+                    "birthdate": integerDate,
+                    "sex": sexe,
+                    "weight": int.parse(weight),
+                    "height": int.parse(height),
+                    "primary_doctor_id": primaryDoctorId,
+                    "medical_antecedents": traitments,
+                    "onboarding_status": "DONE",
                   },
                 };
                 var reponse = await addPatientService(context, body);
                 if (reponse == true) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
-                      message: "Patient ajouté avec succès", context: context));
-                      widget.refresh();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SuccessLoginSnackBar(
+                          message: "Patient ajouté avec succès",
+                          context: context));
+                  widget.refresh();
                 } else {
                   ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(

@@ -20,7 +20,7 @@ Future<List<dynamic>> getAppointments() async {
   );
   if (response.statusCode == 200) {
     var tempAp = jsonDecode(response.body)['appointments'];
-    
+
     return tempAp;
   }
   if (response.statusCode != 200) {

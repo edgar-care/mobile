@@ -27,7 +27,7 @@ class _CustomListRdvState extends State<CustomListRdv> {
           tempAp[i]['cancelation_reason'] == "" &&
           tempAp[i]['start_date'] >=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-          bAppointment.add(tempAp[i]);
+        bAppointment.add(tempAp[i]);
       }
     }
   }

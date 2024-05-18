@@ -1,6 +1,6 @@
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class PatientInfoCard extends StatefulWidget {
@@ -18,61 +18,42 @@ class PatientInfoCard extends StatefulWidget {
 class _PatientInfoCardState extends State<PatientInfoCard> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.80,
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child: Wrap(
-        alignment: WrapAlignment.start,
         spacing: 8,
         runSpacing: 8,
-        direction: Axis.horizontal,
+        runAlignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.start,
         children: [
           for (var i = 0; i < widget.tmpTraitments.length; i++)
-            Card(
-              elevation: 0,
-              margin: const EdgeInsets.all(0),
-              color: AppColors.blue50,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(
-                  color: AppColors.blue200,
-                  width: 2,
-                ),
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  if (widget.tmpTraitments[i].isNotEmpty) {
-                    WoltModalSheet.show<void>(
-                      context: context,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          infoTraitement(
-                            context,
-                            widget.tmpTraitments[i],
-                          ),
-                        ];
-                      },
-                    );
-                  }
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(
-                        widget.tmpTraitments[i]['name'],
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 12,
-                        ),
+            IntrinsicWidth(
+                child: GestureDetector(
+              onTap: () {
+                if (widget.tmpTraitments[i]['treatments'].isEmpty) {
+                  return;
+                }
+                WoltModalSheet.show<void>(
+                  context: context,
+                  pageListBuilder: (modalSheetContext) {
+                    return [
+                      infoTraitement(
+                        context,
+                        widget.tmpTraitments[i],
                       ),
-                    ],
-                  ),
-                ),
+                    ];
+                  },
+                );
+              },
+              child: CardTraitementSmall(
+                name: widget.tmpTraitments[i]['name'],
+                isEnCours: widget.tmpTraitments[i]['treatments'].isEmpty
+                    ? false
+                    : true,
+                withDelete: false,
+                onTap: () {},
               ),
-            )
+            )),
         ],
       ),
     );

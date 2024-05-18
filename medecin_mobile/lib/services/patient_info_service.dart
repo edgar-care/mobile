@@ -6,6 +6,7 @@ import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId() async {
@@ -76,10 +77,26 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
       'poids': (data['medical_folder']['weight']).toString(),
       'medecin_traitant':
           data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
-        if(data['medical_folder']['medical_antecedents'] == null)
-          'medical_antecedents': []
-         else 
-          'medical_antecedents': data['medical_folder']['medical_antecedents'],
+      'medical_antecedents':
+          data['medical_folder']['medical_antecedents'] == null
+              ? []
+              : data['medical_folder']['medical_antecedents']
+                  .map((antecedent) => {
+                        'name': antecedent['name'],
+                        'treatments': antecedent['medicines'] == null
+                            ? []
+                            : antecedent['medicines']
+                                .map((medicine) => {
+                                      'id': medicine['id'],
+                                      'quantity': medicine['quantity'],
+                                      'period': medicine['period'],
+                                      'day': medicine['day'],
+                                      'medicine_id': medicine['medicine_id']
+                                    })
+                                .toList(),
+                        'still_relevant': antecedent['still_relevant']
+                      })
+                  .toList(),
     };
   }
 }
@@ -128,6 +145,7 @@ Future putInformationPatient(
   final url = '${dotenv.env['URL']}doctor/patient/$id';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  Logger().d(body);
   final response = await http.put(
     Uri.parse(url),
     body: jsonEncode(body),
@@ -138,8 +156,7 @@ Future putInformationPatient(
     populateInfoMedical(jsonDecode(body));
     return true;
     //modifié avec success
-  }
-  else {
+  } else {
     return false;
   }
 }
