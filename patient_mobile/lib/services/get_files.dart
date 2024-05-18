@@ -68,6 +68,7 @@ Future<Object?> postDocument(
 
   final response = await request.send();
   if (response.statusCode == 201) {
+    Logger().i('Document uploaded');
     final body = await response.stream.bytesToString();
     return jsonDecode(body);
   } else {

@@ -28,15 +28,17 @@ class CardDocument extends StatefulWidget {
   String id;
   String url;
   Function updatedata;
-  CardDocument(
-      {super.key,
-      required this.typeDeDocument,
-      required this.nomDocument,
-      required this.nameDoctor,
-      required this.isfavorite,
-      required this.id,
-      required this.url,
-      required this.updatedata});
+
+  CardDocument({
+    super.key,
+    required this.typeDeDocument,
+    required this.nomDocument,
+    required this.nameDoctor,
+    required this.isfavorite,
+    required this.id,
+    required this.url,
+    required this.updatedata,
+  });
 
   @override
   State<CardDocument> createState() => _CardDocumentState();
@@ -58,108 +60,107 @@ class _CardDocumentState extends State<CardDocument> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.blue200, width: 2),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.blue200, width: 2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              changeFavorite(widget.id);
+              setState(() {
+                widget.isfavorite = !widget.isfavorite;
+              });
+            },
+            child: Container(
+              child: widget.isfavorite
+                  ? const Icon(Icons.star, color: AppColors.blue700)
+                  : const Icon(Icons.star_border, color: AppColors.blue300),
+            ),
           ),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            GestureDetector(
-              onTap: () {
-                changeFavorite(widget.id);
-                setState(() {
-                  widget.isfavorite = !widget.isfavorite;
-                });
-              },
-              child: Container(
-                child: widget.isfavorite
-                    ? const Icon(Icons.star, color: AppColors.blue700)
-                    : const Icon(Icons.star_border, color: AppColors.blue300),
-              ),
+          const SizedBox(width: 8),
+          Container(
+            width: 4,
+            height: 50,
+            decoration: BoxDecoration(
+              color: documentColor(widget.typeDeDocument),
+              borderRadius: BorderRadius.circular(4),
             ),
-            const SizedBox(width: 8),
-            Container(
-              width: 4,
-              height: 50,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: documentColor(widget.typeDeDocument),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.nomDocument,
-                      style: const TextStyle(
-                        color: AppColors.black,
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    SizedBox(
-                      width: constraints.maxWidth * 0.7,
-                      child: Text(
-                        "Ajouté par ${widget.nameDoctor}",
-                        style: const TextStyle(
-                          color: AppColors.black,
-                          fontFamily: 'Poppins',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            openPatient(
-                              context,
-                              pageIndex,
-                              widget.url,
-                              widget.id,
-                              widget.nomDocument,
-                            ),
-                            modifierPatient(
-                                context,
-                                pageIndex,
-                                widget.nomDocument,
-                                widget.id,
-                                widget.updatedata),
-                            deletePatient(context, pageIndex, widget.id,
-                                widget.updatedata),
-                          ];
-                        });
-                  },
-                  child: const Icon(
-                    BootstrapIcons.three_dots_vertical,
+                Text(
+                  widget.nomDocument[0].toUpperCase() +
+                      widget.nomDocument.substring(1),
+                  style: const TextStyle(
                     color: AppColors.black,
-                    size: 24,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Ajouté par ${widget.nameDoctor}",
+                  style: const TextStyle(
+                    color: AppColors.black,
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-          ]),
-        );
-      },
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              WoltModalSheet.show<void>(
+                context: context,
+                pageIndexNotifier: pageIndex,
+                pageListBuilder: (modalSheetContext) {
+                  return [
+                    openPatient(
+                      context,
+                      pageIndex,
+                      widget.url,
+                      widget.id,
+                      widget.nomDocument,
+                    ),
+                    modifierPatient(
+                      context,
+                      pageIndex,
+                      widget.nomDocument,
+                      widget.id,
+                      widget.updatedata,
+                    ),
+                    deletePatient(
+                      context,
+                      pageIndex,
+                      widget.id,
+                      widget.updatedata,
+                    ),
+                  ];
+                },
+              );
+            },
+            child: const Icon(
+              BootstrapIcons.three_dots_vertical,
+              color: AppColors.black,
+              size: 24,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -310,9 +311,10 @@ WoltModalSheetPage modifierPatient(
                   msg: const Text('Valider'),
                   widthBtn: widthBtn,
                   onPressed: () {
-                    modifyDocument(id, name);
-                    pageIndex.value = 0;
-                    updatedata(context);
+                    modifyDocument(id, name).then((value) {
+                      updatedata();
+                      pageIndex.value = 0;
+                    });
                   }),
             ],
           ),
@@ -396,10 +398,11 @@ WoltModalSheetPage deletePatient(
                   msg: const Text('Supprimer'),
                   widthBtn: widthBtn,
                   onPressed: () {
-                    deleteDocument(id);
-                    pageIndex.value = 0;
-                    Navigator.pop(context);
-                    updatedata(context);
+                    deleteDocument(id).then((value) {
+                      pageIndex.value = 0;
+                      Navigator.pop(context);
+                      updatedata();
+                    });
                   }),
             ],
           ),
