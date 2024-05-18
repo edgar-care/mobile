@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/plain_button.dart';
 import 'package:edgar/widget/pdf_card.dart';
-import 'package:logger/logger.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

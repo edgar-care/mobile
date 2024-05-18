@@ -1,3 +1,4 @@
+import 'package:edgar/services/doctor.dart';
 import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/services/medecine.dart';
 import 'package:edgar/styles/colors.dart';
@@ -22,6 +23,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
     with SingleTickerProviderStateMixin {
   Map<String, dynamic> infoMedical = {};
   String birthdate = '';
+  String doctorName = '';
 
   Future<void> fetchData() async {
     await getMedicalFolder().then((value) {
@@ -35,6 +37,39 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             message: "Error on fetching name", context: context));
       }
     });
+    doctorName = await getNameDoctor();
+  }
+
+  Future<String> getNameDoctor() async {
+    try {
+      final value = await getAllDoctor();
+      if (value.isNotEmpty) {
+        for (var doctor in value) {
+          if (doctor['id'] == infoMedical['primary_doctor_id']) {
+            if (doctor['name'] != null) {
+              return 'Dr.${doctor['name']}';
+            } else {
+              return 'Dr.Edgar';
+            }
+          }
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+            message: "Error on fetching name",
+            // ignore: use_build_context_synchronously
+            context: context));
+        return 'test';
+      }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+          message: "Error on fetching name",
+          // ignore: use_build_context_synchronously
+          context: context));
+      return 'test';
+    }
+    return 'Dr.Edgar'; // default return value if no doctor matches
   }
 
   @override
@@ -84,7 +119,9 @@ class _InformationPersonnelState extends State<InformationPersonnel>
               );
             } else {
               return CardInformationPersonnel(
-                  infoMedical: infoMedical, birthdate: birthdate);
+                  infoMedical: infoMedical,
+                  birthdate: birthdate,
+                  doctorName: doctorName);
             }
           },
         ),
@@ -103,8 +140,12 @@ class _InformationPersonnelState extends State<InformationPersonnel>
 class CardInformationPersonnel extends StatefulWidget {
   final String birthdate;
   final Map<String, dynamic> infoMedical;
+  final String doctorName;
   const CardInformationPersonnel(
-      {super.key, required this.infoMedical, required this.birthdate});
+      {super.key,
+      required this.infoMedical,
+      required this.birthdate,
+      required this.doctorName});
 
   @override
   State<CardInformationPersonnel> createState() =>
@@ -166,8 +207,9 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
             const SizedBox(height: 8),
             ElementInfo(
               title: 'Médecin traitant: ',
-              value: widget.infoMedical['primary_doctor_id'],
+              value: widget.doctorName,
             ),
+            const SizedBox(height: 8),
             const Text(
               'Antécédants médicaux et sujets de santé:',
               style: TextStyle(
