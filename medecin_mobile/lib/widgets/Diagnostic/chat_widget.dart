@@ -43,7 +43,7 @@ class ChatList extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           )),
     );

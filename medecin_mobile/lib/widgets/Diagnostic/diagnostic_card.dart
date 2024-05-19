@@ -58,9 +58,11 @@ class DiagnosticCard extends StatelessWidget {
                   onTap: () {
                     WoltModalSheet.show<void>(
                        onModalDismissedWithBarrierTap: () {
+                        Navigator.pop(context);
                         pageIndexNotifier.value = 0;
                       },
                       onModalDismissedWithDrag: () {
+                        Navigator.pop(context);
                         pageIndexNotifier.value = 0;
                       },
                       pageIndexNotifier: pageIndexNotifier,
@@ -85,7 +87,7 @@ class DiagnosticCard extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0),
                       child: Row(children: [
                         Container(
-                          height: 50,
+                          height: 39,
                           width: 4,
                           decoration: BoxDecoration(
                             color: color,
@@ -96,21 +98,19 @@ class DiagnosticCard extends StatelessWidget {
                           width: 8,
                         ),
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                   "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
                                   style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold)),
-                              const SizedBox(
-                                height: 8,
-                              ),
                               Row(children: [
                                 Text(DateFormat('yMd', 'fr').format(start),
                                     style: const TextStyle(
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins')),
                                 const SizedBox(
                                   width: 4,
@@ -118,7 +118,7 @@ class DiagnosticCard extends StatelessWidget {
                                 const Text("-",
                                     style: TextStyle(
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins')),
                                 const SizedBox(
                                   width: 4,
@@ -127,7 +127,7 @@ class DiagnosticCard extends StatelessWidget {
                                   Text(DateFormat('jm', 'fr').format(start),
                                       style: const TextStyle(
                                           fontSize: 12,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: 'Poppins')),
                                   const SizedBox(
                                     width: 2,
@@ -142,7 +142,7 @@ class DiagnosticCard extends StatelessWidget {
                                   Text(DateFormat('jm', 'fr').format(end),
                                       style: const TextStyle(
                                           fontSize: 12,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: 'Poppins')),
                                 ]),
                               ])
@@ -165,6 +165,7 @@ class DiagnosticCard extends StatelessWidget {
                   onTap: () {
                     WoltModalSheet.show<void>(
                       onModalDismissedWithBarrierTap: () {
+
                         pageIndexNotifier.value = 0;
                       },
                       onModalDismissedWithDrag: () {
@@ -294,14 +295,14 @@ class DiagnosticCard extends StatelessWidget {
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.w700),
+                    fontWeight: FontWeight.w600),
               ),
               Text(
                 '$dateString de $timeStringStart à $timeStringEnd',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.w700),
+                    fontWeight: FontWeight.w600),
               ),
             ]),
             const SizedBox(height: 16),
@@ -706,8 +707,8 @@ class DiagnosticCard extends StatelessWidget {
                         'Retranscription du chat',
                         style: TextStyle(
                             color: AppColors.black,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
                             fontFamily: 'Poppins'),
                       ),
                     ],
@@ -914,7 +915,7 @@ class BodySummary extends StatelessWidget {
                     'Diagnostic',
                     style: TextStyle(
                         color: AppColors.black,
-                        fontSize: 16.0,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Poppins'),
                   ),

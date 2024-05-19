@@ -46,7 +46,7 @@ class _DiagnosticState extends State<Diagnostic> {
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.white),
               ),
             ]),
@@ -69,7 +69,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('En attente', style: TextStyle( fontWeight: FontWeight.w600, fontSize: 12)),
+                      msg: const Text('En attente'),
                       onPressed: () {
                         updateSelection(0);
                       },
@@ -85,7 +85,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('Validés', style: TextStyle( fontWeight: FontWeight.w600, fontSize: 12)),
+                      msg: const Text('Validés'),
                       onPressed: () {
                         updateSelection(1);
                       },
@@ -101,7 +101,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('Refusés', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                      msg: const Text('Refusés'),
                       onPressed: () {
                         updateSelection(2);
                       },

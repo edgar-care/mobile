@@ -46,6 +46,9 @@ flutter:
         - asset: assets/font/Poppins/Poppins-Regular.ttf
         - asset: assets/font/Poppins/Poppins-Medium.ttf
         - asset: assets/font/Poppins/Poppins-Italic.ttf
+        - asset: assets/font/Poppins/Poppins-Bold.ttf
+        - asset: assets/font/Poppins/Poppins-SemiBold.ttf
+        - asset: assets/font/Poppins/Poppins-Light.ttf
   assets:
     - assets/images/logo/
     - assets/images/utils/
