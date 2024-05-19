@@ -1,3 +1,4 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/models/dashboard.dart';
 import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/styles/colors.dart';
@@ -5,6 +6,7 @@ import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -44,6 +46,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
+        Logger().i('infoMedical: $infoMedical');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
             message: "Error on fetching name", context: context));
@@ -88,12 +91,16 @@ class _NavbarPLusState extends State<NavbarPLus> {
                           ),
                         );
                       },
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.arrow_back_ios,
-                              color: Colors.black, size: 16),
-                          SizedBox(width: 8),
-                          Text('Revenir en arrière',
+                          SvgPicture.asset(
+                            'assets/images/utils/arrowNavbar.svg',
+                            // ignore: deprecated_member_use
+                            color: AppColors.black,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text('Revenir en arrière',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
@@ -124,47 +131,52 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const Row(
-                                        children: [
-                                          CircularProgressIndicator(
-                                            color: AppColors.white,
-                                            semanticsValue: 'Loading...',
-                                          ),
-                                          SizedBox(width: 16),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 80,
-                                                height: 4,
-                                                child: LinearProgressIndicator(
-                                                  backgroundColor:
-                                                      AppColors.blue700,
-                                                  minHeight: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          AppColors.white),
+                                      return const SizedBox(
+                                        height: 48,
+                                        child: Row(
+                                          children: [
+                                            CircularProgressIndicator(
+                                              color: AppColors.white,
+                                              semanticsValue: 'Loading...',
+                                            ),
+                                            SizedBox(width: 16),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 80,
+                                                  height: 4,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    backgroundColor:
+                                                        AppColors.blue700,
+                                                    minHeight: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            AppColors.white),
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(height: 8),
-                                              SizedBox(
-                                                width: 120,
-                                                height: 4,
-                                                child: LinearProgressIndicator(
-                                                  backgroundColor:
-                                                      AppColors.blue700,
-                                                  minHeight: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          AppColors.white),
+                                                SizedBox(height: 8),
+                                                SizedBox(
+                                                  width: 120,
+                                                  height: 4,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    backgroundColor:
+                                                        AppColors.blue700,
+                                                    minHeight: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            AppColors.white),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          )
-                                        ],
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       );
                                     } else {
                                       return Row(
@@ -188,23 +200,38 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "${infoMedical['name']} ${infoMedical['firstname']}",
+                                                "${infoMedical['name']} ${infoMedical['firstname'].toUpperCase()}",
                                                 style: const TextStyle(
-                                                  fontSize: 20,
+                                                  fontSize: 14,
                                                   color: AppColors.white,
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily: "Poppins",
                                                 ),
                                               ),
-                                              Text(
-                                                'Né le $birthdate',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: AppColors.white,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: "Poppins",
-                                                ),
-                                              ),
+                                              if (infoMedical['sex'] ==
+                                                      "MALE" ||
+                                                  infoMedical['sex'] ==
+                                                      'OTHER') ...[
+                                                Text(
+                                                  'Né le $birthdate',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.white,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                )
+                                              ] else ...[
+                                                Text(
+                                                  'Née le $birthdate',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.white,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                )
+                                              ]
                                             ],
                                           ),
                                         ],
@@ -238,7 +265,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/MedicalFolder.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 20,
+                                        height: 24,
                                       ),
                                       title: 'Dossier médical',
                                       onTap: () {
@@ -252,7 +279,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/Messagerie.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 20,
+                                        height: 24,
                                       ),
                                       title: 'Messagerie',
                                       onTap: () {
@@ -284,9 +311,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/ArrowRightCircle.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 20,
+                                        height: 24,
                                       ),
-                                      title: 'Deconnexion',
+                                      title: 'Déconnexion',
                                       onTap: () async {
                                         SharedPreferences prefs =
                                             await SharedPreferences
@@ -341,7 +368,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
           color: AppColors.white,
           border: Border(
