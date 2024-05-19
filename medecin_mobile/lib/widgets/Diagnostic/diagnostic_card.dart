@@ -98,7 +98,6 @@ class DiagnosticCard extends StatelessWidget {
                           width: 8,
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -110,6 +109,7 @@ class DiagnosticCard extends StatelessWidget {
                                 Text(DateFormat('yMd', 'fr').format(start),
                                     style: const TextStyle(
                                         fontSize: 12,
+                                        height: 2,
                                         fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins')),
                                 const SizedBox(
