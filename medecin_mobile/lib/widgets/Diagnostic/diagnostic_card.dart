@@ -57,6 +57,12 @@ class DiagnosticCard extends StatelessWidget {
               child: InkWell(
                   onTap: () {
                     WoltModalSheet.show<void>(
+                       onModalDismissedWithBarrierTap: () {
+                        pageIndexNotifier.value = 0;
+                      },
+                      onModalDismissedWithDrag: () {
+                        pageIndexNotifier.value = 0;
+                      },
                       pageIndexNotifier: pageIndexNotifier,
                       context: context,
                       pageListBuilder: (modalSheetContext) {

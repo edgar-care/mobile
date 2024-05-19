@@ -30,18 +30,11 @@ class ProgressBarDisease extends StatelessWidget {
 
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.15),
-            height: 6,
-            child: LinearProgressIndicator(
-              value: value / 100, // percent filled
-              valueColor: AlwaysStoppedAnimation<Color>(barColor),
-              backgroundColor: backgroundColor,
-            ),
-          ),
+        ProgressBar(
+          max: 100,
+          current: value.toDouble(),
+          color: barColor,
+          backgroundColor: backgroundColor,
         ),
         const SizedBox(width: 8),
         SizedBox(
@@ -70,4 +63,47 @@ class ProgressBarDisease extends StatelessWidget {
       ],
     );
   }
+}
+
+class ProgressBar extends StatelessWidget {
+ final double max;
+ final double current;
+ final Color color;
+ final Color backgroundColor;
+
+ const ProgressBar(
+  {super.key,
+  required this.max,
+  required this.current,
+  required this.color,
+  required this.backgroundColor});
+  @override
+  Widget build(BuildContext context) {
+  return LayoutBuilder(
+  builder: (_, boxConstraints) {
+    var percent = (current / max) * MediaQuery.of(context).size.width * 0.15;
+    return Stack(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.15,
+          height: 7,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(35),
+          ),
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          width: percent,
+          height: 7,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(35),
+          ),
+        ),
+      ],
+    );
+  },
+);
+}
 }
