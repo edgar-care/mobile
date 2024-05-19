@@ -9,175 +9,169 @@ import 'package:flutter/material.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AppointementPage extends StatefulWidget {
-  const AppointementPage({super.key});
+class AppointmentPage extends StatefulWidget {
+  const AppointmentPage({super.key});
 
   @override
-  State<AppointementPage> createState() => _AppointementPageState();
+  State<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-class _AppointementPageState extends State<AppointementPage> {
+class _AppointmentPageState extends State<AppointmentPage> {
+  List<Appointment> appointments = [];
+  List<Map<Doctor, String>> allDoctors = [];
+  List<Map<Doctor, String>> filteredDoctors = [];
+  List<dynamic> doctorsTemp = [];
+  String selectedId = '';
+  int currentPage = 0;
+  int totalPages = 0;
+  bool isLoading = false; // Ajout de la variable d'état pour le chargement
+
   @override
-  initState() {
+  void initState() {
     super.initState();
     fetchData();
   }
 
-  List<Appointment> appointements = [];
-  List<Map<Doctor, String>> allDoctors = [];
-  List<Map<Doctor, String>> allDoctorsFilter = [];
-
-  List<dynamic> doctorstmp = [];
-
-  String idSelected = '';
-
-  int currentPage = 0;
-  int totalPages = 30;
-
   Future<void> fetchData() async {
-    var value = await getAllDoctor();
-    if (value.isNotEmpty) {
+    try {
       setState(() {
-        doctorstmp = value;
+        isLoading = true; // Commence le chargement
       });
-      getAllDoctors();
-      get3Appointement(currentPage);
+      var value = await getAllDoctor();
+      if (value.isNotEmpty) {
+        setState(() {
+          doctorsTemp = value;
+        });
+        initializeDoctors();
+        await fetchAppointments(
+            currentPage); // Attendre la récupération des rendez-vous
+      }
+    } catch (e) {
+      Logger().e("Error fetching data: $e");
+    } finally {
+      setState(() {
+        isLoading = false; // Termine le chargement
+      });
     }
   }
 
-  void get3Appointement(int currentPage) async {
+  void initializeDoctors() {
+    for (var element in doctorsTemp) {
+      var id = element['id'];
+      Doctor? doctor = findDoctorById(doctorsTemp, id);
+      if (doctor != null) {
+        setState(() {
+          allDoctors.add({doctor: id});
+        });
+      }
+    }
     setState(() {
-      appointements = [];
+      filteredDoctors = allDoctors;
+      totalPages = (filteredDoctors.length / 2).ceil();
+    });
+  }
+
+  Future<void> fetchAppointments(int currentPage) async {
+    setState(() {
+      appointments = [];
+      isLoading =
+          true;
     });
     for (var i = 0; i < 2; i++) {
-      if (2 * currentPage + i < allDoctorsFilter.length) {
-        await getAppointementDoctor(
-            allDoctorsFilter[2 * currentPage + i].values.first);
+      if (2 * currentPage + i < filteredDoctors.length) {
+        await fetchDoctorAppointment(
+            filteredDoctors[2 * currentPage + i].values.first);
       } else {
         break;
       }
     }
-  }
-
-  String getDate(String date) {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(date) * 1000);
-    var formatter = DateFormat('dd/MM/yyyy');
-    return formatter.format(dateTime);
-  }
-
-  String getHour(String date) {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(date) * 1000);
-    var formatter = DateFormat('HH:mm');
-    return formatter.format(dateTime);
-  }
-
-  void getAllDoctors() {
-    for (var element in doctorstmp) {
-      var id = element['id'];
-      Doctor? doctor = findDoctorById(doctorstmp, id);
-      setState(() {
-        if (doctor != null) {
-          allDoctors.add({doctor: id});
-        }
-      });
-    }
     setState(() {
-      allDoctorsFilter = allDoctors;
-      totalPages = (allDoctorsFilter.length / 2 - 1).ceil();
-      if (allDoctorsFilter.length % 2 != 0) {
-        totalPages++;
-      }
+      isLoading =
+          false; // Termine le chargement après la récupération des rendez-vous
     });
   }
 
-  Future<void> getAppointementDoctor(String id) async {
-    await getAppoitementDoctorById(id).then((value) {
+  Future<void> fetchDoctorAppointment(String id) async {
+    try {
+      var value = await getAppoitementDoctorById(id);
       if (value.isEmpty) {
-        Doctor? doctor = findDoctorById(doctorstmp, id);
-        Appointment appointement = Appointment(
-          doctor: doctor != null ? doctor.name : 'Edgar',
-          address: doctor != null
-              ? doctor.address
-              : Address(
-                  city: 'Lyon',
-                  country: 'France',
-                  zipCode: '69000',
-                  street: '1 rue du Paradis',
-                ),
-          dates: [],
-        );
-        setState(() {
-          appointements.add(appointement);
-        });
-        return;
+        addEmptyAppointment(id);
+      } else if (value.containsKey('rdv')) {
+        addAppointmentFromResponse(id, value);
       }
-      if (value.isNotEmpty && value.containsKey('rdv')) {
-        Appointment? appointement = transformAppointments(doctorstmp, value);
-        if (appointement != null) {
-          setState(() {
-            appointements.add(appointement);
-          });
-        }
-        if (appointement == null) {
-          Doctor? doctor = findDoctorById(doctorstmp, id);
-          Appointment appointement = Appointment(
-            doctor: doctor!.name == "" ? 'Edgar' : doctor.name,
-            address: Address(
-              city: doctor.address.city == "" ? 'Lyon' : doctor.address.city,
-              country: doctor.address.country == ""
-                  ? 'France'
-                  : doctor.address.country,
-              zipCode: doctor.address.zipCode == ""
-                  ? '69000'
-                  : doctor.address.zipCode,
-              street: doctor.address.street == ""
-                  ? '1 rue du Paradis'
-                  : doctor.address.street,
-            ),
-            dates: [],
-          );
-          setState(() {
-            appointements.add(appointement);
-          });
-        }
-      }
-    });
+    } catch (e) {
+      Logger().e("Error fetching data: $e");
+    }
   }
 
-  void updateAppointementSelected(String id) {
+  void addEmptyAppointment(String id) {
+    Doctor? doctor = findDoctorById(doctorsTemp, id);
+    Logger().i("Doctor: ${doctor?.address.city}");
+    Appointment appointment = Appointment(
+      doctor:
+          (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
+              ? "Dr. Edgar"
+              : "Dr. ${doctor!.name} ${doctor.firstname}",
+      address: Address(
+        street: doctor?.address.street.isEmpty ?? true
+            ? '1 rue de la Paix'
+            : doctor!.address.street,
+        zipCode: doctor?.address.zipCode.isEmpty ?? true
+            ? '69000'
+            : doctor!.address.zipCode,
+        country: doctor?.address.country.isEmpty ?? true
+            ? 'France'
+            : doctor!.address.country,
+        city: doctor?.address.city.isEmpty ?? true
+            ? 'Lyon'
+            : doctor!.address.city,
+      ),
+      dates: [],
+    );
     setState(() {
-      if (idSelected == id) {
-        idSelected = '';
-        return;
-      }
-      idSelected = id;
+      appointments.add(appointment);
     });
   }
 
-  void filterAppointementDoctor(String name) {
+  void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
+    Appointment? appointment = transformAppointments(doctorsTemp, value);
+
+    Logger().i("Appointment: $appointment");
+    if (appointment != null) {
+      setState(() {
+        appointments.add(appointment);
+      });
+    } else {
+      addEmptyAppointment(id);
+    }
+  }
+
+  void updateSelectedAppointment(String id) {
+    setState(() {
+      selectedId = (selectedId == id) ? '' : id;
+    });
+    Logger().i("Selected id: $selectedId");
+  }
+
+  void filterDoctors(String name) {
     setState(() {
       currentPage = 0;
-      allDoctorsFilter = allDoctors
+      filteredDoctors = allDoctors
           .where((element) => element.keys.first.name.contains(name))
           .toList();
-      totalPages = (allDoctorsFilter.length / 2 - 1).floor();
-      if (allDoctorsFilter.length % 2 != 0) {
-        totalPages++;
-      }
-      Logger().i('totalPages: $totalPages');
-      Logger().i('allDoctorsFilter: ${allDoctorsFilter.length}');
+      totalPages = (filteredDoctors.length / 2).ceil();
     });
-    get3Appointement(currentPage);
+    fetchAppointments(currentPage);
   }
 
   void onPageChanged(int page) {
     setState(() {
       currentPage = page;
     });
-    get3Appointement(currentPage);
+    fetchAppointments(currentPage);
   }
 
   @override
@@ -195,76 +189,80 @@ class _AppointementPageState extends State<AppointementPage> {
                   "Vous pouvez maintenant sélectionner un rendez-vous chez un médecin.",
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
                     color: AppColors.black,
                   ),
                   textAlign: TextAlign.left,
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
+                const SizedBox(height: 16),
                 CustomFieldSearch(
                   label: "Rechercher par le nom du médecin",
                   icon: SvgPicture.asset("assets/images/utils/search.svg"),
                   keyboardType: TextInputType.text,
                   onValidate: (value) {
-                    filterAppointementDoctor(value);
+                    filterDoctors(value);
                   },
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
+                const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: appointements.length,
-                    itemBuilder: (context, index) {
-                      return CardAppointementDoctorHour(
-                        appointements: appointements[index],
-                        updateId: updateAppointementSelected,
-                        idSelected: idSelected,
-                      );
-                    },
-                  ),
+                  child: isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                          color: AppColors.blue700,
+                          strokeWidth: 2,
+                        )) // Afficher l'indicateur de chargement
+                      : ListView.builder(
+                          itemCount: appointments.length,
+                          itemBuilder: (context, index) {
+                            return CardAppointementDoctorHour(
+                              appointements: appointments[index],
+                              updateId: updateSelectedAppointment,
+                              idSelected: selectedId,
+                            );
+                          },
+                        ),
                 ),
                 Pagination(
-                    currentPage: currentPage,
-                    totalPages: totalPages,
-                    onPageChanged: onPageChanged),
-                const SizedBox(
-                  height: 16,
+                  currentPage: currentPage,
+                  totalPages: totalPages,
+                  onPageChanged: onPageChanged,
                 ),
+                const SizedBox(height: 16),
                 GestureDetector(
                   onTap: () async {
-                    if (idSelected.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                    if (selectedId.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        ErrorLoginSnackBar(
                           message:
                               "Veuillez sélectionner un rendez-vous avant de continuer.",
-                          context: context));
+                          context: context,
+                        ),
+                      );
                     } else {
-                      await postAppointementId(idSelected, idSelected)
-                          .then((value) {
-                        if (value) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SuccessLoginSnackBar(
-                                  message:
-                                      "Votre rendez-vous a bien été pris en compte.",
-                                  context: context))
-                              .closed
-                              .then((reason) {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? sessionId = prefs.getString('sessionId');
+                      Logger().i("session_id: $sessionId");
+
+                      await postAppointementId(selectedId, sessionId!).then(
+                        (value) {
+                          if (value) {
                             Navigator.pushNamed(
-                                // ignore: use_build_context_synchronously
-                                context,
-                                '/simulation/confirmation');
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                              context,
+                              '/simulation/confirmation',
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
                               ErrorLoginSnackBar(
-                                  message:
-                                      "Une erreur est survenue lors de la prise de rendez-vous.",
-                                  context: context));
-                        }
-                      });
+                                message:
+                                    "Une erreur s'est produite lors de la validation du rendez-vous.",
+                                context: context,
+                              ),
+                            );
+                          }
+                        },
+                      );
                     }
                   },
                   child: Container(

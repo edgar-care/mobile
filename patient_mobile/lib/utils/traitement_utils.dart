@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class Hour {
   final String hour;
@@ -65,20 +66,27 @@ Appointment _extractDayHour(Appointment appointment,
   String startDateString = appointmentData['start_date'].toString();
   DateFormat dayFormat = DateFormat('dd/MM/yyyy');
   DateFormat timeFormat = DateFormat('HH:mm');
-  String startDay = dayFormat.format(
-      DateTime.fromMillisecondsSinceEpoch(int.parse(startDateString) * 1000));
-  String startHour = timeFormat.format(
-      DateTime.fromMillisecondsSinceEpoch(int.parse(startDateString) * 1000));
+  DateTime appointmentDate =
+      DateTime.fromMillisecondsSinceEpoch(int.parse(startDateString) * 1000);
+  String startDay = dayFormat.format(appointmentDate);
+  String startHour = timeFormat.format(appointmentDate);
 
-  appointment.dates.where((element) => element.day == startDay).isEmpty
-      ? appointment.dates.add(DayHour(
+  DateTime today = DateTime.now();
+
+  if (appointmentDate.isAfter(today) ||
+      appointmentDate.isAtSameMomentAs(today)) {
+    if (appointment.dates.where((element) => element.day == startDay).isEmpty) {
+      appointment.dates.add(DayHour(
           day: startDay,
-          hour: [Hour(hour: startHour, id: appointmentData['id'])]))
-      : appointment.dates
+          hour: [Hour(hour: startHour, id: appointmentData['id'])]));
+    } else {
+      appointment.dates
           .where((element) => element.day == startDay)
           .first
           .hour
           .add(Hour(hour: startHour, id: appointmentData['id']));
+    }
+  }
 
   return appointment;
 }
@@ -135,34 +143,4 @@ Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
     }
   }
   return null; // Doctor not found
-}
-
-List<Map<String, dynamic>> extractAppointmentDatesWithHours(
-    List<Map<String, dynamic>>? datesList) {
-  List<Map<String, dynamic>> formattedDates = [];
-
-  if (datesList == null || datesList.isEmpty) {
-    return formattedDates; // Return empty list if datesList is null or empty
-  }
-
-  for (Map<String, dynamic> dateMap in datesList) {
-    String startDateString = dateMap['start_date'].toString();
-    DateFormat dayFormat = DateFormat('dd/MM/yyyy');
-    DateFormat timeFormat = DateFormat('HH:mm');
-    String startDay = dayFormat.format(
-        DateTime.fromMillisecondsSinceEpoch(int.parse(startDateString) * 1000));
-    List<String> formattedHours = [];
-
-    for (String hourString
-        in dateMap.containsKey('hours') ? dateMap['hours'] : []) {
-      formattedHours.add(timeFormat.format(DateTime.parse(hourString)));
-    }
-
-    formattedDates.add({
-      'day': startDay,
-      'hour': formattedHours,
-    });
-  }
-
-  return formattedDates;
 }

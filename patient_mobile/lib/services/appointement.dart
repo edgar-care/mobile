@@ -24,6 +24,7 @@ Future<bool> postAppointementId(String id, String sessionId) async {
     prefs.setString('appointment_end_date', body['rdv']['end_date'].toString());
     return true;
   } else {
+    Logger().e('error: ${response.body}');
     return false;
   }
 }
