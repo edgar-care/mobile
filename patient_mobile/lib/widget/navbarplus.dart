@@ -1,4 +1,3 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/models/dashboard.dart';
 import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/styles/colors.dart';
@@ -6,7 +5,6 @@ import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -46,7 +44,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
-        Logger().i('infoMedical: $infoMedical');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
             message: "Error on fetching name", context: context));
