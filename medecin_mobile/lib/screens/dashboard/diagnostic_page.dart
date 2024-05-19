@@ -42,7 +42,7 @@ class _DiagnosticState extends State<Diagnostic> {
                 width: 16,
               ),
               const Text(
-                "Mes Diagnostics",
+                "Mes diagnostics",
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
@@ -53,7 +53,7 @@ class _DiagnosticState extends State<Diagnostic> {
           ),
         ),
         const SizedBox(
-          height: 16,
+          height: 8,
         ),
         ValueListenableBuilder<int>(
             valueListenable: selected,
@@ -69,7 +69,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('En attente'),
+                      msg: const Text('En attente', style: TextStyle( fontWeight: FontWeight.w600, fontSize: 12)),
                       onPressed: () {
                         updateSelection(0);
                       },
@@ -85,7 +85,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('Validés'),
+                      msg: const Text('Validés', style: TextStyle( fontWeight: FontWeight.w600, fontSize: 12)),
                       onPressed: () {
                         updateSelection(1);
                       },
@@ -101,7 +101,7 @@ class _DiagnosticState extends State<Diagnostic> {
                           ? Variante.primary
                           : Variante.secondary,
                       size: SizeButton.sm,
-                      msg: const Text('Refusés'),
+                      msg: const Text('Refusés', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                       onPressed: () {
                         updateSelection(2);
                       },

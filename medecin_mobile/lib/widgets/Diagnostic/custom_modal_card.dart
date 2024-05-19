@@ -42,7 +42,8 @@ class CustomModalCard extends StatelessWidget {
               style: const TextStyle(
                   color: AppColors.blue950,
                   fontSize: 16.0,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins'),
             ),
             const Spacer(),
             const Icon(

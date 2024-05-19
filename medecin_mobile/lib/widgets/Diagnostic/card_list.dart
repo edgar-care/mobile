@@ -1,6 +1,7 @@
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/Diagnostic/diagnostic_card.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class DiagnosticList extends StatefulWidget {
@@ -30,6 +31,13 @@ class _DiagnosticListState extends State<DiagnosticList> {
           break;
       }
       bAppointment = await getDiagnostics(status);
+      bAppointment.sort((a, b) { return a['start_date'].compareTo(b['start_date']);});
+    }
+
+    void updateData() {
+      setState(() {
+        loadAppointment();
+      });
     }
 
     return FutureBuilder(
@@ -45,7 +53,7 @@ class _DiagnosticListState extends State<DiagnosticList> {
                   const SizedBox(height: 4),
               itemBuilder: (context, index) {
                 return DiagnosticCard(
-                    rdvInfo: bAppointment[index], type: widget.type);
+                    rdvInfo: bAppointment[index], type: widget.type, refresh: updateData,);
               },
             ));
           }

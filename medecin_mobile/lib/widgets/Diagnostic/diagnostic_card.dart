@@ -8,15 +8,19 @@ import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
 class DiagnosticCard extends StatelessWidget {
   Map<String, dynamic> rdvInfo;
   int type;
-  DiagnosticCard({super.key, required this.rdvInfo, required this.type});
+  Function refresh;
+  DiagnosticCard({super.key, required this.rdvInfo, required this.type, required this.refresh});
 
   ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
   Map<String, dynamic> patientInfo = {};
@@ -138,11 +142,119 @@ class DiagnosticCard extends StatelessWidget {
                                           fontFamily: 'Poppins')),
                                 ]),
                               ])
-                            ])
+                            ]),
+                      const Spacer(),
+                      const Icon(
+                        BootstrapIcons.chevron_right,
+                        size: 16,),
                       ]))));
         } else {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Skeletonizer(
+              enabled: true,
+              child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: AppColors.blue200, width: 2.0),
+              ),
+              child: InkWell(
+                  onTap: () {
+                    WoltModalSheet.show<void>(
+                      onModalDismissedWithBarrierTap: () {
+                        pageIndexNotifier.value = 0;
+                      },
+                      onModalDismissedWithDrag: () {
+                        pageIndexNotifier.value = 0;
+                      },
+                      pageIndexNotifier: pageIndexNotifier,
+                      context: context,
+                      pageListBuilder: (modalSheetContext) {
+                        return [
+                          navModal(
+                              modalSheetContext,
+                              patientInfo["Nom"],
+                              patientInfo["Prenom"],
+                              rdvInfo,
+                              pageIndexNotifier),
+                          validateModal(
+                              modalSheetContext, pageIndexNotifier, rdvInfo),
+                          cancelModal(
+                              modalSheetContext, pageIndexNotifier, rdvInfo),
+                        ];
+                      },
+                    );
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(children: [
+                        Container(
+                          height: 50,
+                          width: 4,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(children: [
+                                Text(DateFormat('yMd', 'fr').format(start),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                const Text("-",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Row(children: [
+                                  Text(DateFormat('jm', 'fr').format(start),
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Poppins')),
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  const Icon(
+                                    BootstrapIcons.arrow_right,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(DateFormat('jm', 'fr').format(end),
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Poppins')),
+                                ]),
+                              ])
+                            ]),
+                      const Spacer(),
+                      const Icon(
+                        BootstrapIcons.chevron_right,
+                        size: 16,),
+                      ]))))
           );
         }
       },
@@ -164,7 +276,6 @@ class DiagnosticCard extends StatelessWidget {
       diagnostic = await getSummary(rdvInfo["session_id"]);
       return true;
     }
-
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -179,19 +290,19 @@ class DiagnosticCard extends StatelessWidget {
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.w700),
               ),
               Text(
                 '$dateString de $timeStringStart à $timeStringEnd',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.w700),
               ),
             ]),
             const SizedBox(height: 16),
             CustomModalCard(
-                text: 'Dossier Médical',
+                text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
                   WoltModalSheet.show(
@@ -233,6 +344,9 @@ class DiagnosticCard extends StatelessWidget {
                     ));
               },
             ),
+            if (rdvInfo['appointment_status'] == 'WAITING_FOR_REVIEW')
+            Column(
+              children: [
             const SizedBox(height: 12),
             Container(height: 2, color: AppColors.blue200),
             const SizedBox(height: 12),
@@ -265,6 +379,7 @@ class DiagnosticCard extends StatelessWidget {
                 pageIndexNotifier.value = 2;
               },
             )
+          ]),
           ]),
         ),
       ),
@@ -347,6 +462,7 @@ class DiagnosticCard extends StatelessWidget {
                       onPressed: () {
                         postDiagValidation(context, rdvInfo['id'], true, '');
                         Navigator.pop(context);
+                        refresh();
                       },
                     ),
                   ),
@@ -399,7 +515,7 @@ class DiagnosticCard extends StatelessWidget {
                 height: 8,
               ),
               const Text(
-                "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
+                "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière.",
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 14,
@@ -410,22 +526,44 @@ class DiagnosticCard extends StatelessWidget {
               const SizedBox(
                 height: 32,
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               const Text(
                 "La raison de l'annulation",
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 14,
-                    fontWeight: FontWeight.w600),
+                    fontWeight: FontWeight.w600
+                    ),
               ),
               const SizedBox(
                 height: 4,
               ),
-              CustomField(
-                label: "Renseigner la raison de l'annulation",
-                onChanged: (value) => cancelreason = value,
-                keyboardType: TextInputType.text,
-                startUppercase: false,
-              ),
+              AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child:
+              TextFormField(
+                maxLines: 3,
+                minLines: 3,
+                decoration: const InputDecoration(
+                    hintStyle: TextStyle(
+                      color: AppColors.grey400,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                    hintText: 'Renseigner la raison de l\'annulation',
+                    alignLabelWithHint: true,),
+                    onChanged: (value) => cancelreason = value,
+              ),),
               const SizedBox(
                 height: 16,
               ),
@@ -439,13 +577,31 @@ class DiagnosticCard extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              CustomField(
-                label:
-                    "Renseigner les methodes de soins pour diminuer les symptômes",
-                onChanged: (value) => healthmethod = value,
-                keyboardType: TextInputType.text,
-                startUppercase: false,
-              ),
+              AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child:
+              TextFormField(
+                maxLines: 2,
+                minLines: 2,
+                decoration: const InputDecoration(
+                    hintStyle: TextStyle(
+                      color: AppColors.grey400,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                    hintText: 'Renseigner les méthodes de soins pour diminuer les symptômes',
+                    alignLabelWithHint: true,),
+                    onChanged: (value) => cancelreason = value,
+              ),),
+                ]),
               const SizedBox(
                 height: 32,
               ),
@@ -474,10 +630,18 @@ class DiagnosticCard extends StatelessWidget {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        healthmethod = healthmethod;
-                        postDiagValidation(
-                            context, rdvInfo['id'], false, cancelreason);
-                        Navigator.pop(context);
+                        if(cancelreason == ''){
+                          ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                              context: context,
+                              message: 'Veuillez renseigner la raison de l\'annulation'));
+                        }
+                        else {
+                          healthmethod = healthmethod;
+                          postDiagValidation(
+                              context, rdvInfo['id'], false, cancelreason);
+                          Navigator.pop(context);
+                          refresh();
+                        }
                       },
                     ),
                   ),
@@ -747,7 +911,7 @@ class BodySummary extends StatelessWidget {
                     style: TextStyle(
                         color: AppColors.black,
                         fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         fontFamily: 'Poppins'),
                   ),
                 ],
@@ -880,9 +1044,9 @@ class BodySummary extends StatelessWidget {
           msg: const Text(
             "Revenir en arrière",
             style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
                 color: AppColors.blue700),
           ),
           onPressed: () {
