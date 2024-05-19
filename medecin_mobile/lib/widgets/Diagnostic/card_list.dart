@@ -1,7 +1,6 @@
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/Diagnostic/diagnostic_card.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class DiagnosticList extends StatefulWidget {
