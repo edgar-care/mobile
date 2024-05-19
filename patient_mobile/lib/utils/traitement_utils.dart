@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 class Hour {
   final String hour;
