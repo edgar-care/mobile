@@ -32,7 +32,7 @@ class _PaginationState extends State<Pagination> {
         children: [
           GestureDetector(
             onTap: () {
-              if (widget.currentPage > 0) {
+              if (widget.currentPage > 1) {
                 widget.onPageChanged(widget.currentPage - 1);
               }
             },
@@ -41,7 +41,7 @@ class _PaginationState extends State<Pagination> {
           const SizedBox(
             width: 16,
           ),
-          if (widget.currentPage > 0) ...[
+          if (widget.currentPage > 1) ...[
             GestureDetector(
               onTap: () {
                 widget.onPageChanged(widget.currentPage - 1);

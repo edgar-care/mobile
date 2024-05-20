@@ -25,9 +25,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
   List<Map<Doctor, String>> filteredDoctors = [];
   List<dynamic> doctorsTemp = [];
   String selectedId = '';
-  int currentPage = 0;
+  int currentPage = 1; // Start at page 1
   int totalPages = 0;
-  bool isLoading = false; // Ajout de la variable d'état pour le chargement
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
   Future<void> fetchData() async {
     try {
       setState(() {
-        isLoading = true; // Commence le chargement
+        isLoading = true;
       });
       var value = await getAllDoctor();
       if (value.isNotEmpty) {
@@ -46,14 +46,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
           doctorsTemp = value;
         });
         initializeDoctors();
-        await fetchAppointments(
-            currentPage); // Attendre la récupération des rendez-vous
+        await fetchAppointments(currentPage); // Start fetching from page 1
       }
     } catch (e) {
       Logger().e("Error fetching data: $e");
     } finally {
       setState(() {
-        isLoading = false; // Termine le chargement
+        isLoading = false;
       });
     }
   }
@@ -77,20 +76,22 @@ class _AppointmentPageState extends State<AppointmentPage> {
   Future<void> fetchAppointments(int currentPage) async {
     setState(() {
       appointments = [];
-      isLoading =
-          true;
+      isLoading = true;
     });
+
+    int startIndex =
+        (currentPage - 1) * 2; // Adjust start index for 1-based page
     for (var i = 0; i < 2; i++) {
-      if (2 * currentPage + i < filteredDoctors.length) {
+      if (startIndex + i < filteredDoctors.length) {
         await fetchDoctorAppointment(
-            filteredDoctors[2 * currentPage + i].values.first);
+            filteredDoctors[startIndex + i].values.first);
       } else {
         break;
       }
     }
+
     setState(() {
-      isLoading =
-          false; // Termine le chargement après la récupération des rendez-vous
+      isLoading = false;
     });
   }
 
@@ -158,7 +159,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   void filterDoctors(String name) {
     setState(() {
-      currentPage = 0;
+      currentPage = 1; // Reset to first page
       filteredDoctors = allDoctors
           .where((element) => element.keys.first.name.contains(name))
           .toList();
