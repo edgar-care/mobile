@@ -233,14 +233,13 @@ WoltModalSheetPage openPatient(
               onPressed: () {
                 pageIndex.value = 1;
               }),
-          if (!isfavorite)
-            Buttons(
-                variant: Variante.delete,
-                size: SizeButton.md,
-                msg: const Text('Supprimer'),
-                onPressed: () {
-                  pageIndex.value = 2;
-                }),
+          Buttons(
+              variant: Variante.delete,
+              size: SizeButton.md,
+              msg: const Text('Supprimer'),
+              onPressed: () {
+                pageIndex.value = 2;
+              }),
         ],
       ),
     ),
@@ -330,10 +329,11 @@ WoltModalSheetPage modifierPatient(
                   size: SizeButton.sm,
                   msg: const Text('Valider'),
                   widthBtn: widthBtn,
-                  onPressed: () {
+                  onPressed: () async {
                     modifyDocument(id, name).then((value) {
                       updatedata();
                       pageIndex.value = 0;
+                      Navigator.pop(context);
                     });
                   }),
             ],
@@ -417,11 +417,11 @@ WoltModalSheetPage deletePatient(
                   size: SizeButton.sm,
                   msg: const Text('Supprimer'),
                   widthBtn: widthBtn,
-                  onPressed: () {
+                  onPressed: () async {
                     deleteDocument(id).then((value) {
+                      updatedata();
                       pageIndex.value = 0;
                       Navigator.pop(context);
-                      updatedata();
                     });
                   }),
             ],

@@ -14,11 +14,13 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
       .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
+    Logger().i('Documents fetched');
     if (jsonDecode(body)["document"] == null) {
       return [];
     }
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
+    Logger().e(response.statusCode);
     return [];
   }
 }
@@ -41,7 +43,7 @@ Future<Object?> changeFavorite(String id) async {
   }
 }
 
-Future<Object?> postDocument(
+Future<bool> postDocument(
     String category, String documentType, File file) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
@@ -70,10 +72,13 @@ Future<Object?> postDocument(
   if (response.statusCode == 200) {
     Logger().i('Document uploaded');
     final body = await response.stream.bytesToString();
-    return jsonDecode(body);
+    Logger().i(body);
+    return true;
   } else {
+    final body = await response.stream.bytesToString();
+    Logger().e(body);
     Logger().e(response.statusCode);
-    return null;
+    return false;
   }
 }
 

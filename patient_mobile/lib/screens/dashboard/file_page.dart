@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/widget/card_filter_file.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -38,25 +39,26 @@ class _FilePageState extends State<FilePage> {
 
   List<Map<String, dynamic>> files = [];
   List<Map<String, dynamic>> originalFiles = [];
+  List<Map<String, dynamic>> filteredFiles = [];
 
   Future<void> checkPermission() async {
     final status = await Permission.manageExternalStorage.status;
     if (!status.isGranted) {
-      final st = await Permission.manageExternalStorage.request();
-      Logger().i('Permission status: $st');
+      Permission.manageExternalStorage.request();
     }
   }
 
   Future<void> fetchData() async {
     files = await getAllDocument();
-    originalFiles = files;
     return;
   }
 
   void updateData() async {
+    Logger().i('Updating data');
     var tmp = await getAllDocument();
     setState(() {
       files = tmp;
+      filteredFiles = files;
     });
   }
 
@@ -355,7 +357,7 @@ class _FilePageState extends State<FilePage> {
                                   children: [
                                     Icon(
                                       BootstrapIcons.circle_fill,
-                                      color: AppColors.green700,
+                                      color: AppColors.green500,
                                       size: 16,
                                     ),
                                     SizedBox(width: 12),
@@ -501,11 +503,15 @@ class _FilePageState extends State<FilePage> {
               } else if (snapshot.hasError) {
                 return Text('Erreur: ${snapshot.error}');
               } else {
-                var filteredFiles = files
+                filteredFiles = files
                     .where((document) => document['name']
                         .toLowerCase()
                         .contains(searchTerm.toLowerCase()))
                     .toList();
+
+                if (filteredFiles.isEmpty) {
+                  filteredFiles = files;
+                }
 
                 // Apply sorting if needed
                 if (isByAlpha) {
@@ -544,7 +550,6 @@ class _FilePageState extends State<FilePage> {
                       .where((document) => document['document_type'] == 'OTHER')
                       .toList();
                 }
-                Logger().i('Filtered files: $filteredFiles');
                 if (filteredFiles.isEmpty) {
                   return const Center(
                     child: Text('Aucun document trouvé'),
@@ -564,7 +569,7 @@ class _FilePageState extends State<FilePage> {
                         isfavorite: filteredFiles[index]['is_favorite'],
                         id: filteredFiles[index]['id'],
                         url: filteredFiles[index]['download_url'],
-                        updatedata: fetchData,
+                        updatedata: updateData,
                       ),
                     );
                   },
@@ -616,7 +621,7 @@ class _BodyModalState extends State<BodyModal> {
   void openFileExplorer() async {
     final file = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'png', 'jpg', 'jpeg', 'docx', 'odt'],
+      allowedExtensions: ['pdf', 'doc', 'png', 'docx', 'odtx', 'odt'],
       dialogTitle: 'Choisir un fichier',
     );
     if (file != null) {
@@ -865,39 +870,45 @@ class _BodyModalState extends State<BodyModal> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      _logger.d('Cancel button pressed.');
-                      Navigator.pop(context);
-                    },
+                  child: IntrinsicHeight(
+                    child: Buttons(
+                      variant: Variante.secondary,
+                      size: SizeButton.sm,
+                      msg: const Text('Annuler'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
-                  child: Buttons(
-                    variant: Variante.validate,
-                    size: SizeButton.sm,
-                    msg: const Text('Ajouter'),
-                    onPressed: () {
-                      if (fileSelected != null) {
-                        _logger.d('Add button pressed with file selected.');
-                        postDocument(
-                          dropdownValue,
-                          dropdownValue2,
-                          fileSelected!,
-                        ).then((value) {
-                          if (value == null) {
-                            widget.updateData();
-                            Navigator.pop(context);
-                          }
-                        });
-                      } else {
-                        _logger.d('Add button pressed with no file selected.');
-                      }
-                    },
+                  child: IntrinsicHeight(
+                    child: Buttons(
+                      variant: Variante.validate,
+                      size: SizeButton.sm,
+                      msg: const Text('Ajouter'),
+                      onPressed: () {
+                        if (fileSelected != null) {
+                          _logger.d('Add button pressed with file selected.');
+                          postDocument(
+                            dropdownValue,
+                            dropdownValue2,
+                            fileSelected!,
+                          ).then((value) {
+                            if (value == true) {
+                              widget.updateData();
+                              Navigator.pop(context);
+                            }
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              ErrorLoginSnackBar(
+                                  message: "Veuillez séléctionner un fichiez",
+                                  context: context));
+                        }
+                      },
+                    ),
                   ),
                 )
               ],
