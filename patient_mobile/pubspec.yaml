@@ -36,6 +36,7 @@ dependencies:
   confetti: ^0.7.0
   flutter_typeahead: ^5.2.0
   easy_autocomplete: ^1.6.0
+  web_socket_channel: ^2.1.0
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^4.0.0
