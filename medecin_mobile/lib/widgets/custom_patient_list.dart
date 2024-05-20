@@ -80,7 +80,7 @@ class _CustomListState extends State<CustomList> {
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             CustomNavPatientCard(

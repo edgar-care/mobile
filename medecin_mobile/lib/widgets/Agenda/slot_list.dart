@@ -106,7 +106,7 @@ class _SlotListState extends State<SlotList> {
                           style: const TextStyle(
                               fontSize: 12,
                               fontFamily: "Poppins",
-                              fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.w500),
                           textAlign: TextAlign.center,
                         ),
                       ),

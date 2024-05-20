@@ -87,7 +87,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                           '${patient["Nom"]} ${patient["Prenom"]}',
                           style: const TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins'),
                         ),
                         const Spacer(),
@@ -95,7 +95,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                           'Voir Plus',
                           style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins'),
                         ),
                         const SizedBox(

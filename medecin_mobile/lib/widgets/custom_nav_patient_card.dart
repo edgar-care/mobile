@@ -49,7 +49,7 @@ class CustomNavPatientCard extends StatelessWidget {
               style: const TextStyle(
                   color: AppColors.blue950,
                   fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   fontFamily: 'Poppins'),
             ),
             const Spacer(),

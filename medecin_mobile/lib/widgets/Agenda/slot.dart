@@ -139,7 +139,7 @@ class SlotEmpty extends Card {
                           : ""),
                   style: const TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.grey700)),
               const Spacer(),
               const Icon(BootstrapIcons.plus_circle_fill,
@@ -215,7 +215,7 @@ class SlotCreate extends Card {
                             : ""),
                     style: const TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: AppColors.grey700)),
                 const Spacer(),
                 Transform.rotate(
@@ -272,7 +272,7 @@ class SlotTaken extends Card {
                           ? "Réservé"
                           : ""),
                   style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold)),
+                      fontSize: 12, fontWeight: FontWeight.w500)),
             ],
           )),
     );

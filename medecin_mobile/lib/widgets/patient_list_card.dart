@@ -43,7 +43,7 @@ class PatientListCard extends StatelessWidget {
                         fontSize: 16,
                         fontFamily: 'Poppins',
                         color: AppColors.black,
-                        fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

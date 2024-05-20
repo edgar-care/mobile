@@ -143,7 +143,7 @@ class _PatientPageState extends State<PatientPage> {
                             '${patientInfo['Nom']} ${patientInfo['Prenom']}',
                             style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: 'Poppins'),
                           ),
                           const Spacer(),
@@ -151,7 +151,7 @@ class _PatientPageState extends State<PatientPage> {
                             'Voir Plus',
                             style: TextStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: 'Poppins'),
                           ),
                           const SizedBox(
@@ -189,53 +189,53 @@ class _PatientPageState extends State<PatientPage> {
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               Text('Nom: ${patientInfo['Nom']}',
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               Text(
                                   'Date de naissance: ${patientInfo['date_de_naissance']}',
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               Text('Sexe: ${sexe(patientInfo['sexe'])}',
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               Text('Taille: ${taille(patientInfo['taille'])} m',
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               Text('Poids: ${taille(patientInfo['poids'])} kg',
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w500)),
                               if (doctorindex != -1)
                                 Text(
                                     'Médecin traitant: ${docs[doctorindex]['firstname']} ${docs[doctorindex]['name']}',
                                     style: const TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600)),
+                                        fontWeight: FontWeight.w500)),
                               if (doctorindex == -1)
                                 const Text('Médecin traitant: Non indiqué',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600)),
+                                        fontWeight: FontWeight.w500)),
                               if (patientInfo['medical_antecedents'].isNotEmpty)
                                 const Text(
                                     'Antécédants médicaux et sujets de santé: ',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600)),
+                                        fontWeight: FontWeight.w500)),
                             ],
                           ),
                           const SizedBox(
@@ -455,11 +455,11 @@ class _PatientPageState extends State<PatientPage> {
               height: 8,
             ),
             const Text(
-              "Modifiez les informations du patient",
+              "Mettez à jour les informations du patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
-                  fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 8,
@@ -511,7 +511,7 @@ class _PatientPageState extends State<PatientPage> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -532,7 +532,7 @@ class _PatientPageState extends State<PatientPage> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -553,7 +553,7 @@ class _PatientPageState extends State<PatientPage> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 4,
@@ -571,7 +571,7 @@ class _PatientPageState extends State<PatientPage> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -624,7 +624,7 @@ class _PatientPageState extends State<PatientPage> {
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(
                             height: 8,
@@ -656,7 +656,7 @@ class _PatientPageState extends State<PatientPage> {
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(
                             height: 8,
@@ -759,11 +759,11 @@ class _PatientPageState extends State<PatientPage> {
               height: 8,
             ),
             const Text(
-              "Modifiez les informations du patient",
+              "Mettez à jour les informations du patient",
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
-                  fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 8,
@@ -846,7 +846,7 @@ class _PatientPageState extends State<PatientPage> {
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
-                  fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 8,
@@ -1014,6 +1014,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
+        const SizedBox(height: 4),
         ValueListenableBuilder<bool>(
           valueListenable: isHealth,
           builder: (context, value, child) {
@@ -1043,7 +1044,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Poppins'),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.55,
@@ -1289,7 +1290,7 @@ class _Onboarding3State extends State<Body3> {
         style: TextStyle(
           color: AppColors.black,
           fontSize: 14,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
         ),
       ),
       const SizedBox(height: 8),
@@ -1345,7 +1346,7 @@ class _Onboarding3State extends State<Body3> {
         style: TextStyle(
           color: AppColors.black,
           fontSize: 14,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
         ),
       ),
       SizedBox(
@@ -1370,13 +1371,14 @@ class _Onboarding3State extends State<Body3> {
             } else {
               return Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: SizedBox(
-                    width: MediaQuery.sizeOf(context).width - 48,
-                    child: Wrap(
-                      alignment: WrapAlignment.start,
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: [
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        runAlignment: WrapAlignment.start,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: [
                         if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
                           for (var i = 0;
                               i < widget.tmpInfo['medical_antecedents'].length;

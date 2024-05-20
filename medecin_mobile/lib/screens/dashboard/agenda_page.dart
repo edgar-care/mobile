@@ -77,7 +77,7 @@ class _AgendaState extends State<Agenda> {
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.white),
               ),
             ]),
@@ -174,7 +174,7 @@ class _AgendaState extends State<Agenda> {
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontFamily: "Poppins",
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColors.blue700),
                                   )
                                 : ThreeDays(

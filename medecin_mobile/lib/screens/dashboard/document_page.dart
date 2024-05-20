@@ -89,7 +89,7 @@ class _DocumentPageState extends State<DocumentPage> {
                           '${patientInfo['Nom']} ${patientInfo['Prenom']}',
                           style: const TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins'),
                         ),
                         const Spacer(),
@@ -97,7 +97,7 @@ class _DocumentPageState extends State<DocumentPage> {
                           'Voir Plus',
                           style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins'),
                         ),
                         const SizedBox(

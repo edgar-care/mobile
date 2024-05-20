@@ -47,7 +47,7 @@ class _RdvState extends State<Rdv> {
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.white),
               ),
             ]),
