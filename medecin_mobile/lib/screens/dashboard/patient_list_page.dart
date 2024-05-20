@@ -16,6 +16,7 @@ import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
@@ -74,6 +75,7 @@ class _PatientPageState extends State<PatientPage> {
       _loadInfo();
     });
     tmpInfo = Map.of(patientInfo);
+    tmpTraitments = [];
   }
 
   String sexe(String sexe) {
@@ -260,11 +262,13 @@ class _PatientPageState extends State<PatientPage> {
                                   onModalDismissedWithDrag: () {
                                     Navigator.pop(context);
                                     tmpInfo = Map.of(patientInfo);
+                                    tmpTraitments = [];
                                     pageIndex.value = 0;
                                   },
                                   onModalDismissedWithBarrierTap: () {
                                     Navigator.pop(context);
                                     tmpInfo = Map.of(patientInfo);
+                                    tmpTraitments = [];
                                     pageIndex.value = 0;
                                   },
                                   context: context,
@@ -890,6 +894,7 @@ class _PatientPageState extends State<PatientPage> {
             Body3(
                 updateSelectedIndex: updateSelectedIndex,
                 tmpInfo: tmpInfo,
+                tmpTraitments: traitments,
                 refresh: updateData),
           ]),
         ),
@@ -1236,12 +1241,14 @@ class _onboarding2State extends State<Body2> {
 class Body3 extends StatefulWidget {
   final Function(int) updateSelectedIndex;
   Map<String, dynamic> tmpInfo;
+  List<Map<String, dynamic>> tmpTraitments;
   final Function refresh;
   Body3({
     super.key,
     required this.updateSelectedIndex,
     required this.tmpInfo,
     required this.refresh,
+    required this.tmpTraitments,
   });
 
   @override
@@ -1265,7 +1272,13 @@ class _Onboarding3State extends State<Body3> {
         "treatments": treatments["treatments"],
         "still_relevant": stillRelevant,
       });
+      widget.tmpTraitments.add({
+        "name": name,
+        "treatments": treatments["treatments"],
+        "still_relevant": stillRelevant,
+      });
     });
+
   }
 
   @override
@@ -1408,6 +1421,7 @@ class _Onboarding3State extends State<Body3> {
                                         setState(() {
                                           widget.tmpInfo['medical_antecedents']
                                               .removeAt(i);
+                                          widget.tmpTraitments.removeAt(i);
                                         });
                                       },
                                     ),
@@ -1470,31 +1484,32 @@ class _Onboarding3State extends State<Body3> {
                   "weight": poids,
                   "height": taille,
                   "primary_doctor_id": widget.tmpInfo['medecin_traitant'],
-                  "medical_antecedents": widget.tmpInfo['medical_antecedents'],
+                  "medical_antecedents": widget.tmpTraitments,
                 };
-                putInformationPatient(context, body, widget.tmpInfo['id'])
-                    .then((value) => {
-                          if (value == true)
-                            {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SuccessLoginSnackBar(
-                                      message:
-                                          "Informations mises à jour avec succès",
-                                      context: context)),
-                              Navigator.pop(context),
-                              widget.refresh()
-                            }
-                          else
-                            {
-                              // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  ErrorLoginSnackBar(
-                                      message:
-                                          "Erreur lors de la mises à jour des informations",
-                                      // ignore: use_build_context_synchronously
-                                      context: context))
-                            }
-                        });
+                Logger().d(body);
+                // putInformationPatient(context, body, widget.tmpInfo['id'])
+                //     .then((value) => {
+                //           if (value == true)
+                //             {
+                //               ScaffoldMessenger.of(context).showSnackBar(
+                //                   SuccessLoginSnackBar(
+                //                       message:
+                //                           "Informations mises à jour avec succès",
+                //                       context: context)),
+                //               Navigator.pop(context),
+                //               widget.refresh()
+                //             }
+                //           else
+                //             {
+                //               // ignore: use_build_context_synchronously
+                //               ScaffoldMessenger.of(context).showSnackBar(
+                //                   ErrorLoginSnackBar(
+                //                       message:
+                //                           "Erreur lors de la mises à jour des informations",
+                //                       // ignore: use_build_context_synchronously
+                //                       context: context))
+                //             }
+                //         });
               },
             ),
           ),
