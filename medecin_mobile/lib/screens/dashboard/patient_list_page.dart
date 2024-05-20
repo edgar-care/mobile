@@ -16,7 +16,6 @@ import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
@@ -1486,30 +1485,29 @@ class _Onboarding3State extends State<Body3> {
                   "primary_doctor_id": widget.tmpInfo['medecin_traitant'],
                   "medical_antecedents": widget.tmpTraitments,
                 };
-                Logger().d(body);
-                // putInformationPatient(context, body, widget.tmpInfo['id'])
-                //     .then((value) => {
-                //           if (value == true)
-                //             {
-                //               ScaffoldMessenger.of(context).showSnackBar(
-                //                   SuccessLoginSnackBar(
-                //                       message:
-                //                           "Informations mises à jour avec succès",
-                //                       context: context)),
-                //               Navigator.pop(context),
-                //               widget.refresh()
-                //             }
-                //           else
-                //             {
-                //               // ignore: use_build_context_synchronously
-                //               ScaffoldMessenger.of(context).showSnackBar(
-                //                   ErrorLoginSnackBar(
-                //                       message:
-                //                           "Erreur lors de la mises à jour des informations",
-                //                       // ignore: use_build_context_synchronously
-                //                       context: context))
-                //             }
-                //         });
+                putInformationPatient(context, body, widget.tmpInfo['id'])
+                    .then((value) => {
+                          if (value == true)
+                            {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SuccessLoginSnackBar(
+                                      message:
+                                          "Informations mises à jour avec succès",
+                                      context: context)),
+                              Navigator.pop(context),
+                              widget.refresh()
+                            }
+                          else
+                            {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorLoginSnackBar(
+                                      message:
+                                          "Erreur lors de la mises à jour des informations",
+                                      // ignore: use_build_context_synchronously
+                                      context: context))
+                            }
+                        });
               },
             ),
           ),
