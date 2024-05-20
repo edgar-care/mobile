@@ -104,7 +104,8 @@ class DiagnosticCard extends StatelessWidget {
                                   "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
                                   style: const TextStyle(
                                       fontSize: 14,
-                                      fontWeight: FontWeight.bold)),
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
                               Row(children: [
                                 Text(DateFormat('yMd', 'fr').format(start),
                                     style: const TextStyle(
@@ -795,42 +796,42 @@ class DiagnosticCard extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Nom: Nom',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Date de naissance: 22/04/2022',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Sexe: MASCULIN',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Taille: 0.5m',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Poids: 10kg',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Médecin traitant: 1234',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                   Text('Antécédants médicaux et sujets de santé:',
                       style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w500)),
                 ],
               ),
               const SizedBox(
@@ -840,13 +841,7 @@ class DiagnosticCard extends StatelessWidget {
                 variant: Variante.secondary,
                 size: SizeButton.sm,
                 msg: const Text(
-                  "Revenir en arrière",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.blue700),
-                ),
+                  "Revenir en arrière",),
                 onPressed: () {
                   Navigator.pop(context);
                 },
