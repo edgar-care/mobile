@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:io';
+import 'package:download_file/data/models/download_file_options.dart';
+import 'package:download_file/download_file.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
@@ -8,9 +9,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar/widget/buttons.dart';
-import 'package:http/http.dart' as http;
 import 'package:edgar/services/get_files.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 enum TypeDeDocument {
   PRESCRIPTION,
@@ -18,6 +17,8 @@ enum TypeDeDocument {
   CERTIFICATE,
   XRAY,
 }
+
+Size screenSize = const Size(0, 0);
 
 // ignore: must_be_immutable
 class CardDocument extends StatefulWidget {
@@ -60,6 +61,9 @@ class _CardDocumentState extends State<CardDocument> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      screenSize = MediaQuery.of(context).size;
+    });
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -134,6 +138,7 @@ class _CardDocumentState extends State<CardDocument> {
                       pageIndex,
                       widget.url,
                       widget.id,
+                      widget.isfavorite,
                       widget.nomDocument,
                     ),
                     modifierPatient(
@@ -167,18 +172,12 @@ class _CardDocumentState extends State<CardDocument> {
 
 final pageIndex = ValueNotifier(0);
 
-Future<File> downloadFile(String url, String savePath) async {
-  var response = await http.get(Uri.parse(url));
-  var file = File(savePath);
-  await file.writeAsBytes(response.bodyBytes);
-  return file;
-}
-
 WoltModalSheetPage openPatient(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String url,
   String id,
+  bool isfavorite,
   String name,
 ) {
   return WoltModalSheetPage(
@@ -193,34 +192,55 @@ WoltModalSheetPage openPatient(
         runSpacing: 8,
         children: [
           Buttons(
-              variant: Variante.primary,
-              size: SizeButton.sm,
-              msg: const Text('Télécharger'),
-              onPressed: () async {
-                FileDownloader.downloadFile(
-                  url: url,
-                  name: name,
-                  onDownloadCompleted: (String id) {},
-                  onDownloadError: (String error) {
-                    Logger().e(error);
-                  },
-                  notificationType: NotificationType.all,
-                );
-              }),
+            variant: Variante.primary,
+            size: SizeButton.md,
+            msg: const Text('Télécharger'),
+            onPressed: () async {
+              DownloadFile.downloadAndSafeFile(
+                downloadFileOptions: DownloadFileOptions(
+                  downloadUrl: url,
+                  fileName: name,
+                ),
+                context: context,
+                loadingWidget: const Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Téléchargement en cours...',
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      CircularProgressIndicator(
+                        color: AppColors.blue700,
+                        strokeWidth: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+              Logger().i('Downloaded');
+            },
+          ),
           Buttons(
               variant: Variante.secondary,
-              size: SizeButton.sm,
+              size: SizeButton.md,
               msg: const Text('Modifier'),
               onPressed: () {
                 pageIndex.value = 1;
               }),
-          Buttons(
-              variant: Variante.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () {
-                pageIndex.value = 2;
-              }),
+          if (!isfavorite)
+            Buttons(
+                variant: Variante.delete,
+                size: SizeButton.md,
+                msg: const Text('Supprimer'),
+                onPressed: () {
+                  pageIndex.value = 2;
+                }),
         ],
       ),
     ),
@@ -234,8 +254,8 @@ WoltModalSheetPage modifierPatient(
   String id,
   Function updatedata,
 ) {
-  int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
-  int maxSize = (MediaQuery.of(context).size.width - 48).toInt();
+  int widthBtn = (screenSize.width / 2 - 32).toInt();
+  int maxSize = (screenSize.width - 48).toInt();
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
@@ -330,7 +350,7 @@ WoltModalSheetPage deletePatient(
   String id,
   Function updatedata,
 ) {
-  int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
+  int widthBtn = (screenSize.width / 2 - 32).toInt();
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,

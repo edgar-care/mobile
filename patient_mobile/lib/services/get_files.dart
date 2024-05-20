@@ -67,7 +67,7 @@ Future<Object?> postDocument(
   request.fields['isFavorite'] = 'false';
 
   final response = await request.send();
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     Logger().i('Document uploaded');
     final body = await response.stream.bytesToString();
     return jsonDecode(body);

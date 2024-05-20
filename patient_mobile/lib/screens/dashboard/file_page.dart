@@ -12,6 +12,7 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_document.dart';
 import 'package:edgar/widget/field_custom.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final documentTypeMap = {
   'PRESCRIPTION': TypeDeDocument.PRESCRIPTION,
@@ -32,15 +33,31 @@ class _FilePageState extends State<FilePage> {
   void initState() {
     super.initState();
     fetchData();
+    checkPermission();
   }
 
   List<Map<String, dynamic>> files = [];
   List<Map<String, dynamic>> originalFiles = [];
 
+  Future<void> checkPermission() async {
+    final status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted) {
+      final st = await Permission.manageExternalStorage.request();
+      Logger().i('Permission status: $st');
+    }
+  }
+
   Future<void> fetchData() async {
     files = await getAllDocument();
     originalFiles = files;
     return;
+  }
+
+  void updateData() async {
+    var tmp = await getAllDocument();
+    setState(() {
+      files = tmp;
+    });
   }
 
   final pageIndex = ValueNotifier(0);
@@ -92,7 +109,7 @@ class _FilePageState extends State<FilePage> {
             ),
             const SizedBox(width: 16),
             const Text(
-              'Mes Documents',
+              'Mes documents',
               style: TextStyle(
                 color: AppColors.white,
                 fontSize: 20,
@@ -138,15 +155,17 @@ class _FilePageState extends State<FilePage> {
                         color: AppColors.blue700,
                         size: 16,
                       ),
+                      const SizedBox(width: 2),
                       const Text(
                         'Nom',
                         style: TextStyle(
                           color: AppColors.blue700,
                           fontSize: 14,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                      const SizedBox(width: 4),
                       Icon(
                         isByAlpha
                             ? BootstrapIcons.chevron_down
@@ -368,9 +387,10 @@ class _FilePageState extends State<FilePage> {
                       color: AppColors.blue700,
                       fontSize: 14,
                       fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                  SizedBox(width: 4),
                   Icon(
                     BootstrapIcons.plus_lg,
                     color: AppColors.blue700,
@@ -391,7 +411,7 @@ class _FilePageState extends State<FilePage> {
                 IntrinsicWidth(
                   child: FilterCard(
                     header: const Icon(BootstrapIcons.circle_fill,
-                        color: AppColors.green700, size: 16),
+                        color: AppColors.green500, size: 16),
                     onTap: () {
                       toggleFilter('Ordonnance');
                     },
@@ -448,7 +468,7 @@ class _FilePageState extends State<FilePage> {
         const SizedBox(height: 12),
         Buttons(
           variant: Variante.primary,
-          size: SizeButton.sm,
+          size: SizeButton.md,
           msg: const Text('Ajouter un document'),
           onPressed: () {
             WoltModalSheet.show<void>(
@@ -459,7 +479,7 @@ class _FilePageState extends State<FilePage> {
                   addDocument(
                     context,
                     pageIndex,
-                    fetchData,
+                    updateData,
                   ),
                 ];
               },
@@ -869,7 +889,7 @@ class _BodyModalState extends State<BodyModal> {
                           dropdownValue2,
                           fileSelected!,
                         ).then((value) {
-                          if (value != null) {
+                          if (value == null) {
                             widget.updateData();
                             Navigator.pop(context);
                           }
