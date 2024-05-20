@@ -76,7 +76,11 @@ class _CardDocumentState extends State<CardDocument> {
         children: [
           GestureDetector(
             onTap: () {
-              changeFavorite(widget.id);
+              if (widget.isfavorite) {
+                deleteFavory(widget.id);
+              } else {
+                changeFavorite(widget.id);
+              }
               setState(() {
                 widget.isfavorite = !widget.isfavorite;
               });

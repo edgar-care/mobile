@@ -43,6 +43,24 @@ Future<Object?> changeFavorite(String id) async {
   }
 }
 
+Future<Object?> deleteFavory(String id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final url = '${dotenv.env['URL']}document/favorite/$id';
+
+  final response = await http.delete(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  if (response.statusCode == 201) {
+    final body = response.body;
+    return jsonDecode(body);
+  } else {
+    Logger().e(response.statusCode);
+    return null;
+  }
+}
+
 Future<bool> postDocument(
     String category, String documentType, File file) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
