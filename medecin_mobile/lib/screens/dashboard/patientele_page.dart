@@ -667,6 +667,7 @@ SliverWoltModalSheetPage addPatient2(
 SliverWoltModalSheetPage addPatient3(final Function(int) updateSelectedIndex,
     BuildContext context, Function refresh) {
   return WoltModalSheetPage(
+    backgroundColor: AppColors.white,
     hasTopBarLayer: false,
     child: SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
@@ -1545,41 +1546,43 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 ),
               ),
             ),
-            SizedBox(
-              height: widget.screenSize.height * 0.36,
-              width: widget.screenSize.width,
-              child: FutureBuilder(
-                future: fetchData(), // Simulate some async operation
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return ListView.builder(
-                      itemCount: medicines['treatments'].length,
-                      itemBuilder: (context, index) {
-                        if (medicines['treatments'].isEmpty) {
-                          return const SizedBox();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: CardTraitementDay(
-                            isClickable: true,
-                            data: medicines['treatments'][index],
-                            name: medNames[index],
-                            onTap: () {
-                              setState(() {
-                                medicines['treatments'].removeAt(index);
-                                medNames.removeAt(index);
-                              });
-                            },
-                          ),
+            Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.3,
+                  ),
+                  child: FutureBuilder(
+                    future: fetchData(), // Simulate some async operation
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: medicines['treatments'].length,
+                          itemBuilder: (context, index) {
+                            if (medicines['treatments'].isEmpty) {
+                              return const SizedBox();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: CardTraitementDay(
+                                isClickable: true,
+                                data: medicines['treatments'][index],
+                                name: medNames[index],
+                                onTap: () {
+                                  setState(() {
+                                    medicines['treatments'].removeAt(index);
+                                    medNames.removeAt(index);
+                                  });
+                                },
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
+                      }
+                    },
+                  ),
+                ),
           ],
         ),
         const SizedBox(height: 16),
