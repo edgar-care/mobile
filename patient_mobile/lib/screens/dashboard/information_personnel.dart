@@ -28,7 +28,11 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   Future<void> fetchData() async {
     await getMedicalFolder().then((value) {
       if (value.isNotEmpty) {
-        infoMedical = value;
+        infoMedical = {
+          ...value,
+          "medical_antecedents": value['medical_antecedents'] ?? []
+        };
+
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
@@ -75,6 +79,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.max,
       children: [
         Container(
           decoration: const BoxDecoration(
@@ -118,10 +123,12 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 child: Text('Erreur lors du chargement des données'),
               );
             } else {
-              return CardInformationPersonnel(
-                  infoMedical: infoMedical,
-                  birthdate: birthdate,
-                  doctorName: doctorName);
+              return Expanded(
+                child: CardInformationPersonnel(
+                    infoMedical: infoMedical,
+                    birthdate: birthdate,
+                    doctorName: doctorName),
+              );
             }
           },
         ),
@@ -155,8 +162,7 @@ class CardInformationPersonnel extends StatefulWidget {
 class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
+    return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -173,12 +179,12 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
           children: [
             ElementInfo(
               title: 'Prénom: ',
-              value: widget.infoMedical['name'],
+              value: widget.infoMedical['firstname'],
             ),
             const SizedBox(height: 8),
             ElementInfo(
               title: 'Nom: ',
-              value: widget.infoMedical['firstname'],
+              value: widget.infoMedical['name'],
             ),
             const SizedBox(height: 8),
             ElementInfo(
@@ -258,7 +264,7 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
           ],
         ),
       ),
-    ));
+    );
   }
 }
 

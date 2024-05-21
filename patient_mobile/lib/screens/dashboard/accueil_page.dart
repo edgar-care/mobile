@@ -38,11 +38,9 @@ class _HomePageState extends State<HomePage> {
       future: fetchData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Expanded(
-            child: Center(
-              child: CircularProgressIndicator(
-                color: AppColors.blue700,
-              ),
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.blue700,
             ),
           );
         } else if (snapshot.hasError) {
