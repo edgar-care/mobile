@@ -1,3 +1,4 @@
+import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
 import '../styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
@@ -35,7 +36,7 @@ class _CustomFieldState extends State<CustomField> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
@@ -46,7 +47,9 @@ class _CustomFieldState extends State<CustomField> {
             children: [
               Expanded(
                 child: TextFormField(
-                  textCapitalization: widget.startUppercase ? TextCapitalization.sentences : TextCapitalization.none,
+                  textCapitalization: widget.startUppercase
+                      ? TextCapitalization.sentences
+                      : TextCapitalization.none,
                   cursorColor: AppColors.blue500,
                   obscureText: widget.isPassword && !_isPasswordVisible,
                   keyboardType: widget.keyboardType,
@@ -92,6 +95,170 @@ class _CustomFieldState extends State<CustomField> {
                     });
                   },
                 ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class CustomFieldSearch extends StatefulWidget {
+  final String label;
+  final Widget
+      icon; // Utilisation de IconData au lieu de Icon pour la cohérence
+  final TextInputType keyboardType;
+  final Function(String) onValidate;
+
+  const CustomFieldSearch({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+    required this.onValidate,
+  });
+
+  @override
+  State<CustomFieldSearch> createState() => _CustomFieldSearchState();
+}
+
+class _CustomFieldSearchState extends State<CustomFieldSearch> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _controller,
+                  keyboardType: widget.keyboardType,
+                  textInputAction: TextInputAction.search,
+                  style: const TextStyle(
+                    color: AppColors.grey950,
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    textBaseline: TextBaseline.ideographic,
+                  ),
+                  decoration: InputDecoration(
+                    constraints: BoxConstraints(
+                        minWidth: 0, maxWidth: constraints.maxWidth),
+                    border: InputBorder.none,
+                    isDense: true,
+                    hintText: widget.label,
+                    hintStyle: const TextStyle(
+                      color: AppColors.grey400,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                  ),
+                  onFieldSubmitted: (value) {
+                    widget.onValidate(value);
+                  },
+                  onChanged: (value) {
+                    widget.onValidate(value);
+                  },
+                ),
+              ),
+              GestureDetector(
+                child: widget.icon,
+                onTap: () {
+                  widget.onValidate(_controller.text);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class CustomAutoComplete extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  final TextInputType keyboardType;
+  final Function(String) onValidate;
+  final List<String> suggestions; // Added for suggestions list
+
+  const CustomAutoComplete({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+    required this.onValidate,
+    required this.suggestions, // Added for suggestions list
+  });
+
+  @override
+  State<CustomAutoComplete> createState() => _CustomAutoComplete2State();
+}
+
+class _CustomAutoComplete2State extends State<CustomAutoComplete> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedContainer(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16.0), // Adjust padding as needed
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(
+                color: AppColors.blue500,
+                width: 2.0), // Adjust border color and width if desired
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: EasyAutocomplete(
+                    controller: _controller,
+                    suggestions: widget.suggestions,
+                    textCapitalization: TextCapitalization.sentences,
+                    keyboardType: widget.keyboardType,
+                    decoration: InputDecoration(
+                      hintText: widget.label,
+                      border: InputBorder
+                          .none, // Remove border for seamless appearance
+                    ),
+                    onChanged: (value) {
+                      widget.onValidate(value);
+                    },
+                    suggestionBuilder: (data) {
+                      return Container(
+                          margin: const EdgeInsets.all(1),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(data,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins')));
+                    }),
+              ),
+              GestureDetector(
+                child: Icon(widget.icon, color: AppColors.grey950, size: 16.0),
+                onTap: () => widget.onValidate(_controller.text),
+              ),
             ],
           ),
         );

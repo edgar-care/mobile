@@ -185,11 +185,11 @@ class SuccessLoginSnackBar extends SnackBar {
                   color: Colors.white, size: 30),
             ),
             const SizedBox(width: 16),
-            Text(message,
-                style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Text(message,
+                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 14)),
+            ),
           ]),
         );
 }

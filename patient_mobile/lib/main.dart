@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         '/dashboard/chat': (context) => const ConverstationPatient(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
-        '/simulation/appointement': (context) => const AppointementPage(),
+        '/simulation/appointement': (context) => const AppointmentPage(),
         '/onboarding': (context) => const Onboarding(),
       },
     );
