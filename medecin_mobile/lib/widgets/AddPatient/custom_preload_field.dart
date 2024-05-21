@@ -35,7 +35,7 @@ class _CustomPreloadFieldState extends State<CustomPreloadField> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(

@@ -27,12 +27,15 @@ class Buttons extends StatelessWidget {
   SizeButton size;
   Text msg;
   Function? onPressed;
-  Buttons({super.key, required this.variant, required this.size, required this.msg , this.onPressed});
-  
+  Buttons(
+      {super.key,
+      required this.variant,
+      required this.size,
+      required this.msg,
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-
     Color backgroundcolor;
     BorderSide borderSide;
     TextStyle textStyle;
@@ -44,7 +47,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 8;
@@ -53,7 +58,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 10;
@@ -62,7 +69,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 12;
@@ -71,7 +80,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 12;
@@ -80,7 +91,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 16;
@@ -89,7 +102,9 @@ class Buttons extends StatelessWidget {
         textStyle = TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.w600,
-          color: variant == Variante.secondary ? const Color(0xFF2E4C9A) : Colors.white,
+          color: variant == Variante.secondary
+              ? const Color(0xFF2E4C9A)
+              : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 16;
@@ -98,7 +113,7 @@ class Buttons extends StatelessWidget {
         textStyle = const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color:AppColors.blue300,
+          color: AppColors.blue300,
           fontFamily: 'Poppins',
         );
         radius = 8;
@@ -174,7 +189,17 @@ class Buttons extends StatelessWidget {
         constraints: BoxConstraints(
           maxWidth: screenWidth,
         ),
-        padding: EdgeInsets.symmetric(vertical: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 6 : 12 , horizontal: size == SizeButton.sm || size == SizeButton.lg || size == SizeButton.md ? 16 : 24),
+        padding: EdgeInsets.symmetric(
+            vertical: size == SizeButton.sm ||
+                    size == SizeButton.lg ||
+                    size == SizeButton.md
+                ? 6
+                : 12,
+            horizontal: size == SizeButton.sm ||
+                    size == SizeButton.lg ||
+                    size == SizeButton.md
+                ? 16
+                : 24),
         decoration: BoxDecoration(
           color: backgroundcolor,
           border: Border.fromBorderSide(borderSide),

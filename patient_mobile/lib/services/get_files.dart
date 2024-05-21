@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<List<Map<String, dynamic>>> getAllDocument() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  await dotenv.load();
   final url = '${dotenv.env['URL']}document/download';
 
   final response = await http
@@ -28,6 +29,7 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
 Future<Object?> changeFavorite(String id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  await dotenv.load();
   final url = '${dotenv.env['URL']}document/favorite/$id';
 
   final response = await http.post(
@@ -65,6 +67,7 @@ Future<bool> postDocument(
     String category, String documentType, File file) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  await dotenv.load();
   final url = '${dotenv.env['URL']}document/upload';
 
   final docT = {
@@ -103,6 +106,7 @@ Future<bool> postDocument(
 Future<Object?> deleteDocument(String id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  await dotenv.load();
   final url = '${dotenv.env['URL']}document/$id';
 
   final response = await http.delete(
@@ -118,9 +122,10 @@ Future<Object?> deleteDocument(String id) async {
   }
 }
 
-Future<Object?> modifyDocument(String id, String name) async {
+Future<Object?> modifyDocument(String id, String name) async { 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+  await dotenv.load();
   final url = '${dotenv.env['URL']}document/$id';
 
   final response = await http.put(

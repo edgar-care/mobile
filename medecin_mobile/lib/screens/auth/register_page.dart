@@ -7,12 +7,14 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
+    return SafeArea(
+        child: Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo/small-width-blue-edgar-logo.png', width: 200),
+            Image.asset('assets/images/logo/small-width-blue-edgar-logo.png',
+                width: 200),
             const SizedBox(height: 128),
             Buttons(
               variant: Variante.secondary,
