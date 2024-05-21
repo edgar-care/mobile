@@ -1,5 +1,3 @@
-import 'package:logger/logger.dart';
-
 class Chat {
   final String id;
   final List<Message> messages;
@@ -35,7 +33,6 @@ class Participant {
 }
 
 List<Chat> transformChats(Map<String, dynamic> chats) {
-  Logger().i('Transforming chats: $chats');
   List<Chat> transformedChats = [];
 
   for (var chat in chats['chats']) {
@@ -45,14 +42,15 @@ List<Chat> transformChats(Map<String, dynamic> chats) {
       messages.add(Message(
         message: message['message'],
         ownerId: message['owner_id'],
-        time: DateTime.fromMillisecondsSinceEpoch(message['sended_time']),
+        time:
+            DateTime.fromMillisecondsSinceEpoch(message['sended_time'] * 1000),
       ));
     }
     for (var participant in chat['participants']) {
-      Logger().i('Participant: ${participant['participant_id']}');
       participants.add(Participant(
         id: participant['participant_id'],
-        lastSeen: DateTime.fromMillisecondsSinceEpoch(participant['last_seen']),
+        lastSeen: DateTime.fromMillisecondsSinceEpoch(
+            participant['last_seen'] * 1000),
       ));
     }
     transformedChats.add(Chat(
@@ -61,7 +59,11 @@ List<Chat> transformChats(Map<String, dynamic> chats) {
       recipientIds: participants,
     ));
   }
-  return transformedChats;
+
+  var sortedChats = transformedChats
+    ..sort((a, b) => b.messages.last.time.compareTo(a.messages.last.time));
+
+  return sortedChats;
 }
 
 int getUnreadMessages(Chat chat, String userId) {
@@ -76,6 +78,5 @@ int getUnreadMessages(Chat chat, String userId) {
     }
   }
 
-  Logger().i('Unread messages: $unreadMessages');
   return unreadMessages;
 }

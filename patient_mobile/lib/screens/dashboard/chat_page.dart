@@ -1,12 +1,20 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/screens/dashboard/conversation_patient.dart';
 import 'package:edgar/services/doctor.dart';
 import 'package:edgar/services/websocket.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/utlis/chat_utils.dart';
+import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_conversation.dart';
+import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -16,11 +24,15 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  String chatId = '664bad52f8fd0b0e3021a072'; // Set your chat ID
   WebSocketService? _webSocketService;
   String idPatient = '';
   List<Chat> chats = [];
   List<dynamic> doctors = [];
+  String doctorname = '';
+  final ScrollController _scrollController = ScrollController();
+  Chat? chatSelected;
+  bool isChatting = false;
+  List<String> doctorName = [];
 
   @override
   void initState() {
@@ -55,9 +67,17 @@ class _ChatPageState extends State<ChatPage> {
             ),
           );
         });
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        });
       },
       onReady: (data) {},
       onCreateChat: (data) {
+        Logger().i('Chat created: ${data['chat_id']}');
         setState(() {
           chats.add(
             Chat(
@@ -80,6 +100,13 @@ class _ChatPageState extends State<ChatPage> {
       onGetMessages: (data) {
         setState(() {
           chats = transformChats(data);
+        });
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
         });
       },
       onReadMessage: (data) {},
@@ -106,62 +133,316 @@ class _ChatPageState extends State<ChatPage> {
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
         setState(() {
           idPatient = jsonDecode(decodedPayload)['patient']["id"];
-          Logger().i('Patient ID: $idPatient');
         });
       } catch (e) {
-        Logger().e('Error decoding token: $e');
+        Logger().e('Error: $e');
       }
+    } else {}
+  }
+
+  void setChatting(bool value, Chat? chat) {
+    if (chat != null) {
+      setState(() {
+        isChatting = value;
+        chatSelected = chat;
+        doctorname = getDoctorName(chat);
+      });
     } else {
-      Logger().w('Token is null or empty');
+      Logger().e('Error: Chat is null');
+    }
+  }
+
+  String getDoctorName(Chat chat) {
+    var doctor1 = doctors.firstWhere(
+      (element) => element['id'] == chat.recipientIds[0].id,
+      orElse: () => {},
+    );
+    if (doctor1.isEmpty) {
+      return 'Dr. Edgard Test';
+    }
+
+    return 'Dr. ${doctor1['name']} ${doctor1['firstname']}';
+  }
+
+  Future<void> getAllDoctorName() async {
+    for (var doctor in doctors) {
+      doctorName.add('Dr. ${doctor['name']} ${doctor['firstname']}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          decoration: const BoxDecoration(
-            color: AppColors.blue700,
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(children: [
-            Image.asset(
-              'assets/images/logo/edgar-high-five.png',
-              width: 40,
+    return Stack(
+      children: [
+        Column(
+          children: <Widget>[
+            Container(
+              decoration: const BoxDecoration(
+                color: AppColors.blue700,
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(children: [
+                Image.asset(
+                  'assets/images/logo/edgar-high-five.png',
+                  width: 40,
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'Ma messagerie',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ]),
             ),
-            const SizedBox(width: 16),
-            const Text(
-              'Ma messagerie',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 20,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
+            const SizedBox(height: 16),
+            if (isChatting) ...[
+              Expanded(
+                child: ChatPageConversation(
+                  doctorName: doctorname,
+                  chat: chats.firstWhere(
+                    (chat) => chat.id == chatSelected!.id,
+                  ),
+                  webSocketService: _webSocketService,
+                  controller: _scrollController,
+                  onClick: setChatting,
+                  patientId: idPatient,
+                ),
+              ),
+            ],
+            if (!isChatting) ...[
+              Buttons(
+                  variant: Variante.primary,
+                  size: SizeButton.md,
+                  msg: const Text('Commencer une conversation'),
+                  onPressed: () {
+                    WoltModalSheet.show<void>(
+                        context: context,
+                        pageListBuilder: (modalSheetContext) {
+                          return [
+                            createDiscussion(
+                                modalSheetContext, _webSocketService),
+                          ];
+                        });
+                  }),
+              Expanded(
+                child: FutureBuilder(
+                  future:
+                      getAllDoctorName(), // You can replace this with the actual future you want to use
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(
+                        color: AppColors.blue700,
+                        strokeWidth: 2,
+                      ); // You can replace this with a loading indicator
+                    } else {
+                      return ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 4),
+                        itemCount: chats.length,
+                        itemBuilder: (context, index) {
+                          return ChatCard(
+                            chat: chats[index],
+                            unread: getUnreadMessages(chats[index], idPatient),
+                            service: _webSocketService!,
+                            doctorName: doctorName[index],
+                            onClick: setChatting,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+WoltModalSheetPage createDiscussion(
+    BuildContext context, WebSocketService? webSocketService) {
+  return WoltModalSheetPage(
+    hasTopBarLayer: false,
+    backgroundColor: AppColors.white,
+    hasSabGradient: true,
+    enableDrag: true,
+    child: SizedBox(
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: BodycreateDiscussionModal(
+          webSocketService: webSocketService,
+        ),
+      ),
+    ),
+  );
+}
+
+// ignore: must_be_immutable
+class BodycreateDiscussionModal extends StatefulWidget {
+  WebSocketService? webSocketService;
+  BodycreateDiscussionModal({super.key, required this.webSocketService});
+
+  @override
+  State<BodycreateDiscussionModal> createState() =>
+      BodycreateDiscussionModalState();
+}
+
+class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
+  List<dynamic> doctors = [];
+  List<dynamic> filtereddoctors = [];
+  String nameFilter = '';
+
+  Future<void> fetchData() async {
+    await getAllDoctor().then((value) {
+      doctors = value;
+      filtereddoctors = value
+          .where((element) =>
+              element['name'].toString().contains(nameFilter) ||
+              element['firstname'].toString().contains(nameFilter))
+          .toList();
+    });
+  }
+
+  void updateFilter(String value) {
+    setState(() {
+      nameFilter = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: AppColors.green200,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                BootstrapIcons.chat_dots_fill,
+                color: AppColors.green700,
               ),
             ),
-          ]),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'Démarrez une nouvelle conversation',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
+        CustomFieldSearch(
+          label: 'Docteur Edgar',
+          icon: SvgPicture.asset("assets/images/utils/search.svg"),
+          keyboardType: TextInputType.name,
+          onValidate: (value) {
+            updateFilter(value);
+          },
+        ),
+        const SizedBox(height: 16),
         Expanded(
-          child: ListView.builder(
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: CardConversation(
-                    lastMsg: chats[index].messages.last.message,
-                    name: (doctors.firstWhere(
-                        (element) =>
-                            element['id'] == chats[index].recipientIds[0].id ||
-                            element['id'] == chats[index].recipientIds[1].id,
-                        orElse: () => {})['name']),
-                    time: chats[index].messages.last.time,
-                    unread: getUnreadMessages(chats[index], idPatient)),
+            child: FutureBuilder(
+          future: fetchData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.blue700,
+                    strokeWidth: 2,
+                  ),
+                ),
               );
-            },
-          ),
+            } else {
+              return ListView.separated(
+                separatorBuilder: (context, index) => const SizedBox(height: 8),
+                itemCount: filtereddoctors.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      widget.webSocketService?.createChat(
+                          "Bonjour", [filtereddoctors[index]['id'], "Test"]);
+                      widget.webSocketService?.getMessages();
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColors.blue200,
+                            width: 2,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
+                                    color: AppColors.grey500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            const Icon(
+                              BootstrapIcons.chevron_right,
+                              size: 16,
+                            ),
+                          ],
+                        )),
+                  );
+                },
+              );
+            }
+          },
+        )),
+        const SizedBox(height: 16),
+        Buttons(
+          variant: Variante.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ],
     );

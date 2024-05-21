@@ -138,7 +138,7 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
