@@ -28,8 +28,8 @@ class ChatState extends State<ChatPageDashBoard> {
   @override
   void initState() {
     super.initState();
-    fetchData();
     _initializeWebSocketService();
+    fetchData();
   }
 
   Future<void> _initializeWebSocketService() async {
@@ -79,7 +79,6 @@ class ChatState extends State<ChatPageDashBoard> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('id')!;
     String? token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
@@ -133,7 +132,9 @@ class ChatState extends State<ChatPageDashBoard> {
                 child: ChatPage(
                   onClick: setChatting,
                   webSocketService: _webSocketService,
-                  chat: chatSelected!,
+                  chat: chats.firstWhere(
+                    (chat) => chat.id == chatSelected!.id,
+                  ),
                   patientName: patientName,
                   doctorId: idDoctor,
                   controller: _scrollController,

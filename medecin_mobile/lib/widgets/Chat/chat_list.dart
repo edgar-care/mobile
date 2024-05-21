@@ -1,4 +1,3 @@
-import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/web_socket_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_card.dart';
@@ -22,24 +21,16 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  // Set your chat ID
-  List<String> patientsName = [];
   String id = '';
+  List<String> patientId = [];
 
   Future<void> getAllPatientsName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     id = prefs.getString('id')!;
     for (var i = 0; i < widget.chats.length; i++) {
-      var patientId = widget.chats[i].recipientIds
+      patientId.add(widget.chats[i].recipientIds
           .firstWhere((element) => element.id != id)
-          .id;
-      var tmp = await getPatientById(patientId);
-      if (tmp.isNotEmpty) {
-        var tmpName = tmp['Nom'].toUpperCase();
-        patientsName.add("${tmp['Prenom']} $tmpName");
-      } else {
-        patientsName.add('Non indiqué');
-      }
+          .id);
     }
   }
 
@@ -66,7 +57,7 @@ class _ChatListState extends State<ChatList> {
                       chat: widget.chats[index],
                       unread: getUnreadMessages(widget.chats[index], id),
                       service: widget.webSocketService,
-                      patientName: patientsName[index],
+                      patientId: patientId[index],
                       onClick: widget.onClick,
                     );
                   },

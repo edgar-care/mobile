@@ -1,41 +1,67 @@
+import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/web_socket_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 // ignore: must_be_immutable
-class ChatCard extends StatelessWidget {
-  String patientName;
+class ChatCard extends StatefulWidget {
+  String patientId;
   Chat chat;
   int unread;
   WebSocketService service;
   Function(bool, Chat, String?) onClick;
   ChatCard({
     required this.onClick,
-    required this.patientName,
+    required this.patientId,
     required this.unread,
     required this.chat,
     required this.service,
-    super.key,
-  });
+    super.key});
 
-  String patientId = '';
+  @override
+  State<ChatCard> createState() => _ChatCardState();
+}
+
+class _ChatCardState extends State<ChatCard> {
+
+  String patientName = '';
   String doctorId = '';
   String lastMessage = '';
   String unreadString = '';
+  bool enable = true;
+
+  Future<void> loadInfo() async{
+    getPatientById(widget.patientId).then((value) => {
+      setState(() {
+      patientName = "${value["Prenom"]} ${value["Nom"]}";
+      enable = false;
+      }),
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
-    switch (unread) {
+    switch (widget.unread) {
       case < 10:
-        unreadString = unread.toString();
+        unreadString = widget.unread.toString();
         break;
       case >= 10:
         unreadString = '+';
     }
-    return Container(
+
+    return Skeletonizer(
+      enabled: enable,
+      child: Container(
       width: MediaQuery.of(context).size.width - 32,
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -47,7 +73,7 @@ class ChatCard extends StatelessWidget {
       ),
       child: GestureDetector(
           onTap: () {
-            onClick(true, chat, patientName);
+            widget.onClick(true, widget.chat, patientName);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -82,7 +108,7 @@ class ChatCard extends StatelessWidget {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.55,
                       child: Text(
-                        chat.messages.last.message,
+                        widget.chat.messages.last.message,
                         style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Poppins',
@@ -100,7 +126,7 @@ class ChatCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '${DateFormat('d MMM').format(chat.messages.last.time)}.',
+                        '${DateFormat('d MMM').format(widget.chat.messages.last.time)}.',
                         style: const TextStyle(
                             fontSize: 12,
                             fontFamily: 'Poppins',
@@ -108,7 +134,7 @@ class ChatCard extends StatelessWidget {
                             fontStyle: FontStyle.italic,
                             color: AppColors.grey500),
                       ),
-                      if (unread > 0)
+                      if (widget.unread > 0)
                         Container(
                             height: 16,
                             width: 16,
@@ -133,6 +159,7 @@ class ChatCard extends StatelessWidget {
               ],
             ),
           )),
+      ),
     );
   }
 }

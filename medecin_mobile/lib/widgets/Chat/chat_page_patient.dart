@@ -59,6 +59,11 @@ class _ChatPageState extends State<ChatPagePatient> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                Container(
+                  height: 2,
+                  color: AppColors.blue100,
+                ),
+                const SizedBox(height: 8),
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
@@ -73,15 +78,13 @@ class _ChatPageState extends State<ChatPagePatient> {
                           if (index == 0 ||
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
+                            if (index != 0) ...[
                             Container(
-                                decoration: BoxDecoration(
+                              height: 2,
                               color: AppColors.blue100,
-                              border: Border.all(
-                                color: AppColors.blue100,
-                                width: 2,
-                              ),
-                            )),
+                            ),
                             const SizedBox(height: 8),
+                            ],
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
                                   .format(widget.chat.messages[index].time),
@@ -111,25 +114,20 @@ class _ChatPageState extends State<ChatPagePatient> {
                 onValidate: (value) {
                   widget.webSocketService!.sendMessage(
                       widget.chat.id, value);
-                    Future.delayed(const Duration(milliseconds: 200), () {
+                    Future.delayed(const Duration(milliseconds: 300), () {
                       widget.controller.animateTo(
                         widget.controller.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 300),
                         curve: Curves.easeOut,
                       );
                     });
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                    );
                 },
                 label: 'Ecriver votre message ici...',
                 onOpen: () {
                   Future.delayed(const Duration(milliseconds: 300), () {
                     widget.controller.animateTo(
                       widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeOut,
                     );
                   });

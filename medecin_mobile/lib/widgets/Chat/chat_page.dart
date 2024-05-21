@@ -85,6 +85,11 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                Container(
+                  height: 2,
+                  color: AppColors.blue100,
+                ),
+                const SizedBox(height: 8),
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
@@ -99,15 +104,13 @@ class _ChatPageState extends State<ChatPage> {
                           if (index == 0 ||
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
+                            if (index != 0) ...[
                             Container(
-                                decoration: BoxDecoration(
+                              height: 2,
                               color: AppColors.blue100,
-                              border: Border.all(
-                                color: AppColors.blue100,
-                                width: 2,
-                              ),
-                            )),
+                            ),
                             const SizedBox(height: 8),
+                            ],
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
                                   .format(widget.chat.messages[index].time),

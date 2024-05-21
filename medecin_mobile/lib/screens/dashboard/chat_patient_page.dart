@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/web_socket_services.dart';
@@ -7,6 +9,7 @@ import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
@@ -54,10 +57,10 @@ class ChatPatientState extends State<ChatPatient> {
             ),
           );
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
+        Future.delayed(const Duration(milliseconds: 300), () {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         });
@@ -67,10 +70,10 @@ class ChatPatientState extends State<ChatPatient> {
         setState(() {
           chats = transformChats(data);
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
+        Future.delayed(const Duration(milliseconds: 300), () {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         });
@@ -90,8 +93,27 @@ class ChatPatientState extends State<ChatPatient> {
 
   Future<void> _loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    patientInfo = await getPatientById(widget.id);
-    idDoctor = prefs.getString('id')!;
+    getPatientById(widget.id).then((value) => 
+    setState(() {
+      patientInfo = value;
+    })
+    );
+    String? token = prefs.getString('token');
+    if (token != null && token.isNotEmpty) {
+      try {
+        String encodedPayload = token.split('.')[1];
+        String decodedPayload =
+            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+        setState(() {
+          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+        });
+      } catch (e) {
+        Logger().e('Error decoding token: $e');
+      }
+    } else {
+      Logger().w('Token is null or empty');
+    }
   }
 
   Future<bool> checkData() async {
@@ -107,6 +129,13 @@ class ChatPatientState extends State<ChatPatient> {
         future: checkData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && snapshot.data == true) {
+            Future.delayed(const Duration(milliseconds: 300), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+          });
             return Column(
               children: [
                 Container(

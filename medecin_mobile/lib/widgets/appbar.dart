@@ -148,11 +148,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         height: 8,
                       ),
                       CustomCard(
-                          isSelected: widget.getSelected() == 4 ? true : false,
+                          isSelected: widget.getSelected() == 5 ? true : false,
                           icon: BootstrapIcons.question_circle_fill,
                           title: "Aide",
                           onTap: () {
-                            widget.callback(4);
+                            widget.callback(5);
                             setState(() {
                               isOpen = false;
                             });
