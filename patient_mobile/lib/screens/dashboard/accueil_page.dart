@@ -53,11 +53,10 @@ class _HomePageState extends State<HomePage> {
             children: [
               Row(
                 children: [
-                  const SizedBox(width: 10),
                   Text(
                     'Bonjour ${infoMedical['name']}',
-                    style: TextStyle(
-                      color: Colors.blue[900],
+                    style: const TextStyle(
+                      color: AppColors.blue700,
                       fontSize: 16,
                       fontFamily: 'Poppins',
                     ),
@@ -86,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Colors.blue[700],
+                    color: AppColors.blue700,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Center(
@@ -109,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                               TextSpan(
                                 text: 'Jeudi 12 Août',
                                 style: TextStyle(
-                                  color: Color(0xFF5AAF33),
+                                  color: AppColors.green400,
                                   fontSize: 24,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w700,
@@ -127,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                               TextSpan(
                                 text: '14 h 30',
                                 style: TextStyle(
-                                  color: Color(0xFF5AAF33),
+                                  color: AppColors.green400,
                                   fontSize: 20,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w700,
