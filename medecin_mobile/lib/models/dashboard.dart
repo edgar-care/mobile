@@ -52,9 +52,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      Patient(
-        setPages: updateSelectedIndex, setId: updateId
-      ),
+      Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
       const Diagnostic(),
       const ChatPageDashBoard(),

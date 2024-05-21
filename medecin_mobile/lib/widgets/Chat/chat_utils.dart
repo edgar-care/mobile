@@ -42,8 +42,8 @@ List<Chat> transformChats(Map<String, dynamic> chats) {
       messages.add(Message(
         message: message['message'],
         ownerId: message['owner_id'],
-        time:
-            DateTime.fromMillisecondsSinceEpoch((message['sended_time'] * 1000)),
+        time: DateTime.fromMillisecondsSinceEpoch(
+            (message['sended_time'] * 1000)),
       ));
     }
     for (var participant in chat['participants']) {

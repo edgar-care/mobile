@@ -204,7 +204,6 @@ class _CustomFieldSearchState extends State<CustomFieldSearch> {
   }
 }
 
-
 class CustomAutoComplete extends StatefulWidget {
   final String label;
   final IconData icon;
@@ -285,4 +284,3 @@ class _CustomAutoComplete2State extends State<CustomAutoComplete> {
     );
   }
 }
-

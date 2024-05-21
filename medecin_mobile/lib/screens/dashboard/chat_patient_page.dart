@@ -18,7 +18,11 @@ class ChatPatient extends StatefulWidget {
   String id;
   final Function setPages;
   final Function setId;
-  ChatPatient({super.key, required this.id, required this.setPages, required this.setId});
+  ChatPatient(
+      {super.key,
+      required this.id,
+      required this.setPages,
+      required this.setId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -26,7 +30,7 @@ class ChatPatient extends StatefulWidget {
 }
 
 class ChatPatientState extends State<ChatPatient> {
-  Map<String,dynamic> patientInfo = {};
+  Map<String, dynamic> patientInfo = {};
   WebSocketService? _webSocketService;
   String idDoctor = '';
   List<Chat> chats = [];
@@ -58,7 +62,7 @@ class ChatPatientState extends State<ChatPatient> {
           );
         });
         _scrollController.jumpTo(
-           _scrollController.position.maxScrollExtent,
+          _scrollController.position.maxScrollExtent,
         );
       },
       onReady: (data) {},
@@ -89,11 +93,9 @@ class ChatPatientState extends State<ChatPatient> {
 
   Future<void> _loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    getPatientById(widget.id).then((value) => 
-    setState(() {
-      patientInfo = value;
-    })
-    );
+    getPatientById(widget.id).then((value) => setState(() {
+          patientInfo = value;
+        }));
     String? token = prefs.getString('token');
     if (token != null && token.isNotEmpty) {
       try {
@@ -114,107 +116,108 @@ class ChatPatientState extends State<ChatPatient> {
 
   Future<bool> checkData() async {
     if (chats.isNotEmpty && patientInfo.isNotEmpty) {
-    return true;
+      return true;
     }
     return false;
   }
 
   @override
   Widget build(BuildContext context) {
-  return FutureBuilder(
+    return FutureBuilder(
         future: checkData(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data == true) {
-            return Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.blue100,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: AppColors.blue200,
-                      width: 2,
-                    ),
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == true) {
+            return Column(children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.blue100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.blue200,
+                    width: 2,
                   ),
-                  child: InkWell(
-                    onTap: () {
-                      WoltModalSheet.show<void>(
-                          context: context,
-                          pageListBuilder: (modalSheetContext) {
-                            return [
-                              patientNavigation(context, patientInfo,
-                                  widget.setPages, widget.setId),
-                            ];
-                          });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: 3,
-                            decoration: BoxDecoration(
-                              color: AppColors.green500,
-                              borderRadius: BorderRadius.circular(99),
-                            ),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    WoltModalSheet.show<void>(
+                        context: context,
+                        pageListBuilder: (modalSheetContext) {
+                          return [
+                            patientNavigation(context, patientInfo,
+                                widget.setPages, widget.setId),
+                          ];
+                        });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 3,
+                          decoration: BoxDecoration(
+                            color: AppColors.green500,
+                            borderRadius: BorderRadius.circular(99),
                           ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            '${patientInfo['Nom']} ${patientInfo['Prenom']}',
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins'),
-                          ),
-                          const Spacer(),
-                          const Text(
-                            'Voir Plus',
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins'),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          const Icon(
-                            BootstrapIcons.chevron_right,
-                            size: 12,
-                          )
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins'),
+                        ),
+                        const Spacer(),
+                        const Text(
+                          'Voir Plus',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins'),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        const Icon(
+                          BootstrapIcons.chevron_right,
+                          size: 12,
+                        )
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Expanded(
-                  child: ChatPagePatient(
-                    controller: _scrollController,
-                    webSocketService: _webSocketService,
-                    chat: chats.firstWhere(
-                      (chat) => (chat.recipientIds.first.id == widget.id || chat.recipientIds.first.id == idDoctor && (chat.recipientIds.last.id == widget.id || chat.recipientIds.last.id == idDoctor)),
-                    ),
-                    patientName: '${patientInfo['Nom']} ${patientInfo['Prenom']}',
-                    doctorId: idDoctor,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Expanded(
+                child: ChatPagePatient(
+                  controller: _scrollController,
+                  webSocketService: _webSocketService,
+                  chat: chats.firstWhere(
+                    (chat) => (chat.recipientIds.first.id == widget.id ||
+                        chat.recipientIds.first.id == idDoctor &&
+                            (chat.recipientIds.last.id == widget.id ||
+                                chat.recipientIds.last.id == idDoctor)),
                   ),
+                  patientName: '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                  doctorId: idDoctor,
                 ),
-              ]
-            );
+              ),
+            ]);
           } else {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-        } 
-  );
+        });
   }
 
   SliverWoltModalSheetPage patientNavigation(BuildContext context,

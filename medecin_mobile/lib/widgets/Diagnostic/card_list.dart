@@ -30,7 +30,9 @@ class _DiagnosticListState extends State<DiagnosticList> {
           break;
       }
       bAppointment = await getDiagnostics(status);
-      bAppointment.sort((a, b) { return a['start_date'].compareTo(b['start_date']);});
+      bAppointment.sort((a, b) {
+        return a['start_date'].compareTo(b['start_date']);
+      });
     }
 
     void updateData() {
@@ -52,7 +54,10 @@ class _DiagnosticListState extends State<DiagnosticList> {
                   const SizedBox(height: 4),
               itemBuilder: (context, index) {
                 return DiagnosticCard(
-                    rdvInfo: bAppointment[index], type: widget.type, refresh: updateData,);
+                  rdvInfo: bAppointment[index],
+                  type: widget.type,
+                  refresh: updateData,
+                );
               },
             ));
           }

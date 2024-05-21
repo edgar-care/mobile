@@ -14,33 +14,32 @@ class ChatCard extends StatefulWidget {
   int unread;
   WebSocketService service;
   Function(bool, Chat, String?) onClick;
-  ChatCard({
-    required this.onClick,
-    required this.patientId,
-    required this.unread,
-    required this.chat,
-    required this.service,
-    super.key});
+  ChatCard(
+      {required this.onClick,
+      required this.patientId,
+      required this.unread,
+      required this.chat,
+      required this.service,
+      super.key});
 
   @override
   State<ChatCard> createState() => _ChatCardState();
 }
 
 class _ChatCardState extends State<ChatCard> {
-
   String patientName = '';
   String doctorId = '';
   String lastMessage = '';
   String unreadString = '';
   bool enable = true;
 
-  Future<void> loadInfo() async{
+  Future<void> loadInfo() async {
     getPatientById(widget.patientId).then((value) => {
-      setState(() {
-      patientName = "${value["Prenom"]} ${value["Nom"].toUpperCase()}";
-      enable = false;
-      }),
-    });
+          setState(() {
+            patientName = "${value["Prenom"]} ${value["Nom"].toUpperCase()}";
+            enable = false;
+          }),
+        });
   }
 
   @override
@@ -60,108 +59,108 @@ class _ChatCardState extends State<ChatCard> {
     }
 
     return Skeletonizer(
-      enabled: enable,
-      child: Container(
-      width: MediaQuery.of(context).size.width - 32,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        border: Border.all(
-          color: AppColors.blue200,
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: GestureDetector(
-          onTap: () {
-            widget.onClick(true, widget.chat, patientName);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: IntrinsicHeight(
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                    height: 28,
-                    width: 28,
-                    child: BoringAvatars(
-                      name: patientName,
-                      colors: const [
-                        AppColors.blue700,
-                        AppColors.blue200,
-                        AppColors.blue500
-                      ],
-                      type: BoringAvatarsType.beam,
-                    )),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      patientName,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.55,
-                      child: Text(
-                        widget.chat.messages.last.message,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.grey500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child:
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+        enabled: enable,
+        child: Container(
+          width: MediaQuery.of(context).size.width - 32,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            border: Border.all(
+              color: AppColors.blue200,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: GestureDetector(
+            onTap: () {
+              widget.onClick(true, widget.chat, patientName);
+            },
+            child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${DateFormat('d MMM', 'fr').format(widget.chat.messages.last.time)}.',
-                        style: const TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.italic,
-                            color: AppColors.grey500),
-                      ),
-                      if (widget.unread > 0)
-                        Container(
-                            height: 16,
-                            width: 16,
-                            decoration: BoxDecoration(
-                              color: AppColors.blue700,
-                              borderRadius: BorderRadius.circular(99),
+                      SizedBox(
+                          height: 28,
+                          width: 28,
+                          child: BoringAvatars(
+                            name: patientName,
+                            colors: const [
+                              AppColors.blue700,
+                              AppColors.blue200,
+                              AppColors.blue500
+                            ],
+                            type: BoringAvatarsType.beam,
+                          )),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            patientName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
                             ),
-                            child: Center(
-                              child: Text(
-                                unreadString,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.white,
-                                ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.55,
+                            child: Text(
+                              widget.chat.messages.last.message,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.grey500,
                               ),
-                            )),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${DateFormat('d MMM', 'fr').format(widget.chat.messages.last.time)}.',
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FontStyle.italic,
+                                  color: AppColors.grey500),
+                            ),
+                            if (widget.unread > 0)
+                              Container(
+                                  height: 16,
+                                  width: 16,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.blue700,
+                                    borderRadius: BorderRadius.circular(99),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      unreadString,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.white,
+                                      ),
+                                    ),
+                                  )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          )),
-      ),
-    ));
+                )),
+          ),
+        ));
   }
 }

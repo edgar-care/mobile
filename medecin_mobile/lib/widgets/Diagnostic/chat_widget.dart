@@ -9,17 +9,16 @@ class ChatList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<dynamic> chatList = summary['logs'];
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
-      child: ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(height: 16),
-                itemCount: chatList.length * 2,
-                itemBuilder: (context, index) {
-                  return buildChatItem(
-                      index % 2 == 0 ? "question" : "answer",
-                      chatList[index ~/ 2]
-                          [index % 2 == 0 ? "question" : "answer"]!,
-                      context);
-                }));
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: ListView.separated(
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemCount: chatList.length * 2,
+            itemBuilder: (context, index) {
+              return buildChatItem(
+                  index % 2 == 0 ? "question" : "answer",
+                  chatList[index ~/ 2][index % 2 == 0 ? "question" : "answer"]!,
+                  context);
+            }));
   }
 
   Widget buildChatItem(String type, String message, BuildContext context) {

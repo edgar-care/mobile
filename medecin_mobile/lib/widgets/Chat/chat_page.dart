@@ -29,7 +29,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-
   @override
   initState() {
     super.initState();
@@ -37,14 +36,13 @@ class _ChatPageState extends State<ChatPage> {
     widget.webSocketService!.getMessages();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-              widget.onClick!(false, null, '');
+            widget.onClick!(false, null, '');
           },
           child: Row(
             children: [
@@ -106,12 +104,12 @@ class _ChatPageState extends State<ChatPage> {
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
                             if (index != 0) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              height: 2,
-                              color: AppColors.blue100,
-                            ),
-                            const SizedBox(height: 8),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 2,
+                                color: AppColors.blue100,
+                              ),
+                              const SizedBox(height: 8),
                             ],
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
@@ -127,7 +125,9 @@ class _ChatPageState extends State<ChatPage> {
                           CardMessages(
                             message: widget.chat.messages[index].message,
                             isMe: widget.chat.messages[index].ownerId ==
-                                widget.doctorId ? true : false,
+                                    widget.doctorId
+                                ? true
+                                : false,
                             date: widget.chat.messages[index].time,
                           ),
                         ],
@@ -137,33 +137,32 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 const SizedBox(height: 16),
                 CustomFieldSearch(
-                onlyOnValidate: true,
-                onValidate: (value) {
-                  widget.webSocketService!.sendMessage(
-                      widget.chat.id, value);
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                    );
-                  });
-                },
-                label: 'Ecriver votre message ici...',
-                onOpen: () {
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                    );
-                  });
-                },
-                icon: const Icon(
-                  BootstrapIcons.send_fill,
-                  color: AppColors.black,
-                  size: 16,
-                ),
+                  onlyOnValidate: true,
+                  onValidate: (value) {
+                    widget.webSocketService!.sendMessage(widget.chat.id, value);
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      widget.controller.animateTo(
+                        widget.controller.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                      );
+                    });
+                  },
+                  label: 'Ecriver votre message ici...',
+                  onOpen: () {
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      widget.controller.animateTo(
+                        widget.controller.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                      );
+                    });
+                  },
+                  icon: const Icon(
+                    BootstrapIcons.send_fill,
+                    color: AppColors.black,
+                    size: 16,
+                  ),
                   keyboardType: TextInputType.text,
                 ),
               ]),

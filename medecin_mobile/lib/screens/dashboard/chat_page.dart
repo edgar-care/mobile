@@ -49,26 +49,30 @@ class ChatState extends State<ChatPageDashBoard> {
             ),
           );
         });
-       Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
       },
       onReady: (data) {},
       onGetMessages: (data) {
         setState(() {
           chats = transformChats(data);
         });
+        if (isChatting) {
           Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        });
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
       },
       onReadMessage: (data) {},
     );

@@ -26,13 +26,11 @@ class ChatPagePatient extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPagePatient> {
-
   @override
   initState() {
     super.initState();
     widget.webSocketService!.readMessage(widget.chat.id);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +77,12 @@ class _ChatPageState extends State<ChatPagePatient> {
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
                             if (index != 0) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              height: 2,
-                              color: AppColors.blue100,
-                            ),
-                            const SizedBox(height: 8),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 2,
+                                color: AppColors.blue100,
+                              ),
+                              const SizedBox(height: 8),
                             ],
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
@@ -100,7 +98,9 @@ class _ChatPageState extends State<ChatPagePatient> {
                           CardMessages(
                             message: widget.chat.messages[index].message,
                             isMe: widget.chat.messages[index].ownerId ==
-                                widget.doctorId ? true : false,
+                                    widget.doctorId
+                                ? true
+                                : false,
                             date: widget.chat.messages[index].time,
                           ),
                           const SizedBox(height: 8),
@@ -111,10 +111,9 @@ class _ChatPageState extends State<ChatPagePatient> {
                 ),
                 const SizedBox(height: 16),
                 CustomFieldSearch(
-                onlyOnValidate: true,
-                onValidate: (value) {
-                  widget.webSocketService!.sendMessage(
-                      widget.chat.id, value);
+                  onlyOnValidate: true,
+                  onValidate: (value) {
+                    widget.webSocketService!.sendMessage(widget.chat.id, value);
                     Future.delayed(const Duration(milliseconds: 500), () {
                       widget.controller.animateTo(
                         widget.controller.position.maxScrollExtent,
@@ -122,22 +121,22 @@ class _ChatPageState extends State<ChatPagePatient> {
                         curve: Curves.easeOut,
                       );
                     });
-                },
-                label: 'Ecriver votre message ici...',
-                onOpen: () {
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeOut,
-                    );
-                  });
-                },
-                icon: const Icon(
-                  BootstrapIcons.send_fill,
-                  color: AppColors.black,
-                  size: 16,
-                ),
+                  },
+                  label: 'Ecriver votre message ici...',
+                  onOpen: () {
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      widget.controller.animateTo(
+                        widget.controller.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOut,
+                      );
+                    });
+                  },
+                  icon: const Icon(
+                    BootstrapIcons.send_fill,
+                    color: AppColors.black,
+                    size: 16,
+                  ),
                   keyboardType: TextInputType.text,
                 ),
               ]),
