@@ -8,7 +8,6 @@ import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_conversation.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
