@@ -42,9 +42,9 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
       day =
           '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).day.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).month.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).year}';
       startDate =
-          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).hour}:${DateTime.parse(startDate).minute.toString().padLeft(2, '0')}';
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
       endDate =
-          '${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).hour}:${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
     });
   }
 

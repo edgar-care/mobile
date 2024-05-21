@@ -162,6 +162,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
       currentPage = 1; // Reset to first page
       filteredDoctors = allDoctors
           .where((element) => element.keys.first.name.contains(name))
+          .toSet()
           .toList();
       totalPages = (filteredDoctors.length / 2).ceil();
     });
