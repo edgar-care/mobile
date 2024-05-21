@@ -28,6 +28,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -61,6 +62,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -94,6 +96,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
@@ -133,6 +136,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_APP_NAME: edgar
           directory: medecin_mobile
           file_name: .env
