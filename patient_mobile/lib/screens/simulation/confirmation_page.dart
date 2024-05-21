@@ -1,7 +1,10 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/doctor.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationPage extends StatefulWidget {
   const ConfirmationPage({super.key});
@@ -11,6 +14,41 @@ class ConfirmationPage extends StatefulWidget {
 }
 
 class _ConfirmationPageState extends State<ConfirmationPage> {
+  @override
+  initState() {
+    super.initState();
+    fetchdata();
+  }
+
+  String doctorId = '';
+  String doctorName = '';
+  String startDate = '';
+  String endDate = '';
+  String day = '';
+  List<dynamic> doctors = [];
+
+  Future<void> fetchdata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    doctors = await getAllDoctor();
+    setState(() {
+      doctorId = prefs.getString('appointment_doctor_id')!;
+      doctorName = doctors
+              .firstWhere((element) => element['id'] == doctorId)['name'] +
+          ' ' +
+          doctors
+              .firstWhere((element) => element['id'] == doctorId)['firstname']
+              .toUpperCase();
+      startDate = prefs.getString('appointment_start_date')!;
+      endDate = prefs.getString('appointment_end_date')!;
+      day =
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).day.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).month.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).year}';
+      startDate =
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).hour}:${DateTime.parse(startDate).minute.toString().padLeft(2, '0')}';
+      endDate =
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).hour}:${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,12 +91,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                   children: [
                     const SizedBox(height: 16),
                     RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         children: <TextSpan>[
                           TextSpan(
                             text:
-                                'Merci pour cet échange. Votre rendez-vous chez le Dr XX le ',
-                            style: TextStyle(
+                                'Merci pour cet échange. Votre rendez-vous chez le Dr $doctorName le ',
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: AppColors.black,
@@ -66,15 +104,15 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                             ),
                           ),
                           TextSpan(
-                            text: '10/02/2024',
-                            style: TextStyle(
+                            text: day,
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: AppColors.green400,
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: ' de ',
                             style: TextStyle(
                               fontSize: 20,
@@ -84,16 +122,16 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                             ),
                           ),
                           TextSpan(
-                            text: '14h00 ',
-                            style: TextStyle(
+                            text: startDate,
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: AppColors.green400,
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          TextSpan(
-                            text: 'à',
+                          const TextSpan(
+                            text: ' à',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
@@ -102,16 +140,16 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                             ),
                           ),
                           TextSpan(
-                            text: ' 14h30',
-                            style: TextStyle(
+                            text: ' $endDate ',
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: AppColors.green400,
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          TextSpan(
-                            text: ' a bien été validé.',
+                          const TextSpan(
+                            text: 'a bien été validé.',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
