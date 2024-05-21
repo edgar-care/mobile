@@ -37,7 +37,7 @@ class _ChatCardState extends State<ChatCard> {
   Future<void> loadInfo() async{
     getPatientById(widget.patientId).then((value) => {
       setState(() {
-      patientName = "${value["Prenom"]} ${value["Nom"]}";
+      patientName = "${value["Prenom"]} ${value["Nom"].toUpperCase()}";
       enable = false;
       }),
     });
@@ -128,7 +128,7 @@ class _ChatCardState extends State<ChatCard> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '${DateFormat('d MMM').format(widget.chat.messages.last.time)}.',
+                        '${DateFormat('d MMM', 'fr').format(widget.chat.messages.last.time)}.',
                         style: const TextStyle(
                             fontSize: 12,
                             fontFamily: 'Poppins',
