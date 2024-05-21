@@ -47,7 +47,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
         for (var doctor in value) {
           if (doctor['id'] == infoMedical['primary_doctor_id']) {
             if (doctor['name'] != null) {
-              return 'Dr. ${doctor['name']} ${doctor['firstname']}';
+              return 'Dr. ${doctor['firstname']} ${doctor['name'].toUpperCase()}';
             } else {
               return 'Dr.Edgar';
             }
