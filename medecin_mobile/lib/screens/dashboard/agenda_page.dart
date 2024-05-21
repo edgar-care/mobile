@@ -77,7 +77,7 @@ class _AgendaState extends State<Agenda> {
                 style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.white),
               ),
             ]),

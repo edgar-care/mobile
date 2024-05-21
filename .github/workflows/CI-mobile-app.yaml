@@ -28,6 +28,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
@@ -62,6 +63,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
@@ -96,6 +98,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile
@@ -136,6 +139,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
           envkey_URL: ${{ secrets.URL }}/demo/
+          envkey_WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}/demo/
           envkey_AIRTABLE_KEY: ${{ secrets.AIRTABLE_KEY }}
           envkey_APP_NAME: edgar
           directory: patient_mobile

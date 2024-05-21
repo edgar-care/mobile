@@ -1,50 +1,138 @@
+import 'dart:convert';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
+import 'package:edgar_pro/services/web_socket_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/Chat/chat_page_patient.dart';
+import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
-import 'package:edgar_pro/widgets/rdv_patient/custom_list_rdv_patient.dart';
-import 'package:edgar_pro/widgets/rdv_patient/custom_old_list_rdv_patient.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
-class PatientPageRdv extends StatefulWidget {
+class ChatPatient extends StatefulWidget {
   String id;
-  Function setPages;
-  Function setId;
-  PatientPageRdv(
+  final Function setPages;
+  final Function setId;
+  ChatPatient(
       {super.key,
       required this.id,
       required this.setPages,
       required this.setId});
 
   @override
-  State<PatientPageRdv> createState() => _PatientPageRdvState();
+  // ignore: library_private_types_in_public_api
+  ChatPatientState createState() => ChatPatientState();
 }
 
-class _PatientPageRdvState extends State<PatientPageRdv> {
-  ValueNotifier<int> selected = ValueNotifier(0);
-  Map<String, dynamic> patient = {};
+class ChatPatientState extends State<ChatPatient> {
+  Map<String, dynamic> patientInfo = {};
+  WebSocketService? _webSocketService;
+  String idDoctor = '';
+  List<Chat> chats = [];
+  String id = "";
+  final ScrollController _scrollController = ScrollController();
 
-  Future<void> _loadInfo() async {
-    patient = await getPatientById(widget.id);
+  @override
+  void initState() {
+    super.initState();
+    _initializeWebSocketService();
+    _loadInfo();
   }
 
-  void updateSelection(int newSelection) {
-    setState(() {
-      selected.value = newSelection;
-    });
+  Future<void> _initializeWebSocketService() async {
+    _webSocketService = WebSocketService(
+      onReceiveMessage: (data) {
+        setState(() {
+          Chat? chatToUpdate = chats.firstWhere(
+            (chat) => chat.id == data['chat_id'],
+          );
+          chatToUpdate.messages.add(
+            Message(
+              message: data['message'],
+              ownerId: data['owner_id'],
+              time: data['sended_time'] != null
+                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
+                  : DateTime.now(),
+            ),
+          );
+        });
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
+      },
+      onReady: (data) {},
+      onGetMessages: (data) {
+        setState(() {
+          chats = transformChats(data);
+        });
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
+      },
+      onReadMessage: (data) {},
+    );
+    await _webSocketService?.connect();
+    _webSocketService?.sendReadyAction();
+    _webSocketService?.getMessages();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _webSocketService?.disconnect();
+  }
+
+  Future<void> _loadInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    getPatientById(widget.id).then((value) => setState(() {
+          patientInfo = value;
+        }));
+    String? token = prefs.getString('token');
+    if (token != null && token.isNotEmpty) {
+      try {
+        String encodedPayload = token.split('.')[1];
+        String decodedPayload =
+            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+        setState(() {
+          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+        });
+      } catch (e) {
+        Logger().e('Error decoding token: $e');
+      }
+    } else {
+      Logger().w('Token is null or empty');
+    }
+  }
+
+  Future<bool> checkData() async {
+    if (chats.isNotEmpty && patientInfo.isNotEmpty) {
+      return true;
+    }
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _loadInfo(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Column(
-            children: [
+        future: checkData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == true) {
+            return Column(children: [
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.blue100,
@@ -60,8 +148,8 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                         context: context,
                         pageListBuilder: (modalSheetContext) {
                           return [
-                            patientNavigation(context, patient, widget.setPages,
-                                widget.setId),
+                            patientNavigation(context, patientInfo,
+                                widget.setPages, widget.setId),
                           ];
                         });
                   },
@@ -84,7 +172,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                           width: 8,
                         ),
                         Text(
-                          '${patient["Nom"]} ${patient["Prenom"]}',
+                          '${patientInfo['Nom']} ${patientInfo['Prenom']}',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -113,66 +201,27 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
               const SizedBox(
                 height: 16,
               ),
-              ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.445,
-                          child: Buttons(
-                            variant: selected.value == 0
-                                ? Variante.primary
-                                : Variante.secondary,
-                            size: SizeButton.sm,
-                            msg: const Text('Prochain rendez-vous'),
-                            onPressed: () {
-                              updateSelection(0);
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.445,
-                          child: Buttons(
-                            variant: selected.value == 1
-                                ? Variante.primary
-                                : Variante.secondary,
-                            size: SizeButton.sm,
-                            msg: const Text('Rendez-vous passés'),
-                            onPressed: () {
-                              updateSelection(1);
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-              const SizedBox(
-                height: 8,
+              Expanded(
+                child: ChatPagePatient(
+                  controller: _scrollController,
+                  webSocketService: _webSocketService,
+                  chat: chats.firstWhere(
+                    (chat) => (chat.recipientIds.first.id == widget.id ||
+                        chat.recipientIds.first.id == idDoctor &&
+                            (chat.recipientIds.last.id == widget.id ||
+                                chat.recipientIds.last.id == idDoctor)),
+                  ),
+                  patientName: '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                  doctorId: idDoctor,
+                ),
               ),
-              ValueListenableBuilder<int>(
-                  valueListenable: selected,
-                  builder: (context, value, child) {
-                    return selected.value == 0
-                        ? CustomListPatient(
-                            id: widget.id,
-                          )
-                        : CustomListOldPatient(id: widget.id);
-                  }),
-            ],
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
+            ]);
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
   SliverWoltModalSheetPage patientNavigation(BuildContext context,

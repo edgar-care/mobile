@@ -1,68 +1,41 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/websocket.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utlis/chat_utils.dart';
-import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar_pro/services/web_socket_services.dart';
+import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
+import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class ChatPageConversation extends StatefulWidget {
-  Function(bool, Chat?) onClick;
+class ChatPagePatient extends StatefulWidget {
   WebSocketService? webSocketService;
-  String doctorName;
+  String patientName;
   Chat chat;
-  String patientId;
+  String doctorId;
   ScrollController controller;
-  ChatPageConversation(
+  ChatPagePatient(
       {super.key,
-      required this.patientId,
-      required this.onClick,
+      required this.doctorId,
       this.webSocketService,
-      required this.doctorName,
+      required this.patientName,
       required this.controller,
       required this.chat});
 
   @override
-  State<ChatPageConversation> createState() => _ChatPageState();
+  State<ChatPagePatient> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPageConversation> {
+class _ChatPageState extends State<ChatPagePatient> {
   @override
   initState() {
     super.initState();
     widget.webSocketService!.readMessage(widget.chat.id);
-    widget.webSocketService!.getMessages();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            widget.onClick(false, widget.chat);
-          },
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/utils/arrowNavbar.svg',
-                height: 12,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                "Revenir en arrière",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                ),
-              )
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
         Expanded(
           child: Container(
             decoration: BoxDecoration(
@@ -75,13 +48,18 @@ class _ChatPageState extends State<ChatPageConversation> {
               child: Column(children: [
                 Center(
                   child: Text(
-                    widget.doctorName,
+                    widget.patientName,
                     style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: AppColors.black),
                   ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 2,
+                  color: AppColors.blue100,
                 ),
                 const SizedBox(height: 8),
                 Expanded(
@@ -98,11 +76,14 @@ class _ChatPageState extends State<ChatPageConversation> {
                           if (index == 0 ||
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
-                            Container(
-                              color: AppColors.blue100,
-                              height: 2,
-                            ),
-                            const SizedBox(height: 8),
+                            if (index != 0) ...[
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 2,
+                                color: AppColors.blue100,
+                              ),
+                              const SizedBox(height: 8),
+                            ],
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
                                   .format(widget.chat.messages[index].time),
@@ -117,11 +98,12 @@ class _ChatPageState extends State<ChatPageConversation> {
                           CardMessages(
                             message: widget.chat.messages[index].message,
                             isMe: widget.chat.messages[index].ownerId ==
-                                    widget.patientId
+                                    widget.doctorId
                                 ? true
                                 : false,
                             date: widget.chat.messages[index].time,
                           ),
+                          const SizedBox(height: 8),
                         ],
                       );
                     },
@@ -132,25 +114,20 @@ class _ChatPageState extends State<ChatPageConversation> {
                   onlyOnValidate: true,
                   onValidate: (value) {
                     widget.webSocketService!.sendMessage(widget.chat.id, value);
-                    Future.delayed(const Duration(milliseconds: 200), () {
+                    Future.delayed(const Duration(milliseconds: 500), () {
                       widget.controller.animateTo(
                         widget.controller.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 400),
                         curve: Curves.easeOut,
                       );
                     });
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                    );
                   },
                   label: 'Ecriver votre message ici...',
                   onOpen: () {
-                    Future.delayed(const Duration(milliseconds: 300), () {
+                    Future.delayed(const Duration(milliseconds: 500), () {
                       widget.controller.animateTo(
                         widget.controller.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 400),
                         curve: Curves.easeOut,
                       );
                     });
@@ -166,7 +143,6 @@ class _ChatPageState extends State<ChatPageConversation> {
             ),
           ),
         ),
-        const SizedBox(height: 8),
       ],
     );
   }

@@ -138,7 +138,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             size: SizeButton.md,
             msg: const Text('Modifier les informations'),
             onPressed: () {}),
-        const SizedBox(height: 16),
       ],
     );
   }

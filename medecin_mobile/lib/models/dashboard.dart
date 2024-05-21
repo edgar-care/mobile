@@ -1,6 +1,9 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
+import 'package:edgar_pro/screens/dashboard/chat_page.dart';
+import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
@@ -51,6 +54,8 @@ class _DashBoardState extends State<DashBoard> {
       const Agenda(),
       Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
+      const Diagnostic(),
+      const ChatPageDashBoard(),
       const Text('Aide',
           style: TextStyle(
               fontSize: 24,
@@ -67,11 +72,7 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex,
         setId: updateId,
       ),
-      Text('Messagerie: $_id',
-          style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
+      ChatPatient(id: getId(), setPages: updateSelectedIndex, setId: updateId)
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

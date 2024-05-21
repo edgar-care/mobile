@@ -11,7 +11,6 @@ import 'package:edgar/screens/register.dart';
 import 'package:edgar/screens/simulation/warning_page.dart';
 import 'package:edgar/screens/simulation/chat_page.dart';
 import 'package:edgar/models/dashboard.dart';
-import 'package:edgar/screens/dashboard/conversation_patient.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -52,7 +51,6 @@ class MyApp extends StatelessWidget {
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
         '/dashboard': (context) => const DashBoardPage(),
-        '/dashboard/chat': (context) => const ConverstationPatient(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
         '/simulation/appointement': (context) => const AppointmentPage(),
