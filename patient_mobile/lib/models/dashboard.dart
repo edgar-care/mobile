@@ -81,7 +81,7 @@ class DashBoardPageState extends State<DashBoardPage>
           children: <Widget>[
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 84),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
                 child: PageTransitionSwitcher(
                   duration: const Duration(milliseconds: 400),
                   reverse: _previousIndex > _selectedIndex,

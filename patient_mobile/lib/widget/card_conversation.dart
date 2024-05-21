@@ -48,66 +48,66 @@ class ChatCard extends StatelessWidget {
             onClick(true, chat);
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                    height: 28,
-                    width: 28,
-                    child: BoringAvatars(
-                      name: doctorName,
-                      colors: const [
-                        AppColors.green600,
-                        AppColors.green200,
-                        AppColors.green500,
-                      ],
-                      type: BoringAvatarsType.beam,
-                    )),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      doctorName,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.55,
-                      child: Text(
-                        chat.messages.last.message,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.grey500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '${DateFormat('d MMM').format(chat.messages.last.time)}.',
-                        style: const TextStyle(
-                            fontSize: 12,
+                        height: 28,
+                        width: 28,
+                        child: BoringAvatars(
+                          name: doctorName,
+                          colors: const [
+                            AppColors.green600,
+                            AppColors.green200,
+                            AppColors.green500,
+                          ],
+                          type: BoringAvatarsType.beam,
+                        )),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          doctorName,
+                          style: const TextStyle(
+                            fontSize: 14,
                             fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.italic,
-                            color: AppColors.grey500),
-                      ),
-                      if (unread > 0)
-                        Container(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.55,
+                          child: Text(
+                            chat.messages.last.message,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.grey500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${DateFormat('d MMM').format(chat.messages.last.time)}.',
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FontStyle.italic,
+                              color: AppColors.grey500),
+                        ),
+                        if (unread > 0)
+                          Container(
                             height: 16,
                             width: 16,
                             decoration: BoxDecoration(
@@ -124,13 +124,13 @@ class ChatCard extends StatelessWidget {
                                   color: AppColors.white,
                                 ),
                               ),
-                            ))
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ))),
     );
   }
 }

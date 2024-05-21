@@ -4,6 +4,7 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/utlis/chat_utils.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
@@ -43,14 +44,14 @@ class _ChatPageState extends State<ChatPageConversation> {
           onTap: () {
             widget.onClick(false, widget.chat);
           },
-          child: const Row(
+          child: Row(
             children: [
-              Icon(
-                BootstrapIcons.arrow_left,
-                size: 12,
+              SvgPicture.asset(
+                'assets/images/utils/arrowNavbar.svg',
+                height: 12,
               ),
-              SizedBox(width: 8),
-              Text(
+              const SizedBox(width: 8),
+              const Text(
                 "Revenir en arrière",
                 style: TextStyle(
                   fontSize: 14,
@@ -86,7 +87,7 @@ class _ChatPageState extends State<ChatPageConversation> {
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                     itemCount: widget.chat.messages.length,
                     physics: const BouncingScrollPhysics(),
                     controller: widget.controller,
@@ -98,13 +99,9 @@ class _ChatPageState extends State<ChatPageConversation> {
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
                             Container(
-                                decoration: BoxDecoration(
                               color: AppColors.blue100,
-                              border: Border.all(
-                                color: AppColors.blue100,
-                                width: 2,
-                              ),
-                            )),
+                              height: 2,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               DateFormat('EEEE d MMMM yyyy', 'fr_FR')
@@ -125,7 +122,6 @@ class _ChatPageState extends State<ChatPageConversation> {
                                 : false,
                             date: widget.chat.messages[index].time,
                           ),
-                          const SizedBox(height: 8),
                         ],
                       );
                     },
