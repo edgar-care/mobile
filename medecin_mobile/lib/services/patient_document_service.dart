@@ -43,7 +43,9 @@ Future<Map<String, dynamic>> getDocumentsbyId(String id) async {
       'Authorization': 'Bearer $token',
     },
   );
-  if (response.statusCode == 201) {
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
+  if (response.statusCode == 200) {
     return jsonDecode(response.body)['download'];
   } else {
     return {};
