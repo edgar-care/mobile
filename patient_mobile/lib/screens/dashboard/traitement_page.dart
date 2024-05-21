@@ -637,6 +637,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                             setState(() {
                               if (traitement.isNotEmpty) {
                                 alreadyExist = true;
+                                name = nameTraitement[0];
                               }
                             });
                           }),

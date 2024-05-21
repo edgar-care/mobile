@@ -47,27 +47,32 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
             ),
           ),
           const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                widget.traitement['antedisease']['name'] as String,
-                style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  widget.traitement['antedisease']['name'] as String,
+                  style: const TextStyle(
+                    color: AppColors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  if (widget.traitement['treatments'] != null) ...[
+                const SizedBox(height: 4),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final maxWidth = constraints.maxWidth;
+                    double usedWidth = 0.0;
+                    bool overflow = false;
+
+                    List<Widget> treatmentWidgets = [];
                     for (var i = 0;
-                        i < (widget.traitement['treatments'] as List).length &&
-                            i < 2;
-                        i++) ...[
-                      Container(
+                        i < (widget.traitement['treatments'] as List).length;
+                        i++) {
+                      final treatmentName = widget.medNames[i];
+                      final treatmentWidget = Container(
                         margin: const EdgeInsets.only(right: 4),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
@@ -76,28 +81,56 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                         ),
                         child: Text(
-                          widget.medNames[i],
+                          treatmentName,
                           style: const TextStyle(
                             color: AppColors.black,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ),
-                    ],
-                    if (widget.traitement['treatments'].length > 2) ...[
-                      const Icon(
-                        BootstrapIcons.plus,
-                        color: AppColors.black,
-                        size: 16,
-                      ),
-                    ]
-                  ],
-                ],
-              ),
-            ],
+                      );
+
+                      final textPainter = TextPainter(
+                        text: TextSpan(
+                          text: treatmentName,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        maxLines: 1,
+                        textDirection: TextDirection.ltr,
+                      )..layout();
+
+                      usedWidth +=
+                          textPainter.width + 20; // Add padding and margin
+
+                      if (usedWidth > maxWidth) {
+                        overflow = true;
+                        break;
+                      }
+
+                      treatmentWidgets.add(treatmentWidget);
+                    }
+
+                    if (overflow) {
+                      treatmentWidgets.add(
+                        const Icon(
+                          BootstrapIcons.plus,
+                          color: AppColors.black,
+                          size: 16,
+                        ),
+                      );
+                    }
+
+                    return Row(
+                      children: treatmentWidgets,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
           const Icon(
             BootstrapIcons.chevron_right,
             color: AppColors.black,
