@@ -32,6 +32,7 @@ class _ChatPageState extends State<ChatPage> {
   Chat? chatSelected;
   bool isChatting = false;
   List<String> doctorName = [];
+  final ValueNotifier<int> pageIndex = ValueNotifier(0);
 
   @override
   void initState() {
@@ -76,7 +77,6 @@ class _ChatPageState extends State<ChatPage> {
       },
       onReady: (data) {},
       onCreateChat: (data) {
-        Logger().i('Chat created: ${data['chat_id']}');
         setState(() {
           chats.add(
             Chat(
@@ -160,13 +160,19 @@ class _ChatPageState extends State<ChatPage> {
       return 'Dr. Edgard Test';
     }
 
-    return 'Dr. ${doctor1['name']} ${doctor1['firstname']}';
+    return 'Dr. ${doctor1['name']} ${doctor1['firstname'].toUpperCase()}';
   }
 
   Future<void> getAllDoctorName() async {
     for (var doctor in doctors) {
       doctorName.add('Dr. ${doctor['name']} ${doctor['firstname']}');
     }
+  }
+
+  void updateData(int index) {
+    setState(() {
+      pageIndex.value = index;
+    });
   }
 
   @override
@@ -221,13 +227,17 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () {
                     WoltModalSheet.show<void>(
                         context: context,
+                        pageIndexNotifier: pageIndex,
                         pageListBuilder: (modalSheetContext) {
                           return [
-                            createDiscussion(
-                                modalSheetContext, _webSocketService),
+                            createDiscussion(modalSheetContext,
+                                _webSocketService, updateData),
+                            createDiscussion2(modalSheetContext,
+                                _webSocketService, updateData, idPatient),
                           ];
                         });
                   }),
+              const SizedBox(height: 8),
               Expanded(
                 child: FutureBuilder(
                   future:
@@ -240,6 +250,7 @@ class _ChatPageState extends State<ChatPage> {
                       ); // You can replace this with a loading indicator
                     } else {
                       return ListView.separated(
+                        padding: const EdgeInsets.all(0),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 4),
                         itemCount: chats.length,
@@ -248,7 +259,8 @@ class _ChatPageState extends State<ChatPage> {
                             chat: chats[index],
                             unread: getUnreadMessages(chats[index], idPatient),
                             service: _webSocketService!,
-                            doctorName: doctorName[index],
+                            doctorName: getDoctorName(
+                                chats[index]), //doctorName[index],
                             onClick: setChatting,
                           );
                         },
@@ -265,8 +277,10 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
-WoltModalSheetPage createDiscussion(
-    BuildContext context, WebSocketService? webSocketService) {
+String doctorIdSelected = '';
+
+WoltModalSheetPage createDiscussion(BuildContext context,
+    WebSocketService? webSocketService, Function updateData) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
@@ -278,6 +292,7 @@ WoltModalSheetPage createDiscussion(
         padding: const EdgeInsets.all(24),
         child: BodycreateDiscussionModal(
           webSocketService: webSocketService,
+          updateData: updateData,
         ),
       ),
     ),
@@ -287,7 +302,9 @@ WoltModalSheetPage createDiscussion(
 // ignore: must_be_immutable
 class BodycreateDiscussionModal extends StatefulWidget {
   WebSocketService? webSocketService;
-  BodycreateDiscussionModal({super.key, required this.webSocketService});
+  Function updateData;
+  BodycreateDiscussionModal(
+      {super.key, required this.webSocketService, required this.updateData});
 
   @override
   State<BodycreateDiscussionModal> createState() =>
@@ -376,20 +393,22 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
               return ListView.separated(
                 separatorBuilder: (context, index) => const SizedBox(height: 8),
                 itemCount: filtereddoctors.length,
+                padding: const EdgeInsets.all(0),
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      widget.webSocketService?.createChat(
-                          "Bonjour", [filtereddoctors[index]['id'], "Test"]);
-                      widget.webSocketService?.getMessages();
-                      Navigator.pop(context);
+                      // ignore: unused_label
+                      doctorIdSelected:
+                      filtereddoctors[index]['id'];
+                      widget.updateData(1);
                     },
                     child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: AppColors.blue200,
                             width: 2,
@@ -403,7 +422,7 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
                                 Text(
                                   'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
                                   ),
@@ -412,10 +431,10 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
                                 Text(
                                   '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
                                   style: const TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
-                                    color: AppColors.grey500,
+                                    color: AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -440,6 +459,125 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
           size: SizeButton.md,
           msg: const Text('Annuler'),
           onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+WoltModalSheetPage createDiscussion2(BuildContext context,
+    WebSocketService? webSocketService, Function updateData, String idPatient) {
+  return WoltModalSheetPage(
+    hasTopBarLayer: false,
+    backgroundColor: AppColors.white,
+    hasSabGradient: true,
+    enableDrag: true,
+    child: SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: BodycreateDiscussion2Modal(
+          webSocketService: webSocketService,
+          updateData: updateData,
+          idPatient: idPatient,
+        ),
+      ),
+    ),
+  );
+}
+
+// ignore: must_be_immutable
+class BodycreateDiscussion2Modal extends StatefulWidget {
+  WebSocketService? webSocketService;
+  Function updateData;
+  String idPatient;
+  BodycreateDiscussion2Modal(
+      {super.key,
+      required this.webSocketService,
+      required this.updateData,
+      required this.idPatient});
+
+  @override
+  State<BodycreateDiscussion2Modal> createState() =>
+      BodycreateDiscussion2ModalState();
+}
+
+class BodycreateDiscussion2ModalState
+    extends State<BodycreateDiscussion2Modal> {
+  String message = '';
+
+  Future<void> fetchData() async {}
+
+  void updateData(String value) {
+    setState(() {
+      message = value;
+    });
+    widget.webSocketService?.createChat(message, [
+      doctorIdSelected,
+      widget.idPatient,
+    ]);
+    Future.delayed(const Duration(milliseconds: 200), () {
+      widget.webSocketService?.getMessages();
+      widget.updateData(0);
+      Navigator.pop(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                color: AppColors.green200,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                BootstrapIcons.chat_dots_fill,
+                color: AppColors.green700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'Démarrez une nouvelle conversation',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        CustomFieldSearchMaxLines(
+          label: 'Votre message',
+          maxLines: 5,
+          keyboardType: TextInputType.name,
+          icon: const Icon(
+            BootstrapIcons.send_fill,
+            size: 18,
+          ),
+          onlyOnValidate: true,
+          onValidate: (value) {
+            updateData(value);
+          },
+        ),
+        const SizedBox(height: 16),
+        Buttons(
+          variant: Variante.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
+          onPressed: () {
+            widget.updateData(0);
             Navigator.pop(context);
           },
         ),

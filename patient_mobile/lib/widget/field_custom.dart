@@ -286,3 +286,111 @@ class _CustomAutoComplete2State extends State<CustomAutoComplete> {
     );
   }
 }
+
+class CustomFieldSearchMaxLines extends StatefulWidget {
+  final String label;
+  final Widget icon;
+  final TextInputType keyboardType;
+  final Function(String) onValidate;
+  final bool? onlyOnValidate;
+  final Function()? onOpen;
+  final int maxLines;
+
+  const CustomFieldSearchMaxLines({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+    required this.onValidate,
+    this.onlyOnValidate = false,
+    this.onOpen,
+    required this.maxLines,
+  });
+
+  @override
+  State<CustomFieldSearchMaxLines> createState() =>
+      _CustomFieldSearchMaxLinesState();
+}
+
+class _CustomFieldSearchMaxLinesState extends State<CustomFieldSearchMaxLines> {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode =
+      FocusNode(); // Create a FocusNode for requesting focus
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  maxLines: widget.maxLines,
+                  keyboardType: widget.keyboardType,
+                  textInputAction: TextInputAction.search,
+                  textCapitalization: TextCapitalization.sentences,
+                  style: const TextStyle(
+                    color: AppColors.grey950,
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    textBaseline: TextBaseline.ideographic,
+                  ),
+                  decoration: InputDecoration(
+                    constraints: BoxConstraints(
+                      minWidth: 0,
+                      maxWidth: constraints.maxWidth,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                    hintText: widget.label,
+                    hintStyle: const TextStyle(
+                      color: AppColors.grey400,
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                  ),
+                  onTap: widget.onOpen,
+                  onTapAlwaysCalled: true,
+                  onSubmitted: (value) {
+                    widget.onValidate(value);
+                    _controller.clear();
+                  },
+                  onChanged: (value) {
+                    if (widget.onlyOnValidate == true) {
+                      return;
+                    }
+                    widget.onValidate(value);
+                  },
+                  focusNode:
+                      _focusNode, // Associate the FocusNode with the TextField
+                ),
+              ),
+              GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: widget.icon,
+                ),
+                onTap: () {
+                  widget.onValidate(_controller.text);
+                  _controller.clear();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

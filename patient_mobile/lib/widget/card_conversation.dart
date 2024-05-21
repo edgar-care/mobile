@@ -58,9 +58,9 @@ class ChatCard extends StatelessWidget {
                     child: BoringAvatars(
                       name: doctorName,
                       colors: const [
-                        AppColors.blue700,
-                        AppColors.blue200,
-                        AppColors.blue500
+                        AppColors.green600,
+                        AppColors.green200,
+                        AppColors.green500,
                       ],
                       type: BoringAvatarsType.beam,
                     )),
