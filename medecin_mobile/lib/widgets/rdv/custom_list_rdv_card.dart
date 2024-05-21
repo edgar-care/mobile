@@ -2,6 +2,7 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
+import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -330,11 +331,21 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         .format(date.add(const Duration(minutes: 30)))
         .toString();
     Map<String, dynamic> diagnostic = {};
-
+    List<dynamic> docs = [];
+    int doctorindex = -1;
+    
     Future<bool> loadInfo() async {
       diagnostic = await getSummary(rdvInfo["session_id"]);
       return true;
     }
+
+    Future<bool> loadDoctor() async{
+        docs = await getAllDoctor();
+    doctorindex =
+        docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
+      return true;
+    }
+
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -364,14 +375,15 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
+                  loadDoctor().then((value) =>
                   WoltModalSheet.show(
                     context: context,
                     pageListBuilder: (BuildContext context) {
                       return [
-                        medicalFolderModal(context),
+                        medicalFolderModal(context, docs, doctorindex),
                       ];
                     },
-                  );
+                  ));
                 }),
             const SizedBox(height: 4),
             CustomModalCard(
@@ -492,11 +504,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(BuildContext context) {
+  SliverWoltModalSheetPage medicalFolderModal(BuildContext context,  List<dynamic> docs, int doctorindex) {
     return WoltModalSheetPage(
         backgroundColor: AppColors.white,
         hasTopBarLayer: false,
-        child: MedicalFolderBody(patientInfo: patientInfo,));
+        child: MedicalFolderBody(patientInfo: patientInfo, docs: docs, doctorindex: doctorindex,));
   }
 }
 

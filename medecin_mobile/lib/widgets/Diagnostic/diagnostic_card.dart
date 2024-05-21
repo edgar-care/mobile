@@ -103,7 +103,7 @@ class DiagnosticCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
+                                  "${patientInfo["Prenom"]} ${patientInfo["Nom"].toUpperCase()}",
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
@@ -279,11 +279,21 @@ class DiagnosticCard extends StatelessWidget {
         .format(date.add(const Duration(minutes: 30)))
         .toString();
     Map<String, dynamic> diagnostic = {};
+    List<dynamic> docs = [];
+    int doctorindex = -1;
 
     Future<bool> loadInfo() async {
       diagnostic = await getSummary(rdvInfo["session_id"]);
       return true;
     }
+
+    Future<bool> loadDoctor() async{
+        docs = await getAllDoctor();
+    doctorindex =
+        docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
+      return true;
+    }
+
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -313,14 +323,15 @@ class DiagnosticCard extends StatelessWidget {
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
+                        loadDoctor().then((value) =>
                   WoltModalSheet.show(
                     context: context,
                     pageListBuilder: (BuildContext context) {
                       return [
-                        medicalFolderModal(context),
+                        medicalFolderModal(context, docs, doctorindex),
                       ];
                     },
-                  );
+                  ));
                 }),
             const SizedBox(height: 4),
             CustomModalCard(
@@ -744,11 +755,11 @@ class DiagnosticCard extends StatelessWidget {
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(BuildContext context) {
+  SliverWoltModalSheetPage medicalFolderModal(BuildContext context, List<dynamic> docs, int doctorindex) {
     return WoltModalSheetPage(
         backgroundColor: AppColors.white,
         hasTopBarLayer: false,
-        child: MedicalFolderBody(patientInfo: patientInfo,));
+        child: MedicalFolderBody(patientInfo: patientInfo, docs: docs, doctorindex: doctorindex));
   }
 }
 
@@ -961,27 +972,15 @@ class BodySummary extends StatelessWidget {
 // ignore: must_be_immutable
 class MedicalFolderBody extends StatefulWidget {
   Map<String, dynamic> patientInfo;
-  MedicalFolderBody({super.key, required this.patientInfo});
+  List<dynamic> docs;
+  int doctorindex ;
+  MedicalFolderBody({super.key, required this.patientInfo, required this.docs, required this.doctorindex});
 
   @override
   State<MedicalFolderBody> createState() => _MedicalFolderBodyState();
 }
 
 class _MedicalFolderBodyState extends State<MedicalFolderBody> {
-  List<dynamic> docs = [];
-  int doctorindex = -1;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadInfo();
-  }
-
-  Future<void> _loadInfo() async {
-    docs = await getAllDoctor();
-    doctorindex =
-        docs.indexWhere((doc) => doc['id'] == widget.patientInfo['medecin_traitant']);
-  }
 
   String sexe(String sexe) {
     switch (sexe) {
@@ -1030,9 +1029,8 @@ class _MedicalFolderBodyState extends State<MedicalFolderBody> {
                         Text(
                           'Dossier médical',
                           style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins'),
                         ),
                       ],
@@ -1077,14 +1075,14 @@ class _MedicalFolderBodyState extends State<MedicalFolderBody> {
                           fontSize: 14,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500)),
-                  if (doctorindex != -1)
+                  if (widget.doctorindex != -1)
                     Text(
-                        'Médecin traitant: ${docs[doctorindex]['firstname']} ${docs[doctorindex]['name']}',
+                        'Médecin traitant: ${widget.docs[widget.doctorindex]['firstname']} ${widget.docs[widget.doctorindex]['name']}',
                         style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500)),
-                  if (doctorindex == -1)
+                  if (widget.doctorindex == -1)
                     const Text('Médecin traitant: Non indiqué',
                         style: TextStyle(
                             fontSize: 14,
