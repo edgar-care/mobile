@@ -509,10 +509,6 @@ class _FilePageState extends State<FilePage> {
                         .contains(searchTerm.toLowerCase()))
                     .toList();
 
-                if (filteredFiles.isEmpty) {
-                  filteredFiles = files;
-                }
-
                 // Apply sorting if needed
                 if (isByAlpha) {
                   filteredFiles.sort((a, b) => a['name'].compareTo(b['name']));
