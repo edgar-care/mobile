@@ -399,8 +399,11 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
                   return GestureDetector(
                     onTap: () {
                       // ignore: unused_label
-                      doctorIdSelected:
-                      filtereddoctors[index]['id'];
+                      setState(() {
+                        doctorIdSelected = filtereddoctors[index]['id'];
+                      });
+
+                      Logger().i(doctorIdSelected);
                       widget.updateData(1);
                     },
                     child: Container(
