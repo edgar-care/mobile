@@ -1,4 +1,5 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
+import 'package:edgar_pro/screens/dashboard/chat_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
@@ -51,6 +52,7 @@ class _DashBoardState extends State<DashBoard> {
       const Agenda(),
       Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
+      const ChatPageDashBoard(),
       const Text('Aide',
           style: TextStyle(
               fontSize: 24,

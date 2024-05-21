@@ -1278,7 +1278,6 @@ class _Onboarding3State extends State<Body3> {
         "still_relevant": stillRelevant,
       });
     });
-
   }
 
   @override
@@ -1372,13 +1371,13 @@ class _Onboarding3State extends State<Body3> {
               return Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        runAlignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        children: [
+                    scrollDirection: Axis.vertical,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      runAlignment: WrapAlignment.start,
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: [
                         if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
                           for (var i = 0;
                               i < widget.tmpInfo['medical_antecedents'].length;

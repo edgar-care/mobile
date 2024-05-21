@@ -1547,42 +1547,42 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               ),
             ),
             Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.3,
-                  ),
-                  child: FutureBuilder(
-                    future: fetchData(), // Simulate some async operation
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: medicines['treatments'].length,
-                          itemBuilder: (context, index) {
-                            if (medicines['treatments'].isEmpty) {
-                              return const SizedBox();
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: CardTraitementDay(
-                                isClickable: true,
-                                data: medicines['treatments'][index],
-                                name: medNames[index],
-                                onTap: () {
-                                  setState(() {
-                                    medicines['treatments'].removeAt(index);
-                                    medNames.removeAt(index);
-                                  });
-                                },
-                              ),
-                            );
-                          },
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.3,
+              ),
+              child: FutureBuilder(
+                future: fetchData(), // Simulate some async operation
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: medicines['treatments'].length,
+                      itemBuilder: (context, index) {
+                        if (medicines['treatments'].isEmpty) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: CardTraitementDay(
+                            isClickable: true,
+                            data: medicines['treatments'][index],
+                            name: medNames[index],
+                            onTap: () {
+                              setState(() {
+                                medicines['treatments'].removeAt(index);
+                                medNames.removeAt(index);
+                              });
+                            },
+                          ),
                         );
-                      }
-                    },
-                  ),
-                ),
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
