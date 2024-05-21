@@ -128,8 +128,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                       CustomCard(
                         isSelected: widget.getSelected() == 3 ? true : false,
-                        icon: BootstrapIcons.chat_dots_fill,
-                        title: "Messagerie",
+                        icon: BootstrapIcons.heart_pulse_fill,
+                        title: "Diagnostics",
                         onTap: () {
                           widget.callback(3);
                           setState(() {
@@ -142,8 +142,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                       CustomCard(
                         isSelected: widget.getSelected() == 4 ? true : false,
-                        icon: BootstrapIcons.heart_pulse_fill,
-                        title: "Diagnostic",
+                        icon: BootstrapIcons.chat_dots_fill,
+                        title: "Messagerie",
                         onTap: () {
                           widget.callback(4);
                           setState(() {
