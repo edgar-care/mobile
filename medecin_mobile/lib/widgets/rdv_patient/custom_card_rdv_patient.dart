@@ -62,8 +62,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
           WoltModalSheet.show(
             context: context,
             pageListBuilder: (BuildContext context) {
-              return [
-              ];
+              return [];
             },
           );
         },
@@ -114,6 +113,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
       diagnostic = await getSummary(rdvInfo["session_id"]);
       return true;
     }
+
     return WoltModalSheetPage(
       backgroundColor: AppColors.white,
       hasTopBarLayer: false,
@@ -144,13 +144,13 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                 icon: BootstrapIcons.heart_pulse_fill,
                 onTap: () {
                   loadInfo().then((value) => WoltModalSheet.show(
-                      context: context,
-                      pageListBuilder: (BuildContext context) {
-                        return [
-                          diagnosticModal(context, diagnostic),
-                        ];
-                      },
-                    ));
+                        context: context,
+                        pageListBuilder: (BuildContext context) {
+                          return [
+                            diagnosticModal(context, diagnostic),
+                          ];
+                        },
+                      ));
                 }),
             const SizedBox(height: 4),
             CustomCardModal(
@@ -158,13 +158,13 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                 icon: BootstrapIcons.file_text_fill,
                 onTap: () {
                   loadInfo().then((value) => WoltModalSheet.show(
-                      context: context,
-                      pageListBuilder: (BuildContext context) {
-                        return [
-                          chatModal(context, diagnostic),
-                        ];
-                      },
-                    ));
+                        context: context,
+                        pageListBuilder: (BuildContext context) {
+                          return [
+                            chatModal(context, diagnostic),
+                          ];
+                        },
+                      ));
                 }),
             if (!widget.old)
               Column(children: [
@@ -435,7 +435,6 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
       ),
     );
   }
-
 }
 
 class BodySummary extends StatelessWidget {

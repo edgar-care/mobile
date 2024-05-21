@@ -25,8 +25,8 @@ Future<Map<String, dynamic>> getSummary(String id) async {
   }
 }
 
-Future<void> postDiagValidation(
-    BuildContext context, String id, bool validation, String reason, String health) async {
+Future<void> postDiagValidation(BuildContext context, String id,
+    bool validation, String reason, String health) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/diagnostic/$id';
@@ -35,8 +35,11 @@ Future<void> postDiagValidation(
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode(
-          {if (reason != '') 'reason': reason, 'validation': validation, if(health != '') "health_method": health}));
+      body: jsonEncode({
+        if (reason != '') 'reason': reason,
+        'validation': validation,
+        if (health != '') "health_method": health
+      }));
   if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: "Réponse envoyée avec succes", context: context));

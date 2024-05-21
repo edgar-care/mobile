@@ -19,11 +19,11 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> documents = [];
     if (jsonDecode(response.body)['document_ids'] != null) {
-    var tmp = jsonDecode(response.body)['document_ids'];
-    for (int i = 0; i < tmp.length; i++) {
-      documents.add(await getDocumentsbyId(tmp[i]));
-    }
-    return documents;
+      var tmp = jsonDecode(response.body)['document_ids'];
+      for (int i = 0; i < tmp.length; i++) {
+        documents.add(await getDocumentsbyId(tmp[i]));
+      }
+      return documents;
     } else {
       return [];
     }

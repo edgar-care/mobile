@@ -59,97 +59,96 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-              Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.red200,
+          child: Column(children: [
+            Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(60),
+                  color: AppColors.red200,
+                ),
+                child: const Icon(
+                  BootstrapIcons.x,
+                  color: AppColors.red700,
+                  size: 40,
+                )),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Êtes-vous sûr ?",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey400),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            const Text(
+              "La raison de l'annulation",
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            CustomField(
+              label: "Renseigner la raison de l'annulation",
+              onChanged: (value) => cancelreason = value,
+              keyboardType: TextInputType.text,
+              startUppercase: false,
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.427,
+                  child: Buttons(
+                    variant: Variante.secondary,
+                    size: SizeButton.sm,
+                    msg: const Text('Annuler'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  child: const Icon(
-                    BootstrapIcons.x,
-                    color: AppColors.red700,
-                    size: 40,
-                  )),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Êtes-vous sûr ?",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              const Text(
-                "La raison de l'annulation",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              CustomField(
-                label: "Renseigner la raison de l'annulation",
-                onChanged: (value) => cancelreason = value,
-                keyboardType: TextInputType.text,
-                startUppercase: false,
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.427,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Annuler'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.427,
+                  child: Buttons(
+                    variant: Variante.delete,
+                    size: SizeButton.sm,
+                    msg: const Text('Oui, je suis sûr'),
+                    onPressed: () {
+                      cancelAppointments(id, context, cancelreason);
+                      Navigator.pop(context);
+                    },
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.427,
-                    child: Buttons(
-                      variant: Variante.delete,
-                      size: SizeButton.sm,
-                      msg: const Text('Oui, je suis sûr'),
-                      onPressed: () {
-                        cancelAppointments(id, context, cancelreason);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ]),
+                ),
+              ],
+            ),
+          ]),
         ),
       ),
     );
@@ -190,11 +189,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                   context: context,
                   pageListBuilder: (modalSheetContext) {
                     return [
-                      navModal(
-                              modalSheetContext,
-                              patientInfo["Nom"],
-                              patientInfo["Prenom"],
-                              widget.rdvInfo),
+                      navModal(modalSheetContext, patientInfo["Nom"],
+                          patientInfo["Prenom"], widget.rdvInfo),
                     ];
                   },
                 );
@@ -321,6 +317,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
       },
     );
   }
+
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
       String firstname, Map<String, dynamic> rdvInfo) {
     DateTime date =
@@ -333,16 +330,16 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     Map<String, dynamic> diagnostic = {};
     List<dynamic> docs = [];
     int doctorindex = -1;
-    
+
     Future<bool> loadInfo() async {
       diagnostic = await getSummary(rdvInfo["session_id"]);
       return true;
     }
 
-    Future<bool> loadDoctor() async{
-        docs = await getAllDoctor();
-    doctorindex =
-        docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
+    Future<bool> loadDoctor() async {
+      docs = await getAllDoctor();
+      doctorindex = docs
+          .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;
     }
 
@@ -375,15 +372,14 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
-                  loadDoctor().then((value) =>
-                  WoltModalSheet.show(
-                    context: context,
-                    pageListBuilder: (BuildContext context) {
-                      return [
-                        medicalFolderModal(context, docs, doctorindex),
-                      ];
-                    },
-                  ));
+                  loadDoctor().then((value) => WoltModalSheet.show(
+                        context: context,
+                        pageListBuilder: (BuildContext context) {
+                          return [
+                            medicalFolderModal(context, docs, doctorindex),
+                          ];
+                        },
+                      ));
                 }),
             const SizedBox(height: 4),
             CustomModalCard(
@@ -504,11 +500,16 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(BuildContext context,  List<dynamic> docs, int doctorindex) {
+  SliverWoltModalSheetPage medicalFolderModal(
+      BuildContext context, List<dynamic> docs, int doctorindex) {
     return WoltModalSheetPage(
         backgroundColor: AppColors.white,
         hasTopBarLayer: false,
-        child: MedicalFolderBody(patientInfo: patientInfo, docs: docs, doctorindex: doctorindex,));
+        child: MedicalFolderBody(
+          patientInfo: patientInfo,
+          docs: docs,
+          doctorindex: doctorindex,
+        ));
   }
 }
 
@@ -716,5 +717,4 @@ class BodySummary extends StatelessWidget {
       ],
     );
   }
-
 }

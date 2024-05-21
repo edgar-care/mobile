@@ -20,7 +20,11 @@ class DiagnosticCard extends StatelessWidget {
   Map<String, dynamic> rdvInfo;
   int type;
   Function refresh;
-  DiagnosticCard({super.key, required this.rdvInfo, required this.type, required this.refresh});
+  DiagnosticCard(
+      {super.key,
+      required this.rdvInfo,
+      required this.type,
+      required this.refresh});
 
   ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
   Map<String, dynamic> patientInfo = {};
@@ -59,7 +63,7 @@ class DiagnosticCard extends StatelessWidget {
               child: InkWell(
                   onTap: () {
                     WoltModalSheet.show<void>(
-                       onModalDismissedWithBarrierTap: () {
+                      onModalDismissedWithBarrierTap: () {
                         Navigator.pop(context);
                         pageIndexNotifier.value = 0;
                       },
@@ -150,120 +154,120 @@ class DiagnosticCard extends StatelessWidget {
                                 ]),
                               ])
                             ]),
-                      const Spacer(),
-                      const Icon(
-                        BootstrapIcons.chevron_right,
-                        size: 16,),
+                        const Spacer(),
+                        const Icon(
+                          BootstrapIcons.chevron_right,
+                          size: 16,
+                        ),
                       ]))));
         } else {
           return Skeletonizer(
               enabled: true,
               child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: AppColors.blue200, width: 2.0),
-              ),
-              child: InkWell(
-                  onTap: () {
-                    WoltModalSheet.show<void>(
-                      onModalDismissedWithBarrierTap: () {
-
-                        pageIndexNotifier.value = 0;
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(color: AppColors.blue200, width: 2.0),
+                  ),
+                  child: InkWell(
+                      onTap: () {
+                        WoltModalSheet.show<void>(
+                          onModalDismissedWithBarrierTap: () {
+                            pageIndexNotifier.value = 0;
+                          },
+                          onModalDismissedWithDrag: () {
+                            pageIndexNotifier.value = 0;
+                          },
+                          pageIndexNotifier: pageIndexNotifier,
+                          context: context,
+                          pageListBuilder: (modalSheetContext) {
+                            return [
+                              navModal(
+                                  modalSheetContext,
+                                  patientInfo["Nom"],
+                                  patientInfo["Prenom"],
+                                  rdvInfo,
+                                  pageIndexNotifier),
+                              validateModal(modalSheetContext,
+                                  pageIndexNotifier, rdvInfo),
+                              cancelModal(modalSheetContext, pageIndexNotifier,
+                                  rdvInfo),
+                            ];
+                          },
+                        );
                       },
-                      onModalDismissedWithDrag: () {
-                        pageIndexNotifier.value = 0;
-                      },
-                      pageIndexNotifier: pageIndexNotifier,
-                      context: context,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          navModal(
-                              modalSheetContext,
-                              patientInfo["Nom"],
-                              patientInfo["Prenom"],
-                              rdvInfo,
-                              pageIndexNotifier),
-                          validateModal(
-                              modalSheetContext, pageIndexNotifier, rdvInfo),
-                          cancelModal(
-                              modalSheetContext, pageIndexNotifier, rdvInfo),
-                        ];
-                      },
-                    );
-                  },
-                  child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(children: [
-                        Container(
-                          height: 50,
-                          width: 4,
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              const SizedBox(
-                                height: 8,
+                      child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(children: [
+                            Container(
+                              height: 50,
+                              width: 4,
+                              decoration: BoxDecoration(
+                                color: color,
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              Row(children: [
-                                Text(DateFormat('yMd', 'fr').format(start),
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Poppins')),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                const Text("-",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Poppins')),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Row(children: [
-                                  Text(DateFormat('jm', 'fr').format(start),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
                                       style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Poppins')),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
                                   const SizedBox(
-                                    width: 2,
+                                    height: 8,
                                   ),
-                                  const Icon(
-                                    BootstrapIcons.arrow_right,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(DateFormat('jm', 'fr').format(end),
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Poppins')),
+                                  Row(children: [
+                                    Text(DateFormat('yMd', 'fr').format(start),
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'Poppins')),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    const Text("-",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'Poppins')),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Row(children: [
+                                      Text(DateFormat('jm', 'fr').format(start),
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Poppins')),
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                      const Icon(
+                                        BootstrapIcons.arrow_right,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                      Text(DateFormat('jm', 'fr').format(end),
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Poppins')),
+                                    ]),
+                                  ])
                                 ]),
-                              ])
-                            ]),
-                      const Spacer(),
-                      const Icon(
-                        BootstrapIcons.chevron_right,
-                        size: 16,),
-                      ]))))
-          );
+                            const Spacer(),
+                            const Icon(
+                              BootstrapIcons.chevron_right,
+                              size: 16,
+                            ),
+                          ])))));
         }
       },
     );
@@ -287,10 +291,10 @@ class DiagnosticCard extends StatelessWidget {
       return true;
     }
 
-    Future<bool> loadDoctor() async{
-        docs = await getAllDoctor();
-    doctorindex =
-        docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
+    Future<bool> loadDoctor() async {
+      docs = await getAllDoctor();
+      doctorindex = docs
+          .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;
     }
 
@@ -301,48 +305,42 @@ class DiagnosticCard extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(
-            children: [
-            Column(
-              children: [
+          child: Column(children: [
+            Column(children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child:
-                  Text(
-                'Rendez-vous de $firstname $name',
-                style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600
-                    ),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Text(
+                    'Rendez-vous de $firstname $name',
+                    style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
-              )),
+                  )),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child:
-              Text(
-                '$dateString de $timeStringStart à $timeStringEnd',
-                style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Text(
+                    '$dateString de $timeStringStart à $timeStringEnd',
+                    style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
-              )),
+                  )),
             ]),
             const SizedBox(height: 16),
             CustomModalCard(
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
-                        loadDoctor().then((value) =>
-                  WoltModalSheet.show(
-                    context: context,
-                    pageListBuilder: (BuildContext context) {
-                      return [
-                        medicalFolderModal(context, docs, doctorindex),
-                      ];
-                    },
-                  ));
+                  loadDoctor().then((value) => WoltModalSheet.show(
+                        context: context,
+                        pageListBuilder: (BuildContext context) {
+                          return [
+                            medicalFolderModal(context, docs, doctorindex),
+                          ];
+                        },
+                      ));
                 }),
             const SizedBox(height: 4),
             CustomModalCard(
@@ -375,41 +373,40 @@ class DiagnosticCard extends StatelessWidget {
               },
             ),
             if (rdvInfo['appointment_status'] == 'WAITING_FOR_REVIEW')
-            Column(
-              children: [
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-              variant: Variante.validate,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Valider le rendez-vous',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600),
-              ),
-              onPressed: () {
-                pageIndexNotifier.value = 1;
-              },
-            ),
-            const SizedBox(height: 4),
-            Buttons(
-              variant: Variante.delete,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Annuler le rendez-vous',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600),
-              ),
-              onPressed: () {
-                pageIndexNotifier.value = 2;
-              },
-            )
-          ]),
+              Column(children: [
+                const SizedBox(height: 12),
+                Container(height: 2, color: AppColors.blue200),
+                const SizedBox(height: 12),
+                Buttons(
+                  variant: Variante.validate,
+                  size: SizeButton.sm,
+                  msg: const Text(
+                    'Valider le rendez-vous',
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    pageIndexNotifier.value = 1;
+                  },
+                ),
+                const SizedBox(height: 4),
+                Buttons(
+                  variant: Variante.delete,
+                  size: SizeButton.sm,
+                  msg: const Text(
+                    'Annuler le rendez-vous',
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    pageIndexNotifier.value = 2;
+                  },
+                )
+              ]),
           ]),
         ),
       ),
@@ -490,7 +487,8 @@ class DiagnosticCard extends StatelessWidget {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        postDiagValidation(context, rdvInfo['id'], true, '', '');
+                        postDiagValidation(
+                            context, rdvInfo['id'], true, '', '');
                         Navigator.pop(context);
                         refresh();
                       },
@@ -556,82 +554,82 @@ class DiagnosticCard extends StatelessWidget {
               const SizedBox(
                 height: 32,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-              const Text(
-                "La raison de l'annulation",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600
-                    ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.blue500, width: 2),
-          ),
-          child:
-              TextFormField(
-                maxLines: 3,
-                minLines: 3,
-                decoration: const InputDecoration(
-                    hintStyle: TextStyle(
-                      color: AppColors.grey400,
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text(
+                  "La raison de l'annulation",
+                  style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      textBaseline: TextBaseline.ideographic,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                AnimatedContainer(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.blue500, width: 2),
+                  ),
+                  child: TextFormField(
+                    maxLines: 3,
+                    minLines: 3,
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(
+                        color: AppColors.grey400,
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        textBaseline: TextBaseline.ideographic,
+                      ),
+                      hintText: 'Renseigner la raison de l\'annulation',
+                      alignLabelWithHint: true,
                     ),
-                    hintText: 'Renseigner la raison de l\'annulation',
-                    alignLabelWithHint: true,),
                     onChanged: (value) => cancelreason = value,
-              ),),
-              const SizedBox(
-                height: 16,
-              ),
-              const Text(
-                "Méthode de soins",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.blue500, width: 2),
-          ),
-          child:
-              TextFormField(
-                maxLines: 2,
-                minLines: 2,
-                decoration: const InputDecoration(
-                    hintStyle: TextStyle(
-                      color: AppColors.grey400,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text(
+                  "Méthode de soins",
+                  style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      textBaseline: TextBaseline.ideographic,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                AnimatedContainer(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.blue500, width: 2),
+                  ),
+                  child: TextFormField(
+                    maxLines: 2,
+                    minLines: 2,
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(
+                        color: AppColors.grey400,
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        textBaseline: TextBaseline.ideographic,
+                      ),
+                      hintText:
+                          'Renseigner les méthodes de soins pour diminuer les symptômes',
+                      alignLabelWithHint: true,
                     ),
-                    hintText: 'Renseigner les méthodes de soins pour diminuer les symptômes',
-                    alignLabelWithHint: true,),
                     onChanged: (value) => cancelreason = value,
-              ),),
-                ]),
+                  ),
+                ),
+              ]),
               const SizedBox(
                 height: 32,
               ),
@@ -660,14 +658,15 @@ class DiagnosticCard extends StatelessWidget {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        if(cancelreason == ''){
-                          ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-                              context: context,
-                              message: 'Veuillez renseigner la raison de l\'annulation'));
-                        }
-                        else {
-                          postDiagValidation(
-                              context, rdvInfo['id'], false, cancelreason, healthmethod);
+                        if (cancelreason == '') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              ErrorLoginSnackBar(
+                                  context: context,
+                                  message:
+                                      'Veuillez renseigner la raison de l\'annulation'));
+                        } else {
+                          postDiagValidation(context, rdvInfo['id'], false,
+                              cancelreason, healthmethod);
                           Navigator.pop(context);
                           refresh();
                         }
@@ -766,11 +765,13 @@ class DiagnosticCard extends StatelessWidget {
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(BuildContext context, List<dynamic> docs, int doctorindex) {
+  SliverWoltModalSheetPage medicalFolderModal(
+      BuildContext context, List<dynamic> docs, int doctorindex) {
     return WoltModalSheetPage(
         backgroundColor: AppColors.white,
         hasTopBarLayer: false,
-        child: MedicalFolderBody(patientInfo: patientInfo, docs: docs, doctorindex: doctorindex));
+        child: MedicalFolderBody(
+            patientInfo: patientInfo, docs: docs, doctorindex: doctorindex));
   }
 }
 
@@ -984,15 +985,18 @@ class BodySummary extends StatelessWidget {
 class MedicalFolderBody extends StatefulWidget {
   Map<String, dynamic> patientInfo;
   List<dynamic> docs;
-  int doctorindex ;
-  MedicalFolderBody({super.key, required this.patientInfo, required this.docs, required this.doctorindex});
+  int doctorindex;
+  MedicalFolderBody(
+      {super.key,
+      required this.patientInfo,
+      required this.docs,
+      required this.doctorindex});
 
   @override
   State<MedicalFolderBody> createState() => _MedicalFolderBodyState();
 }
 
 class _MedicalFolderBodyState extends State<MedicalFolderBody> {
-
   String sexe(String sexe) {
     switch (sexe) {
       case 'MALE':
@@ -1012,123 +1016,121 @@ class _MedicalFolderBodyState extends State<MedicalFolderBody> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.blue50,
-                    borderRadius: BorderRadius.circular(4.0),
-                    border: Border.all(color: AppColors.blue200, width: 1.0),
-                  ),
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          BootstrapIcons.postcard_heart_fill,
-                          color: AppColors.blue700,
-                          size: 16,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'Dossier médical',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins'),
-                        ),
-                      ],
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+              decoration: BoxDecoration(
+                color: AppColors.blue50,
+                borderRadius: BorderRadius.circular(4.0),
+                border: Border.all(color: AppColors.blue200, width: 1.0),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      BootstrapIcons.postcard_heart_fill,
+                      color: AppColors.blue700,
+                      size: 16,
                     ),
-                  )),
-              const SizedBox(
-                height: 16,
-              ),
-               Wrap(
-                alignment: WrapAlignment.start,
-                direction: Axis.vertical,
-                spacing: 12,
-                children: [
-                  Text('Prénom: ${widget.patientInfo['Prenom']}',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Nom: ${widget.patientInfo['Nom']}',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text(
-                      'Date de naissance: ${widget.patientInfo['date_de_naissance']}',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Sexe: ${sexe(widget.patientInfo['sexe'])}',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Taille: ${taille(widget.patientInfo['taille'])} m',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Poids: ${taille(widget.patientInfo['poids'])} kg',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  if (widget.doctorindex != -1)
-                    Text(
-                        'Médecin traitant: ${widget.docs[widget.doctorindex]['firstname']} ${widget.docs[widget.doctorindex]['name']}',
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500)),
-                  if (widget.doctorindex == -1)
-                    const Text('Médecin traitant: Non indiqué',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500)),
-                  if (widget.patientInfo['medical_antecedents'].isNotEmpty)
-                    const Text(
-                        'Antécédants médicaux et sujets de santé: ',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500)),
-                  if (widget.patientInfo['medical_antecedents'].isNotEmpty)
                     SizedBox(
-                      width: MediaQuery.of(context).size.width - 32,
-                      child: PatientInfoCard(
-                          context: context,
-                          tmpTraitments:
-                              widget.patientInfo['medical_antecedents']),)
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Buttons(
-                variant: Variante.secondary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  "Revenir en arrière",),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ]),
+                      width: 8,
+                    ),
+                    Text(
+                      'Dossier médical',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins'),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(
+            height: 16,
           ),
-        );
+          Wrap(
+            alignment: WrapAlignment.start,
+            direction: Axis.vertical,
+            spacing: 12,
+            children: [
+              Text('Prénom: ${widget.patientInfo['Prenom']}',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              Text('Nom: ${widget.patientInfo['Nom']}',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              Text(
+                  'Date de naissance: ${widget.patientInfo['date_de_naissance']}',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              Text('Sexe: ${sexe(widget.patientInfo['sexe'])}',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              Text('Taille: ${taille(widget.patientInfo['taille'])} m',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              Text('Poids: ${taille(widget.patientInfo['poids'])} kg',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500)),
+              if (widget.doctorindex != -1)
+                Text(
+                    'Médecin traitant: ${widget.docs[widget.doctorindex]['firstname']} ${widget.docs[widget.doctorindex]['name']}',
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500)),
+              if (widget.doctorindex == -1)
+                const Text('Médecin traitant: Non indiqué',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500)),
+              if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+                const Text('Antécédants médicaux et sujets de santé: ',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500)),
+              if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 32,
+                  child: PatientInfoCard(
+                      context: context,
+                      tmpTraitments: widget.patientInfo['medical_antecedents']),
+                )
+            ],
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Buttons(
+            variant: Variante.secondary,
+            size: SizeButton.sm,
+            msg: const Text(
+              "Revenir en arrière",
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ]),
+      ),
+    );
   }
 }

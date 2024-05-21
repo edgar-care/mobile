@@ -121,32 +121,32 @@ class DocumentPatientCard extends StatelessWidget {
               ),
               onPressed: () {
                 DownloadFile.downloadAndSafeFile(
-                downloadFileOptions: DownloadFileOptions(
-                  downloadUrl: url,
-                  fileName: name,
-                ),
-                context: context,
-                loadingWidget: const Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Téléchargement en cours...',
-                        style: TextStyle(
-                          color: AppColors.black,
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      CircularProgressIndicator(
-                        color: AppColors.blue700,
-                        strokeWidth: 2,
-                      ),
-                    ],
+                  downloadFileOptions: DownloadFileOptions(
+                    downloadUrl: url,
+                    fileName: name,
                   ),
-                ),
-              );
+                  context: context,
+                  loadingWidget: const Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Téléchargement en cours...',
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        CircularProgressIndicator(
+                          color: AppColors.blue700,
+                          strokeWidth: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }),
         ]),
       ),
