@@ -7,33 +7,30 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class ChatPage extends StatefulWidget {
-  Function(bool, Chat?, String?)? onClick;
+class ChatPagePatient extends StatefulWidget {
   WebSocketService? webSocketService;
   String patientName;
   Chat chat;
   String doctorId;
   ScrollController controller;
-  ChatPage(
+  ChatPagePatient(
       {super.key,
       required this.doctorId,
-      this.onClick,
       this.webSocketService,
       required this.patientName,
       required this.controller,
       required this.chat});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPagePatient> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPagePatient> {
 
   @override
   initState() {
     super.initState();
     widget.webSocketService!.readMessage(widget.chat.id);
-    widget.webSocketService!.getMessages();
   }
 
 
@@ -41,29 +38,6 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-              widget.onClick!(false, null, '');
-          },
-          child: const Row(
-            children: [
-              Icon(
-                BootstrapIcons.arrow_left,
-                size: 12,
-              ),
-              SizedBox(width: 8),
-              Text(
-                "Revenir en arrière",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                ),
-              )
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
         Expanded(
           child: Container(
             decoration: BoxDecoration(

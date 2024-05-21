@@ -127,11 +127,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         height: 2,
                       ),
                       CustomCard(
-                        isSelected: widget.getSelected() == 3 ? true : false,
+                        isSelected: widget.getSelected() == 4 ? true : false,
                         icon: BootstrapIcons.chat_dots_fill,
                         title: "Messagerie",
                         onTap: () {
-                          widget.callback(3);
+                          widget.callback(4);
                           setState(() {
                             isOpen = false;
                           });
