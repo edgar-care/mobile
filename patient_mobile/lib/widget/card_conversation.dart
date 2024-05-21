@@ -96,6 +96,7 @@ class ChatCard extends StatelessWidget {
                     const Spacer(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '${DateFormat('d MMMM', 'fr_FR').format(chat.messages.last.time)}.',

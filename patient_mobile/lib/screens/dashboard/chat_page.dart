@@ -67,13 +67,15 @@ class _ChatPageState extends State<ChatPage> {
             ),
           );
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
       },
       onReady: (data) {},
       onCreateChat: (data) {
@@ -100,13 +102,15 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           chats = transformChats(data);
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
       },
       onReadMessage: (data) {},
     );
@@ -153,7 +157,9 @@ class _ChatPageState extends State<ChatPage> {
 
   String getDoctorName(Chat chat) {
     var doctor1 = doctors.firstWhere(
-      (element) => element['id'] == chat.recipientIds[0].id,
+      (element) =>
+          element['id'] == chat.recipientIds[0].id ||
+          element['id'] == chat.recipientIds[1].id,
       orElse: () => {},
     );
     if (doctor1.isEmpty) {
@@ -164,8 +170,19 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getAllDoctorName() async {
-    for (var doctor in doctors) {
-      doctorName.add('Dr. ${doctor['name']} ${doctor['firstname']}');
+    for (var chat in chats) {
+      var doctor1 = doctors.firstWhere(
+        (element) =>
+            element['id'] == chat.recipientIds[0].id ||
+            element['id'] == chat.recipientIds[1].id,
+        orElse: () => {},
+      );
+      if (doctor1.isEmpty) {
+        doctorName.add('Dr. Edgard Test');
+      } else {
+        doctorName.add(
+            'Dr. ${doctor1['firstname']} ${doctor1['name'].toUpperCase()}');
+      }
     }
   }
 
