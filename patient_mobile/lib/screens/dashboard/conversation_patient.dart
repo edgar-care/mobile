@@ -170,6 +170,7 @@ class _ChatPageState extends State<ChatPageConversation> {
             ),
           ),
         ),
+        const SizedBox(height: 8),
       ],
     );
   }
