@@ -40,11 +40,11 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
       startDate = prefs.getString('appointment_start_date')!;
       endDate = prefs.getString('appointment_end_date')!;
       day =
-          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).day.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).month.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).year}';
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000).day.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000).month.toString().padLeft(2, '0')}/${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000).year}';
       startDate =
-          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(startDate) * 1000).minute.toString().padLeft(2, '0')}';
       endDate =
-          '${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000, isUtc: true).minute.toString().padLeft(2, '0')}';
+          '${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000).hour.toString().padLeft(2, '0')}h${DateTime.fromMillisecondsSinceEpoch(int.parse(endDate) * 1000).minute.toString().padLeft(2, '0')}';
     });
   }
 

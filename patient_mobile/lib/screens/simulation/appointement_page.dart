@@ -68,7 +68,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
       }
     }
     setState(() {
-      filteredDoctors = allDoctors;
+      filteredDoctors = allDoctors.toSet().toList();
       totalPages = (filteredDoctors.length / 2).ceil();
     });
   }

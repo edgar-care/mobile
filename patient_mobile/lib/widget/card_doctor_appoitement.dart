@@ -326,11 +326,10 @@ class _BodySeeMoreState extends State<BodySeeMore> {
                           height: 8,
                         ),
                         SizedBox(
-                          height: 200, // Adjust the height as needed
+                          height: 237,
                           child: ListView(
                             scrollDirection: Axis.vertical,
                             children: date.hour
-                                .take(3)
                                 .map((hour) => HourItem(
                                       hour: hour.hour,
                                       onTap: () {
