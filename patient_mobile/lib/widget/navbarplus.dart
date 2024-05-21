@@ -179,18 +179,23 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       return Row(
                                         children: [
                                           Container(
-                                            width: 48,
-                                            height: 48,
-                                            decoration: const BoxDecoration(
-                                              color: AppColors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(50)),
-                                            ),
-                                            child: BoringAvatars(
-                                              name:
-                                                  "${infoMedical['name']} ${infoMedical['firstname']}",
-                                            ),
-                                          ),
+                                              width: 48,
+                                              height: 48,
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.white,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(50)),
+                                              ),
+                                              child: BoringAvatars(
+                                                name:
+                                                    "${infoMedical['name']} ${infoMedical['firstname'].toUpperCase()}",
+                                                colors: const [
+                                                  AppColors.blue700,
+                                                  AppColors.blue200,
+                                                  AppColors.blue500
+                                                ],
+                                                type: BoringAvatarsType.beam,
+                                              )),
                                           const SizedBox(width: 16),
                                           Column(
                                             crossAxisAlignment:
@@ -262,7 +267,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/MedicalFolder.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 24,
+                                        height: 18,
                                       ),
                                       title: 'Dossier médical',
                                       onTap: () {
@@ -276,7 +281,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/Messagerie.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 24,
+                                        height: 18,
                                       ),
                                       title: 'Messagerie',
                                       onTap: () {
@@ -308,7 +313,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/ArrowRightCircle.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
-                                        height: 24,
+                                        height: 18,
                                       ),
                                       title: 'Déconnexion',
                                       onTap: () async {
