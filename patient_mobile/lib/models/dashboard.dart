@@ -24,11 +24,10 @@ class DashBoardPageState extends State<DashBoardPage>
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
     const GestionRendezVous(),
-    const InformationPersonnel(),
+    const TraitmentPage(),
     const FilePage(),
     const InformationPersonnel(),
     const ChatPage(),
-    const TraitmentPage(),
   ];
 
   @override

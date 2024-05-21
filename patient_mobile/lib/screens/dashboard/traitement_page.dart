@@ -202,6 +202,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
                 });
           },
         ),
+        const SizedBox(height: 8),
         Expanded(
           child: FutureBuilder(
             future: getFilterTraitement(),
@@ -549,8 +550,11 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
     for (var trait in traitement) {
       nameTraitement.add(trait['antedisease']['name']);
     }
-    traitementName = nameTraitement[0];
-    idTraitement = traitement[0]['antedisease']['id'];
+    if (traitement.isNotEmpty) {
+      traitementName = nameTraitement[0];
+      idTraitement = traitement[0]['antedisease']['id'];
+    }
+
     return;
   }
 
@@ -631,7 +635,9 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                       AddButton(
                           onTap: (() {
                             setState(() {
-                              alreadyExist = true;
+                              if (traitement.isNotEmpty) {
+                                alreadyExist = true;
+                              }
                             });
                           }),
                           label: "Oui",
@@ -675,7 +681,8 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                   },
                   keyboardType: TextInputType.name,
                 ),
-              ] else ...[
+              ],
+              if (traitement.isNotEmpty) ...[
                 const Text(
                   'Sélectionnez votre sujet de santé',
                   style: TextStyle(
