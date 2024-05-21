@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:download_file/data/models/download_file_options.dart';
+import 'package:download_file/download_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -119,11 +121,33 @@ class DocumentPatientCard extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               onPressed: () {
-                FileDownloader.downloadFile(
-                  url: url,
-                  name: name,
-                  notificationType: NotificationType.all,
-                );
+                DownloadFile.downloadAndSafeFile(
+                downloadFileOptions: DownloadFileOptions(
+                  downloadUrl: url,
+                  fileName: name,
+                ),
+                context: context,
+                loadingWidget: const Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Téléchargement en cours...',
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      CircularProgressIndicator(
+                        color: AppColors.blue700,
+                        strokeWidth: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              );
               }),
         ]),
       ),

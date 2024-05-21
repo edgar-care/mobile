@@ -29,6 +29,7 @@ class CustomNavPatientCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
+          setId(id);
           setPages(pageTo);
           Navigator.pop(context);
         },
