@@ -20,8 +20,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // fetchData(context);
+    askPermission();
   }
+
+  Future<void> askPermission() async {}
 
   Map<String, Object>? infoMedical = {};
 
