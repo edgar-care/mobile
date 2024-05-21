@@ -77,7 +77,8 @@ class _ChatCardState extends State<ChatCard> {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
+            child: IntrinsicHeight(
+              child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
@@ -121,8 +122,9 @@ class _ChatCardState extends State<ChatCard> {
                   ],
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
@@ -152,14 +154,14 @@ class _ChatCardState extends State<ChatCard> {
                                   color: AppColors.white,
                                 ),
                               ),
-                            ))
+                            )),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           )),
       ),
-    );
+    ));
   }
 }

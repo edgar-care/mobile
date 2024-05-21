@@ -67,7 +67,7 @@ class _ChatPageState extends State<ChatPagePatient> {
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                     itemCount: widget.chat.messages.length,
                     physics: const BouncingScrollPhysics(),
                     controller: widget.controller,
@@ -79,6 +79,7 @@ class _ChatPageState extends State<ChatPagePatient> {
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
                             if (index != 0) ...[
+                            const SizedBox(height: 8),
                             Container(
                               height: 2,
                               color: AppColors.blue100,

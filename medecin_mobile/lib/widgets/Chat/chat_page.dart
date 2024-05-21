@@ -4,6 +4,7 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
@@ -45,14 +46,14 @@ class _ChatPageState extends State<ChatPage> {
           onTap: () {
               widget.onClick!(false, null, '');
           },
-          child: const Row(
+          child: Row(
             children: [
-              Icon(
-                BootstrapIcons.arrow_left,
-                size: 12,
+              SvgPicture.asset(
+                'assets/images/utils/arrowChat.svg',
+                height: 12,
               ),
-              SizedBox(width: 8),
-              Text(
+              const SizedBox(width: 8),
+              const Text(
                 "Revenir en arrière",
                 style: TextStyle(
                   fontSize: 14,
@@ -93,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                     itemCount: widget.chat.messages.length,
                     physics: const BouncingScrollPhysics(),
                     controller: widget.controller,
@@ -105,6 +106,7 @@ class _ChatPageState extends State<ChatPage> {
                               widget.chat.messages[index - 1].time.day !=
                                   widget.chat.messages[index].time.day) ...[
                             if (index != 0) ...[
+                            const SizedBox(height: 8),
                             Container(
                               height: 2,
                               color: AppColors.blue100,
@@ -128,7 +130,6 @@ class _ChatPageState extends State<ChatPage> {
                                 widget.doctorId ? true : false,
                             date: widget.chat.messages[index].time,
                           ),
-                          const SizedBox(height: 8),
                         ],
                       );
                     },
