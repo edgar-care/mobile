@@ -202,7 +202,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "${infoMedical['name']} ${infoMedical['firstname'].toUpperCase()}",
+                                                "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   color: AppColors.white,

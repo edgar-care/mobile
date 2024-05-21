@@ -36,6 +36,7 @@ dependencies:
   confetti: ^0.7.0
   flutter_typeahead: ^5.2.0
   easy_autocomplete: ^1.6.0
+  web_socket_channel: ^2.1.0
   flutter_boring_avatars: ^1.1.0
   permission_handler: ^11.3.1
   download_file: ^1.2.0
