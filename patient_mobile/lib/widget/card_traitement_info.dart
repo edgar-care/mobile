@@ -57,7 +57,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                   style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -71,7 +72,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                     for (var i = 0;
                         i < (widget.traitement['treatments'] as List).length;
                         i++) {
-                      final treatmentName = widget.medNames[i];
+                      final treatmentName =
+                          widget.medNames[i].split(' ')[0].trim();
                       final treatmentWidget = Container(
                         margin: const EdgeInsets.only(right: 4),
                         padding: const EdgeInsets.symmetric(
@@ -85,7 +87,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                           style: const TextStyle(
                             color: AppColors.black,
                             fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       );
@@ -96,6 +99,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                         maxLines: 1,
@@ -118,7 +122,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                         const Icon(
                           BootstrapIcons.plus,
                           color: AppColors.black,
-                          size: 16,
+                          size: 14,
                         ),
                       );
                     }
@@ -135,6 +139,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
             BootstrapIcons.chevron_right,
             color: AppColors.black,
             size: 18,
+            opticalSize: 18,
           ),
         ],
       ),

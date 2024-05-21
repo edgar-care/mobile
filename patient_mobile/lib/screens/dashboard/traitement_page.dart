@@ -217,46 +217,47 @@ class _TraitmentPageState extends State<TraitmentPage> {
               } else if (snapshot.hasError) {
                 return const Text('Erreur de chargement des données');
               } else {
-                return ListView.builder(
+                return ListView.separated(
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 8,
+                  ),
                   itemCount: traitement.length,
+                  padding: const EdgeInsets.all(0),
                   itemBuilder: (context, index) {
                     getListName(traitement[index]);
                     return GestureDetector(
-                        onTap: () {
-                          WoltModalSheet.show<void>(
-                              context: context,
-                              pageIndexNotifier: pageIndex,
-                              pageListBuilder: (modalSheetContext) {
-                                return [
-                                  subMenu(
-                                    modalSheetContext,
-                                    pageIndex,
-                                    updateData,
-                                    traitement[index],
-                                  ),
-                                  infoTraitement(
-                                    context,
-                                    pageIndex,
-                                    updateData,
-                                    traitement[index],
-                                  ),
-                                  deleteTraitement(
-                                    context,
-                                    pageIndex,
-                                    updateData,
-                                    traitement[index],
-                                  ),
-                                  modifyTraitement(context, pageIndex,
-                                      updateData, traitement[index])
-                                ];
-                              });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: CardTraitementSimplify(
-                              traitement: traitement[index],
-                              medNames: medNames),
-                        ));
+                      onTap: () {
+                        WoltModalSheet.show<void>(
+                            context: context,
+                            pageIndexNotifier: pageIndex,
+                            pageListBuilder: (modalSheetContext) {
+                              return [
+                                subMenu(
+                                  modalSheetContext,
+                                  pageIndex,
+                                  updateData,
+                                  traitement[index],
+                                ),
+                                infoTraitement(
+                                  context,
+                                  pageIndex,
+                                  updateData,
+                                  traitement[index],
+                                ),
+                                deleteTraitement(
+                                  context,
+                                  pageIndex,
+                                  updateData,
+                                  traitement[index],
+                                ),
+                                modifyTraitement(context, pageIndex, updateData,
+                                    traitement[index])
+                              ];
+                            });
+                      },
+                      child: CardTraitementSimplify(
+                          traitement: traitement[index], medNames: medNames),
+                    );
                   },
                 );
               }
@@ -545,10 +546,10 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   }
 
   Future<void> fetchTraitement() async {
-    traitement = await getTraitement();
     nameTraitement.clear();
-    for (var trait in traitement) {
-      nameTraitement.add(trait['antedisease']['name']);
+    traitement = await getTraitement();
+    for (var tmp in traitement) {
+      nameTraitement.add(tmp['antedisease']['name']);
     }
     if (traitement.isNotEmpty) {
       traitementName = nameTraitement[0];
@@ -604,7 +605,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Ajoutez un sujet de santé',
+            'Ajoutez un traitement',
             style: TextStyle(
               color: AppColors.black,
               fontFamily: 'Poppins',
@@ -612,7 +613,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -683,7 +684,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                   keyboardType: TextInputType.name,
                 ),
               ],
-              if (traitement.isNotEmpty) ...[
+              if (traitement.isNotEmpty && alreadyExist == true) ...[
                 const Text(
                   'Sélectionnez votre sujet de santé',
                   style: TextStyle(
@@ -697,19 +698,30 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue500, width: 2),
+                    border: Border.all(
+                        color: AppColors.blue500,
+                        width: 2,
+                        style: BorderStyle.solid),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: DropdownButton<String>(
                     value: traitementName,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     icon: const Icon(BootstrapIcons.chevron_down),
                     iconSize: 16,
                     isExpanded: true,
+                    isDense: true,
                     borderRadius: BorderRadius.circular(12),
                     underline: Container(
                       height: 0,
                     ),
-                    style: const TextStyle(color: AppColors.black),
+                    style: const TextStyle(
+                        color: AppColors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins'),
                     onChanged: (String? newValue) {
                       setState(() {
                         if (newValue != null) {
@@ -725,8 +737,16 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                         .toSet() // Convert to Set to remove duplicates
                         .map((String value) {
                       return DropdownMenuItem<String>(
+                        alignment: Alignment.centerLeft,
                         value: value,
-                        child: Text(value),
+                        child: Text(value,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            )),
                       );
                     }).toList(),
                   ),
@@ -820,8 +840,9 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
               SizedBox(
-                height: widget.screenSize.height - 608,
+                height: widget.screenSize.height - 610,
                 width: widget.screenSize.width,
                 child: FutureBuilder(
                   future: fetchData(), // Simulate some async operation
@@ -833,25 +854,25 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                         strokeCap: StrokeCap.round,
                       ));
                     } else {
-                      return ListView.builder(
+                      return ListView.separated(
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 8,
+                        ),
                         itemCount: medicines['treatments'].length,
                         itemBuilder: (context, index) {
                           if (medicines['treatments'].isEmpty) {
                             return const SizedBox();
                           }
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: CardTraitementDay(
-                              isClickable: true,
-                              data: medicines['treatments'][index],
-                              name: medNames[index],
-                              onTap: () {
-                                setState(() {
-                                  medicines['treatments'].removeAt(index);
-                                  medNames.removeAt(index);
-                                });
-                              },
-                            ),
+                          return CardTraitementDay(
+                            isClickable: true,
+                            data: medicines['treatments'][index],
+                            name: medNames[index],
+                            onTap: () {
+                              setState(() {
+                                medicines['treatments'].removeAt(index);
+                                medNames.removeAt(index);
+                              });
+                            },
                           );
                         },
                       );
@@ -1746,7 +1767,6 @@ WoltModalSheetPage modifyTraitement(
           updateData: updateData,
           treatments: treatment,
           screenSize: screenSize,
-          updateMedicament: (medicament) {},
         ),
       ),
     ),
@@ -1759,14 +1779,13 @@ class BodyModifyTraitement extends StatefulWidget {
   final Function(int) updateData;
   final Size screenSize;
   Map<String, dynamic> treatments;
-  Function(Map<String, dynamic>) updateMedicament;
-  BodyModifyTraitement(
-      {super.key,
-      required this.pageIndex,
-      required this.updateData,
-      required this.screenSize,
-      required this.treatments,
-      required this.updateMedicament});
+  BodyModifyTraitement({
+    super.key,
+    required this.pageIndex,
+    required this.updateData,
+    required this.screenSize,
+    required this.treatments,
+  });
 
   @override
   State<BodyModifyTraitement> createState() => _BodyModifyTraitementState();
@@ -1803,6 +1822,40 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
     }
 
     return true;
+  }
+
+  void updateMedicaments(Map<String, dynamic> medicament) {
+    setState(() {
+      widget.treatments['treatments'].add(medicament);
+    });
+  }
+
+  void deleteTraitement(int index) {
+    deleteTraitementRequest(widget.treatments['treatments'][index]['id']).then(
+      (value) => {
+        if (value == true)
+          {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SuccessLoginSnackBar(
+                message: "Traitement supprimé avec succès",
+                context: context,
+              ),
+            ),
+            setState(
+              () {
+                widget.treatments['treatments'].removeAt(widget
+                    .treatments['treatments']
+                    .indexOf(widget.treatments['treatments'].firstWhere(
+                        (element) =>
+                            element['medicine_id'] ==
+                            widget.treatments['treatments'][index]
+                                ['medicine_id'])));
+                medNames.removeAt(index);
+              },
+            ),
+          },
+      },
+    );
   }
 
   @override
@@ -1895,8 +1948,8 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
                             context,
                             widget.pageIndex,
                             widget.updateData,
-                            widget.updateMedicament,
                             widget.treatments,
+                            updateMedicaments,
                           ),
                         ];
                       });
@@ -1934,72 +1987,37 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
               const SizedBox(height: 16),
               SizedBox(
                 height: widget.screenSize.height - 552,
-                child: Expanded(
-                  child: FutureBuilder(
-                    future: fetchData(), // Simulate some async operation
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          color: AppColors.blue700,
-                          strokeCap: StrokeCap.round,
-                        ));
-                      } else {
-                        return ListView.builder(
-                          itemCount: widget.treatments['treatments'].length,
-                          itemBuilder: (context, index) {
-                            if (widget.treatments['treatments'].isEmpty) {
-                              return const SizedBox();
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: CardTraitementDay(
-                                isClickable: true,
-                                data: widget.treatments['treatments'][index],
-                                name: medNames[index],
-                                onTap: () async {
-                                  await deleteTraitementRequest(
-                                          widget.treatments['treatments'][index]
-                                              ['id'])
-                                      .then(
-                                    (value) => {
-                                      if (value == true)
-                                        {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SuccessLoginSnackBar(
-                                              message:
-                                                  "Traitement supprimé avec succès",
-                                              context: context,
-                                            ),
-                                          ),
-                                          setState(
-                                            () {
-                                              widget.treatments['treatments'].removeAt(widget
-                                                  .treatments['treatments']
-                                                  .indexOf(widget
-                                                      .treatments['treatments']
-                                                      .firstWhere((element) =>
-                                                          element[
-                                                              'medicine_id'] ==
-                                                          widget.treatments[
-                                                                      'treatments']
-                                                                  [index][
-                                                              'medicine_id'])));
-                                              medNames.removeAt(index);
-                                            },
-                                          ),
-                                        },
-                                    },
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
+                child: FutureBuilder(
+                  future: fetchData(), // Simulate some async operation
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                        color: AppColors.blue700,
+                        strokeCap: StrokeCap.round,
+                      ));
+                    } else {
+                      return ListView.separated(
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 8,
+                        ),
+                        itemCount: widget.treatments['treatments'].length,
+                        itemBuilder: (context, index) {
+                          if (widget.treatments['treatments'].isEmpty) {
+                            return const SizedBox();
+                          }
+                          return CardTraitementDay(
+                            isClickable: true,
+                            data: widget.treatments['treatments'][index],
+                            name: medNames[index],
+                            onTap: () {
+                              deleteTraitement(index);
+                            },
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 16),
@@ -2030,7 +2048,7 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
                     Navigator.pop(context);
                   },
                 ),
-              ),
+              )
             ],
           ),
         ],
@@ -2043,8 +2061,8 @@ WoltModalSheetPage addMedicamentModify(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   Function(int) updateData,
-  Function(Map<String, dynamic>) updateMedicaments,
   Map<String, dynamic> traitement,
+  dynamic Function(Map<String, dynamic>) updateMedicaments,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
