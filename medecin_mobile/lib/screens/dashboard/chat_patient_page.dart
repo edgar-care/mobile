@@ -61,9 +61,13 @@ class ChatPatientState extends State<ChatPatient> {
             ),
           );
         });
-        _scrollController.jumpTo(
-          _scrollController.position.maxScrollExtent,
-        );
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
       },
       onReady: (data) {},
       onGetMessages: (data) {
