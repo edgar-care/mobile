@@ -468,7 +468,7 @@ class DiagnosticCard extends StatelessWidget {
                       size: SizeButton.sm,
                       msg: const Text('Oui, je suis sûr'),
                       onPressed: () {
-                        postDiagValidation(context, rdvInfo['id'], true, '');
+                        postDiagValidation(context, rdvInfo['id'], true, '', '');
                         Navigator.pop(context);
                         refresh();
                       },
@@ -644,9 +644,8 @@ class DiagnosticCard extends StatelessWidget {
                               message: 'Veuillez renseigner la raison de l\'annulation'));
                         }
                         else {
-                          healthmethod = healthmethod;
                           postDiagValidation(
-                              context, rdvInfo['id'], false, cancelreason);
+                              context, rdvInfo['id'], false, cancelreason, healthmethod);
                           Navigator.pop(context);
                           refresh();
                         }
@@ -1101,12 +1100,10 @@ class _MedicalFolderBodyState extends State<MedicalFolderBody> {
                   if (widget.patientInfo['medical_antecedents'].isNotEmpty)
                     SizedBox(
                       width: MediaQuery.of(context).size.width - 32,
-                      child: Expanded(
                       child: PatientInfoCard(
                           context: context,
                           tmpTraitments:
                               widget.patientInfo['medical_antecedents']),)
-                    ),
                 ],
               ),
               const SizedBox(
