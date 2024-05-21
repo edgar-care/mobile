@@ -6,7 +6,6 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
