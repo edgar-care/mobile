@@ -126,19 +126,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       const SizedBox(
                         height: 8,
                       ),
-                      CustomCard(
-                          isSelected: widget.getSelected() == 3,
-                          icon: BootstrapIcons.heart_pulse_fill,
-                          title: "Diagnostics",
-                          onTap: () {
-                            widget.callback(3);
-                            setState(() {
-                              isOpen = false;
-                            });
-                          }),
-                      const SizedBox(
-                        height: 8,
-                      ),
                       Container(
                         height: 2,
                         color: AppColors.blue200,
@@ -147,11 +134,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         height: 8,
                       ),
                       CustomCard(
-                          isSelected: widget.getSelected() == 4 ? true : false,
+                          isSelected: widget.getSelected() == 3 ? true : false,
                           icon: BootstrapIcons.question_circle_fill,
                           title: "Aide",
                           onTap: () {
-                            widget.callback(4);
+                            widget.callback(3);
                             setState(() {
                               isOpen = false;
                             });
@@ -160,7 +147,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         height: 2,
                       ),
                       CustomCard(
-                          isSelected: widget.getSelected() == 5 ? true : false,
+                          isSelected: false,
                           icon: BootstrapIcons.arrow_right_circle_fill,
                           title: "Déconnexion",
                           onTap: () {

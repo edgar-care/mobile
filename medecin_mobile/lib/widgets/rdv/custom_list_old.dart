@@ -27,7 +27,7 @@ class _CustomListRdvState extends State<CustomListOld> {
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments();
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
+      if (tempAp[i]['id_patient'].isNotEmpty &&
           tempAp[i]['cancelation_reason'] == "" &&
           tempAp[i]['start_date'] <=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {

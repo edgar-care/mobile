@@ -27,7 +27,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.blue,
           useMaterial3: true,
-          fontFamily: 'Raleway'),
+          fontFamily: 'Poppins'),
       initialRoute: "/",
       routes: {
         "/": (context) => const Auth(),

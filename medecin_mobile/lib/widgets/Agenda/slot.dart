@@ -9,7 +9,8 @@ enum SlotType { empty, taken, create }
 // ignore: must_be_immutable
 class Slot extends StatefulWidget {
   late SlotType type;
-  final String? patientName;
+  final String? name;
+  final String? firstname;
   final bool? three;
   final DateTime? date;
   String? id;
@@ -19,7 +20,8 @@ class Slot extends StatefulWidget {
       required this.type,
       this.date,
       this.id,
-      this.patientName,
+      this.name,
+      this.firstname,
       this.three,
       this.slots});
 
@@ -81,7 +83,8 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
                   date: widget.date!);
             case SlotType.taken:
               return SlotTaken(
-                  patientName: widget.patientName ?? "Nom du patient",
+                  patientName: widget.name ?? "Nom",
+                  patientFirstname: widget.firstname ?? "Prénom",
                   three: widget.three ?? false);
             case SlotType.create:
               return SlotCreate(
@@ -136,7 +139,7 @@ class SlotEmpty extends Card {
                           : ""),
                   style: const TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.grey700)),
               const Spacer(),
               const Icon(BootstrapIcons.plus_circle_fill,
@@ -212,7 +215,7 @@ class SlotCreate extends Card {
                             : ""),
                     style: const TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: AppColors.grey700)),
                 const Spacer(),
                 Transform.rotate(
@@ -228,10 +231,12 @@ class SlotCreate extends Card {
 
 class SlotTaken extends Card {
   final String patientName;
+  final String patientFirstname;
   final bool three;
   const SlotTaken({
     super.key,
     required this.patientName,
+    required this.patientFirstname,
     required this.three,
   });
 
@@ -262,12 +267,12 @@ class SlotTaken extends Card {
               ),
               Text(
                   three == false
-                      ? patientName
+                      ? "$patientFirstname $patientName"
                       : (MediaQuery.of(context).size.width > 380
                           ? "Réservé"
                           : ""),
                   style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold)),
+                      fontSize: 12, fontWeight: FontWeight.w500)),
             ],
           )),
     );

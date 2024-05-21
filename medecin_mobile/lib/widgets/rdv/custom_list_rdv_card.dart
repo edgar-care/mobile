@@ -184,7 +184,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         ),
       ),
     );
-   }
+  }
 
   SliverWoltModalSheetPage updateAppointmentModal(BuildContext context,
       Map<String, dynamic> rdvInfo, Function updateAppointment) {

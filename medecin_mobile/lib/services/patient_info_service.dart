@@ -6,6 +6,7 @@ import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId() async {
@@ -77,7 +78,25 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
       'medecin_traitant':
           data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
       'medical_antecedents':
-          data['medical_folder']['medical_antecedents'] ?? [],
+          data['medical_folder']['medical_antecedents'] == null
+              ? []
+              : data['medical_folder']['medical_antecedents']
+                  .map((antecedent) => {
+                        'name': antecedent['name'],
+                        'treatments': antecedent['medicines'] == null
+                            ? []
+                            : antecedent['medicines']
+                                .map((medicine) => {
+                                      'id': medicine['id'],
+                                      'quantity': medicine['quantity'],
+                                      'period': medicine['period'],
+                                      'day': medicine['day'],
+                                      'medicine_id': medicine['medicine_id']
+                                    })
+                                .toList(),
+                        'still_relevant': antecedent['still_relevant']
+                      })
+                  .toList(),
     };
   }
 }
@@ -121,31 +140,12 @@ void populateInfoMedical(Map<String, dynamic>? data) {
 }
 
 Future putInformationPatient(
-    BuildContext context, Map<String, dynamic>? info, String id) async {
+    BuildContext context, Map<String, Object> body, String id) async {
   await dotenv.load();
   final url = '${dotenv.env['URL']}doctor/patient/$id';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-
-  int poids = int.tryParse(info?['poids'] ?? 0) ?? 0;
-  int taille = int.tryParse(info?['taille'] ?? 0) ?? 0;
-
-  String day = info?['date_de_naissance']?.substring(0, 2) ?? '00';
-  String month = info?['date_de_naissance']?.substring(3, 5) ?? '00';
-  String year = info?['date_de_naissance']?.substring(6, 10) ?? '0000';
-  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch ~/ 1000;
-
-  final body = {
-    'firstname': info?['Prenom'],
-    'name': info?['Nom'],
-    'birthdate': date,
-    'sex': info?['sexe'],
-    'height': taille,
-    'weight': poids,
-    'primary_doctor_id': info?['medecin_traitant'],
-    'medical_antecedents': info?['medical_antecedents'],
-    'onboarding_status': 'DONE'
-  };
+  Logger().d(body);
   final response = await http.put(
     Uri.parse(url),
     body: jsonEncode(body),
@@ -154,51 +154,31 @@ Future putInformationPatient(
   if (response.statusCode == 200) {
     final body = response.body;
     populateInfoMedical(jsonDecode(body));
+    return true;
     //modifié avec success
+  } else {
+    return false;
   }
 }
 
 Future addPatientService(
-    BuildContext context, Map<String, dynamic>? info) async {
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}doctor/patient';
+    BuildContext context, Map<String, dynamic> traitement) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-
-  int poids = int.parse(info?['poids']);
-  int taille = int.parse(info?['taille']);
-
-  String day = info?['date']?.substring(0, 2) ?? '00';
-  String month = info?['date']?.substring(3, 5) ?? '00';
-  String year = info?['date']?.substring(6, 10) ?? '0000';
-  int date = DateTime.parse('$year-$month-$day').millisecondsSinceEpoch ~/ 1000;
-
-  final body = {
-    'email': info?['email'],
-    'medical_folder': {
-      'name': info?['nom'],
-      'firstname': info?['prenom'],
-      'birthdate': date,
-      'sex': info?['sexe'],
-      'weight': poids,
-      'height': taille,
-      'primary_doctor_id': info?['medecin_traitant'],
-      'medical_antecedents': info?['medical_antecedents'],
-      'onboarding_status': 'DONE'
-    },
-  };
-
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}doctor/patient';
   final response = await http.post(
     Uri.parse(url),
-    body: jsonEncode(body),
     headers: {'Authorization': 'Bearer $token'},
+    body: jsonEncode(traitement),
   );
   if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient ajouté avec succès', context: context));
+    return true;
   } else {
     ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
         message: 'Erreur lors de l\'ajout du patient', context: context));
+    return false;
   }
 }
 
@@ -213,7 +193,7 @@ Future deletePatientService(String id, BuildContext context) async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: 'Patient supprimé avec succès', context: context));
   } else {

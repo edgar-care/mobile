@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Agenda/slot.dart';
@@ -16,7 +17,8 @@ class SlotListThree extends StatefulWidget {
 }
 
 class _SlotListThreeState extends State<SlotListThree> {
-  String patientName = "";
+  String name = "";
+  String firstname = "";
   List<dynamic> slots = [];
 
   @override
@@ -36,6 +38,14 @@ class _SlotListThreeState extends State<SlotListThree> {
     var tempslots = await getSlot();
     setState(() {
       slots = tempslots;
+    });
+  }
+
+  Future<void> getName(String id) async {
+    var tempname = await getPatientById(id);
+    setState(() {
+      name = tempname['Nom'];
+      firstname = tempname['Prenom'];
     });
   }
 
@@ -142,9 +152,14 @@ class _SlotListThreeState extends State<SlotListThree> {
     for (var i = 0; i < slots.length; i++) {
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch &&
           slots[i]['id_patient'] != "") {
+        getName(slots[i]['id_patient']);
         return Slot(
           type: SlotType.taken,
+          date: date,
+          slots: slots,
           three: true,
+          name: name,
+          firstname: firstname,
         );
       }
       if (slots[i]['start_date'] * 1000 == date.millisecondsSinceEpoch) {

@@ -22,13 +22,14 @@ class Agenda extends StatefulWidget {
 
 class _AgendaState extends State<Agenda> {
   DateTime date = DateTime(
+      
       DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
   ValueNotifier<int> selected = ValueNotifier(0);
   List<dynamic> slots = [];
   List<dynamic> tempslot = [];
 
-  @override
-  initState() {
+@override
+    initState() {
     super.initState();
     _loadSlots();
   }
@@ -37,12 +38,9 @@ class _AgendaState extends State<Agenda> {
     selected.value = newSelection;
   }
 
-  String capitalise(String date) {
-    return date
-        .split(' ')
-        .map((word) => toBeginningOfSentenceCase(word))
-        .join(' ');
-  }
+  String capitalise(String date){
+      return date.split(' ').map((word) => toBeginningOfSentenceCase(word)).join(' ');
+    }
 
   Future<void> _loadSlots() async {
     var tempslots = await getSlot();
@@ -63,29 +61,16 @@ class _AgendaState extends State<Agenda> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(children: [
-              Image.asset(
-                "assets/images/logo/edgar-high-five.png",
-                height: 40,
-                width: 37,
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              const Text(
-                "Mon Agenda",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.white),
-              ),
+            child: Row(
+              children: [
+                Image.asset("assets/images/logo/edgar-high-five.png",height: 40,width: 37,),
+                const SizedBox(width: 16,),
+                const Text("Mon Agenda", style: TextStyle(fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColors.white),
+                ),
             ]),
           ),
         ),
-        const SizedBox(
-          height: 8,
-        ),
+        const SizedBox(height: 8,),
         Expanded(
           child: Container(
             decoration: BoxDecoration(
@@ -174,7 +159,7 @@ class _AgendaState extends State<Agenda> {
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontFamily: "Poppins",
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColors.blue700),
                                   )
                                 : ThreeDays(

@@ -17,14 +17,24 @@ class _CustomListRdvState extends State<CustomListRdv> {
     setState(() {
       bAppointment.removeAt(index);
     });
+    _loadAppointment();
   }
 
   Future<void> _loadAppointment() async {
-    bAppointment = await getAppointments();
+    var tempAp = await getAppointments();
+    for (var i = 0; i < tempAp.length; i++) {
+      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
+          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['start_date'] >=
+              DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+        bAppointment.add(tempAp[i]);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    bAppointment.clear();
     return FutureBuilder(
       future: _loadAppointment(),
       builder: (context, snapshot) {
@@ -37,7 +47,7 @@ class _CustomListRdvState extends State<CustomListRdv> {
             itemBuilder: (context, index) {
               return CustomListRdvCard(
                 rdvInfo: bAppointment[index],
-                delete: () => {deleteAppointmentList(index)},
+                delete: () => deleteAppointmentList(index),
                 old: false,
               );
             },

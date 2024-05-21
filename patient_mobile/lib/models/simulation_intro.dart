@@ -73,7 +73,7 @@ class Warnig extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -144,7 +144,7 @@ class Warnig extends StatelessWidget {
                 'Bienvenue dans votre simulation. Je m’appelle Edgar et je serai votre assistant tout au long de cette simulation.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -203,7 +203,7 @@ class Warning2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -274,7 +274,7 @@ class Warning2 extends StatelessWidget {
                 'Avant de commencer votre simulation, notez que cette simulation n’a pas pour but de diagnostiquer une maladie.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -333,7 +333,7 @@ class Warning3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -404,7 +404,7 @@ class Warning3 extends StatelessWidget {
                 'A l’issue de la simulation, notre échange sera transmis à un médecin afin d’être examiné.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -463,7 +463,7 @@ class Warning4 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -534,7 +534,7 @@ class Warning4 extends StatelessWidget {
                 'Si votre rendez-vous n’est pas utile alors il sera annulé par le médecin et il vous conseillera des méthodes de soins.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,
@@ -593,7 +593,7 @@ class Warning5 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32, top: 16),
-      height: MediaQuery.of(context).size.height * 0.5 - 24,
+      height: MediaQuery.of(context).size.height * 0.5 - 28,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -664,7 +664,7 @@ class Warning5 extends StatelessWidget {
                 'Voilà, tout est prêt pour moi. Vous pouvez dès maintenant commencer votre simulation.',
                 style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                     fontFamily: 'Poppins'),
                 textAlign: TextAlign.center,

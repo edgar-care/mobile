@@ -37,13 +37,13 @@ class PatientListCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    patientData['Prenom'] + ' ' + patientData['Nom'] ??
+                    patientData['Nom'] + ' ' + patientData['Prenom'] ??
                         'Nom Prénom',
                     style: const TextStyle(
                         fontSize: 16,
                         fontFamily: 'Poppins',
                         color: AppColors.black,
-                        fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

@@ -33,7 +33,7 @@ Future<List<Map<String, dynamic>>> getDiagnostics(String status) async {
   }
 }
 
-Future<List<Map<String, dynamic>>> getAppointments() async {
+Future<List<dynamic>> getAppointments() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments';
@@ -45,17 +45,9 @@ Future<List<Map<String, dynamic>>> getAppointments() async {
     },
   );
   if (response.statusCode == 200) {
-    List<Map<String, dynamic>> bAppointment = [];
     var tempAp = jsonDecode(response.body)['appointments'];
-    for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
-          tempAp[i]['cancelation_reason'] == "" &&
-          tempAp[i]['start_date'] >=
-              DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-        bAppointment.add(tempAp[i]);
-      }
-    }
-    return bAppointment;
+
+    return tempAp;
   }
   if (response.statusCode != 200) {
     return [];
@@ -83,13 +75,10 @@ Future cancelAppointments(
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}doctor/appointments/$id';
-  final response = await http.delete(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-    body: jsonEncode({'reason': reason}),
-  );
-
-  if (response.statusCode == 201) {
+  final response = await http.delete(Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+      body: jsonEncode({'reason': reason}));
+  if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
       message: 'Votre rendez-vous a bien été annulé',
       context: context,
