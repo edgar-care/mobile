@@ -36,7 +36,7 @@ Future<void> postDiagValidation(
         'Authorization': 'Bearer $token'
       },
       body: jsonEncode(
-          {if (reason != '') 'reason': reason, 'validation': validation, if(health != '') "health_methode": health}));
+          {if (reason != '') 'reason': reason, 'validation': validation, if(health != '') "health_method": health}));
   if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
         message: "Réponse envoyée avec succes", context: context));
