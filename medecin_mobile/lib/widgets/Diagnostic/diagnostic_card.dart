@@ -301,22 +301,33 @@ class DiagnosticCard extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Column(children: [
-              Text(
+          child: Column(
+            children: [
+            Column(
+              children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child:
+                  Text(
                 'Rendez-vous de $firstname $name',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
-                    fontWeight: FontWeight.w600),
-              ),
+                    fontWeight: FontWeight.w600
+                    ),
+                    textAlign: TextAlign.center,
+              )),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child:
               Text(
                 '$dateString de $timeStringStart à $timeStringEnd',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     fontWeight: FontWeight.w600),
-              ),
+                    textAlign: TextAlign.center,
+              )),
             ]),
             const SizedBox(height: 16),
             CustomModalCard(
