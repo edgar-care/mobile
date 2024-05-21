@@ -68,6 +68,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                             i < 2;
                         i++) ...[
                       Container(
+                        margin: const EdgeInsets.only(right: 4),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
                         decoration: const BoxDecoration(
@@ -100,7 +101,7 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
           const Icon(
             BootstrapIcons.chevron_right,
             color: AppColors.black,
-            size: 16,
+            size: 18,
           ),
         ],
       ),
