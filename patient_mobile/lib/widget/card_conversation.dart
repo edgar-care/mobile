@@ -98,7 +98,7 @@ class ChatCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${DateFormat('d MMM').format(chat.messages.last.time)}.',
+                          '${DateFormat('d MMMM', 'fr_FR').format(chat.messages.last.time)}.',
                           style: const TextStyle(
                               fontSize: 12,
                               fontFamily: 'Poppins',

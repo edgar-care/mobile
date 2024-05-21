@@ -160,7 +160,7 @@ class _ChatPageState extends State<ChatPage> {
       return 'Dr. Edgard Test';
     }
 
-    return 'Dr. ${doctor1['name']} ${doctor1['firstname'].toUpperCase()}';
+    return 'Dr. ${doctor1['firstname']} ${doctor1['name'].toUpperCase()}';
   }
 
   Future<void> getAllDoctorName() async {
