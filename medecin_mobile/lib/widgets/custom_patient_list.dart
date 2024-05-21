@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
@@ -13,8 +14,8 @@ class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
   final Function updatePatient;
   final Function setPages;
-  final Function setId;
   final Function deletePatientList;
+  final Function setId;
   const CustomList(
       {super.key,
       required this.patients,
@@ -87,7 +88,7 @@ class _CustomListState extends State<CustomList> {
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 setPages: setPages,
-                pageTo: 4,
+                pageTo: 6,
                 id: patient['id'],
                 setId: setId),
             const SizedBox(height: 4),
@@ -95,7 +96,7 @@ class _CustomListState extends State<CustomList> {
                 text: 'Rendez-vous',
                 icon: BootstrapIcons.calendar2_week_fill,
                 setPages: setPages,
-                pageTo: 5,
+                pageTo: 7,
                 id: patient['id'],
                 setId: setId),
             const SizedBox(height: 4),
@@ -103,7 +104,7 @@ class _CustomListState extends State<CustomList> {
                 text: 'Documents',
                 icon: BootstrapIcons.file_earmark_text_fill,
                 setPages: setPages,
-                pageTo: 6,
+                pageTo: 8,
                 id: patient['id'],
                 setId: setId),
             const SizedBox(height: 4),
@@ -111,7 +112,7 @@ class _CustomListState extends State<CustomList> {
                 text: 'Messagerie',
                 icon: BootstrapIcons.chat_dots_fill,
                 setPages: setPages,
-                pageTo: 7,
+                pageTo: 9,
                 id: patient['id'],
                 setId: setId),
             const SizedBox(height: 12),

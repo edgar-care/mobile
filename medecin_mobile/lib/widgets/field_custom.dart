@@ -65,6 +65,7 @@ class _CustomFieldState extends State<CustomField> {
                         minWidth: 0, maxWidth: constraints.maxWidth),
                     border: InputBorder.none,
                     isDense: true,
+                    alignLabelWithHint: true,
                     hintText: widget.label,
                     hintStyle: const TextStyle(
                       color: AppColors.grey400,
