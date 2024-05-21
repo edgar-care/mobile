@@ -114,20 +114,20 @@ class _ChatPageState extends State<ChatPagePatient> {
                 onValidate: (value) {
                   widget.webSocketService!.sendMessage(
                       widget.chat.id, value);
-                    Future.delayed(const Duration(milliseconds: 300), () {
+                    Future.delayed(const Duration(milliseconds: 400), () {
                       widget.controller.animateTo(
                         widget.controller.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 400),
                         curve: Curves.easeOut,
                       );
                     });
                 },
                 label: 'Ecriver votre message ici...',
                 onOpen: () {
-                  Future.delayed(const Duration(milliseconds: 300), () {
+                  Future.delayed(const Duration(milliseconds: 400), () {
                     widget.controller.animateTo(
                       widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
                       curve: Curves.easeOut,
                     );
                   });

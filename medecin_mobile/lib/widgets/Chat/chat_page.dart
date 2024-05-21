@@ -140,18 +140,6 @@ class _ChatPageState extends State<ChatPage> {
                 onValidate: (value) {
                   widget.webSocketService!.sendMessage(
                       widget.chat.id, value);
-                    Future.delayed(const Duration(milliseconds: 200), () {
-                      widget.controller.animateTo(
-                        widget.controller.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeOut,
-                      );
-                    });
-                    widget.controller.animateTo(
-                      widget.controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                    );
                 },
                 label: 'Ecriver votre message ici...',
                 onOpen: () {

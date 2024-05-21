@@ -57,13 +57,9 @@ class ChatPatientState extends State<ChatPatient> {
             ),
           );
         });
-        Future.delayed(const Duration(milliseconds: 300), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        });
+        _scrollController.jumpTo(
+           _scrollController.position.maxScrollExtent,
+        );
       },
       onReady: (data) {},
       onGetMessages: (data) {
@@ -129,13 +125,6 @@ class ChatPatientState extends State<ChatPatient> {
         future: checkData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && snapshot.data == true) {
-            Future.delayed(const Duration(milliseconds: 300), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-          });
             return Column(
               children: [
                 Container(

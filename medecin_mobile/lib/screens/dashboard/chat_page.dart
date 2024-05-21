@@ -49,26 +49,19 @@ class ChatState extends State<ChatPageDashBoard> {
             ),
           );
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        });
+        _scrollController.jumpTo(
+          _scrollController.position.maxScrollExtent);
       },
       onReady: (data) {},
       onGetMessages: (data) {
         setState(() {
           chats = transformChats(data);
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 600),
             curve: Curves.easeOut,
           );
-        });
       },
       onReadMessage: (data) {},
     );
