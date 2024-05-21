@@ -54,17 +54,9 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex, setId: updateId
       ),
       const Rdv(),
+      const Text("Messagerie"),
       const Diagnostic(),
       const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      Text('Dossier médical: ${getId()}',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      PatientPageRdv(id: getId(), setPages: updateSelectedIndex, setId: updateId,),
-      DocumentPage(id: _id, setPages: updateSelectedIndex, setId: updateId,),
-      Text('Messagerie: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      const Text('Aide',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
       PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
       PatientPageRdv(
         id: getId(),

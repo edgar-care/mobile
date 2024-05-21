@@ -1,5 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
+import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
@@ -7,6 +8,7 @@ import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -747,108 +749,7 @@ class DiagnosticCard extends StatelessWidget {
     return WoltModalSheetPage(
         backgroundColor: AppColors.white,
         hasTopBarLayer: false,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.blue50,
-                    borderRadius: BorderRadius.circular(4.0),
-                    border: Border.all(color: AppColors.blue200, width: 1.0),
-                  ),
-                  child: const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          BootstrapIcons.postcard_heart_fill,
-                          color: AppColors.blue700,
-                          size: 16,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'Dossier médical',
-                          style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins'),
-                        ),
-                      ],
-                    ),
-                  )),
-              const SizedBox(
-                height: 16,
-              ),
-              const Wrap(
-                alignment: WrapAlignment.start,
-                direction: Axis.vertical,
-                spacing: 12,
-                children: [
-                  Text('Prénom: Test',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Nom: Nom',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Date de naissance: 22/04/2022',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Sexe: MASCULIN',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Taille: 0.5m',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Poids: 10kg',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Médecin traitant: 1234',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                  Text('Antécédants médicaux et sujets de santé:',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500)),
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Buttons(
-                variant: Variante.secondary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  "Revenir en arrière",),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ]),
-          ),
-        ));
+        child: MedicalFolderBody(patientInfo: patientInfo,));
   }
 }
 
@@ -1055,5 +956,173 @@ class BodySummary extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+// ignore: must_be_immutable
+class MedicalFolderBody extends StatefulWidget {
+  Map<String, dynamic> patientInfo;
+  MedicalFolderBody({super.key, required this.patientInfo});
+
+  @override
+  State<MedicalFolderBody> createState() => _MedicalFolderBodyState();
+}
+
+class _MedicalFolderBodyState extends State<MedicalFolderBody> {
+  List<dynamic> docs = [];
+  int doctorindex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInfo();
+  }
+
+  Future<void> _loadInfo() async {
+    docs = await getAllDoctor();
+    doctorindex =
+        docs.indexWhere((doc) => doc['id'] == widget.patientInfo['medecin_traitant']);
+  }
+
+  String sexe(String sexe) {
+    switch (sexe) {
+      case 'MALE':
+        return 'Masculin';
+      case 'FEMALE':
+        return 'Feminin';
+      default:
+        return 'Autre';
+    }
+  }
+
+  String taille(String taille) {
+    int tailleInt = int.parse(taille);
+    return (tailleInt / 100).toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.blue50,
+                    borderRadius: BorderRadius.circular(4.0),
+                    border: Border.all(color: AppColors.blue200, width: 1.0),
+                  ),
+                  child: const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          BootstrapIcons.postcard_heart_fill,
+                          color: AppColors.blue700,
+                          size: 16,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          'Dossier médical',
+                          style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins'),
+                        ),
+                      ],
+                    ),
+                  )),
+              const SizedBox(
+                height: 16,
+              ),
+               Wrap(
+                alignment: WrapAlignment.start,
+                direction: Axis.vertical,
+                spacing: 12,
+                children: [
+                  Text('Prénom: ${widget.patientInfo['Prenom']}',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  Text('Nom: ${widget.patientInfo['Nom']}',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  Text(
+                      'Date de naissance: ${widget.patientInfo['date_de_naissance']}',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  Text('Sexe: ${sexe(widget.patientInfo['sexe'])}',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  Text('Taille: ${taille(widget.patientInfo['taille'])} m',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  Text('Poids: ${taille(widget.patientInfo['poids'])} kg',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500)),
+                  if (doctorindex != -1)
+                    Text(
+                        'Médecin traitant: ${docs[doctorindex]['firstname']} ${docs[doctorindex]['name']}',
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500)),
+                  if (doctorindex == -1)
+                    const Text('Médecin traitant: Non indiqué',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500)),
+                  if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+                    const Text(
+                        'Antécédants médicaux et sujets de santé: ',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500)),
+                  if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 32,
+                      child: Expanded(
+                      child: PatientInfoCard(
+                          context: context,
+                          tmpTraitments:
+                              widget.patientInfo['medical_antecedents']),)
+                    ),
+                ],
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text(
+                  "Revenir en arrière",),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ]),
+          ),
+        );
   }
 }
