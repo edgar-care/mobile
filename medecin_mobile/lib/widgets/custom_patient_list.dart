@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
@@ -13,8 +14,8 @@ class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
   final Function updatePatient;
   final Function setPages;
-  final Function setId;
   final Function deletePatientList;
+  final Function setId;
   const CustomList(
       {super.key,
       required this.patients,

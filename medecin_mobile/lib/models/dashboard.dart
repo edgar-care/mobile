@@ -3,6 +3,7 @@ import 'package:edgar_pro/screens/dashboard/chat_page.dart';
 import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
@@ -51,9 +52,11 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      Patient(setPages: updateSelectedIndex, setId: updateId),
+      Patient(
+        setPages: updateSelectedIndex, setId: updateId
+      ),
       const Rdv(),
-      const Text('Diagnostic'),
+      const Diagnostic(),
       const ChatPageDashBoard(),
       const Text('Aide',
           style: TextStyle(

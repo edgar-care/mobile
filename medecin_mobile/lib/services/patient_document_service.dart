@@ -18,11 +18,15 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
   );
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> documents = [];
+    if (jsonDecode(response.body)['document_ids'] != null) {
     var tmp = jsonDecode(response.body)['document_ids'];
     for (int i = 0; i < tmp.length; i++) {
       documents.add(await getDocumentsbyId(tmp[i]));
     }
     return documents;
+    } else {
+      return [];
+    }
   } else {
     return [];
   }
@@ -39,7 +43,9 @@ Future<Map<String, dynamic>> getDocumentsbyId(String id) async {
       'Authorization': 'Bearer $token',
     },
   );
-  if (response.statusCode == 201) {
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
+  if (response.statusCode == 200) {
     return jsonDecode(response.body)['download'];
   } else {
     return {};
