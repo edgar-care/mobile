@@ -57,7 +57,6 @@ Future<Map<String, Object>?> putInformationPatient(
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
-  Logger().i(info);
   final body = {
     'onboarding_info': {
       'name': info?['Prenom'],

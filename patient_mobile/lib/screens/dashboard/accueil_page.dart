@@ -20,8 +20,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchData(context);
+    askPermission();
   }
+
+  Future<void> askPermission() async {}
 
   Map<String, Object>? infoMedical = {};
 
@@ -75,167 +77,173 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: fetchData(context),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Afficher le loader
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.green400,
-              ),
-            );
-          } else if (snapshot.hasError) {
-            // Afficher un message d'erreur en cas d'échec
-            return const Center(
-              child: Text('Erreur lors du chargement des données'),
-            );
-          } else {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.05),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 10),
-                      Text(
-                        'Bonjour mr.Duc',
-                        style: TextStyle(
-                          color: Colors.blue[900],
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Image.asset(
-                        'assets/images/logo/edgar-high-five.png',
-                        width: 40,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.grey200),
-                        ),
-                        icon: const Icon(
-                          BootstrapIcons.bell,
-                          color: AppColors.blue950,
-                        ),
-                        onPressed: () {},
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                  ),
+    return SafeArea(
+      child: FutureBuilder(
+          future: fetchData(context),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Afficher le loader
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.green400,
                 ),
-                SizedBox(
-                  height: 100,
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.blue[700],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              );
+            } else if (snapshot.hasError) {
+              // Afficher un message d'erreur en cas d'échec
+              return const Center(
+                child: Text('Erreur lors du chargement des données'),
+              );
+            } else {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.05),
+                      child: Row(
                         children: [
-                          const Text(
-                            'Prochain rendez-vous le',
+                          const SizedBox(width: 10),
+                          Text(
+                            'Bonjour mr.Duc',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.blue[900],
                               fontSize: 16,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                          Text.rich(
-                            TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '${info['next_rdv_date']} ',
-                                  style: const TextStyle(
-                                    color: Color(0xFF5AAF33),
-                                    fontSize: 24,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const TextSpan(
-                                  text: ' à  ',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '${info['next_rdv_horraire']}',
-                                  style: const TextStyle(
-                                    color: Color(0xFF5AAF33),
-                                    fontSize: 20,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                          const SizedBox(width: 10),
+                          Image.asset(
+                            'assets/images/logo/edgar-high-five.png',
+                            width: 40,
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  AppColors.grey200),
                             ),
-                            textAlign: TextAlign.justify,
-                          )
+                            icon: const Icon(
+                              BootstrapIcons.bell,
+                              color: AppColors.blue950,
+                            ),
+                            onPressed: () {},
+                          ),
+                          const SizedBox(width: 10),
                         ],
                       ),
                     ),
-                  ),
-                ),
-                const Text(
-                  'Vous voulez prendre un nouveau\nrendez-vous ?',
-                  style: TextStyle(
-                    color: Color(0xFF1E2B4D),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.1,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                GreenPlainButton(
-                  text: 'Prendre un rendez-vous',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/simulation/intro');
-                  },
-                ),
-                const Text(
-                  'Vos dernier documents reçus',
-                  style: TextStyle(
-                    color: Color(0xFF1E2B4D),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    PDFCard(
-                      text: 'Document 1',
-                      pdfUrl:
-                          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+                    SizedBox(
+                      height: 100,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.blue[700],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Prochain rendez-vous le',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text.rich(
+                                TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: '${info['next_rdv_date']} ',
+                                      style: const TextStyle(
+                                        color: Color(0xFF5AAF33),
+                                        fontSize: 24,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const TextSpan(
+                                      text: ' à  ',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${info['next_rdv_horraire']}',
+                                      style: const TextStyle(
+                                        color: Color(0xFF5AAF33),
+                                        fontSize: 20,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.justify,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(width: 10),
-                    PDFCard(
-                      text: 'Document 2',
-                      pdfUrl:
-                          'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+                    const Text(
+                      'Vous voulez prendre un nouveau\nrendez-vous ?',
+                      style: TextStyle(
+                        color: Color(0xFF1E2B4D),
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.1,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    GreenPlainButton(
+                      text: 'Prendre un rendez-vous',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/simulation/intro');
+                      },
+                    ),
+                    const Text(
+                      'Vos dernier documents reçus',
+                      style: TextStyle(
+                        color: Color(0xFF1E2B4D),
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        PDFCard(
+                          text: 'Document 1',
+                          pdfUrl:
+                              'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+                        ),
+                        SizedBox(width: 10),
+                        PDFCard(
+                          text: 'Document 2',
+                          pdfUrl:
+                              'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            );
-          }
-        });
+              );
+            }
+          }),
+    );
   }
 }

@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/diagnotic.dart';
+import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/services/getResponseConversation.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -19,6 +17,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   var sessionId = '';
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -26,118 +26,156 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getSessionId() async {
-    await dotenv.load();
-    final url = '${dotenv.env['URL']}diagnostic/initiate';
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-    setState(() {
-      sessionId = jsonDecode(response.body)['sessionId'];
+    await initiateDiagnostic().then((value) {
+      setState(() {
+        sessionId = value;
+      });
     });
   }
 
-  List<List<dynamic>> messages = [
+  List<dynamic> messages = [
     [
-      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation.Pour commencer, pouvez-vous me dire où vous avez mal ?',
+      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
       false,
     ]
   ];
 
-  Future<void> parseUserInput(String userInput) async {
-    final response = await getResponseMessage(context, userInput, sessionId);
-    Logger().d(response);
-    final Map<String, dynamic> jsonData = json.decode(response.toString());
-
-    final question = jsonData['question'];
-    Logger().d(jsonData['done']);
-    bool done = jsonData['done'] as bool;
-    Logger().d(done);
-    Logger().d(question.toString());
-    if (done) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/simulation/confirmation');
-    } else {
+  void sendMessage(bool isSender, String message) async {
+    setState(() {
+      messages.add([message[0].toUpperCase() + message.substring(1), true]);
+    });
+    await getDiagnostic(sessionId, message).then((value) {
+      if (value.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+            message: "Erreur lors de l'envoie", context: context));
+        return;
+      }
+      if (value['done'] == true) {
+        setState(() {
+          messages.add(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Buttons(
+                variant: Variante.primary,
+                size: SizeButton.md,
+                msg: const Text('Continuer la simulation'),
+                onPressed: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString('sessionId', sessionId);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamed(context, '/simulation/appointement');
+                },
+              ),
+            ),
+          );
+        });
+        goMid();
+        return;
+      }
       setState(() {
-        messages.add([question, false]);
+        messages.add([value['question'], false]);
+        goMid();
       });
-    }
+    });
   }
 
-  void sendMessage(bool isSender, String message) {
-    setState(() {
-      messages.add([message, isSender]);
-    });
+  void goMid() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 100,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
 // Controller for the text input field
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blue200,
+      backgroundColor: AppColors.white,
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: AppColors.white,
-            ),
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    reverse: false, // Reverse the order of the messages
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final item = messages[index][0];
-                      final isSender = messages[index][1];
-
-                      Widget content;
-                      if (item is String) {
-                        content = Text(
-                          item,
-                          style: TextStyle(
-                            color:
-                                isSender ? AppColors.grey700 : AppColors.black,
-                            fontSize: 12,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                reverse: false,
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  if (message is Padding) {
+                    return message;
+                  } else if (message[1] == false) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width - 48,
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            message[0],
+                            style: const TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
                           ),
-                        );
-                      } else if (item is Widget) {
-                        content = item;
-                      } else {
-                        content = const Text('Unsupported item type');
-                      }
-
-                      return ListTile(
-                        title: Align(
-                          alignment: isSender
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: content,
                         ),
-                      );
-                    },
-                  ),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width - 48,
+                          padding: const EdgeInsets.only(bottom: 32),
+                          child: Text(
+                            message[0],
+                            style: const TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (messages.last is! Padding)
+              CustomFieldSearch(
+                onValidate: (value) {
+                  if (value.isEmpty) {
+                    return;
+                  }
+                  if (messages.last is! Buttons) {
+                    sendMessage(true, value.trim());
+                  }
+                },
+                label: 'Ecriver votre message ici...',
+                icon: const Icon(
+                  BootstrapIcons.send_fill,
+                  color: AppColors.black,
+                  size: 16,
                 ),
-                CustomFieldSearch(
-                  onValidate: (value) {
-                    if (value.isEmpty) {
-                      return;
-                    }
-                    sendMessage(true, value);
-                    parseUserInput(value);
-                  },
-                  label: 'Votre réponse',
-                  icon: BootstrapIcons.send_fill,
-                  keyboardType: TextInputType.text,
-                ),
-              ],
-            )),
+                keyboardType: TextInputType.text,
+                onlyOnValidate: true,
+                onOpen: () {
+                  goMid();
+                },
+              ),
+          ],
+        ),
       ),
     );
   }
