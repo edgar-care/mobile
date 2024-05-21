@@ -3,7 +3,6 @@ import 'package:edgar/services/doctor.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationPage extends StatefulWidget {
