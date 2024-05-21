@@ -1,5 +1,6 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
@@ -35,8 +36,7 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
-  String getId()
-  {
+  String getId() {
     return _id;
   }
 
@@ -51,11 +51,27 @@ class _DashBoardState extends State<DashBoard> {
       const Agenda(),
       Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
-      const Text('Aide',style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      Text('Dossier médical: ${getId()}',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
-      PatientPageRdv(id: getId(), setPages: updateSelectedIndex, setId: updateId,),
-      DocumentPage(id: _id, setPages: updateSelectedIndex, setId: updateId,),
-      Text('Messagerie: $_id',style: const TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: AppColors.blue950)),
+      const Text('Aide',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
+      PatientPageRdv(
+        id: getId(),
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      DocumentPage(
+        id: _id,
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      Text('Messagerie: $_id',
+          style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

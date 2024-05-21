@@ -10,7 +10,14 @@ class CustomNavPatientCard extends StatelessWidget {
   int pageTo;
   String id;
   Function setId;
-  CustomNavPatientCard({super.key, required this.setPages, required this.text, required this.icon, required this.pageTo, required this.id, required this.setId});
+  CustomNavPatientCard(
+      {super.key,
+      required this.setPages,
+      required this.text,
+      required this.icon,
+      required this.pageTo,
+      required this.id,
+      required this.setId});
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +34,33 @@ class CustomNavPatientCard extends StatelessWidget {
           Navigator.pop(context);
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16,8,10,8),
-          child: Row(
-            children:[
-              Icon(icon, color: AppColors.blue950, size: 17,),
-              const SizedBox(width: 16,),
-              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
-              const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 16, )
-            ]
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
+          child: Row(children: [
+            Icon(
+              icon,
+              color: AppColors.blue950,
+              size: 17,
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Text(
+              text,
+              style: const TextStyle(
+                  color: AppColors.blue950,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins'),
+            ),
+            const Spacer(),
+            const Icon(
+              BootstrapIcons.chevron_right,
+              color: AppColors.black,
+              size: 16,
+            )
+          ]),
         ),
       ),
-
     );
   }
 }
@@ -49,7 +70,8 @@ class CustomCardModal extends StatelessWidget {
   Function onTap;
   String text;
   IconData? icon;
-  CustomCardModal({super.key, required this.onTap, required this.text, required this.icon});
+  CustomCardModal(
+      {super.key, required this.onTap, required this.text, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -65,19 +87,33 @@ class CustomCardModal extends StatelessWidget {
           Navigator.pop(context);
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16,8,10,8),
-          child: Row(
-            children:[
-              Icon(icon, color: AppColors.blue950, size: 17,),
-              const SizedBox(width: 16,),
-              Text(text, style: const TextStyle(color: AppColors.blue950, fontSize: 16.0, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),),
-              const Spacer(),
-              const Icon(BootstrapIcons.chevron_right, color: AppColors.black, size: 16, )
-            ]
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
+          child: Row(children: [
+            Icon(
+              icon,
+              color: AppColors.blue950,
+              size: 17,
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Text(
+              text,
+              style: const TextStyle(
+                  color: AppColors.blue950,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins'),
+            ),
+            const Spacer(),
+            const Icon(
+              BootstrapIcons.chevron_right,
+              color: AppColors.black,
+              size: 16,
+            )
+          ]),
         ),
       ),
-
     );
   }
 }
