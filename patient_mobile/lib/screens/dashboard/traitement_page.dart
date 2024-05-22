@@ -192,13 +192,10 @@ class _TraitmentPageState extends State<TraitmentPage> {
           onPressed: () {
             WoltModalSheet.show<void>(
                 context: context,
-                pageIndexNotifier: pageIndex,
                 pageListBuilder: (modalSheetContext) {
                   return [
                     addTraitement(
                       context,
-                      pageIndex,
-                      updateData,
                     ),
                   ];
                 });
@@ -502,8 +499,6 @@ class _DeleteBodyState extends State<DeleteBody> {
 
 WoltModalSheetPage addTraitement(
   BuildContext context,
-  ValueNotifier<int> pageIndex,
-  Function(int) updateData,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
@@ -515,8 +510,6 @@ WoltModalSheetPage addTraitement(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: BodyAddTraitement(
-          pageIndex: pageIndex,
-          updateData: updateData,
           screenSize: MediaQuery.of(context).size,
         ),
       ),
@@ -525,14 +518,10 @@ WoltModalSheetPage addTraitement(
 }
 
 class BodyAddTraitement extends StatefulWidget {
-  final ValueNotifier<int> pageIndex;
-  final Function(int) updateData;
   final Size screenSize;
 
   const BodyAddTraitement({
     super.key,
-    required this.pageIndex,
-    required this.updateData,
     required this.screenSize,
   });
 
@@ -817,13 +806,9 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 onTap: () {
                   WoltModalSheet.show<void>(
                     context: context,
-                    pageIndexNotifier: widget.pageIndex,
                     pageListBuilder: (modalSheetContext) {
                       return [
                         addMedicament(
-                          context,
-                          widget.pageIndex,
-                          widget.updateData,
                           updateMedicament,
                         ),
                       ];
@@ -959,15 +944,13 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                     await postTraitement(tmp).then((value) => {
                           if (value == true)
                             {
-                              widget.updateData(0),
-                              Navigator.pop(context),
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SuccessLoginSnackBar(
                                   message: "Traitement modifié avec succès",
                                   context: context,
                                 ),
                               ),
-                              widget.updateData(0),
+                              Navigator.pop(context),
                             }
                           else
                             {
@@ -978,7 +961,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                                   context: context,
                                 ),
                               ),
-                              widget.updateData(0),
+                              Navigator.pop(context),
                             }
                         });
                   },
@@ -994,9 +977,6 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 }
 
 WoltModalSheetPage addMedicament(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  Function(int) updateData,
   Function(Map<String, dynamic>) updateMedicaments,
 ) {
   return WoltModalSheetPage(
@@ -1007,8 +987,7 @@ WoltModalSheetPage addMedicament(
     child: SizedBox(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: BodyAddMedic(
-            updateData: updateData, updateMedicament: updateMedicaments),
+        child: BodyAddMedic(updateMedicament: updateMedicaments),
       ),
     ),
   );
@@ -1016,11 +995,9 @@ WoltModalSheetPage addMedicament(
 
 // ignore: must_be_immutable
 class BodyAddMedic extends StatefulWidget {
-  Function(int) updateData;
   Function(Map<String, dynamic>) updateMedicament;
 
-  BodyAddMedic(
-      {super.key, required this.updateData, required this.updateMedicament});
+  BodyAddMedic({super.key, required this.updateMedicament});
 
   @override
   State<BodyAddMedic> createState() => _BodyAddMedicState();
