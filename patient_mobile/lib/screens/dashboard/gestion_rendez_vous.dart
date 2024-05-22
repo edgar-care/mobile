@@ -1,10 +1,19 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/appointement.dart';
+import 'package:edgar/services/doctor.dart';
+import 'package:edgar/utils/appoitement_utils.dart';
+import 'package:edgar/widget/card_doctor_appoitement.dart';
+import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar/widget/pagination.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 import 'package:edgar/services/get_appointement.dart';
-import 'package:edgar/services/put_appoitement.dart';
 import 'package:edgar/styles/colors.dart';
 import 'package:edgar/widget/buttons.dart';
 
@@ -27,21 +36,29 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   @override
   void initState() {
     super.initState();
-    fetchData(context);
+    fetchData();
   }
 
   final List<Map<String, String>> rdv = [];
+  List<dynamic> doctor = [];
 
   final currentDate = DateTime.now();
 
   RdvFilter rdvFilter = RdvFilter.aVenir;
-  Future<void> fetchData(BuildContext context) async {
-    final Map<String, dynamic>? rdvs = await getAppointement(context);
+  Future<void> fetchData() async {
+    final Map<String, dynamic>? rdvs =
+        await getAppointement(context).whenComplete(() {
+      setState(() {});
+    });
+    doctor = await getAllDoctor().whenComplete(() {
+      setState(() {});
+    });
     if (rdvs != null) {
       final uniqueRdv = <Map<String, String>>{};
       if (rdvs['rdv'] == null) {
         return;
       }
+      rdv.clear();
       rdvs['rdv'].forEach((dynamic rdv) {
         final rendezVous = {
           'id': rdv['id'] as String,
@@ -51,8 +68,11 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
               DateTime.fromMillisecondsSinceEpoch(rdv['start_date'] * 1000)),
           'fin': DateFormat('HH:mm:ss').format(
               DateTime.fromMillisecondsSinceEpoch(rdv['end_date'] * 1000)),
-          'medecin': 'Dr. Malade',
-          'adresse': '123 Rue de la Santé, Paris',
+          'medecin':
+              "Dr. ${doctor.firstWhere((element) => element['id'] == rdv['doctor_id'])['name'].toString()}",
+          'adresse':
+              '${doctor.firstWhere((element) => element['id'] == rdv['doctor_id'])["address"]["street"] ?? ""}, ${doctor.firstWhere((element) => element['id'] == rdv['doctor_id'])["address"]["zip_code"]}  ${doctor.firstWhere((element) => element['id'] == rdv['doctor_id'])["address"]["city"]}',
+          'status': rdv['appointment_status'].toString(),
         };
         uniqueRdv.add(rendezVous); // Ajouter le rendez-vous au Set
       });
@@ -65,7 +85,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
 
   Future<void> updateDate(BuildContext context) async {
     setState(() {
-      fetchData(context);
+      fetchData();
     });
   }
 
@@ -77,17 +97,21 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
       case RdvFilter.aVenir:
         filteredRdv = rdv.where((element) {
           final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
-          return rdvDate.isAfter(DateTime.now());
+          return rdvDate.isAfter(DateTime.now()) &&
+              element['status'] != 'CANCELED';
         }).toList();
         break;
       case RdvFilter.passes:
         filteredRdv = rdv.where((element) {
           final rdvDate = DateFormat('dd/MM/yyyy').parse(element['date']!);
-          return rdvDate.isBefore(DateTime.now());
+          return rdvDate.isBefore(DateTime.now()) &&
+              element['status'] != 'CANCELED';
         }).toList();
         break;
       case RdvFilter.annules:
-        filteredRdv = rdv;
+        filteredRdv = rdv.where((element) {
+          return element['status'] == 'CANCELED';
+        }).toList();
         break;
     }
 
@@ -397,155 +421,158 @@ class _CardRdvState extends State<CardRdv> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Expanded(
-        child: Row(
-          children: [
-            SizedBox(
-              width: 100,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Column(
+              children: [
+                Text(
+                  widget.rdv['date'] ==
+                          DateFormat('dd/MM/yyyy').format(currenDate)
+                      ? 'Aujourd\'hui'
+                      : widget.rdv['date'] ==
+                              DateFormat('dd/MM/yyyy').format(
+                                  currenDate.add(const Duration(days: 1)))
+                          ? 'Demain'
+                          : widget.rdv['date']!,
+                  style: const TextStyle(
+                    color: AppColors.green500,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  widget.rdv['heure']
+                          ?.replaceAll(':', 'H')
+                          .substring(0, 5)
+                          .trim()
+                          .replaceFirst("H", " H ") ??
+                      '',
+                  style: const TextStyle(
+                    color: AppColors.grey950,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Text(
+                  "30 min",
+                  style: TextStyle(
+                    color: AppColors.grey400,
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.grey100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.grey200, width: 1),
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.rdv['date'] ==
-                            DateFormat('dd/MM/yyyy').format(currenDate)
-                        ? 'Aujourd\'hui'
-                        : widget.rdv['date'] ==
-                                DateFormat('dd/MM/yyyy').format(
-                                    currenDate.add(const Duration(days: 1)))
-                            ? 'Demain'
-                            : widget.rdv['date']!,
-                    style: const TextStyle(
-                      color: AppColors.green500,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.rdv['medecin'] ?? '',
+                        style: const TextStyle(
+                          color: AppColors.grey950,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          WoltModalSheet.show<void>(
+                              context: context,
+                              pageIndexNotifier: pageIndexRDV,
+                              pageListBuilder: (modalSheetContext) {
+                                return [
+                                  openRDV(
+                                    context,
+                                    pageIndexRDV,
+                                    widget.updataData,
+                                  ),
+                                  deleteRDV(
+                                    context,
+                                    pageIndexRDV,
+                                    widget.rdv['id']!,
+                                    widget.updataData,
+                                  ),
+                                  modifyRdv(
+                                    context,
+                                    pageIndexRDV,
+                                    widget.rdv['id']!,
+                                    widget.updataData,
+                                  ),
+                                ];
+                              });
+                        },
+                        child: const Icon(
+                          BootstrapIcons.three_dots_vertical,
+                          color: AppColors.grey500,
+                          size: 24,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    widget.rdv['heure']
-                            ?.replaceAll(':', 'H')
-                            .substring(0, 5)
-                            .trim()
-                            .replaceFirst("H", " H ") ??
-                        '',
-                    style: const TextStyle(
-                      color: AppColors.grey950,
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 1,
+                    color: Colors.black,
                   ),
-                  const Text(
-                    "30 min",
-                    style: TextStyle(
-                      color: AppColors.grey400,
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          widget.rdv['adresse'] ?? '',
+                          style: const TextStyle(
+                            color: AppColors.grey950,
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isVisible = !isVisible;
+                          });
+                        },
+                        child: const Icon(
+                          BootstrapIcons.chevron_right,
+                          color: AppColors.grey500,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.grey100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.grey200, width: 1),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.rdv['medecin'] ?? '',
-                          style: const TextStyle(
-                            color: AppColors.grey950,
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            WoltModalSheet.show<void>(
-                                context: context,
-                                pageIndexNotifier: pageIndexRDV,
-                                pageListBuilder: (modalSheetContext) {
-                                  return [
-                                    openRDV(
-                                      context,
-                                      pageIndexRDV,
-                                      widget.updataData,
-                                    ),
-                                    deleteRDV(
-                                      context,
-                                      pageIndexRDV,
-                                      widget.rdv['id']!,
-                                      widget.updataData,
-                                    ),
-                                  ];
-                                });
-                          },
-                          child: const Icon(
-                            BootstrapIcons.three_dots_vertical,
-                            color: AppColors.grey500,
-                            size: 24,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            widget.rdv['adresse'] ?? '',
-                            style: const TextStyle(
-                              color: AppColors.grey950,
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isVisible = !isVisible;
-                            });
-                          },
-                          child: const Icon(
-                            BootstrapIcons.chevron_right,
-                            color: AppColors.grey500,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -573,7 +600,9 @@ WoltModalSheetPage openRDV(
               variant: Variante.primary,
               size: SizeButton.sm,
               msg: const Text('Modifier'),
-              onPressed: () async {}),
+              onPressed: () async {
+                pageIndexRDV.value = 2;
+              }),
           Buttons(
               variant: Variante.delete,
               size: SizeButton.sm,
@@ -659,7 +688,8 @@ WoltModalSheetPage deleteRDV(
                 size: SizeButton.sm,
                 msg: const Text('Supprimer'),
                 onPressed: () async {
-                  putAppointement(context, id);
+                  await deleteAppointementId(id);
+                  // ignore: use_build_context_synchronously
                   updataData(context);
                   pageIndexRDV.value = 0;
                 },
@@ -671,4 +701,310 @@ WoltModalSheetPage deleteRDV(
       ),
     ),
   );
+}
+
+WoltModalSheetPage modifyRdv(
+  BuildContext context,
+  ValueNotifier<int> pageIndex,
+  String id,
+  Function updataData,
+) {
+  return WoltModalSheetPage(
+      hasTopBarLayer: false,
+      backgroundColor: AppColors.white,
+      hasSabGradient: true,
+      enableDrag: true,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: AppointmentPage(
+            pageIndex: pageIndex,
+            id: id,
+            updataData: updataData,
+          ),
+        ),
+      ));
+}
+
+// ignore: must_be_immutable
+class AppointmentPage extends StatefulWidget {
+  ValueNotifier<int> pageIndex;
+  String id;
+  Function updataData;
+  AppointmentPage(
+      {super.key,
+      required this.pageIndex,
+      required this.id,
+      required this.updataData});
+
+  @override
+  State<AppointmentPage> createState() => _AppointmentPageState();
+}
+
+class _AppointmentPageState extends State<AppointmentPage> {
+  List<Appointment> appointments = [];
+  List<Map<Doctor, String>> allDoctors = [];
+  List<Map<Doctor, String>> filteredDoctors = [];
+  List<dynamic> doctorsTemp = [];
+  String selectedId = '';
+  int currentPage = 1; // Start at page 1
+  int totalPages = 0;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      var value = await getAllDoctor();
+      if (value.isNotEmpty) {
+        setState(() {
+          doctorsTemp = value;
+        });
+        initializeDoctors();
+        await fetchAppointments(currentPage); // Start fetching from page 1
+      }
+    } catch (e) {
+      Logger().e("Error fetching data: $e");
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  void initializeDoctors() {
+    for (var element in doctorsTemp) {
+      var id = element['id'];
+      Doctor? doctor = findDoctorById(doctorsTemp, id);
+      if (doctor != null) {
+        setState(() {
+          allDoctors.add({doctor: id});
+        });
+      }
+    }
+    setState(() {
+      filteredDoctors = allDoctors.toSet().toList();
+      totalPages = (filteredDoctors.length / 2).ceil();
+    });
+  }
+
+  Future<void> fetchAppointments(int currentPage) async {
+    setState(() {
+      appointments = [];
+      isLoading = true;
+    });
+
+    int startIndex =
+        (currentPage - 1) * 2; // Adjust start index for 1-based page
+    for (var i = 0; i < 2; i++) {
+      if (startIndex + i < filteredDoctors.length) {
+        await fetchDoctorAppointment(
+            filteredDoctors[startIndex + i].values.first);
+      } else {
+        break;
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> fetchDoctorAppointment(String id) async {
+    try {
+      var value = await getAppoitementDoctorById(id);
+      if (value.isEmpty) {
+        addEmptyAppointment(id);
+      } else if (value.containsKey('rdv')) {
+        addAppointmentFromResponse(id, value);
+      }
+    } catch (e) {
+      Logger().e("Error fetching data: $e");
+    }
+  }
+
+  void addEmptyAppointment(String id) {
+    Doctor? doctor = findDoctorById(doctorsTemp, id);
+    Logger().i("Doctor: ${doctor?.address.city}");
+    Appointment appointment = Appointment(
+      doctor:
+          (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
+              ? "Dr. Edgar"
+              : "Dr. ${doctor!.name} ${doctor.firstname}",
+      address: Address(
+        street: doctor?.address.street.isEmpty ?? true
+            ? '1 rue de la Paix'
+            : doctor!.address.street,
+        zipCode: doctor?.address.zipCode.isEmpty ?? true
+            ? '69000'
+            : doctor!.address.zipCode,
+        country: doctor?.address.country.isEmpty ?? true
+            ? 'France'
+            : doctor!.address.country,
+        city: doctor?.address.city.isEmpty ?? true
+            ? 'Lyon'
+            : doctor!.address.city,
+      ),
+      dates: [],
+    );
+    setState(() {
+      appointments.add(appointment);
+    });
+  }
+
+  void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
+    Appointment? appointment = transformAppointments(doctorsTemp, value);
+
+    Logger().i("Appointment: $appointment");
+    if (appointment != null) {
+      setState(() {
+        appointments.add(appointment);
+      });
+    } else {
+      addEmptyAppointment(id);
+    }
+  }
+
+  void updateSelectedAppointment(String id) {
+    setState(() {
+      selectedId = (selectedId == id) ? '' : id;
+    });
+    Logger().i("Selected id: $selectedId");
+  }
+
+  void filterDoctors(String name) {
+    setState(() {
+      currentPage = 1; // Reset to first page
+      filteredDoctors = allDoctors
+          .where((element) => element.keys.first.name.contains(name))
+          .toSet()
+          .toList();
+      totalPages = (filteredDoctors.length / 2).ceil();
+    });
+    fetchAppointments(currentPage);
+  }
+
+  void onPageChanged(int page) {
+    setState(() {
+      currentPage = page;
+    });
+    fetchAppointments(currentPage);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+          const Text(
+            "Vous pouvez maintenant sélectionner un rendez-vous chez un médecin.",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+              color: AppColors.black,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          const SizedBox(height: 16),
+          CustomFieldSearch(
+            label: "Rechercher par le nom du médecin",
+            icon: SvgPicture.asset("assets/images/utils/search.svg"),
+            keyboardType: TextInputType.text,
+            onValidate: (value) {
+              filterDoctors(value);
+            },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: AppColors.blue700,
+                    strokeWidth: 2,
+                  )) // Afficher l'indicateur de chargement
+                : ListView.builder(
+                    itemCount: appointments.length,
+                    itemBuilder: (context, index) {
+                      return CardAppointementDoctorHour(
+                        appointements: appointments[index],
+                        updateId: updateSelectedAppointment,
+                        idSelected: selectedId,
+                      );
+                    },
+                  ),
+          ),
+          Pagination(
+            currentPage: currentPage,
+            totalPages: totalPages,
+            onPageChanged: onPageChanged,
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () async {
+              if (selectedId.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  ErrorLoginSnackBar(
+                    message:
+                        "Veuillez sélectionner un rendez-vous avant de continuer.",
+                    context: context,
+                  ),
+                );
+              } else {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? sessionId = prefs.getString('sessionId');
+                Logger().i("session_id: $sessionId");
+
+                await putAppoitement(widget.id, selectedId).whenComplete(
+                  () {
+                    widget.updataData(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SuccessLoginSnackBar(
+                        message: "Rendez-vous validé avec succès.",
+                        context: context,
+                      ),
+                    );
+                    widget.pageIndex.value = 0;
+                    Navigator.pop(context);
+                  },
+                );
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.blue700,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Valider le rendez-vous',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.white,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Icon(
+                    BootstrapIcons.arrow_right_circle_fill,
+                    color: AppColors.white,
+                    size: 24,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

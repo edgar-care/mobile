@@ -82,3 +82,21 @@ Future<bool> deleteAppointementId(String id) async {
     return false;
   }
 }
+
+Future<bool> putAppoitement(String idold, String idnew) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await dotenv.load();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}appointments/$idold';
+  var body = jsonEncode({'id': idnew});
+  final response = await http.put(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+    body: body,
+  );
+  if (response.statusCode == 201) {
+    return true;
+  } else {
+    return false;
+  }
+}
