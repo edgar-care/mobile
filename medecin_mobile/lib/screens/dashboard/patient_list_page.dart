@@ -140,7 +140,7 @@ class _PatientPageState extends State<PatientPage> {
                             width: 8,
                           ),
                           Text(
-                            '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                            '${patientInfo['Prenom']} ${patientInfo['Nom']}',
                             style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -312,7 +312,7 @@ class _PatientPageState extends State<PatientPage> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(children: [
             Text(
-              '${patient['Nom']} ${patient['Prenom']}',
+              '${patient['Prenom']} ${patient['Nom']}',
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
@@ -1527,7 +1527,7 @@ WoltModalSheetPage addTraitement(
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
-    hasSabGradient: true,
+    hasSabGradient: false,
     enableDrag: true,
     child: Padding(
       padding: const EdgeInsets.all(24),

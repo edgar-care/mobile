@@ -287,7 +287,7 @@ class _PatientState extends State<Patient> {
               style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
-                  fontWeight: FontWeight.w700),
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(
               height: 8,
@@ -339,7 +339,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -359,7 +359,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -379,7 +379,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -399,7 +399,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 4,
@@ -415,7 +415,7 @@ class _PatientState extends State<Patient> {
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
                   height: 8,
@@ -468,7 +468,7 @@ class _PatientState extends State<Patient> {
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(
                             height: 8,
@@ -502,7 +502,7 @@ class _PatientState extends State<Patient> {
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(
                             height: 8,
@@ -609,7 +609,7 @@ SliverWoltModalSheetPage addPatient2(
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
-                fontWeight: FontWeight.w700),
+                fontWeight: FontWeight.w600),
           ),
           const SizedBox(
             height: 8,
@@ -691,7 +691,7 @@ SliverWoltModalSheetPage addPatient3(final Function(int) updateSelectedIndex,
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
-                fontWeight: FontWeight.w700),
+                fontWeight: FontWeight.w600),
           ),
           const SizedBox(
             height: 8,
@@ -810,7 +810,7 @@ class _onboarding2State extends State<Body2> {
               });
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Expanded(
             child: FutureBuilder(
               future: _fetchDocsFuture,
@@ -927,7 +927,7 @@ class _Onboarding3State extends State<Body3> {
         style: TextStyle(
           color: AppColors.black,
           fontSize: 14,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
         ),
       ),
       const SizedBox(height: 8),
@@ -983,7 +983,7 @@ class _Onboarding3State extends State<Body3> {
         style: TextStyle(
           color: AppColors.black,
           fontSize: 14,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
         ),
       ),
       SizedBox(
@@ -1010,8 +1010,8 @@ class _Onboarding3State extends State<Body3> {
                 padding: const EdgeInsets.only(top: 16),
                 child: Wrap(
                   alignment: WrapAlignment.start,
-                  spacing: 4,
-                  runSpacing: 4,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     if (traitments.isNotEmpty)
                       for (var i = 0; i < traitments.length; i++)
@@ -1334,11 +1334,9 @@ WoltModalSheetPage addTraitement(
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
-    hasSabGradient: true,
+    hasSabGradient: false,
     enableDrag: true,
-    child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
-      child: Padding(
+    child: Padding(
         padding: const EdgeInsets.all(24),
         child: BodyAddTraitement(
           pageIndex: pageIndex,
@@ -1347,7 +1345,6 @@ WoltModalSheetPage addTraitement(
           screenSize: MediaQuery.of(context).size,
         ),
       ),
-    ),
   );
 }
 

@@ -77,7 +77,7 @@ class _CustomListState extends State<CustomList> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(children: [
             Text(
-              '${patient['Nom']} ${patient['Prenom']}',
+              '${patient['Prenom']} ${patient['Nom']}',
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,

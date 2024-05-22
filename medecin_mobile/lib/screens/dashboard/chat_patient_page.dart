@@ -172,7 +172,7 @@ class ChatPatientState extends State<ChatPatient> {
                           width: 8,
                         ),
                         Text(
-                          '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                          '${patientInfo['Prenom']} ${patientInfo['Nom']}',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -211,7 +211,7 @@ class ChatPatientState extends State<ChatPatient> {
                             (chat.recipientIds.last.id == widget.id ||
                                 chat.recipientIds.last.id == idDoctor)),
                   ),
-                  patientName: '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                  patientName: '${patientInfo['Prenom']} ${patientInfo['Nom']}',
                   doctorId: idDoctor,
                 ),
               ),
@@ -235,7 +235,7 @@ class ChatPatientState extends State<ChatPatient> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(children: [
             Text(
-              '${patient['Nom']} ${patient['Prenom']}',
+              '${patient['Prenom']} ${patient['Nom']}',
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,

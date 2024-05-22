@@ -16,6 +16,7 @@ import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class CustomListRdvCard extends StatefulWidget {
@@ -164,7 +165,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
   Future<void> _loadAppointment() async {
-    patientInfo = await getPatientById(widget.rdvInfo['id_patient']);
+      getPatientById(widget.rdvInfo['id_patient']).then((value) {
+        setState(() {
+          patientInfo = value;
+        });
+      });
   }
 
   @override
@@ -173,11 +178,9 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         widget.rdvInfo['start_date'] * 1000);
     DateTime end =
         DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
-    return FutureBuilder(
-      future: _loadAppointment(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Container(
+    return Skeletonizer(
+      enabled: patientInfo.isEmpty,
+      child: Container(
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(8.0),
@@ -308,15 +311,10 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                     ]),
               ),
             ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+          ),
     );
   }
+    
 
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
       String firstname, Map<String, dynamic> rdvInfo) {

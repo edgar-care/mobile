@@ -12,32 +12,52 @@ import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
-class DiagnosticCard extends StatelessWidget {
+class DiagnosticCard extends StatefulWidget {
   Map<String, dynamic> rdvInfo;
   int type;
   Function refresh;
-  DiagnosticCard(
-      {super.key,
+  DiagnosticCard({super.key,
       required this.rdvInfo,
       required this.type,
       required this.refresh});
 
-  ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
+  @override
+  State<DiagnosticCard> createState() => _DiagnosticCardState();
+}
+
+class _DiagnosticCardState extends State<DiagnosticCard> {
+
+   ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    patientInfo = await getPatientById(rdvInfo['id_patient']);
+    getPatientById(widget.rdvInfo['id_patient']).then((value) => 
+    setState(() {
+      patientInfo = value;
+    }));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Logger().d(widget.rdvInfo);
+    _loadAppointment();
   }
 
   @override
   Widget build(BuildContext context) {
-    // ignore: prefer_typing_uninitialized_variables
-    var color;
-    switch (type) {
+    DateTime start =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
+    DateTime end =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
+
+    Color color = AppColors.blue200;
+    switch (widget.type) {
       case 0:
         color = AppColors.blue200;
       case 1:
@@ -46,231 +66,113 @@ class DiagnosticCard extends StatelessWidget {
         color = AppColors.red500;
     }
 
-    DateTime start =
-        DateTime.fromMillisecondsSinceEpoch(rdvInfo['start_date'] * 1000);
-    DateTime end =
-        DateTime.fromMillisecondsSinceEpoch(rdvInfo['end_date'] * 1000);
-    return FutureBuilder(
-      future: _loadAppointment(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: AppColors.blue200, width: 2.0),
-              ),
-              child: InkWell(
-                  onTap: () {
-                    WoltModalSheet.show<void>(
-                      onModalDismissedWithBarrierTap: () {
-                        Navigator.pop(context);
-                        pageIndexNotifier.value = 0;
-                      },
-                      onModalDismissedWithDrag: () {
-                        Navigator.pop(context);
-                        pageIndexNotifier.value = 0;
-                      },
-                      pageIndexNotifier: pageIndexNotifier,
-                      context: context,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          navModal(
-                              modalSheetContext,
-                              patientInfo["Nom"],
-                              patientInfo["Prenom"],
-                              rdvInfo,
-                              pageIndexNotifier),
-                          validateModal(
-                              modalSheetContext, pageIndexNotifier, rdvInfo),
-                          cancelModal(
-                              modalSheetContext, pageIndexNotifier, rdvInfo),
-                        ];
-                      },
-                    );
+    return Skeletonizer(
+      enabled: patientInfo.isEmpty,
+      child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: AppColors.blue200, width: 2.0),
+          ),
+          child: InkWell(
+              onTap: () {
+                WoltModalSheet.show<void>(
+                  onModalDismissedWithBarrierTap: () {
+                    pageIndexNotifier.value = 0;
                   },
-                  child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(children: [
-                        Container(
-                          height: 39,
-                          width: 4,
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(8.0),
+                  onModalDismissedWithDrag: () {
+                    pageIndexNotifier.value = 0;
+                  },
+                  pageIndexNotifier: pageIndexNotifier,
+                  context: context,
+                  pageListBuilder: (modalSheetContext) {
+                    return [
+                      navModal(
+                          modalSheetContext,
+                          patientInfo["Nom"],
+                          patientInfo["Prenom"],
+                          widget.rdvInfo,
+                          pageIndexNotifier),
+                      validateModal(modalSheetContext,
+                          pageIndexNotifier, widget.rdvInfo),
+                      cancelModal(modalSheetContext, pageIndexNotifier,
+                          widget.rdvInfo),
+                    ];
+                  },
+                );
+              },
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(children: [
+                    Container(
+                      height: 50,
+                      width: 4,
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                          const SizedBox(
+                            height: 8,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  "${patientInfo["Prenom"]} ${patientInfo["Nom"].toUpperCase()}",
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600)),
-                              Row(children: [
-                                Text(DateFormat('yMd', 'fr').format(start),
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        height: 2,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Poppins')),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                const Text("-",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Poppins')),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Row(children: [
-                                  Text(DateFormat('jm', 'fr').format(start),
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Poppins')),
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
-                                  const Icon(
-                                    BootstrapIcons.arrow_right,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(DateFormat('jm', 'fr').format(end),
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Poppins')),
-                                ]),
-                              ])
-                            ]),
-                        const Spacer(),
-                        const Icon(
-                          BootstrapIcons.chevron_right,
-                          size: 16,
-                        ),
-                      ]))));
-        } else {
-          return Skeletonizer(
-              enabled: true,
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: AppColors.blue200, width: 2.0),
-                  ),
-                  child: InkWell(
-                      onTap: () {
-                        WoltModalSheet.show<void>(
-                          onModalDismissedWithBarrierTap: () {
-                            pageIndexNotifier.value = 0;
-                          },
-                          onModalDismissedWithDrag: () {
-                            pageIndexNotifier.value = 0;
-                          },
-                          pageIndexNotifier: pageIndexNotifier,
-                          context: context,
-                          pageListBuilder: (modalSheetContext) {
-                            return [
-                              navModal(
-                                  modalSheetContext,
-                                  patientInfo["Nom"],
-                                  patientInfo["Prenom"],
-                                  rdvInfo,
-                                  pageIndexNotifier),
-                              validateModal(modalSheetContext,
-                                  pageIndexNotifier, rdvInfo),
-                              cancelModal(modalSheetContext, pageIndexNotifier,
-                                  rdvInfo),
-                            ];
-                          },
-                        );
-                      },
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(children: [
-                            Container(
-                              height: 50,
-                              width: 4,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
+                          Row(children: [
+                            Text(DateFormat('yMd', 'fr').format(start),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins')),
                             const SizedBox(
-                              width: 8,
+                              width: 4,
                             ),
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Row(children: [
-                                    Text(DateFormat('yMd', 'fr').format(start),
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Poppins')),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    const Text("-",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Poppins')),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Row(children: [
-                                      Text(DateFormat('jm', 'fr').format(start),
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Poppins')),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      const Icon(
-                                        BootstrapIcons.arrow_right,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(DateFormat('jm', 'fr').format(end),
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Poppins')),
-                                    ]),
-                                  ])
-                                ]),
-                            const Spacer(),
-                            const Icon(
-                              BootstrapIcons.chevron_right,
-                              size: 16,
+                            const Text("-",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins')),
+                            const SizedBox(
+                              width: 4,
                             ),
-                          ])))));
-        }
-      },
-    );
+                            Row(children: [
+                              Text(DateFormat('jm', 'fr').format(start),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Poppins')),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              const Icon(
+                                BootstrapIcons.arrow_right,
+                                size: 16,
+                              ),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              Text(DateFormat('jm', 'fr').format(end),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Poppins')),
+                            ]),
+                          ])
+                        ]),
+                    const Spacer(),
+                    const Icon(
+                      BootstrapIcons.chevron_right,
+                      size: 16,
+                    ),
+                  ])))));
   }
 
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
@@ -490,7 +392,7 @@ class DiagnosticCard extends StatelessWidget {
                         postDiagValidation(
                             context, rdvInfo['id'], true, '', '');
                         Navigator.pop(context);
-                        refresh();
+                        widget.refresh();
                       },
                     ),
                   ),
@@ -668,7 +570,7 @@ class DiagnosticCard extends StatelessWidget {
                           postDiagValidation(context, rdvInfo['id'], false,
                               cancelreason, healthmethod);
                           Navigator.pop(context);
-                          refresh();
+                          widget.refresh();
                         }
                       },
                     ),
