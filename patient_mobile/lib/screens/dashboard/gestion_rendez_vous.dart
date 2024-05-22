@@ -84,9 +84,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   }
 
   Future<void> updateDate(BuildContext context) async {
-    setState(() {
-      fetchData();
-    });
+    fetchData();
   }
 
   @override
