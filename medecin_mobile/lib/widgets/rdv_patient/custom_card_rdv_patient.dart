@@ -12,7 +12,6 @@ import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 // ignore: must_be_immutable
 class CustomCardRdvPatient extends StatefulWidget {
