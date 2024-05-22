@@ -523,6 +523,7 @@ WoltModalSheetPage addTraitement(
   );
 }
 
+// ignore: must_be_immutable
 class BodyAddTraitement extends StatefulWidget {
   final Size screenSize;
   Function() getFilterTraitement;
