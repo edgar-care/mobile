@@ -1,20 +1,14 @@
-import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class PatientInfoCard extends StatefulWidget {
   final BuildContext context;
-  final Map<String, dynamic> patient;
-  final String champ;
-  final bool isDeletable;
+  final List<dynamic> tmpTraitments;
 
-  const PatientInfoCard({
-    super.key,
-    required this.context,
-    required this.patient,
-    required this.champ,
-    required this.isDeletable,
-  });
+  const PatientInfoCard(
+      {super.key, required this.context, required this.tmpTraitments});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -24,55 +18,42 @@ class PatientInfoCard extends StatefulWidget {
 class _PatientInfoCardState extends State<PatientInfoCard> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.80,
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child: Wrap(
-        alignment: WrapAlignment.start,
         spacing: 8,
         runSpacing: 8,
-        direction: Axis.horizontal,
+        runAlignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.start,
         children: [
-          for (var i = 0; i < widget.patient[widget.champ].length; i++)
-            Card(
-              elevation: 0,
-              margin: const EdgeInsets.all(0),
-              color: AppColors.blue50,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(
-                  color: AppColors.blue200,
-                  width: 2,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      widget.patient[widget.champ][i],
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
+          for (var i = 0; i < widget.tmpTraitments.length; i++)
+            IntrinsicWidth(
+                child: GestureDetector(
+              onTap: () {
+                if (widget.tmpTraitments[i]['treatments'].isEmpty) {
+                  return;
+                }
+                WoltModalSheet.show<void>(
+                  context: context,
+                  pageListBuilder: (modalSheetContext) {
+                    return [
+                      infoTraitement(
+                        context,
+                        widget.tmpTraitments[i],
                       ),
-                    ),
-                    if (widget.isDeletable)
-                      GestureDetector(
-                        child: const Icon(
-                          BootstrapIcons.x,
-                          color: AppColors.black,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            widget.patient[widget.champ].removeAt(i);
-                          });
-                        },
-                      ),
-                  ],
-                ),
+                    ];
+                  },
+                );
+              },
+              child: CardTraitementSmall(
+                name: widget.tmpTraitments[i]['name'],
+                isEnCours: widget.tmpTraitments[i]['treatments'].isEmpty
+                    ? false
+                    : true,
+                withDelete: false,
+                onTap: () {},
               ),
-            ),
+            )),
         ],
       ),
     );

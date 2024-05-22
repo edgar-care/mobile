@@ -1,4 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/services/auth.dart';
+import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
 
@@ -7,6 +9,14 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String email = "";
+    String password = "";
+    Color borderColor = AppColors.blue800;
+
+    bool emailValidityChecker(String email) {
+      return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -18,28 +28,91 @@ class Register extends StatelessWidget {
             TextFieldBlock(children: [
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.darkBlue, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    borderSide: BorderSide(color: borderColor, width: 2.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   labelText: 'Adresse mail',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: AppColors.textBlue,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
+                onChanged: (value) {
+                  email = value;
+                },
               ),
             ]),
             const SizedBox(height: 20),
-            const PasswordTextFieldBlock(),
+            TextFieldBlock(children: [
+              TextFormField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: borderColor, width: 2.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  labelText: 'Mot de passe',
+                  labelStyle: const TextStyle(
+                      color: AppColors.textBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+                onChanged: (value) {
+                  password = value;
+                },
+              ),
+            ]),
             const SizedBox(height: 20),
             PlainButton(
-                text: "Inscrivez-vous",
-                onPressed: () {
-                  Navigator.pushNamed(context, '/');
-                }),
+              text: "Inscrivez-vous",
+              onPressed: () async {
+                if (password == "" || email == "") {
+                  // ignore: use_build_context_synchronously
+
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Veuillez remplir tous les champs",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                  return;
+                }
+                if (password.length < 8) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                  return;
+                }
+                if (!emailValidityChecker(email)) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Adresse mail invalide",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                  return;
+                }
+                var reponse = await RegisterUser(email, password);
+                if (reponse) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SuccessLoginSnackBar(
+                          message: "Inscription réussie",
+                          // ignore: use_build_context_synchronously
+                          context: context));
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamed(context, '/onboarding');
+                } else {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                      message: "Erreur lors de l'inscription",
+                      // ignore: use_build_context_synchronously
+                      context: context));
+                }
+              },
+            ),
             const SizedBox(height: 20),
             const Text("Déjà inscrit ?",
                 style: TextStyle(

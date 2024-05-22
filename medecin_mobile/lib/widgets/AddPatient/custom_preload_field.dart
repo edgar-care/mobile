@@ -9,6 +9,7 @@ class CustomPreloadField extends StatefulWidget {
   final TextInputType keyboardType;
   final Function(String) onChanged;
   final String text; // Added onChanged parameter
+  final bool startUppercase;
 
   const CustomPreloadField({
     super.key,
@@ -17,7 +18,8 @@ class CustomPreloadField extends StatefulWidget {
     this.isPassword = false,
     this.text = "",
     required this.keyboardType,
-    required this.onChanged, // Added required onChanged parameter
+    required this.onChanged,
+    required this.startUppercase,
   });
 
   @override
@@ -33,7 +35,7 @@ class _CustomPreloadFieldState extends State<CustomPreloadField> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
@@ -44,6 +46,9 @@ class _CustomPreloadFieldState extends State<CustomPreloadField> {
             children: [
               Expanded(
                 child: TextFormField(
+                  textCapitalization: widget.startUppercase
+                      ? TextCapitalization.sentences
+                      : TextCapitalization.none,
                   cursorColor: AppColors.blue500,
                   controller: TextEditingController(text: widget.text),
                   obscureText: widget.isPassword && !_isPasswordVisible,

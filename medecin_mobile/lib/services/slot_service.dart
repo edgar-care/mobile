@@ -14,10 +14,10 @@ Future<List<dynamic>> getSlot() async {
       'Authorization': 'Bearer $token'
     },
   );
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     return jsonDecode(response.body)['slot'];
   }
-  if (response.statusCode != 201) {
+  if (response.statusCode != 200) {
     return [];
   }
   return [];
@@ -27,9 +27,10 @@ Future<Object?> postSlot(DateTime date) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}doctor/slot';
-  final start = date.toUtc().millisecondsSinceEpoch ~/ 1000	;
+  final start = date.toUtc().millisecondsSinceEpoch ~/ 1000;
   final end =
-      ((date.add(const Duration(minutes: 30))).toUtc().millisecondsSinceEpoch  ~/ 1000);
+      ((date.add(const Duration(minutes: 30))).toUtc().millisecondsSinceEpoch ~/
+          1000);
   final response = await http.post(
     Uri.parse(url),
     headers: {
@@ -53,8 +54,6 @@ Future deleteSlot(String id) async {
   String url = '${dotenv.env['URL']}doctor/slot/$id';
   await http.delete(
     Uri.parse(url),
-    headers: {
-      'Authorization': 'Bearer $token'
-    },
+    headers: {'Authorization': 'Bearer $token'},
   );
 }
