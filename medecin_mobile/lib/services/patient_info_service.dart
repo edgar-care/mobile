@@ -82,12 +82,13 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
               ? []
               : data['medical_folder']['medical_antecedents']
                   .map((antecedent) => {
+                        'antedisease_id': antecedent['id'],
                         'name': antecedent['name'],
                         'treatments': antecedent['medicines'] == null
                             ? []
                             : antecedent['medicines']
                                 .map((medicine) => {
-                                      'id': medicine['id'],
+                                      'treatment_id': medicine['id'],
                                       'quantity': medicine['quantity'],
                                       'period': medicine['period'],
                                       'day': medicine['day'],
