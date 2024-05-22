@@ -140,7 +140,7 @@ class _PatientPageState extends State<PatientPage> {
                             width: 8,
                           ),
                           Text(
-                            '${patientInfo['Nom']} ${patientInfo['Prenom']}',
+                            '${patientInfo['Prenom']} ${patientInfo['Nom']}',
                             style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -312,7 +312,7 @@ class _PatientPageState extends State<PatientPage> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(children: [
             Text(
-              '${patient['Nom']} ${patient['Prenom']}',
+              '${patient['Prenom']} ${patient['Nom']}',
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
@@ -893,7 +893,6 @@ class _PatientPageState extends State<PatientPage> {
             Body3(
                 updateSelectedIndex: updateSelectedIndex,
                 tmpInfo: tmpInfo,
-                tmpTraitments: traitments,
                 refresh: updateData),
           ]),
         ),
@@ -1241,14 +1240,12 @@ class _onboarding2State extends State<Body2> {
 class Body3 extends StatefulWidget {
   final Function(int) updateSelectedIndex;
   Map<String, dynamic> tmpInfo;
-  List<Map<String, dynamic>> tmpTraitments;
   final Function refresh;
   Body3({
     super.key,
     required this.updateSelectedIndex,
     required this.tmpInfo,
     required this.refresh,
-    required this.tmpTraitments,
   });
 
   @override
@@ -1268,11 +1265,6 @@ class _Onboarding3State extends State<Body3> {
       String name, Map<String, dynamic> treatments, bool stillRelevant) {
     setState(() {
       widget.tmpInfo['medical_antecedents'].add({
-        "name": name,
-        "treatments": treatments["treatments"],
-        "still_relevant": stillRelevant,
-      });
-      widget.tmpTraitments.add({
         "name": name,
         "treatments": treatments["treatments"],
         "still_relevant": stillRelevant,
@@ -1421,7 +1413,6 @@ class _Onboarding3State extends State<Body3> {
                                         setState(() {
                                           widget.tmpInfo['medical_antecedents']
                                               .removeAt(i);
-                                          widget.tmpTraitments.removeAt(i);
                                         });
                                       },
                                     ),
@@ -1484,7 +1475,7 @@ class _Onboarding3State extends State<Body3> {
                   "weight": poids,
                   "height": taille,
                   "primary_doctor_id": widget.tmpInfo['medecin_traitant'],
-                  "medical_antecedents": widget.tmpTraitments,
+                  "medical_antecedents": widget.tmpInfo['medical_antecedents'],
                 };
                 putInformationPatient(context, body, widget.tmpInfo['id'])
                     .then((value) => {
@@ -1527,7 +1518,7 @@ WoltModalSheetPage addTraitement(
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
-    hasSabGradient: true,
+    hasSabGradient: false,
     enableDrag: true,
     child: Padding(
       padding: const EdgeInsets.all(24),

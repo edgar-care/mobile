@@ -84,7 +84,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                           width: 8,
                         ),
                         Text(
-                          '${patient["Nom"]} ${patient["Prenom"]}',
+                          '${patient["Prenom"]} ${patient["Nom"]}',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -186,7 +186,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
           child: Column(children: [
             Text(
-              '${patient['Nom']} ${patient['Prenom']}',
+              '${patient['Prenom']} ${patient['Nom']}',
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 16,
