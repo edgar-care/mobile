@@ -1,7 +1,7 @@
 import 'package:edgar/services/appointement.dart';
 import 'package:edgar/services/doctor.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/traitement_utils.dart';
+import 'package:edgar/utils/appoitement_utils.dart';
 import 'package:edgar/widget/card_doctor_appoitement.dart';
 import 'package:edgar/widget/pagination.dart';
 import 'package:edgar/widget/snackbar.dart';

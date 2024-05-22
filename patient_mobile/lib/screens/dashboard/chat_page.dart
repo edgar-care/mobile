@@ -3,7 +3,7 @@ import 'package:edgar/screens/dashboard/conversation_patient.dart';
 import 'package:edgar/services/doctor.dart';
 import 'package:edgar/services/websocket.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utlis/chat_utils.dart';
+import 'package:edgar/utils/chat_utils.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_conversation.dart';
 import 'package:edgar/widget/field_custom.dart';

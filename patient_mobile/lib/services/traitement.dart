@@ -21,6 +21,7 @@ Future<List<dynamic>> getTraitement() async {
 }
 
 Future<bool> postTraitement(Map<String, dynamic> traitement) async {
+  Logger().i(traitement);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
   final url = '${dotenv.env['URL']}dashboard/treatment';
@@ -86,5 +87,45 @@ Future<List<dynamic>> getFollowUp() async {
     return [];
   } else {
     return [];
+  }
+}
+
+Future<List<dynamic>> postFollowUp(Map<String, dynamic> followUp) async {
+  Logger().i(followUp);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/treatment/follow-up';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+    body: jsonEncode(followUp),
+  );
+
+  if (response.statusCode == 200) {
+    final body = jsonDecode(response.body);
+    if (body != null) {
+      return body;
+    }
+    return [];
+  } else {
+    return [];
+  }
+}
+
+Future<bool> deleteFollowUpRequest(String id) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+  final url = '${dotenv.env['URL']}dashboard/treatment/follow-up/$id';
+  final response = await http.delete(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+
+
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    Logger().e(response.body);
+    return false;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:edgar/services/appointement.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/traitement_utils.dart';
+import 'package:edgar/utils/appoitement_utils.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';

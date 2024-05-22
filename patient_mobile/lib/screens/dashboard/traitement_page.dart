@@ -2,6 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/medecine.dart';
 import 'package:edgar/services/traitement.dart';
 import 'package:edgar/styles/colors.dart';
+import 'package:edgar/utils/traitement_utils.dart';
 import 'package:edgar/widget/AddPatient/add_button.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_traitement_day.dart';
@@ -10,6 +11,7 @@ import 'package:edgar/widget/field_custom.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
@@ -391,100 +393,111 @@ WoltModalSheetPage deleteTraitement(
     enableDrag: true,
     child: Padding(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.red200,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Icon(
-              BootstrapIcons.x,
-              color: AppColors.red700,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Êtes-vous sûr ?',
-            style: TextStyle(
-              color: AppColors.grey950,
-              fontFamily: 'Poppins',
-              fontSize: 20,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w600,
-              height: null,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Si vous supprimez ces traitements, ni vous ni votre médecin ne pourrez plus les consultez.',
-            style: TextStyle(
-              color: AppColors.grey500,
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,
-              height: null,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Buttons(
-                  variant: Variante.secondary,
-                  size: SizeButton.sm,
-                  msg: const Text('Annuler'),
-                  onPressed: () {
-                    updateData(0);
-                    Navigator.pop(context);
-                  },
-                  widthBtn: 140),
-              Buttons(
-                variant: Variante.delete,
-                size: SizeButton.sm,
-                msg: const Text('Supprimer'),
-                onPressed: () async {
-                  for (var traitment in traitement['treatments']) {
-                    await deleteTraitementRequest(traitment['id'])
-                        .then((value) => {
-                              if (value == true)
-                                {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SuccessLoginSnackBar(
-                                          message:
-                                              "Traitement supprimé avec succès",
-                                          context: context)),
-                                  updateData(0),
-                                  Navigator.pop(context),
-                                }
-                              else
-                                {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      ErrorLoginSnackBar(
-                                          message:
-                                              "Erreur lors de la suppression du traitement",
-                                          context: context)),
-                                  updateData(0),
-                                  Navigator.pop(context),
-                                }
-                            });
-                  }
-                },
-                widthBtn: 140,
-              ),
-            ],
-          ),
-        ],
+      child: DeleteBody(
+        updateData: updateData,
+        traitement: traitement,
       ),
     ),
   );
+}
+
+// ignore: must_be_immutable
+class DeleteBody extends StatefulWidget {
+  Function(int) updateData;
+  Map<String, dynamic> traitement;
+  DeleteBody({super.key, required this.updateData, required this.traitement});
+
+  @override
+  State<DeleteBody> createState() => _DeleteBodyState();
+}
+
+class _DeleteBodyState extends State<DeleteBody> {
+  onDispose() {
+    super.dispose();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SuccessLoginSnackBar(
+        message: "Traitement supprimé avec succès",
+        context: context,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.red200,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: const Icon(
+            BootstrapIcons.x,
+            color: AppColors.red700,
+            size: 40,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Êtes-vous sûr ?',
+          style: TextStyle(
+            color: AppColors.grey950,
+            fontFamily: 'Poppins',
+            fontSize: 20,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w600,
+            height: null,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Si vous supprimez ces traitements, ni vous ni votre médecin ne pourrez plus les consultez.',
+          style: TextStyle(
+            color: AppColors.grey500,
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            height: null,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Buttons(
+                variant: Variante.secondary,
+                size: SizeButton.sm,
+                msg: const Text('Annuler'),
+                onPressed: () {
+                  widget.updateData(0);
+                  Navigator.pop(context);
+                },
+                widthBtn: 140),
+            Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text('Supprimer'),
+              onPressed: () async {
+                for (var traitment in widget.traitement['treatments']) {
+                  await deleteTraitementRequest(traitment['id']);
+                }
+                widget.updateData(0);
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              },
+              widthBtn: 140,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 WoltModalSheetPage addTraitement(
@@ -498,13 +511,13 @@ WoltModalSheetPage addTraitement(
     hasSabGradient: true,
     enableDrag: true,
     child: SizedBox(
-      height: height * 0.90,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: BodyAddTraitement(
           pageIndex: pageIndex,
           updateData: updateData,
-          screenSize: screenSize,
+          screenSize: MediaQuery.of(context).size,
         ),
       ),
     ),
@@ -515,11 +528,13 @@ class BodyAddTraitement extends StatefulWidget {
   final ValueNotifier<int> pageIndex;
   final Function(int) updateData;
   final Size screenSize;
-  const BodyAddTraitement(
-      {super.key,
-      required this.pageIndex,
-      required this.updateData,
-      required this.screenSize});
+
+  const BodyAddTraitement({
+    super.key,
+    required this.pageIndex,
+    required this.updateData,
+    required this.screenSize,
+  });
 
   @override
   State<BodyAddTraitement> createState() => _BodyAddTraitementState();
@@ -536,27 +551,31 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 
   Map<String, dynamic> medicines = {"treatments": [], "name": "Parasetamole"};
 
+  ValueNotifier<bool> alreadyExistNotifier = ValueNotifier(false);
+  ValueNotifier<bool> stillRelevantNotifier = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      medicines = {"treatments": [], "name": name};
-    });
     fetchTraitement();
   }
 
   Future<void> fetchTraitement() async {
     nameTraitement.clear();
+    traitement.clear();
     traitement = await getTraitement();
+    medicines = {"treatments": [], "name": name};
     for (var tmp in traitement) {
-      nameTraitement.add(tmp['antedisease']['name']);
+      setState(() {
+        nameTraitement.add(tmp['antedisease']['name']);
+      });
     }
     if (traitement.isNotEmpty) {
-      traitementName = nameTraitement[0];
-      idTraitement = traitement[0]['antedisease']['id'];
+      setState(() {
+        idTraitement = traitement[0]['antedisease']['id'];
+        traitementName = nameTraitement[0];
+      });
     }
-
-    return;
   }
 
   List<Map<String, dynamic>> medicaments = [];
@@ -571,6 +590,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
 
   Future<bool> fetchData() async {
     medicaments = await getMedecines();
+    medNames.clear();
 
     for (var treatment in medicines['treatments']) {
       var medId = treatment['medicine_id'];
@@ -585,7 +605,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height * 0.9,
+      height: widget.screenSize.height * 0.9,
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
@@ -628,31 +648,30 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               ),
               const SizedBox(height: 8),
               ValueListenableBuilder<bool>(
-                valueListenable: ValueNotifier(alreadyExist),
+                valueListenable: alreadyExistNotifier,
                 builder: (context, value, child) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       AddButton(
-                          onTap: (() {
+                          onTap: () {
                             setState(() {
                               if (traitement.isNotEmpty) {
-                                alreadyExist = true;
-                                name = nameTraitement[0];
+                                alreadyExistNotifier.value = true;
                               }
                             });
-                          }),
+                          },
                           label: "Oui",
                           color: value == true
                               ? AppColors.blue700
                               : Colors.transparent),
                       const SizedBox(width: 8),
                       AddButton(
-                          onTap: (() {
+                          onTap: () {
                             setState(() {
-                              alreadyExist = false;
+                              alreadyExistNotifier.value = false;
                             });
-                          }),
+                          },
                           label: "Non",
                           color: value == false
                               ? AppColors.blue700
@@ -662,7 +681,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 },
               ),
               const SizedBox(height: 16),
-              if (alreadyExist == false) ...[
+              if (!alreadyExistNotifier.value) ...[
                 const Text(
                   'Nom de votre sujet de santé',
                   style: TextStyle(
@@ -684,7 +703,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                   keyboardType: TextInputType.name,
                 ),
               ],
-              if (traitement.isNotEmpty && alreadyExist == true) ...[
+              if (traitement.isNotEmpty && alreadyExistNotifier.value) ...[
                 const Text(
                   'Sélectionnez votre sujet de santé',
                   style: TextStyle(
@@ -729,7 +748,6 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                           idTraitement = traitement.firstWhere((element) =>
                               element['antedisease']['name'] ==
                               newValue)['antedisease']['id'];
-                          name = newValue;
                         }
                       });
                     },
@@ -764,28 +782,28 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               ),
               const SizedBox(height: 8),
               ValueListenableBuilder<bool>(
-                valueListenable: ValueNotifier(stillRelevant),
+                valueListenable: stillRelevantNotifier,
                 builder: (context, value, child) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       AddButton(
-                          onTap: (() {
+                          onTap: () {
                             setState(() {
-                              stillRelevant = true;
+                              stillRelevantNotifier.value = true;
                             });
-                          }),
+                          },
                           label: "Oui",
                           color: value == true
                               ? AppColors.blue700
                               : Colors.transparent),
                       const SizedBox(width: 8),
                       AddButton(
-                          onTap: (() {
+                          onTap: () {
                             setState(() {
-                              stillRelevant = false;
+                              stillRelevantNotifier.value = false;
                             });
-                          }),
+                          },
                           label: "Non",
                           color: value == false
                               ? AppColors.blue700
@@ -798,18 +816,19 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
               GestureDetector(
                 onTap: () {
                   WoltModalSheet.show<void>(
-                      context: context,
-                      pageIndexNotifier: widget.pageIndex,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          addMedicament(
-                            context,
-                            widget.pageIndex,
-                            widget.updateData,
-                            updateMedicament,
-                          ),
-                        ];
-                      });
+                    context: context,
+                    pageIndexNotifier: widget.pageIndex,
+                    pageListBuilder: (modalSheetContext) {
+                      return [
+                        addMedicament(
+                          context,
+                          widget.pageIndex,
+                          widget.updateData,
+                          updateMedicament,
+                        ),
+                      ];
+                    },
+                  );
                 },
                 child: Container(
                   padding:
@@ -845,7 +864,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                 height: widget.screenSize.height - 610,
                 width: widget.screenSize.width,
                 child: FutureBuilder(
-                  future: fetchData(), // Simulate some async operation
+                  future: fetchData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -889,73 +908,81 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
             children: [
               Flexible(
                 child: Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text("Annuler"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
+                  variant: Variante.secondary,
+                  size: SizeButton.sm,
+                  msg: const Text("Annuler"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ),
               const SizedBox(width: 12),
               Flexible(
                 child: Buttons(
-                    variant: Variante.validate,
-                    size: SizeButton.sm,
-                    msg: const Text("Ajouter"),
-                    onPressed: () async {
-                      if (name == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorLoginSnackBar(
-                                message: "Ajoutez un nom", context: context));
-                        return;
-                      }
-                      if (medicines['treatments'].isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorLoginSnackBar(
-                                message: "Ajoutez un médicament",
-                                context: context));
-                        return;
-                      }
-                      Map<String, dynamic> tmp = {};
-                      if (alreadyExist == false) {
-                        tmp = {
-                          "name": name,
-                          "still_relevant": stillRelevant,
-                          "treatments": medicines['treatments']
-                        };
-                      }
-                      if (alreadyExist == true) {
-                        tmp = {
-                          "name": traitementName,
-                          "disease_id": idTraitement,
-                          "still_relevant": stillRelevant,
-                          "treatments": medicines['treatments']
-                        };
-                      }
-                      Logger().i(tmp);
-                      await postTraitement(tmp).then((value) => {
-                            if (value == true)
-                              {
-                                widget.updateData(0),
-                                Navigator.pop(context),
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SuccessLoginSnackBar(
-                                        message:
-                                            "Traitement modifié avec succès",
-                                        context: context)),
-                                widget.updateData(0),
-                              }
-                            else
-                              {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    ErrorLoginSnackBar(
-                                        message:
-                                            "Erreur lors de la modification du traitement",
-                                        context: context)),
-                                widget.updateData(0),
-                              }
-                          });
-                    }),
+                  variant: Variante.validate,
+                  size: SizeButton.sm,
+                  msg: const Text("Ajouter"),
+                  onPressed: () async {
+                    if (name.isEmpty && !alreadyExistNotifier.value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        ErrorLoginSnackBar(
+                          message: "Ajoutez un nom",
+                          context: context,
+                        ),
+                      );
+                      return;
+                    }
+                    if (medicines['treatments'].isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        ErrorLoginSnackBar(
+                          message: "Ajoutez un médicament",
+                          context: context,
+                        ),
+                      );
+                      return;
+                    }
+                    Map<String, dynamic> tmp = {};
+                    if (!alreadyExistNotifier.value) {
+                      tmp = {
+                        "name": name,
+                        "still_relevant": stillRelevantNotifier.value,
+                        "treatments": medicines['treatments']
+                      };
+                    } else {
+                      tmp = {
+                        "name": traitementName,
+                        "disease_id": idTraitement,
+                        "still_relevant": stillRelevantNotifier.value,
+                        "treatments": medicines['treatments']
+                      };
+                    }
+                    await postTraitement(tmp).then((value) => {
+                          if (value == true)
+                            {
+                              widget.updateData(0),
+                              Navigator.pop(context),
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SuccessLoginSnackBar(
+                                  message: "Traitement modifié avec succès",
+                                  context: context,
+                                ),
+                              ),
+                              widget.updateData(0),
+                            }
+                          else
+                            {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                ErrorLoginSnackBar(
+                                  message:
+                                      "Erreur lors de la modification du traitement",
+                                  context: context,
+                                ),
+                              ),
+                              widget.updateData(0),
+                            }
+                        });
+                  },
+                ),
               ),
             ],
           ),
@@ -1916,6 +1943,23 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
                               widget.treatments['antedisease']
                                   ["still_relevant"] = true;
                             });
+                            postTraitement({
+                              "name": widget.treatments["antedisease"]["name"],
+                              "disease_id": widget.treatments["antedisease"]
+                                  ["id"],
+                              "still_relevant": true,
+                              'treatments': []
+                            }).then((value) => {
+                                  if (value == false)
+                                    {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(ErrorLoginSnackBar(
+                                        message:
+                                            "Erreur lors de la modification du traitement",
+                                        context: context,
+                                      )),
+                                    }
+                                });
                           }),
                           label: "Oui",
                           color: value == true
@@ -1923,11 +1967,28 @@ class _BodyModifyTraitementState extends State<BodyModifyTraitement> {
                               : AppColors.white),
                       const SizedBox(width: 8),
                       AddButton(
-                          onTap: (() {
+                          onTap: (() async {
                             setState(() {
                               widget.treatments['antedisease']
                                   ["still_relevant"] = false;
                             });
+                            postTraitement({
+                              "name": widget.treatments["antedisease"]["name"],
+                              "disease_id": widget.treatments["antedisease"]
+                                  ["id"],
+                              "still_relevant": false,
+                              'treatments': []
+                            }).then((value) => {
+                                  if (value == false)
+                                    {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(ErrorLoginSnackBar(
+                                        message:
+                                            "Erreur lors de la modification du traitement",
+                                        context: context,
+                                      )),
+                                    }
+                                });
                           }),
                           label: "Non",
                           color: value == false
@@ -2676,7 +2737,7 @@ WoltModalSheetPage calendarTraitement(
     hasSabGradient: true,
     enableDrag: true,
     child: SizedBox(
-      height: height * 0.80,
+      height: height * 0.7,
       child: const Padding(
         padding: EdgeInsets.all(24),
         child: BodyCalendarTraitement(),
@@ -2693,6 +2754,16 @@ class BodyCalendarTraitement extends StatefulWidget {
 }
 
 class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
+  List<dynamic> allTreatments = [];
+  List<dynamic> followUp = [];
+  List<dynamic> medecines = [];
+  // ignore: non_constant_identifier_names
+  DateTime DaySelected = DateTime.now();
+  List<Treatment> treatmentsMorning = [];
+  List<Treatment> treatmentsAfterNoon = [];
+  List<Treatment> treatmentsNight = [];
+  List<Treatment> treatmentsEVENING = [];
+
   @override
   initState() {
     super.initState();
@@ -2700,7 +2771,56 @@ class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
   }
 
   Future<void> fetchData() async {
-    await getFollowUp();
+    var tmp3 = await getMedecines();
+
+    setState(() {
+      medecines = tmp3;
+    });
+  }
+
+  Day getDayEnum() {
+    switch (DaySelected.weekday) {
+      case 1:
+        return Day.MONDAY;
+      case 2:
+        return Day.TUESDAY;
+      case 3:
+        return Day.WEDNESDAY;
+      case 4:
+        return Day.THURSDAY;
+      case 5:
+        return Day.FRIDAY;
+      case 6:
+        return Day.SATURDAY;
+      case 7:
+        return Day.SUNDAY;
+    }
+    return Day.MONDAY;
+  }
+
+  Future<void> getTraitments() async {
+    followUp = await getFollowUp();
+    allTreatments = await getTraitement();
+    if (allTreatments.isEmpty) {
+      return;
+    }
+    treatmentsMorning = await getTreatmentsByDayAndPeriod(
+        allTreatments, getDayEnum(), Period.MORNING);
+    treatmentsAfterNoon = await getTreatmentsByDayAndPeriod(
+        allTreatments, getDayEnum(), Period.NOON);
+    treatmentsNight = await getTreatmentsByDayAndPeriod(
+        allTreatments, getDayEnum(), Period.NIGHT);
+    treatmentsEVENING = await getTreatmentsByDayAndPeriod(
+        allTreatments, getDayEnum(), Period.EVENING);
+  }
+
+  void updateData() {
+    getFollowUp().then((value) => {
+          setState(() {
+            followUp = value;
+            Logger().i(followUp);
+          })
+        });
   }
 
   @override
@@ -2734,13 +2854,15 @@ class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Poppins'),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Aujourd’hui',
-                style: TextStyle(
+              Text(
+                DaySelected.day == DateTime.now().day
+                    ? "Aujourd'hui"
+                    : DateFormat('EEEE', 'Fr_fr').format(DaySelected),
+                style: const TextStyle(
                     color: AppColors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -2748,33 +2870,114 @@ class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
               ),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: const Icon(
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        DaySelected =
+                            DaySelected.subtract(const Duration(days: 1));
+                      });
+                    },
+                    icon: const Icon(
                       BootstrapIcons.chevron_left,
                       color: AppColors.black,
+                      size: 16,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const Icon(
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        DaySelected = DaySelected.add(const Duration(days: 1));
+                      });
+                    },
+                    icon: const Icon(
                       BootstrapIcons.chevron_right,
                       color: AppColors.black,
+                      size: 16,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          PeriodeMedicCheckList(
-            periode: "Matin",
-            medicaments: const [
-              {"name": "Médicament A", "checked": false, "quantity": 2},
-              {"name": "Médicament B", "checked": true, "quantity": 1},
-            ],
+          FutureBuilder(
+            future: getTraitments(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return SizedBox(
+                  height: height * 0.4,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeCap: StrokeCap.round,
+                    ),
+                  ),
+                );
+              } else {
+                return SizedBox(
+                  height: height * 0.4,
+                  child: ListView(
+                    children: [
+                      PeriodeMedicCheckList(
+                        period: Period.MORNING,
+                        treatments: treatmentsMorning,
+                        medecines: medecines,
+                        followUp: followUp,
+                        updateData: updateData,
+                        date: DaySelected,
+                      ),
+                      PeriodeMedicCheckList(
+                        period: Period.NOON,
+                        treatments: treatmentsAfterNoon,
+                        medecines: medecines,
+                        followUp: followUp,
+                        updateData: updateData,
+                        date: DaySelected,
+                      ),
+                      PeriodeMedicCheckList(
+                        period: Period.EVENING,
+                        treatments: treatmentsEVENING,
+                        medecines: medecines,
+                        followUp: followUp,
+                        updateData: updateData,
+                        date: DaySelected,
+                      ),
+                      PeriodeMedicCheckList(
+                        period: Period.NIGHT,
+                        treatments: treatmentsNight,
+                        medecines: medecines,
+                        followUp: followUp,
+                        updateData: updateData,
+                        date: DaySelected,
+                      ),
+                      if (treatmentsMorning.isEmpty &&
+                          treatmentsAfterNoon.isEmpty &&
+                          treatmentsNight.isEmpty &&
+                          treatmentsEVENING.isEmpty)
+                        const Center(
+                          child: Text(
+                            "Aucun traitement pour cette journée",
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }
+            },
           ),
+          const Spacer(),
+          Buttons(
+              variant: Variante.primary,
+              size: SizeButton.md,
+              msg: const Text("Fermer"),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
         ],
       ),
     );
@@ -2783,24 +2986,66 @@ class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
 
 // ignore: must_be_immutable
 class PeriodeMedicCheckList extends StatefulWidget {
-  final String periode;
-  List<Map<String, dynamic>> medicaments;
+  final Period period;
+  final List<Treatment> treatments;
+  final List<dynamic> medecines;
+  final List<dynamic> followUp;
+  final DateTime date;
+  Function updateData;
 
   PeriodeMedicCheckList(
-      {super.key, required this.periode, required this.medicaments});
+      {super.key,
+      required this.period,
+      required this.treatments,
+      required this.medecines,
+      required this.followUp,
+      required this.updateData,
+      required this.date});
 
   @override
   PeriodeMedicCheckListState createState() => PeriodeMedicCheckListState();
 }
 
 class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
+  String getPeriodInFrench(Period period) {
+    switch (period) {
+      case Period.MORNING:
+        return 'Matin';
+      case Period.NOON:
+        return 'Après-midi';
+      case Period.EVENING:
+        return 'Soir';
+      case Period.NIGHT:
+        return 'Nuit';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Filtrer les traitements pour la période spécifiée
+    List<Treatment> filteredTreatments = widget.treatments
+        .where((treatment) => treatment.periods.contains(widget.period))
+        .toList();
+
+    if (filteredTreatments.isEmpty) {
+      return Container(); // Ne pas afficher si aucun traitement
+    }
+
+    String getMedicineName(String medicineId) {
+      var med = widget.medecines.firstWhere(
+        (med) => med['id'] == medicineId,
+        orElse: () => {'name': ''},
+      );
+      return med['name'];
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.periode,
+          getPeriodInFrench(widget.period),
           style: const TextStyle(
             color: AppColors.black,
             fontSize: 14,
@@ -2812,25 +3057,67 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
           color: AppColors.blue200,
           thickness: 2,
         ),
-        for (int index = 0; index < widget.medicaments.length; index++)
+        for (int index = 0; index < filteredTreatments.length; index++)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${widget.medicaments[index]['quantity']} x ${widget.medicaments[index]["name"]}',
+                '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
                 style: const TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Poppins',
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
               Checkbox(
-                value: widget.medicaments[index]['checked'],
-                onChanged: (value) {
-                  setState(() {
-                    widget.medicaments[index]['quantity'] = value!;
-                  });
+                value: widget.followUp.any((element) =>
+                    element['treatment_id'] == filteredTreatments[index].id &&
+                    element['period'].contains(
+                        widget.period.toString().trim().split('.').last) &&
+                    DateTime.fromMillisecondsSinceEpoch(element['date'] ~/ 1000)
+                            .day ==
+                        widget.date.day),
+                onChanged: (value) async {
+                  if (DateTime.now().year != widget.date.year ||
+                      DateTime.now().day != widget.date.day ||
+                      DateTime.now().month != widget.date.month) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      ErrorLoginSnackBar(
+                        message:
+                            "Vous ne pouvez pas supprimer un suivi pour une date passée ou future",
+                        context: context,
+                      ),
+                    );
+                    return;
+                  }
+                  if (value == true) {
+                    await postFollowUp({
+                      "treatment_id": filteredTreatments[index].id,
+                      "date": DateTime.now().millisecondsSinceEpoch * 1000,
+                      "period": [
+                        widget.period.toString().trim().split('.').last
+                      ],
+                    }).then(
+                      (value) => {
+                        widget.updateData(),
+                      },
+                    );
+                  } else {
+                    await deleteFollowUpRequest(widget.followUp.firstWhere(
+                      (element) =>
+                          element['treatment_id'] ==
+                              filteredTreatments[index].id &&
+                          element['period'].contains(
+                              widget.period.toString().trim().split('.').last),
+                    )['id'])
+                        .then(
+                      (value) => {
+                        widget.updateData(),
+                      },
+                    );
+                  }
                 },
                 activeColor: AppColors.blue700,
                 shape: RoundedRectangleBorder(
