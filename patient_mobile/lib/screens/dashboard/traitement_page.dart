@@ -2777,18 +2777,16 @@ class _BodyCalendarTraitementState extends State<BodyCalendarTraitement> {
 
   Future<void> getTraitments() async {
     followUp = await getFollowUp();
-    allTreatments = await getTraitement();
-    if (allTreatments.isEmpty) {
-      return;
-    }
-    treatmentsMorning = await getTreatmentsByDayAndPeriod(
-        allTreatments, getDayEnum(), Period.MORNING);
-    treatmentsAfterNoon = await getTreatmentsByDayAndPeriod(
-        allTreatments, getDayEnum(), Period.NOON);
-    treatmentsNight = await getTreatmentsByDayAndPeriod(
-        allTreatments, getDayEnum(), Period.NIGHT);
-    treatmentsEVENING = await getTreatmentsByDayAndPeriod(
-        allTreatments, getDayEnum(), Period.EVENING);
+    allTreatments = await getTraitement().whenComplete(() async {
+      treatmentsMorning = await getTreatmentsByDayAndPeriod(
+          allTreatments, getDayEnum(), Period.MORNING);
+      treatmentsAfterNoon = await getTreatmentsByDayAndPeriod(
+          allTreatments, getDayEnum(), Period.NOON);
+      treatmentsNight = await getTreatmentsByDayAndPeriod(
+          allTreatments, getDayEnum(), Period.NIGHT);
+      treatmentsEVENING = await getTreatmentsByDayAndPeriod(
+          allTreatments, getDayEnum(), Period.EVENING);
+    });
   }
 
   void updateData() {
@@ -3063,7 +3061,7 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       ErrorLoginSnackBar(
                         message:
-                            "Vous ne pouvez pas supprimer un suivi pour une date passée ou future",
+                            "Vous ne pouvez pas modifier un suivi pour une date passée ou future",
                         context: context,
                       ),
                     );
@@ -3099,7 +3097,6 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                 activeColor: AppColors.blue700,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
-                  side: const BorderSide(color: AppColors.blue200, width: 2),
                 ),
               ),
             ],
