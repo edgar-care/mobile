@@ -83,8 +83,7 @@ class CustomCardModal extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          onTap;
-          Navigator.pop(context);
+          onTap();
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),

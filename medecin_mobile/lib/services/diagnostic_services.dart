@@ -7,6 +7,18 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Map<String, dynamic> diagnosticInfo = {};
+
+void mapperDiagnostic(Map<String, dynamic> data) {
+  diagnosticInfo = {
+    "fiability": data['fiability'] ?? 0,
+    "diseases": data['diseases'] ?? [],
+    "symptoms": data['symptoms'] ?? [],
+    "logs": data['logs'] ?? [],
+    "session_id" : data['session_id'] ?? '',
+  };
+}
+
 Future<Map<String, dynamic>> getSummary(String id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
@@ -19,7 +31,8 @@ Future<Map<String, dynamic>> getSummary(String id) async {
     },
   );
   if (response.statusCode == 200) {
-    return jsonDecode(response.body);
+    mapperDiagnostic(jsonDecode(response.body));
+    return diagnosticInfo;
   } else {
     return {};
   }
