@@ -109,7 +109,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
             ),
             const SizedBox(width: 16),
             const Text(
-              'Mes traitement',
+              'Mes traitements',
               style: TextStyle(
                 color: AppColors.white,
                 fontSize: 20,
@@ -3063,7 +3063,7 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                     element['treatment_id'] == filteredTreatments[index].id &&
                     element['period'].contains(
                         widget.period.toString().trim().split('.').last) &&
-                    DateTime.fromMillisecondsSinceEpoch(element['date'] ~/ 1000)
+                    DateTime.fromMillisecondsSinceEpoch(element['date'] * 1000)
                             .day ==
                         widget.date.day),
                 onChanged: (value) async {
@@ -3082,7 +3082,7 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                   if (value == true) {
                     await postFollowUp({
                       "treatment_id": filteredTreatments[index].id,
-                      "date": DateTime.now().millisecondsSinceEpoch * 1000,
+                      "date": DateTime.now().millisecondsSinceEpoch ~/ 1000,
                       "period": [
                         widget.period.toString().trim().split('.').last
                       ],
