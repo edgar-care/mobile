@@ -71,6 +71,12 @@ class _TraitmentPageState extends State<TraitmentPage> {
     }
   }
 
+  void updateTraitement() {
+    Logger().i('Traitement mis à jour');
+    getFilterTraitement();
+    setState(() {});
+  }
+
   Future<void> getFilterTraitement() async {
     var traitements = await getTraitement();
     if (_encour_ornot.value == 'encours') {
@@ -103,7 +109,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
             ),
             const SizedBox(width: 16),
             const Text(
-              'Mes Traitement',
+              'Mes traitement',
               style: TextStyle(
                 color: AppColors.white,
                 fontSize: 20,
@@ -194,9 +200,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
                 context: context,
                 pageListBuilder: (modalSheetContext) {
                   return [
-                    addTraitement(
-                      context,
-                    ),
+                    addTraitement(context, updateTraitement),
                   ];
                 });
           },
@@ -499,6 +503,7 @@ class _DeleteBodyState extends State<DeleteBody> {
 
 WoltModalSheetPage addTraitement(
   BuildContext context,
+  Function() getFilterTraitement,
 ) {
   return WoltModalSheetPage(
     hasTopBarLayer: false,
@@ -511,6 +516,7 @@ WoltModalSheetPage addTraitement(
         padding: const EdgeInsets.all(24),
         child: BodyAddTraitement(
           screenSize: MediaQuery.of(context).size,
+          getFilterTraitement: getFilterTraitement,
         ),
       ),
     ),
@@ -519,10 +525,12 @@ WoltModalSheetPage addTraitement(
 
 class BodyAddTraitement extends StatefulWidget {
   final Size screenSize;
+  Function() getFilterTraitement;
 
-  const BodyAddTraitement({
+  BodyAddTraitement({
     super.key,
     required this.screenSize,
+    required this.getFilterTraitement,
   });
 
   @override
@@ -930,14 +938,16 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                     if (!alreadyExistNotifier.value) {
                       tmp = {
                         "name": name,
-                        "still_relevant": stillRelevantNotifier.value,
+                        "still_relevant":
+                            stillRelevantNotifier.value == true ? true : false,
                         "treatments": medicines['treatments']
                       };
                     } else {
                       tmp = {
                         "name": traitementName,
                         "disease_id": idTraitement,
-                        "still_relevant": stillRelevantNotifier.value,
+                        "still_relevant":
+                            stillRelevantNotifier.value == true ? true : false,
                         "treatments": medicines['treatments']
                       };
                     }
@@ -964,6 +974,7 @@ class _BodyAddTraitementState extends State<BodyAddTraitement> {
                               Navigator.pop(context),
                             }
                         });
+                    widget.getFilterTraitement();
                   },
                 ),
               ),
