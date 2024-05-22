@@ -1,6 +1,4 @@
 // ignore: constant_identifier_names
-import 'package:logger/logger.dart';
-
 enum Period { MORNING, NOON, EVENING, NIGHT }
 
 // ignore: constant_identifier_names
