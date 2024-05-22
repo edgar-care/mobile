@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:edgar/screens/dashboard/traitement_page.dart';
 import 'package:edgar/widget/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
@@ -23,7 +24,7 @@ class DashBoardPageState extends State<DashBoardPage>
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
     const GestionRendezVous(),
-    const InformationPersonnel(),
+    const TraitmentPage(),
     const FilePage(),
     const InformationPersonnel(),
     const ChatPage(),

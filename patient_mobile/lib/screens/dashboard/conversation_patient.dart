@@ -1,7 +1,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/websocket.dart';
 import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utlis/chat_utils.dart';
+import 'package:edgar/utils/chat_utils.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

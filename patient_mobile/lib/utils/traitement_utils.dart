@@ -1,145 +1,87 @@
-import 'package:intl/intl.dart';
+// ignore: constant_identifier_names
+enum Period { MORNING, NOON, EVENING, NIGHT }
 
-class Hour {
-  final String hour;
+// ignore: constant_identifier_names
+enum Day { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }
+
+class Treatment {
   final String id;
+  final List<Period> periods;
+  final List<Day> days;
+  final int quantity;
+  final String medicineId;
 
-  Hour({
-    required this.hour,
+  Treatment({
     required this.id,
+    required this.periods,
+    required this.days,
+    required this.quantity,
+    required this.medicineId,
   });
+
+  factory Treatment.fromJson(Map<String, dynamic> json) {
+    return Treatment(
+      id: json['id'] ?? '',
+      periods: (json['period'] as List)
+          .map((period) => Period.values
+              .firstWhere((e) => e.toString().split('.').last == period))
+          .toList(),
+      days: (json['day'] as List)
+          .map((day) =>
+              Day.values.firstWhere((e) => e.toString().split('.').last == day))
+          .toList(),
+      quantity: json['quantity'],
+      medicineId: json['medicine_id'],
+    );
+  }
 }
 
-class DayHour {
-  final String day;
-  final List<Hour> hour;
-
-  DayHour({
-    required this.day,
-    required this.hour,
-  });
-}
-
-class Appointment {
-  final String doctor;
-  final Address address;
-  final List<DayHour> dates;
-
-  Appointment({
-    required this.doctor,
-    required this.address,
-    required this.dates,
-  });
-}
-
-class Address {
-  final String street;
-  final String zipCode;
-  final String country;
-  final String city;
-
-  Address({
-    required this.street,
-    required this.zipCode,
-    required this.country,
-    required this.city,
-  });
-}
-
-class Doctor {
+class Antedisease {
   final String id;
-  final String firstname;
   final String name;
-  final Address address;
+  final int chronicity;
+  final bool stillRelevant;
+  final List<Treatment>? treatments;
 
-  Doctor({
+  Antedisease({
     required this.id,
-    required this.firstname,
     required this.name,
-    required this.address,
+    required this.chronicity,
+    required this.stillRelevant,
+    required this.treatments,
   });
+
+  factory Antedisease.fromJson(Map<String, dynamic> json) {
+    return Antedisease(
+      id: json["antedisease"]['id'],
+      name: json["antedisease"]['name'],
+      chronicity: json["antedisease"]['chronicity'],
+      stillRelevant: json["antedisease"]['still_relevant'],
+      treatments: json['treatments'] == null
+          ? null
+          : (json['treatments'] as List)
+              .map((treatment) => Treatment.fromJson(treatment))
+              .toList(),
+    );
+  }
 }
 
-Appointment _extractDayHour(Appointment appointment,
-    Map<String, dynamic> appointmentData, Address address, String doctor) {
-  String startDateString = appointmentData['start_date'].toString();
-  DateFormat dayFormat = DateFormat('dd/MM/yyyy');
-  DateFormat timeFormat = DateFormat('HH:mm');
-  DateTime appointmentDate =
-      DateTime.fromMillisecondsSinceEpoch(int.parse(startDateString) * 1000);
-  String startDay = dayFormat.format(appointmentDate);
-  String startHour = timeFormat.format(appointmentDate);
+Future<List<Treatment>> getTreatmentsByDayAndPeriod(
+    List<dynamic> allTreatments, Day day, Period period) async {
+  List<Antedisease> antediseases =
+      allTreatments.map((e) => Antedisease.fromJson(e)).toList();
+  List<Treatment> filteredTreatments = [];
 
-  DateTime today = DateTime.now();
-
-  if (appointmentDate.isAfter(today) ||
-      appointmentDate.isAtSameMomentAs(today)) {
-    if (appointment.dates.where((element) => element.day == startDay).isEmpty) {
-      appointment.dates.add(DayHour(
-          day: startDay,
-          hour: [Hour(hour: startHour, id: appointmentData['id'])]));
-    } else {
-      appointment.dates
-          .where((element) => element.day == startDay)
-          .first
-          .hour
-          .add(Hour(hour: startHour, id: appointmentData['id']));
+  for (var antedisease in antediseases) {
+    if (antedisease.treatments == null || !antedisease.stillRelevant) {
+      continue;
+    }
+    for (var treatment in antedisease.treatments!) {
+      if (treatment.days.contains(day) && treatment.periods.contains(period)) {
+        filteredTreatments.add(treatment);
+      }
     }
   }
 
-  return appointment;
-}
-
-// Main function to transform appointments
-Appointment? transformAppointments(
-  List<dynamic> doctorsData,
-  Map<String, dynamic> appointmentData,
-) {
-  if (appointmentData.isEmpty ||
-      appointmentData['rdv'] == null ||
-      appointmentData['rdv'].isEmpty) {
-    return null;
-  }
-
-  String doctorId = appointmentData['rdv'][0]['doctor_id'];
-
-  final Doctor? doctor = findDoctorById(doctorsData, doctorId);
-  Appointment appointment = Appointment(
-    doctor: doctor!.name,
-    address: doctor.address,
-    dates: [],
-  );
-
-  for (Map<String, dynamic> tmp in appointmentData['rdv']) {
-    String appointmentStatus = tmp['appointment_status'];
-
-    if (doctorId.isNotEmpty && appointmentStatus == 'OPENED') {
-      appointment = _extractDayHour(appointment, tmp, doctor.address,
-          '${doctor.firstname} ${doctor.name}');
-    }
-  }
-
-  if (appointment.dates.isEmpty) {
-    return null;
-  }
-
-  return appointment;
-}
-
-Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
-  for (Map<String, dynamic> doctorMap in doctorsData) {
-    String id = doctorMap['id'];
-    if (id == doctorId) {
-      String firstname = doctorMap['firstname'] ?? "Test";
-      String name = doctorMap['name'] ?? "Edgar";
-      Address address = Address(
-        street: doctorMap['address']['street'] ?? '1 rue de la Paix',
-        zipCode: doctorMap['address']['zip_code'] ?? '69000',
-        country: doctorMap['address']['country'] ?? 'France',
-        city: doctorMap['address']['city'] ?? 'Lyon',
-      );
-      return Doctor(id: id, firstname: firstname, name: name, address: address);
-    }
-  }
-  return null; // Doctor not found
+  return filteredTreatments;
 }
