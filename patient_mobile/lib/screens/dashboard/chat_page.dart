@@ -6,14 +6,14 @@ import 'package:edgar/styles/colors.dart';
 import 'package:edgar/utils/chat_utils.dart';
 import 'package:edgar/widget/buttons.dart';
 import 'package:edgar/widget/card_conversation.dart';
+import 'package:edgar/widget/custom_modal.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -238,22 +238,40 @@ class _ChatPageState extends State<ChatPage> {
             ],
             if (!isChatting) ...[
               Buttons(
-                  variant: Variante.primary,
-                  size: SizeButton.md,
-                  msg: const Text('Commencer une conversation'),
-                  onPressed: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            createDiscussion(modalSheetContext,
-                                _webSocketService, updateData),
-                            createDiscussion2(modalSheetContext,
-                                _webSocketService, updateData, idPatient),
-                          ];
-                        });
-                  }),
+                variant: Variante.primary,
+                size: SizeButton.md,
+                msg: const Text('Commencer une conversation'),
+                onPressed: () {
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return ChangeNotifierProvider.value(
+                        value: model,
+                        child: ListModal(
+                          model: model,
+                          children: [
+                            CreateDiscussion(
+                              updateData: updateData,
+                              webSocketService: _webSocketService,
+                            ),
+                            CreateDiscussion2(
+                              idPatient: idPatient,
+                              updateData: updateData,
+                              webSocketService: _webSocketService,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 8),
               Expanded(
                 child: FutureBuilder(
@@ -296,39 +314,18 @@ class _ChatPageState extends State<ChatPage> {
 
 String doctorIdSelected = '';
 
-WoltModalSheetPage createDiscussion(BuildContext context,
-    WebSocketService? webSocketService, Function updateData) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodycreateDiscussionModal(
-          webSocketService: webSocketService,
-          updateData: updateData,
-        ),
-      ),
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodycreateDiscussionModal extends StatefulWidget {
+class CreateDiscussion extends StatefulWidget {
   WebSocketService? webSocketService;
   Function updateData;
-  BodycreateDiscussionModal(
-      {super.key, required this.webSocketService, required this.updateData});
+  CreateDiscussion(
+      {super.key, required this.updateData, required this.webSocketService});
 
   @override
-  State<BodycreateDiscussionModal> createState() =>
-      BodycreateDiscussionModalState();
+  State<CreateDiscussion> createState() => _CreateDiscussionState();
 }
 
-class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
+class _CreateDiscussionState extends State<CreateDiscussion> {
   List<dynamic> doctors = [];
   List<dynamic> filtereddoctors = [];
   String nameFilter = '';
@@ -352,38 +349,17 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: AppColors.green200,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(
-                BootstrapIcons.chat_dots_fill,
-                color: AppColors.green700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Démarrez une nouvelle conversation',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
+    return ModalContainer(
+      title: "Démarrez une nouvelle conversation",
+      subtitle: "Séléctionner un docteur",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.chat_dots_fill,
+          color: AppColors.green700,
         ),
-        const SizedBox(height: 16),
+        type: ModalType.success,
+      ),
+      body: [
         CustomFieldSearch(
           label: 'Docteur Edgar',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
@@ -393,138 +369,118 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
           },
         ),
         const SizedBox(height: 16),
-        Expanded(
-            child: FutureBuilder(
-          future: fetchData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.blue700,
-                    strokeWidth: 2,
+        SizedBox(
+          height: 300,
+          child: FutureBuilder(
+            future: fetchData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeWidth: 2,
+                    ),
                   ),
-                ),
-              );
-            } else {
-              return ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(height: 8),
-                itemCount: filtereddoctors.length,
-                padding: const EdgeInsets.all(0),
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // ignore: unused_label
-                      setState(() {
-                        doctorIdSelected = filtereddoctors[index]['id'];
-                      });
+                );
+              } else {
+                return ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
+                  itemCount: filtereddoctors.length,
+                  padding: const EdgeInsets.all(0),
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        // ignore: unused_label
+                        setState(() {
+                          doctorIdSelected = filtereddoctors[index]['id'];
+                        });
 
-                      Logger().i(doctorIdSelected);
-                      widget.updateData(1);
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppColors.blue200,
-                            width: 2,
+                        Logger().i(doctorIdSelected);
+                        widget.updateData(1);
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: AppColors.blue200,
+                              width: 2,
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins',
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Poppins',
-                                    color: AppColors.black,
+                                  Text(
+                                    '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                      color: AppColors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            const Icon(
-                              BootstrapIcons.chevron_right,
-                              size: 16,
-                            ),
-                          ],
-                        )),
-                  );
-                },
-              );
-            }
-          },
-        )),
-        const SizedBox(height: 16),
-        Buttons(
-          variant: Variante.secondary,
-          size: SizeButton.md,
-          msg: const Text('Annuler'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+                                ],
+                              ),
+                              const Spacer(),
+                              const Icon(
+                                BootstrapIcons.chevron_right,
+                                size: 16,
+                              ),
+                            ],
+                          )),
+                    );
+                  },
+                );
+              }
+            },
+          ),
         ),
       ],
+      footer: Buttons(
+        variant: Variante.secondary,
+        size: SizeButton.md,
+        msg: const Text('Annuler'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
 
-WoltModalSheetPage createDiscussion2(BuildContext context,
-    WebSocketService? webSocketService, Function updateData, String idPatient) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodycreateDiscussion2Modal(
-          webSocketService: webSocketService,
-          updateData: updateData,
-          idPatient: idPatient,
-        ),
-      ),
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodycreateDiscussion2Modal extends StatefulWidget {
+class CreateDiscussion2 extends StatefulWidget {
   WebSocketService? webSocketService;
   Function updateData;
   String idPatient;
-  BodycreateDiscussion2Modal(
+  CreateDiscussion2(
       {super.key,
-      required this.webSocketService,
+      required this.idPatient,
       required this.updateData,
-      required this.idPatient});
+      required this.webSocketService});
 
   @override
-  State<BodycreateDiscussion2Modal> createState() =>
-      BodycreateDiscussion2ModalState();
+  State<CreateDiscussion2> createState() => _CreateDiscission2State();
 }
 
-class BodycreateDiscussion2ModalState
-    extends State<BodycreateDiscussion2Modal> {
+class _CreateDiscission2State extends State<CreateDiscussion2> {
   String message = '';
 
   Future<void> fetchData() async {}
@@ -546,38 +502,17 @@ class BodycreateDiscussion2ModalState
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: AppColors.green200,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(
-                BootstrapIcons.chat_dots_fill,
-                color: AppColors.green700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Démarrez une nouvelle conversation',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
+    return ModalContainer(
+      title: "Démarrez une nouvelle conversation",
+      subtitle: "Séléctionner un médecin",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.chat_dots_fill,
+          color: AppColors.green700,
         ),
-        const SizedBox(height: 16),
+        type: ModalType.success,
+      ),
+      body: [
         CustomFieldSearchMaxLines(
           label: 'Votre message',
           maxLines: 5,
@@ -591,17 +526,16 @@ class BodycreateDiscussion2ModalState
             updateData(value);
           },
         ),
-        const SizedBox(height: 16),
-        Buttons(
-          variant: Variante.secondary,
-          size: SizeButton.md,
-          msg: const Text('Annuler'),
-          onPressed: () {
-            widget.updateData(0);
-            Navigator.pop(context);
-          },
-        ),
       ],
+      footer: Buttons(
+        variant: Variante.secondary,
+        size: SizeButton.md,
+        msg: const Text('Annuler'),
+        onPressed: () {
+          widget.updateData(0);
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
