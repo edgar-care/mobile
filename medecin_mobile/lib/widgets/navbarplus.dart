@@ -63,6 +63,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
         useMaterial3: true,
       ),
       home: Scaffold(
+        backgroundColor: AppColors.blue50,
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -204,39 +205,63 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   },
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              const Text("Paramètres du compte", style: TextStyle(fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w500),),
+                              const SizedBox(height: 4),
                               Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: AppColors.white,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  border: Border(
-                                    left: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    right: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    bottom: BorderSide(
-                                        color: AppColors.blue200, width: 1),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue200,
+                                    width: 1,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/question-circle-fill.svg',
+                                        'assets/images/utils/person-fill.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Aide',
+                                      title: 'Compte',
                                       onTap: () {
-                                        widget.onItemTapped(5);
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const SizedBox();
+                                            },
+                                          ),
+                                        
+                                        );
                                         Navigator.pop(context);
                                       },
-                                      type: 'Bottom',
+                                      type: 'Only',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
+                                    ),
+                                    NavbarPLusTab(
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/laptop-fill.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 18,
+                                      ),
+                                      title: 'Appareils',
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      type: 'Only',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
                                     ),
                                   ],
                                 ),
