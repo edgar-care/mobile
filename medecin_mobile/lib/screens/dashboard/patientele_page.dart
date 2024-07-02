@@ -30,9 +30,9 @@ bool isHealths = false;
 
 // ignore: must_be_immutable
 class Patient extends StatefulWidget {
-  Function setPages;
-  Function setId;
-  Patient({super.key, required this.setPages, required this.setId});
+  const Patient({
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -141,8 +141,6 @@ class _PatientState extends State<Patient> {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomList(
                             deletePatientList: deletePatientList,
-                            setId: widget.setId,
-                            setPages: widget.setPages,
                             patients: patients,
                             updatePatient: updatePatient,
                           );
@@ -1337,14 +1335,14 @@ WoltModalSheetPage addTraitement(
     hasSabGradient: false,
     enableDrag: true,
     child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodyAddTraitement(
-          pageIndex: pageIndex,
-          updateData: updateData,
-          addNewTraitement: addNewTraitement,
-          screenSize: MediaQuery.of(context).size,
-        ),
+      padding: const EdgeInsets.all(24),
+      child: BodyAddTraitement(
+        pageIndex: pageIndex,
+        updateData: updateData,
+        addNewTraitement: addNewTraitement,
+        screenSize: MediaQuery.of(context).size,
       ),
+    ),
   );
 }
 
