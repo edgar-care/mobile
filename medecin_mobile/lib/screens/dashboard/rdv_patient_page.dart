@@ -2,7 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
+import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_list_rdv_patient.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_old_list_rdv_patient.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +11,10 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 // ignore: must_be_immutable
 class PatientPageRdv extends StatefulWidget {
   String id;
-  Function setPages;
-  Function setId;
-  PatientPageRdv(
-      {super.key,
-      required this.id,
-      required this.setPages,
-      required this.setId});
+  PatientPageRdv({
+    super.key,
+    required this.id,
+  });
 
   @override
   State<PatientPageRdv> createState() => _PatientPageRdvState();
@@ -60,8 +57,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
                         context: context,
                         pageListBuilder: (modalSheetContext) {
                           return [
-                            patientNavigation(context, patient, widget.setPages,
-                                widget.setId),
+                            patientNavigation(context, patient, []),
                           ];
                         });
                   },
@@ -172,75 +168,6 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
           );
         }
       },
-    );
-  }
-
-  SliverWoltModalSheetPage patientNavigation(BuildContext context,
-      Map<String, dynamic> patient, Function setPages, Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  setPages(1);
-                  Navigator.pop(context);
-                }),
-          ]),
-        ),
-      ),
     );
   }
 }

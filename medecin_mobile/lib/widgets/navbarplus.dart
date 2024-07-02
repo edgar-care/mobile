@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:edgar_pro/models/dashboard.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -34,14 +33,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
     String? token = prefs.getString('token');
     if (token == null) {
       Navigator.pushNamed(context, '/login');
-    }
-    else {
+    } else {
       if (token.isNotEmpty) {
         String encodedPayload = token.split('.')[1];
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
-          }
+        idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+      }
       fetchData();
     }
   }
@@ -73,43 +71,26 @@ class _NavbarPLusState extends State<NavbarPLus> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<void>(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoard();
-                            },
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const curve = Curves.easeInOut;
-                              return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                    .animate(CurvedAnimation(
-                                        parent: animation, curve: curve)),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SvgPicture.asset(
                             'assets/images/utils/arrowChat.svg',
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text('Revenir en arrière',
+                          ), 
+                            const Text('Profil et paramètres',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: Colors.black,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: 'Poppins',
-                              )),
-                        ],
+                              ),),
+                              const SizedBox(),
+                            ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -279,7 +260,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       icon: SvgPicture.asset(
                                         'assets/images/utils/arrow-right-circle-fill.svg',
                                         // ignore: deprecated_member_use
-                                        color: AppColors.black,
+                                        color: AppColors.red600,
                                         height: 18,
                                       ),
                                       title: 'Déconnexion',
@@ -311,7 +292,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
 }
 
 class NavbarPLusTab extends StatefulWidget {
-  final Widget icon;
+  final Widget? icon;
   final String title;
   final Function onTap;
   final String type; // Ajout de la propriété type
@@ -320,7 +301,7 @@ class NavbarPLusTab extends StatefulWidget {
 
   const NavbarPLusTab(
       {super.key,
-      required this.icon,
+      this.icon,
       required this.title,
       required this.onTap,
       required this.type,
@@ -361,7 +342,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         ),
         child: Row(
           children: [
-            widget.icon,
+            widget.icon ?? const SizedBox.shrink(),
             const SizedBox(width: 16),
             Text(widget.title,
                 style: TextStyle(

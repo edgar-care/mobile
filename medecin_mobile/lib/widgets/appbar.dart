@@ -21,7 +21,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       left: 16,
       right: 16,
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -31,57 +31,38 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
             width: 2,
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 48,
           children: <Widget>[
             NavBarItem(
-              color: widget.selectedIndex == 0
-                  ? AppColors.blue200
-                  : Colors.transparent,
+              color: widget.selectedIndex == 0 ? true : false,
               icon: "assets/images/utils/calendar-week-fill.svg",
               onTap: () {
                 widget.onItemTapped(0);
               },
+              text: "Agenda",
             ),
             NavBarItem(
-              color: widget.selectedIndex == 1
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/person-vcard-fill.svg",
+              color: widget.selectedIndex == 1 ? true : false,
+              icon: "assets/images/utils/calendar2-check-fill.svg",
               onTap: () {
                 widget.onItemTapped(1);
               },
+              text: "Rdv",
             ),
             NavBarItem(
-              color: widget.selectedIndex == 2
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/calendar2-check-fill.svg",
+              color: (widget.selectedIndex == 2 || widget.selectedIndex == 3 || widget.selectedIndex == 4 || widget.selectedIndex == 5)  ? true : false,
+              icon: "assets/images/utils/clipboard2-pulse-fill.svg",
               onTap: () {
                 widget.onItemTapped(2);
               },
+              text: "Services",
             ),
             NavBarItem(
-              color: widget.selectedIndex == 3
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/heart-pulse-fill.svg",
-              onTap: () {
-                widget.onItemTapped(3);
-              },
-            ),
-            NavBarItem(
-              color: widget.selectedIndex == 4
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/chat-dots-fill.svg",
-              onTap: () {
-                widget.onItemTapped(4);
-              },
-            ),
-            NavBarItem(
-              color: Colors.transparent,
-              icon: "assets/images/utils/plus-lg.svg",
+              color: false,
+              icon: "assets/images/utils/person-fill.svg",
+              text: "Profil",
               onTap: () {
                 Navigator.push(
                   context,
@@ -114,36 +95,42 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
 }
 
 class NavBarItem extends StatelessWidget {
-  final Color color;
+  final bool color;
   final String icon;
   final VoidCallback onTap;
+  final String text;
 
   const NavBarItem({
     super.key,
     required this.color,
     required this.icon,
     required this.onTap,
+    required this.text,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-          width: 48,
-          height: 48,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
-          ),
-          child: SvgPicture.asset(
+        onTap: onTap,
+        child: Column(children: [
+          SvgPicture.asset(
             icon,
             // ignore: deprecated_member_use
-            color: AppColors.blue800,
-            height: 24,
-            width: 24,
-          )),
-    );
+            color: color == true ? AppColors.blue800 : AppColors.grey500,
+            height: 25,
+            width: 25,
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: color == true ? AppColors.blue800 : AppColors.grey500),
+          )
+        ]));
   }
 }

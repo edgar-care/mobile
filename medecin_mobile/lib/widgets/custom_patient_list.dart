@@ -1,6 +1,10 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
+import 'package:edgar_pro/screens/dashboard/document_page.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
@@ -13,15 +17,11 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 class CustomList extends StatefulWidget {
   final List<Map<String, dynamic>> patients;
   final Function updatePatient;
-  final Function setPages;
   final Function deletePatientList;
-  final Function setId;
   const CustomList(
       {super.key,
       required this.patients,
       required this.updatePatient,
-      required this.setPages,
-      required this.setId,
       required this.deletePatientList});
 
   @override
@@ -52,105 +52,36 @@ class _CustomListState extends State<CustomList> {
                     context: context,
                     pageListBuilder: (BuildContext context) {
                       return [
-                        patientNavigation(context, widget.patients[index],
-                            index, widget.setPages, widget.setId),
+                        patientNavigation(context, widget.patients[index], [
+                          const SizedBox(height: 4),
+                          Buttons(
+                            variant: Variante.delete,
+                            size: SizeButton.sm,
+                            msg: const Text(
+                              'Supprimer le patient',
+                              style: TextStyle(fontFamily: 'Poppins'),
+                            ),
+                            onPressed: () {
+                              WoltModalSheet.show(
+                                context: context,
+                                pageListBuilder: (BuildContext context) {
+                                  return [
+                                    deletePatient(
+                                        context,
+                                        widget.patients[index],
+                                        widget.deletePatientList),
+                                  ];
+                                },
+                              );
+                            },
+                          )
+                        ]),
                       ];
                     },
                   );
                 },
               );
             }));
-  }
-
-  SliverWoltModalSheetPage patientNavigation(
-      BuildContext context,
-      Map<String, dynamic> patient,
-      int index,
-      Function setPages,
-      Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            const SizedBox(height: 4),
-            Buttons(
-              variant: Variante.delete,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Supprimer le patient',
-                style: TextStyle(fontFamily: 'Poppins'),
-              ),
-              onPressed: () {
-                WoltModalSheet.show(
-                  context: context,
-                  pageListBuilder: (BuildContext context) {
-                    return [
-                      deletePatient(context, patient, widget.deletePatientList),
-                    ];
-                  },
-                );
-              },
-            )
-          ]),
-        ),
-      ),
-    );
   }
 
   SliverWoltModalSheetPage deletePatient(BuildContext context,
@@ -243,4 +174,69 @@ class _CustomListState extends State<CustomList> {
       ),
     );
   }
+}
+
+SliverWoltModalSheetPage patientNavigation(
+    BuildContext context, Map<String, dynamic> patient, List<Widget>? next) {
+  return WoltModalSheetPage(
+    backgroundColor: AppColors.white,
+    hasTopBarLayer: false,
+    child: SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+        child: Column(children: [
+          Text(
+            '${patient['Prenom']} ${patient['Nom']}',
+            style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 16,
+                fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 16),
+          CustomNavPatientCard(
+            page: PatientPage(id: patient['id']),
+            text: 'Dossier médical',
+            icon: BootstrapIcons.postcard_heart_fill,
+          ),
+          const SizedBox(height: 4),
+          CustomNavPatientCard(
+            page: PatientPageRdv(id: patient['id']),
+            text: 'Rendez-vous',
+            icon: BootstrapIcons.calendar2_week_fill,
+          ),
+          const SizedBox(height: 4),
+          CustomNavPatientCard(
+            page: DocumentPage(
+              id: patient['id'],
+            ),
+            text: 'Documents',
+            icon: BootstrapIcons.file_earmark_text_fill,
+          ),
+          const SizedBox(height: 4),
+          CustomNavPatientCard(
+            page: ChatPatient(id: patient['id']),
+            text: 'Messagerie',
+            icon: BootstrapIcons.chat_dots_fill,
+          ),
+          const SizedBox(height: 12),
+          Container(height: 2, color: AppColors.blue200),
+          const SizedBox(height: 12),
+          Buttons(
+              variant: Variante.primary,
+              size: SizeButton.sm,
+              msg: const Text(
+                'Revenir à la patientèle',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+          Column(
+            children: next ?? [],
+          )
+        ]),
+      ),
+    ),
+  );
 }

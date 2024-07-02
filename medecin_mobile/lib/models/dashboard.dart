@@ -1,15 +1,11 @@
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:animations/animations.dart';
 import 'package:edgar_pro/screens/dashboard/chat_page.dart';
-import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
-import 'package:edgar_pro/screens/dashboard/document_page.dart';
-import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
-import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
+import 'package:edgar_pro/screens/dashboard/services.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
 
 class DashBoard extends StatefulWidget {
@@ -80,29 +76,12 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       const Agenda(),
-      Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
+      Services(tapped: _onItemTapped,),
+      const Patient(),
       const Diagnostic(),
       const ChatPageDashBoard(),
-      const Text('Aide',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
-      PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
-      PatientPageRdv(
-        id: getId(),
-        setPages: updateSelectedIndex,
-        setId: updateId,
-      ),
-      DocumentPage(
-        id: _id,
-        setPages: updateSelectedIndex,
-        setId: updateId,
-      ),
-      ChatPatient(id: getId(), setPages: updateSelectedIndex, setId: updateId)
     ];
-
 
     // ignore: deprecated_member_use
     return WillPopScope(
@@ -127,14 +106,14 @@ class _DashBoardState extends State<DashBoard> {
                       child: child,
                     );
                   },
-                child: pages[_selectedIndex],
+                  child: pages[_selectedIndex],
+                ),
               ),
-            ),
             ),
             CustomBottomBar(
               selectedIndex: _selectedIndex,
               onItemTapped: _onItemTapped,
-       ),
+            ),
           ],
         ),
       ),

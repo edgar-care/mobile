@@ -165,11 +165,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
   Future<void> _loadAppointment() async {
-      getPatientById(widget.rdvInfo['id_patient']).then((value) {
-        setState(() {
-          patientInfo = value;
-        });
+    getPatientById(widget.rdvInfo['id_patient']).then((value) {
+      setState(() {
+        patientInfo = value;
       });
+    });
   }
 
   @override
@@ -181,140 +181,134 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     return Skeletonizer(
       enabled: patientInfo.isEmpty,
       child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: AppColors.blue200, width: 2.0),
-            ),
-            child: InkWell(
-              onTap: () {
-                WoltModalSheet.show<void>(
-                  context: context,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      navModal(modalSheetContext, patientInfo["Nom"],
-                          patientInfo["Prenom"], widget.rdvInfo),
-                    ];
-                  },
-                );
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: AppColors.blue200, width: 2.0),
+        ),
+        child: InkWell(
+          onTap: () {
+            WoltModalSheet.show<void>(
+              context: context,
+              pageListBuilder: (modalSheetContext) {
+                return [
+                  navModal(modalSheetContext, patientInfo["Nom"],
+                      patientInfo["Prenom"], widget.rdvInfo),
+                ];
               },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Row(children: [
-                        Text(DateFormat('yMd', 'fr').format(start),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins')),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        const Text("-",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins')),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Row(children: [
-                          Text(DateFormat('jm', 'fr').format(start),
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins')),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          const Icon(
-                            BootstrapIcons.arrow_right,
-                            size: 16,
-                          ),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          Text(DateFormat('jm', 'fr').format(end),
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins')),
-                        ]),
-                      ]),
-                      if (!widget.old)
-                        Column(
-                          children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.40,
-                                  child: Buttons(
-                                    variant: Variante.delete,
-                                    size: SizeButton.sm,
-                                    msg: const Text('Annuler'),
-                                    onPressed: () {
-                                      WoltModalSheet.show<void>(
-                                        context: context,
-                                        pageListBuilder: (modalSheetContext) {
-                                          return [
-                                            deleteAppointment(
-                                                context, widget.rdvInfo['id']),
-                                          ];
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 12,
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.40,
-                                  child: Buttons(
-                                    variant: Variante.secondary,
-                                    size: SizeButton.sm,
-                                    msg: const Text('Modifier'),
-                                    onPressed: () {
-                                      WoltModalSheet.show<void>(
-                                        context: context,
-                                        pageListBuilder: (modalSheetContext) {
-                                          return [
-                                            updateAppointmentModal(
-                                                context,
-                                                widget.rdvInfo,
-                                                updateAppointment),
-                                          ];
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                    ]),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 8,
               ),
-            ),
+              Row(children: [
+                Text(DateFormat('yMd', 'fr').format(start),
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins')),
+                const SizedBox(
+                  width: 4,
+                ),
+                const Text("-",
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins')),
+                const SizedBox(
+                  width: 4,
+                ),
+                Row(children: [
+                  Text(DateFormat('jm', 'fr').format(start),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins')),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  const Icon(
+                    BootstrapIcons.arrow_right,
+                    size: 16,
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Text(DateFormat('jm', 'fr').format(end),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins')),
+                ]),
+              ]),
+              if (!widget.old)
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Buttons(
+                            variant: Variante.delete,
+                            size: SizeButton.sm,
+                            msg: const Text('Annuler'),
+                            onPressed: () {
+                              WoltModalSheet.show<void>(
+                                context: context,
+                                pageListBuilder: (modalSheetContext) {
+                                  return [
+                                    deleteAppointment(
+                                        context, widget.rdvInfo['id']),
+                                  ];
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Buttons(
+                            variant: Variante.secondary,
+                            size: SizeButton.sm,
+                            msg: const Text('Modifier'),
+                            onPressed: () {
+                              WoltModalSheet.show<void>(
+                                context: context,
+                                pageListBuilder: (modalSheetContext) {
+                                  return [
+                                    updateAppointmentModal(context,
+                                        widget.rdvInfo, updateAppointment),
+                                  ];
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+            ]),
           ),
+        ),
+      ),
     );
   }
-    
 
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
       String firstname, Map<String, dynamic> rdvInfo) {

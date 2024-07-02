@@ -6,8 +6,7 @@ import 'package:edgar_pro/services/web_socket_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_page_patient.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
+import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,13 +15,10 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 // ignore: must_be_immutable
 class ChatPatient extends StatefulWidget {
   String id;
-  final Function setPages;
-  final Function setId;
-  ChatPatient(
-      {super.key,
-      required this.id,
-      required this.setPages,
-      required this.setId});
+  ChatPatient({
+    super.key,
+    required this.id,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -148,8 +144,7 @@ class ChatPatientState extends State<ChatPatient> {
                         context: context,
                         pageListBuilder: (modalSheetContext) {
                           return [
-                            patientNavigation(context, patientInfo,
-                                widget.setPages, widget.setId),
+                            patientNavigation(context, patientInfo, []),
                           ];
                         });
                   },
@@ -222,74 +217,5 @@ class ChatPatientState extends State<ChatPatient> {
             );
           }
         });
-  }
-
-  SliverWoltModalSheetPage patientNavigation(BuildContext context,
-      Map<String, dynamic> patient, Function setPages, Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  setPages(1);
-                  Navigator.pop(context);
-                }),
-          ]),
-        ),
-      ),
-    );
   }
 }
