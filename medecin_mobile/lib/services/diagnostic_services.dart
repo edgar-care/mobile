@@ -15,7 +15,7 @@ void mapperDiagnostic(Map<String, dynamic> data) {
     "diseases": data['diseases'] ?? [],
     "symptoms": data['symptoms'] ?? [],
     "logs": data['logs'] ?? [],
-    "session_id" : data['session_id'] ?? '',
+    "session_id": data['session_id'] ?? '',
   };
 }
 
