@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
+import 'package:edgar_pro/2FA/account_page.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -25,33 +25,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
   @override
   void initState() {
     super.initState();
-    checkToken();
-  }
-
-  void checkToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token == null) {
-      Navigator.pushNamed(context, '/login');
-    } else {
-      if (token.isNotEmpty) {
-        String encodedPayload = token.split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
-      }
-      fetchData();
-    }
   }
 
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
-      setState(() {
-        infoMedical = value.where((element) {
-          return element['id'] == idDoctor;
-        }).first;
-      });
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('id');
+    List<dynamic> doctorList = await getAllDoctor();
+    for (var doctor in doctorList) {
+      if (doctor['id'] == id) {
+        infoMedical = doctor;
+      }
+    }
+    Logger().d(infoMedical);
   }
 
   @override
@@ -235,12 +220,10 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           PageRouteBuilder<void>(
                                             opaque: false,
                                             pageBuilder: (BuildContext context, _, __) {
-                                              return const SizedBox();
+                                              return AccountPage(infoMedical: infoMedical,);
                                             },
                                           ),
-                                        
                                         );
-                                        Navigator.pop(context);
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -368,7 +351,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         child: Row(
           children: [
             widget.icon ?? const SizedBox.shrink(),
-            const SizedBox(width: 16),
+            widget.icon != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,
