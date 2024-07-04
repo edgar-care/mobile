@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:download_file/data/models/download_file_options.dart';
 import 'package:download_file/download_file.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:http/http.dart' as http;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class DocumentPatientCard extends StatelessWidget {
@@ -48,10 +49,21 @@ class DocumentPatientCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
-            WoltModalSheet.show(
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+
+            showModalBottomSheet(
               context: context,
-              pageListBuilder: (BuildContext context) {
-                return [modal(context, name, date, url)];
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                        model: model,
+                        children: [modal(context, name, date, url)]);
+                  },
+                );
               },
             );
           },
@@ -91,65 +103,57 @@ class DocumentPatientCard extends StatelessWidget {
     return file;
   }
 
-  SliverWoltModalSheetPage modal(
-      BuildContext context, String name, String date, String url) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-        child: Column(children: [
-          Text(
-            name,
-            style: const TextStyle(
+  Widget modal(BuildContext context, String name, String date, String url) {
+    return ModalContainer(
+      title: name,
+      subtitle: 'Télécharger le document',
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.download,
+          color: AppColors.grey700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      footer: Buttons(
+          variant: Variante.primary,
+          size: SizeButton.sm,
+          msg: const Text(
+            'Télécharger le document',
+            style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
-          Container(height: 2, color: AppColors.blue200),
-          const SizedBox(height: 12),
-          Buttons(
-              variant: Variante.primary,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Télécharger le document',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
+          onPressed: () {
+            DownloadFile.downloadAndSafeFile(
+              downloadFileOptions: DownloadFileOptions(
+                downloadUrl: url,
+                fileName: name,
               ),
-              onPressed: () {
-                DownloadFile.downloadAndSafeFile(
-                  downloadFileOptions: DownloadFileOptions(
-                    downloadUrl: url,
-                    fileName: name,
-                  ),
-                  context: context,
-                  loadingWidget: const Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Téléchargement en cours...',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        CircularProgressIndicator(
-                          color: AppColors.blue700,
-                          strokeWidth: 2,
-                        ),
-                      ],
+              context: context,
+              loadingWidget: const Center(
+                child: Column(
+                  children: [
+                    Text(
+                      'Téléchargement en cours...',
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                );
-              }),
-        ]),
-      ),
+                    SizedBox(height: 8),
+                    CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeWidth: 2,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
     );
   }
 }

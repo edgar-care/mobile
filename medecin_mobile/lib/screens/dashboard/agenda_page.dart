@@ -6,10 +6,11 @@ import 'package:edgar_pro/widgets/Agenda/custom_dropdown_buttont.dart';
 import 'package:edgar_pro/widgets/Agenda/slot_list.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class Agenda extends StatefulWidget {
@@ -93,123 +94,141 @@ class _AgendaState extends State<Agenda> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppColors.blue200, width: 2)),
             child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ValueListenableBuilder<int>(
-                          valueListenable: selected,
-                          builder: (context, value, child) {
-                            return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ValueListenableBuilder<int>(
+                      valueListenable: selected,
+                      builder: (context, value, child) {
+                        return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Buttons(
+                                  variant: value == 0
+                                      ? Variante.primary
+                                      : Variante.secondary,
+                                  size: SizeButton.sm,
+                                  msg: const Text("Jour"),
+                                  onPressed: () => updateSelection(0),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: Buttons(
+                                  variant: value == 1
+                                      ? Variante.primary
+                                      : Variante.secondary,
+                                  size: SizeButton.sm,
+                                  msg: const Text(" 3 Jours"),
+                                  onPressed: () => updateSelection(1),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Row(
                                 children: [
-                                  Expanded(
-                                    child: Buttons(
-                                      variant: value == 0
-                                          ? Variante.primary
-                                          : Variante.secondary,
-                                      size: SizeButton.sm,
-                                      msg: const Text("Jour"),
-                                      onPressed: () => updateSelection(0),
+                                  GestureDetector(
+                                    onTap: () => {
+                                      setState(() {
+                                        date = date
+                                            .subtract(const Duration(days: 1));
+                                      })
+                                    },
+                                    child: const Icon(
+                                      BootstrapIcons.chevron_left,
+                                      color: AppColors.blue700,
+                                      size: 20,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Expanded(
-                                    child: Buttons(
-                                      variant: value == 1
-                                          ? Variante.primary
-                                          : Variante.secondary,
-                                      size: SizeButton.sm,
-                                      msg: const Text(" 3 Jours"),
-                                      onPressed: () => updateSelection(1),
+                                  GestureDetector(
+                                    onTap: () => {
+                                      setState(() {
+                                        date =
+                                            date.add(const Duration(days: 1));
+                                      })
+                                    },
+                                    child: const Icon(
+                                      BootstrapIcons.chevron_right,
+                                      color: AppColors.blue700,
+                                      size: 20,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => {
-                                          setState(() {
-                                            date = date.subtract(
-                                                const Duration(days: 1));
-                                          })
-                                        },
-                                        child: const Icon(
-                                          BootstrapIcons.chevron_left,
-                                          color: AppColors.blue700,
-                                          size: 20,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () => {
-                                          setState(() {
-                                            date = date
-                                                .add(const Duration(days: 1));
-                                          })
-                                        },
-                                        child: const Icon(
-                                          BootstrapIcons.chevron_right,
-                                          color: AppColors.blue700,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ]);
-                          }),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      ValueListenableBuilder<int>(
-                          valueListenable: selected,
-                          builder: (context, value, child) {
-                            return selected.value == 0
-                                ? Text(
-                                    capitalise(DateFormat("yMMMMEEEEd", "fr")
-                                        .format(date)),
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.blue700),
-                                  )
-                                : ThreeDays(
-                                    date: date,
-                                  );
-                          }),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Expanded(
-                        child: ValueListenableBuilder<int>(
-                          valueListenable: selected,
-                          builder: (context, value, child) {
-                            return selected.value == 0
-                                ? SlotList(date: date)
-                                : SlotListThree(
-                                    date: date,
-                                  );
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Buttons(
-                          variant: Variante.primary,
-                          size: SizeButton.md,
-                          msg: const Text('Ajouter un créneau +'),
-                          onPressed: () => WoltModalSheet.show(
-                                context: context,
-                                pageListBuilder: (modalSheetContext) {
-                                  return [addSlot(context, tempslot)];
-                                },
-                              )),
-                    ])),
+                                ],
+                              ),
+                            ]);
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  ValueListenableBuilder<int>(
+                      valueListenable: selected,
+                      builder: (context, value, child) {
+                        return selected.value == 0
+                            ? Text(
+                                capitalise(DateFormat("yMMMMEEEEd", "fr")
+                                    .format(date)),
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.blue700),
+                              )
+                            : ThreeDays(
+                                date: date,
+                              );
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Expanded(
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: selected,
+                      builder: (context, value, child) {
+                        return selected.value == 0
+                            ? SlotList(date: date)
+                            : SlotListThree(
+                                date: date,
+                              );
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Buttons(
+                    variant: Variante.primary,
+                    size: SizeButton.md,
+                    msg: const Text('Ajouter un créneau +'),
+                    onPressed: () {
+                      final model =
+                          Provider.of<BottomSheetModel>(context, listen: false);
+                      model.resetCurrentIndex();
+
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          return Consumer<BottomSheetModel>(
+                            builder: (context, model, child) {
+                              return ListModal(
+                                model: model,
+                                children: [SlotAdd(tempslot: tempslot)],
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -232,15 +251,15 @@ bool parsing(DateTime date, List<dynamic> slots) {
   return true;
 }
 
-class Addslot extends StatefulWidget {
+class SlotAdd extends StatefulWidget {
   final List<dynamic> tempslot;
-  const Addslot({super.key, required this.tempslot});
+  const SlotAdd({super.key, required this.tempslot});
 
   @override
-  State<Addslot> createState() => _AddslotState();
+  State<SlotAdd> createState() => _SlotAddState();
 }
 
-class _AddslotState extends State<Addslot> {
+class _SlotAddState extends State<SlotAdd> {
   DateTime date = DateTime.now();
   int year = DateTime.now().year;
   int month = DateTime.now().month;
@@ -304,180 +323,140 @@ class _AddslotState extends State<Addslot> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-          child: Column(
-            children: [
-              Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.green200,
-                  borderRadius: BorderRadius.circular(99999),
+    return ModalContainer(
+      title: "Ouvrez un créneau",
+      subtitle: "Séléctionner une date pour ouvrir un créneau",
+      body: [
+        const Text(
+          "Date du créneau",
+          style: TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        CustomDatePiker(
+            value: DateFormat("yMd", "fr").format(date),
+            startDate: DateTime.now(),
+            onChanged: (value) {
+              setState(() {
+                if (value.length == 10 && value[2] == '/' && value[5] == '/') {
+                  year = int.parse(value.substring(6));
+                  month = int.parse(value.substring(3, 5));
+                  day = int.parse(value.substring(0, 2));
+                  date = DateTime(year, month, day);
+                } else {}
+              });
+            }),
+        const SizedBox(
+          height: 12,
+        ),
+        const Text(
+          "Heure du créneau",
+          style: TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        CustomDropdownButton(
+          list: list,
+          dropdownvalue: dropdownvalue,
+          onChanged: (value) {
+            dropdownvalue = value!;
+            hour = int.parse(value.substring(0, 2));
+            minute = int.parse(value.substring(3, 5));
+          },
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.orange100,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.orange300, width: 2),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Icon(
+                  BootstrapIcons.exclamation_diamond_fill,
+                  color: AppColors.orange600,
+                  size: 32,
                 ),
-                child: const Icon(BootstrapIcons.check_circle_fill,
-                    color: AppColors.green700),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Ouvrez un créneau",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold),
-              ),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const SizedBox(
-                  height: 16,
+                SizedBox(
+                  width: 16,
                 ),
-                const Text(
-                  "Date du créneau",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomDatePiker(
-                    value: DateFormat("yMd", "fr").format(date),
-                    startDate: DateTime.now(),
-                    onChanged: (value) {
-                      setState(() {
-                        if (value.length == 10 &&
-                            value[2] == '/' &&
-                            value[5] == '/') {
-                          year = int.parse(value.substring(6));
-                          month = int.parse(value.substring(3, 5));
-                          day = int.parse(value.substring(0, 2));
-                          date = DateTime(year, month, day);
-                        } else {}
-                      });
-                    }),
-                const SizedBox(
-                  height: 12,
-                ),
-                const Text(
-                  "Heure du créneau",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomDropdownButton(
-                  list: list,
-                  dropdownvalue: dropdownvalue,
-                  onChanged: (value) {
-                    dropdownvalue = value!;
-                    hour = int.parse(value.substring(0, 2));
-                    minute = int.parse(value.substring(3, 5));
-                  },
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-              ]),
-              Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.orange100,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.orange300, width: 2),
+                Expanded(
+                  child: Text(
+                    "En ouvrant ce créneau, n'importe quel patient pourra le réserver",
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.orange600),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    child: Row(
-                      children: [
-                        Icon(
-                          BootstrapIcons.exclamation_diamond_fill,
-                          color: AppColors.orange600,
-                          size: 32,
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Expanded(
-                          child: Text(
-                            "En ouvrant ce créneau, n'importe quel patient pourra le réserver",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.orange600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.42,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Revenir en arrière'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.42,
-                    child: Buttons(
-                      variant: Variante.validate,
-                      size: SizeButton.sm,
-                      msg: const Text('Ouvrir le créneau'),
-                      onPressed: () {
-                        date = DateTime(year, month, day, hour, minute, 0);
-                        if (parsing(date, widget.tempslot) == true) {
-                          postSlot(date);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, '/dashboard');
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SuccessLoginSnackBar(
-                            message: 'Créneau créé avec succès',
-                            context: context,
-                          ));
-                        } else {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(ErrorLoginSnackBar(
-                            message: 'Créneau déjà existant',
-                            context: context,
-                          ));
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variante.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Revenir en arrière'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variante.validate,
+              size: SizeButton.sm,
+              msg: const Text('Ouvrir le créneau'),
+              onPressed: () {
+                date = DateTime(year, month, day, hour, minute, 0);
+                if (parsing(date, widget.tempslot) == true) {
+                  postSlot(date);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/dashboard');
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SuccessLoginSnackBar(
+                    message: 'Créneau créé avec succès',
+                    context: context,
+                  ));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                    message: 'Créneau déjà existant',
+                    context: context,
+                  ));
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.check_circle_fill,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
     );
   }
-}
-
-SliverWoltModalSheetPage addSlot(BuildContext context, List<dynamic> tempslot) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    child: Addslot(
-      tempslot: tempslot,
-    ),
-  );
 }

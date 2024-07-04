@@ -7,11 +7,12 @@ import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_page_patient.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
 class ChatPatient extends StatefulWidget {
@@ -144,14 +145,28 @@ class ChatPatientState extends State<ChatPatient> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            patientNavigation(context, patientInfo,
-                                widget.setPages, widget.setId),
-                          ];
-                        });
+                    final model =
+                        Provider.of<BottomSheetModel>(context, listen: false);
+                    model.resetCurrentIndex();
+
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return Consumer<BottomSheetModel>(
+                          builder: (context, model, child) {
+                            return ListModal(
+                              model: model,
+                              children: [
+                                navigationPatient(context, patientInfo,
+                                    widget.setPages, widget.setId)
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -224,72 +239,65 @@ class ChatPatientState extends State<ChatPatient> {
         });
   }
 
-  SliverWoltModalSheetPage patientNavigation(BuildContext context,
-      Map<String, dynamic> patient, Function setPages, Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  setPages(1);
-                  Navigator.pop(context);
-                }),
-          ]),
+  Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
+      Function setPages, Function setId) {
+    return ModalContainer(
+      title: '${patient['Prenom']} ${patient['Nom']}',
+      subtitle: "Veuillez choisir une catégorie",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.person,
+          size: 18,
         ),
+        type: ModalType.info,
       ),
+      body: [
+        CustomNavPatientCard(
+            text: 'Dossier médical',
+            icon: BootstrapIcons.postcard_heart_fill,
+            setPages: setPages,
+            pageTo: 6,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Rendez-vous',
+            icon: BootstrapIcons.calendar2_week_fill,
+            setPages: setPages,
+            pageTo: 7,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Documents',
+            icon: BootstrapIcons.file_earmark_text_fill,
+            setPages: setPages,
+            pageTo: 8,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Messagerie',
+            icon: BootstrapIcons.chat_dots_fill,
+            setPages: setPages,
+            pageTo: 9,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 12),
+        Container(height: 2, color: AppColors.blue200),
+        const SizedBox(height: 12),
+      ],
+      footer: Buttons(
+          variant: Variante.primary,
+          size: SizeButton.sm,
+          msg: const Text(
+            'Revenir à la patientèle',
+            style: TextStyle(fontFamily: 'Poppins'),
+          ),
+          onPressed: () {
+            setPages(1);
+            Navigator.pop(context);
+          }),
     );
   }
 }

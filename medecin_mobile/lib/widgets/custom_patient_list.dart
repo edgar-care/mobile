@@ -3,11 +3,12 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/patient_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class CustomList extends StatefulWidget {
@@ -48,13 +49,23 @@ class _CustomListState extends State<CustomList> {
               return PatientListCard(
                 patientData: widget.patients[index],
                 onTap: () {
-                  WoltModalSheet.show(
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+
+                  showModalBottomSheet(
                     context: context,
-                    pageListBuilder: (BuildContext context) {
-                      return [
-                        patientNavigation(context, widget.patients[index],
-                            index, widget.setPages, widget.setId),
-                      ];
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            navigationpatient(context, widget.patients[index],
+                                index, widget.setPages, widget.setId)
+                          ]);
+                        },
+                      );
                     },
                   );
                 },
@@ -62,184 +73,125 @@ class _CustomListState extends State<CustomList> {
             }));
   }
 
-  SliverWoltModalSheetPage patientNavigation(
-      BuildContext context,
-      Map<String, dynamic> patient,
-      int index,
-      Function setPages,
-      Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            const SizedBox(height: 4),
-            Buttons(
-              variant: Variante.delete,
-              size: SizeButton.sm,
-              msg: const Text(
-                'Supprimer le patient',
-                style: TextStyle(fontFamily: 'Poppins'),
-              ),
-              onPressed: () {
-                WoltModalSheet.show(
-                  context: context,
-                  pageListBuilder: (BuildContext context) {
-                    return [
-                      deletePatient(context, patient, widget.deletePatientList),
-                    ];
-                  },
-                );
-              },
-            )
-          ]),
-        ),
+  Widget navigationpatient(BuildContext context, Map<String, dynamic> patient,
+      int index, Function setPages, Function setId) {
+    return ModalContainer(
+      title: '${patient['Prenom']} ${patient['Nom']}',
+      subtitle: "Séléctionner une catégorie",
+      icon: const IconModal(
+        icon: Icon(BootstrapIcons.person, size: 18, color: AppColors.grey700),
+        type: ModalType.info,
       ),
+      footer: Buttons(
+        variant: Variante.delete,
+        size: SizeButton.sm,
+        msg: const Text(
+          'Supprimer le patient',
+          style: TextStyle(fontFamily: 'Poppins'),
+        ),
+        onPressed: () {
+          final model = Provider.of<BottomSheetModel>(context, listen: false);
+          model.resetCurrentIndex();
+
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (context) {
+              return Consumer<BottomSheetModel>(
+                builder: (context, model, child) {
+                  return ListModal(model: model, children: [
+                    patientDelete(context, patient, widget.deletePatientList)
+                  ]);
+                },
+              );
+            },
+          );
+        },
+      ),
+      body: [
+        CustomNavPatientCard(
+            text: 'Dossier médical',
+            icon: BootstrapIcons.postcard_heart_fill,
+            setPages: setPages,
+            pageTo: 6,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Rendez-vous',
+            icon: BootstrapIcons.calendar2_week_fill,
+            setPages: setPages,
+            pageTo: 7,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Documents',
+            icon: BootstrapIcons.file_earmark_text_fill,
+            setPages: setPages,
+            pageTo: 8,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Messagerie',
+            icon: BootstrapIcons.chat_dots_fill,
+            setPages: setPages,
+            pageTo: 9,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 12),
+        Container(height: 2, color: AppColors.blue200),
+      ],
     );
   }
 
-  SliverWoltModalSheetPage deletePatient(BuildContext context,
-      Map<String, dynamic> patient, Function deletePatientList) {
-    return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: Column(
-            children: [
-              Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.red200,
-                  ),
-                  child: const Icon(
-                    BootstrapIcons.x,
-                    color: AppColors.red700,
-                    size: 40,
-                  )),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Êtes-vous sûr ?",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Si vous supprimez ce patient, vous ne pourrez plus le consulter.",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Annuler'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.delete,
-                      size: SizeButton.sm,
-                      msg: const Text('Oui, je suis sûr'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        deletePatientService(patient['id'], context);
-                        deletePatientList(patient['id']);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+  Widget patientDelete(BuildContext context, Map<String, dynamic> patient,
+      Function deletePatientList) {
+    return ModalContainer(
+      title: "Êtes-vous sûr ?",
+      subtitle:
+          "Si vous supprimez ce patient, vous ne pourrez plus le consulter.",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
         ),
+        type: ModalType.error,
+      ),
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variante.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text('Oui, je suis sûr'),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                deletePatientService(patient['id'], context);
+                deletePatientList(patient['id']);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

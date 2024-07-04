@@ -8,14 +8,17 @@ import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
-import 'package:edgar_pro/widgets/Diagnostic/diagnostic_card.dart';
 import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/rdv/modif_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
@@ -51,125 +54,90 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     });
   }
 
-  SliverWoltModalSheetPage deleteAppointment(BuildContext context, String id) {
+  Widget deleteAppointment(String id) {
     String cancelreason = '';
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Container(
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  color: AppColors.red200,
-                ),
-                child: const Icon(
-                  BootstrapIcons.x,
-                  color: AppColors.red700,
-                  size: 40,
-                )),
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "Êtes-vous sûr ?",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.grey400),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            const Text(
-              "La raison de l'annulation",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            CustomField(
-              label: "Renseigner la raison de l'annulation",
-              onChanged: (value) => cancelreason = value,
-              keyboardType: TextInputType.text,
-              startUppercase: false,
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.427,
-                  child: Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.427,
-                  child: Buttons(
-                    variant: Variante.delete,
-                    size: SizeButton.sm,
-                    msg: const Text('Oui, je suis sûr'),
-                    onPressed: () {
-                      cancelAppointments(id, context, cancelreason);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ]),
+    return ModalContainer(
+      title: "Êtes-vous sûr ?",
+      subtitle:
+          "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
         ),
+        type: ModalType.error,
+      ),
+      body: [
+        const Text(
+          "La raison de l'annulation",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        CustomField(
+          label: "Renseigner la raison de l'annulation",
+          onChanged: (value) => cancelreason = value,
+          keyboardType: TextInputType.text,
+          startUppercase: false,
+        ),
+      ],
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.427,
+            child: Buttons(
+              variant: Variante.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.427,
+            child: Buttons(
+              variant: Variante.delete,
+              size: SizeButton.sm,
+              msg: const Text('Oui, je suis sûr'),
+              onPressed: () {
+                cancelAppointments(id, context, cancelreason);
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  SliverWoltModalSheetPage updateAppointmentModal(BuildContext context,
+  Widget updateAppointmentModal(BuildContext context,
       Map<String, dynamic> rdvInfo, Function updateAppointment) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment),
+    return ModalContainer(
+      title: "",
+      subtitle: "",
+      icon: const IconModal(
+        type: ModalType.info,
+        icon: Icon(BootstrapIcons.pen_fill),
+      ),
+      body: [ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment)],
     );
   }
 
   Future<void> _loadAppointment() async {
-      getPatientById(widget.rdvInfo['id_patient']).then((value) {
-        setState(() {
-          patientInfo = value;
-        });
+    getPatientById(widget.rdvInfo['id_patient']).then((value) {
+      setState(() {
+        patientInfo = value;
       });
+    });
   }
 
   @override
@@ -181,140 +149,155 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     return Skeletonizer(
       enabled: patientInfo.isEmpty,
       child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: AppColors.blue200, width: 2.0),
-            ),
-            child: InkWell(
-              onTap: () {
-                WoltModalSheet.show<void>(
-                  context: context,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      navModal(modalSheetContext, patientInfo["Nom"],
-                          patientInfo["Prenom"], widget.rdvInfo),
-                    ];
-                  },
-                );
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: AppColors.blue200, width: 2.0),
+        ),
+        child: InkWell(
+          onTap: () {
+            WoltModalSheet.show<void>(
+              context: context,
+              pageListBuilder: (modalSheetContext) {
+                return [
+                  navModal(modalSheetContext, patientInfo["Nom"],
+                      patientInfo["Prenom"], widget.rdvInfo),
+                ];
               },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Row(children: [
-                        Text(DateFormat('yMd', 'fr').format(start),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins')),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        const Text("-",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins')),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Row(children: [
-                          Text(DateFormat('jm', 'fr').format(start),
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins')),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          const Icon(
-                            BootstrapIcons.arrow_right,
-                            size: 16,
-                          ),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          Text(DateFormat('jm', 'fr').format(end),
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins')),
-                        ]),
-                      ]),
-                      if (!widget.old)
-                        Column(
-                          children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.40,
-                                  child: Buttons(
-                                    variant: Variante.delete,
-                                    size: SizeButton.sm,
-                                    msg: const Text('Annuler'),
-                                    onPressed: () {
-                                      WoltModalSheet.show<void>(
-                                        context: context,
-                                        pageListBuilder: (modalSheetContext) {
-                                          return [
-                                            deleteAppointment(
-                                                context, widget.rdvInfo['id']),
-                                          ];
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 12,
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.40,
-                                  child: Buttons(
-                                    variant: Variante.secondary,
-                                    size: SizeButton.sm,
-                                    msg: const Text('Modifier'),
-                                    onPressed: () {
-                                      WoltModalSheet.show<void>(
-                                        context: context,
-                                        pageListBuilder: (modalSheetContext) {
-                                          return [
-                                            updateAppointmentModal(
-                                                context,
-                                                widget.rdvInfo,
-                                                updateAppointment),
-                                          ];
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                    ]),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 8,
               ),
-            ),
+              Row(children: [
+                Text(DateFormat('yMd', 'fr').format(start),
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins')),
+                const SizedBox(
+                  width: 4,
+                ),
+                const Text("-",
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins')),
+                const SizedBox(
+                  width: 4,
+                ),
+                Row(children: [
+                  Text(DateFormat('jm', 'fr').format(start),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins')),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  const Icon(
+                    BootstrapIcons.arrow_right,
+                    size: 16,
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Text(DateFormat('jm', 'fr').format(end),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins')),
+                ]),
+              ]),
+              if (!widget.old)
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Buttons(
+                            variant: Variante.delete,
+                            size: SizeButton.sm,
+                            msg: const Text('Annuler'),
+                            onPressed: () {
+                              final model = Provider.of<BottomSheetModel>(
+                                  context,
+                                  listen: false);
+                              model.resetCurrentIndex();
+
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return Consumer<BottomSheetModel>(
+                                    builder: (context, model, child) {
+                                      return ListModal(model: model, children: [
+                                        deleteAppointment(widget.rdvInfo['id'])
+                                      ]);
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Buttons(
+                            variant: Variante.secondary,
+                            size: SizeButton.sm,
+                            msg: const Text('Modifier'),
+                            onPressed: () {
+                              final model = Provider.of<BottomSheetModel>(
+                                  context,
+                                  listen: false);
+                              model.resetCurrentIndex();
+
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return Consumer<BottomSheetModel>(
+                                    builder: (context, model, child) {
+                                      return ListModal(model: model, children: [
+                                        updateAppointmentModal(context,
+                                            widget.rdvInfo, updateAppointment)
+                                      ]);
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+            ]),
           ),
+        ),
+      ),
     );
   }
-    
 
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
       String firstname, Map<String, dynamic> rdvInfo) {
@@ -326,8 +309,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         .format(date.add(const Duration(minutes: 30)))
         .toString();
     Map<String, dynamic> diagnostic = {};
+    // ignore: unused_local_variable
     List<dynamic> docs = [];
-    int doctorindex = -1;
 
     Future<bool> loadInfo() async {
       diagnostic = await getSummary(rdvInfo["session_id"]);
@@ -336,8 +319,6 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
 
     Future<bool> loadDoctor() async {
       docs = await getAllDoctor();
-      doctorindex = docs
-          .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;
     }
 
@@ -370,12 +351,11 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                 text: 'Dossier médical',
                 icon: BootstrapIcons.postcard_heart_fill,
                 ontap: () {
+                  // ModalMedicFolder
                   loadDoctor().then((value) => WoltModalSheet.show(
                         context: context,
                         pageListBuilder: (BuildContext context) {
-                          return [
-                            medicalFolderModal(context, docs, doctorindex),
-                          ];
+                          return [];
                         },
                       ));
                 }),
@@ -498,17 +478,17 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(
-      BuildContext context, List<dynamic> docs, int doctorindex) {
-    return WoltModalSheetPage(
-        backgroundColor: AppColors.white,
-        hasTopBarLayer: false,
-        child: MedicalFolderBody(
-          patientInfo: patientInfo,
-          docs: docs,
-          doctorindex: doctorindex,
-        ));
-  }
+  // SliverWoltModalSheetPage medicalFolderModal(
+  //     BuildContext context, List<dynamic> docs, int doctorindex) {
+  //   return WoltModalSheetPage(
+  //       backgroundColor: AppColors.white,
+  //       hasTopBarLayer: false,
+  //       child: MedicalFolderBody(
+  //         patientInfo: patientInfo,
+  //         docs: docs,
+  //         doctorindex: doctorindex,
+  //       ));
+  // }
 }
 
 class BodySummary extends StatelessWidget {
