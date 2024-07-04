@@ -251,22 +251,23 @@ class _ChatPageState extends State<ChatPage> {
                     isScrollControlled: true,
                     backgroundColor: Colors.transparent,
                     builder: (context) {
-                      return ChangeNotifierProvider.value(
-                        value: model,
-                        child: ListModal(
-                          model: model,
-                          children: [
-                            CreateDiscussion(
-                              updateData: updateData,
-                              webSocketService: _webSocketService,
-                            ),
-                            CreateDiscussion2(
-                              idPatient: idPatient,
-                              updateData: updateData,
-                              webSocketService: _webSocketService,
-                            ),
-                          ],
-                        ),
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(
+                            model: model,
+                            children: [
+                              CreateDiscussion(
+                                updateData: updateData,
+                                webSocketService: _webSocketService,
+                              ),
+                              CreateDiscussion2(
+                                idPatient: idPatient,
+                                updateData: updateData,
+                                webSocketService: _webSocketService,
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                   );

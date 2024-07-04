@@ -42,7 +42,7 @@ class ListModalState extends State<ListModal>
         curve: Curves.easeInOut,
         child: Container(
           constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height - 48,
+            maxHeight: MediaQuery.of(context).size.height,
           ),
           margin: const EdgeInsets.all(12),
           decoration: const BoxDecoration(
@@ -58,10 +58,7 @@ class ListModalState extends State<ListModal>
                   Visibility(
                     visible: widget.model!.getCurrentPageIndex == i,
                     maintainState: true,
-                    child: Flexible(
-                      // Ensure proper use of Expanded or Flexible
-                      child: widget.children[i],
-                    ),
+                    child: widget.children[i],
                   ),
             ],
           ),
@@ -92,9 +89,9 @@ class ModalContainer extends StatelessWidget {
     return SafeArea(
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height - 84,
-          maxWidth: MediaQuery.of(context).size.width - 24,
+          maxHeight: MediaQuery.of(context).size.height,
         ),
+        // padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -128,24 +125,35 @@ class ModalContainer extends StatelessWidget {
               softWrap: true,
               overflow: TextOverflow.visible,
             ),
-            Flexible(
-              child: Text(
-                subtitle,
-                style: const TextStyle(
-                  height: 1.5,
-                  fontSize: 14,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
-                ),
-                softWrap: true,
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                height: 1.5,
+                fontSize: 14,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w500,
+                color: AppColors.grey700,
               ),
+              softWrap: true,
             ),
             if (body != null) ...[
               const SizedBox(height: 24),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: body!,
+              SingleChildScrollView(
+                physics:
+                    const BouncingScrollPhysics(), // Optional: Add bounce effect
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height -
+                          264, // Adjust as per your needs
+                    ),
+                    child: Flexible(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: body!,
+                      ),
+                    )),
               ),
             ],
             const SizedBox(height: 24),

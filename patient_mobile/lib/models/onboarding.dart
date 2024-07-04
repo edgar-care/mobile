@@ -781,14 +781,15 @@ class _Onboarding3State extends State<Onboarding3> {
                     isScrollControlled: true,
                     backgroundColor: Colors.transparent,
                     builder: (context) {
-                      return ChangeNotifierProvider.value(
-                        value: model,
-                        child: ListModal(
-                          model: model,
-                          children: [
-                            AddTraitement(addNewTraitement: addNewTraitement)
-                          ],
-                        ),
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(
+                            model: model,
+                            children: [
+                              AddTraitement(addNewTraitement: addNewTraitement)
+                            ],
+                          );
+                        },
                       );
                     },
                   );
@@ -882,19 +883,21 @@ class _Onboarding3State extends State<Onboarding3> {
                                                 backgroundColor:
                                                     Colors.transparent,
                                                 builder: (context) {
-                                                  return ChangeNotifierProvider
-                                                      .value(
-                                                    value: model,
-                                                    child: ListModal(
-                                                      model: model,
-                                                      children: [
-                                                        InfoTraitement(
-                                                            traitement:
-                                                                traitments[i],
-                                                            updateData:
-                                                                updateData)
-                                                      ],
-                                                    ),
+                                                  return Consumer<
+                                                      BottomSheetModel>(
+                                                    builder: (context, model,
+                                                        child) {
+                                                      return ListModal(
+                                                        model: model,
+                                                        children: [
+                                                          InfoTraitement(
+                                                              traitement:
+                                                                  traitments[i],
+                                                              updateData:
+                                                                  updateData)
+                                                        ],
+                                                      );
+                                                    },
                                                   );
                                                 },
                                               );
@@ -1359,17 +1362,18 @@ class _AddTraitementState extends State<AddTraitement> {
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: model,
-                  child: ListModal(
-                    model: model,
-                    children: [
-                      AddMedicament(
-                        addNewTraitement: widget.addNewTraitement,
-                        updateMedicaments: updateMedicament,
-                      ),
-                    ],
-                  ),
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        AddMedicament(
+                          addNewTraitement: widget.addNewTraitement,
+                          updateMedicaments: updateMedicament,
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             );

@@ -138,14 +138,15 @@ class _TraitmentPageState extends State<TraitmentPage> {
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: model,
-                  child: ListModal(
-                    model: model,
-                    children: const [
-                      BodyCalendarTraitement(),
-                    ],
-                  ),
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: const [
+                        BodyCalendarTraitement(),
+                      ],
+                    );
+                  },
                 );
               },
             );
@@ -217,16 +218,17 @@ class _TraitmentPageState extends State<TraitmentPage> {
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: model,
-                  child: ListModal(
-                    model: model,
-                    children: [
-                      AddTraitement(
-                        getFilterTraitement: updateTraitement,
-                      )
-                    ],
-                  ),
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        AddTraitement(
+                          getFilterTraitement: updateTraitement,
+                        )
+                      ],
+                    );
+                  },
                 );
               },
             );
@@ -263,8 +265,8 @@ class _TraitmentPageState extends State<TraitmentPage> {
 
                         showModalBottomSheet(
                           context: context,
-                          backgroundColor: Colors.transparent,
                           isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
                           builder: (context) {
                             return Consumer<BottomSheetModel>(
                               builder: (context, model, child) {
@@ -746,14 +748,15 @@ class _AddTraitementState extends State<AddTraitement> {
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: model,
-                  child: ListModal(
-                    model: model,
-                    children: [
-                      AddMedicament(updateMedicaments: updateMedicament)
-                    ],
-                  ),
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        AddMedicament(updateMedicaments: updateMedicament)
+                      ],
+                    );
+                  },
                 );
               },
             );
@@ -1792,16 +1795,26 @@ class _BodyModifyTraitementState extends State<ModifyTraitement> {
         const SizedBox(height: 16),
         GestureDetector(
           onTap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+
             showModalBottomSheet(
               context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
               builder: (context) {
-                return ListModal(
-                  children: [
-                    AddMedicamentModify(
-                      traitement: widget.treatments,
-                      updateMedicaments: updateMedicaments,
-                    ),
-                  ],
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        AddMedicamentModify(
+                          traitement: widget.treatments,
+                          updateMedicaments: updateMedicaments,
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             );

@@ -191,12 +191,13 @@ class _FilePageState extends State<FilePage> {
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
-                    return ChangeNotifierProvider.value(
-                      value: model,
-                      child: ListModal(
-                        model: model,
-                        children: [FilterModal(toggleFilter: toggleFilter)],
-                      ),
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(
+                          model: model,
+                          children: [FilterModal(toggleFilter: toggleFilter)],
+                        );
+                      },
                     );
                   },
                 );
@@ -301,12 +302,13 @@ class _FilePageState extends State<FilePage> {
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: model,
-                  child: ListModal(
-                    model: model,
-                    children: [AddDocument(updateData: updateData)],
-                  ),
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [AddDocument(updateData: updateData)],
+                    );
+                  },
                 );
               },
             );

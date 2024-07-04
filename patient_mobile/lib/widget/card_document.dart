@@ -142,27 +142,28 @@ class _CardDocumentState extends State<CardDocument> {
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) {
-                  return ChangeNotifierProvider.value(
-                    value: model,
-                    child: ListModal(
-                      model: model,
-                      children: [
-                        OpenPatient(
-                          url: widget.url,
-                          id: widget.id,
-                          isfavorite: widget.isfavorite,
-                          name: widget.nomDocument,
-                          model: model,
-                        ),
-                        ModifyPatient(
-                          name: widget.nomDocument,
-                          id: widget.id,
-                          updatedata: widget.updatedata,
-                        ),
-                        DeletePatient(
-                            id: widget.id, updatedata: widget.updatedata)
-                      ],
-                    ),
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                        model: model,
+                        children: [
+                          OpenPatient(
+                            url: widget.url,
+                            id: widget.id,
+                            isfavorite: widget.isfavorite,
+                            name: widget.nomDocument,
+                            model: model,
+                          ),
+                          ModifyPatient(
+                            name: widget.nomDocument,
+                            id: widget.id,
+                            updatedata: widget.updatedata,
+                          ),
+                          DeletePatient(
+                              id: widget.id, updatedata: widget.updatedata)
+                        ],
+                      );
+                    },
                   );
                 },
               );
