@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
 
 class Login extends StatefulWidget {
@@ -89,8 +88,7 @@ class _LoginState extends State<Login> {
                           height: 8,
                         ),
                         CustomField(
-                          startUppercase: false,
-                          text: email,
+                          action: TextInputAction.next,
                           label: "prenom.nom@gmail.com",
                           keyboardType: TextInputType.emailAddress,
                           onChanged: (value) {
@@ -112,7 +110,7 @@ class _LoginState extends State<Login> {
                           height: 8,
                         ),
                         CustomField(
-                          startUppercase: false,
+                          action: TextInputAction.next,
                           label: "Minimum 8 caractères",
                           keyboardType: TextInputType.text,
                           isPassword: true,
@@ -124,7 +122,7 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 24),
                         Buttons(
-                          variant: Variante.primary,
+                          variant: Variant.primary,
                           msg: const Text("Se connecter"),
                           size: SizeButton.md,
                           onPressed: () {
@@ -151,7 +149,7 @@ class _LoginState extends State<Login> {
                         height: 8,
                       ),
                       Buttons(
-                        variant: Variante.secondary,
+                        variant: Variant.secondary,
                         msg: const Text("Créer un compte"),
                         size: SizeButton.md,
                         onPressed: () {

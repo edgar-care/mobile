@@ -2,26 +2,26 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
 import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class DiagnosticCard extends StatefulWidget {
   Map<String, dynamic> rdvInfo;
   int type;
   Function refresh;
-  DiagnosticCard({super.key,
+  DiagnosticCard(
+      {super.key,
       required this.rdvInfo,
       required this.type,
       required this.refresh});
@@ -31,15 +31,13 @@ class DiagnosticCard extends StatefulWidget {
 }
 
 class _DiagnosticCardState extends State<DiagnosticCard> {
-
-   ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
+  ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient']).then((value) => 
-    setState(() {
-      patientInfo = value;
-    }));
+    getPatientById(widget.rdvInfo['id_patient']).then((value) => setState(() {
+          patientInfo = value;
+        }));
   }
 
   @override
@@ -51,8 +49,8 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime start =
-        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
+    DateTime start = DateTime.fromMillisecondsSinceEpoch(
+        widget.rdvInfo['start_date'] * 1000);
     DateTime end =
         DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
 
@@ -67,116 +65,112 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
     }
 
     return Skeletonizer(
-      enabled: patientInfo.isEmpty,
-      child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: AppColors.blue200, width: 2.0),
-          ),
-          child: InkWell(
-              onTap: () {
-                WoltModalSheet.show<void>(
-                  onModalDismissedWithBarrierTap: () {
-                    pageIndexNotifier.value = 0;
-                  },
-                  onModalDismissedWithDrag: () {
-                    pageIndexNotifier.value = 0;
-                  },
-                  pageIndexNotifier: pageIndexNotifier,
-                  context: context,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      navModal(
-                          modalSheetContext,
-                          patientInfo["Nom"],
-                          patientInfo["Prenom"],
-                          widget.rdvInfo,
-                          pageIndexNotifier),
-                      validateModal(modalSheetContext,
-                          pageIndexNotifier, widget.rdvInfo),
-                      cancelModal(modalSheetContext, pageIndexNotifier,
-                          widget.rdvInfo),
-                    ];
-                  },
-                );
-              },
-              child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(children: [
-                    Container(
-                      height: 50,
-                      width: 4,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8.0),
+        enabled: patientInfo.isEmpty,
+        child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: AppColors.blue200, width: 2.0),
+            ),
+            child: InkWell(
+                onTap: () {
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            modalNav(context, patientInfo["Nom"],
+                                patientInfo["Prenom"], widget.rdvInfo, model),
+                            modalCancel(model, widget.rdvInfo),
+                            modalValidate(model, widget.rdvInfo)
+                          ]);
+                        },
+                      );
+                    },
+                  );
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(children: [
+                      Container(
+                        height: 50,
+                        width: 4,
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Row(children: [
-                            Text(DateFormat('yMd', 'fr').format(start),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
                                 style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins')),
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
                             const SizedBox(
-                              width: 4,
-                            ),
-                            const Text("-",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins')),
-                            const SizedBox(
-                              width: 4,
+                              height: 8,
                             ),
                             Row(children: [
-                              Text(DateFormat('jm', 'fr').format(start),
+                              Text(DateFormat('yMd', 'fr').format(start),
                                   style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'Poppins')),
                               const SizedBox(
-                                width: 2,
+                                width: 4,
                               ),
-                              const Icon(
-                                BootstrapIcons.arrow_right,
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              Text(DateFormat('jm', 'fr').format(end),
-                                  style: const TextStyle(
+                              const Text("-",
+                                  style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'Poppins')),
-                            ]),
-                          ])
-                        ]),
-                    const Spacer(),
-                    const Icon(
-                      BootstrapIcons.chevron_right,
-                      size: 16,
-                    ),
-                  ])))));
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Row(children: [
+                                Text(DateFormat('jm', 'fr').format(start),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                const Icon(
+                                  BootstrapIcons.arrow_right,
+                                  size: 16,
+                                ),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(DateFormat('jm', 'fr').format(end),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                              ]),
+                            ])
+                          ]),
+                      const Spacer(),
+                      const Icon(
+                        BootstrapIcons.chevron_right,
+                        size: 16,
+                      ),
+                    ])))));
   }
 
-  SliverWoltModalSheetPage navModal(BuildContext context, String name,
-      String firstname, Map<String, dynamic> rdvInfo, ValueNotifier pageindex) {
+  Widget modalNav(BuildContext context, String name, String firstname,
+      Map<String, dynamic> rdvInfo, BottomSheetModel model) {
     DateTime date =
         DateTime.fromMillisecondsSinceEpoch(rdvInfo['start_date'] * 1000);
     String dateString = DateFormat('yMMMd', 'fr').format(date).toString();
@@ -200,487 +194,353 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
       return true;
     }
 
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Column(children: [
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                    'Rendez-vous de $firstname $name',
-                    style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.center,
-                  )),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                    '$dateString de $timeStringStart à $timeStringEnd',
-                    style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.center,
-                  )),
-            ]),
-            const SizedBox(height: 16),
-            CustomModalCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                ontap: () {
-                  loadDoctor().then((value) => WoltModalSheet.show(
-                        context: context,
-                        pageListBuilder: (BuildContext context) {
-                          return [
-                            medicalFolderModal(context, docs, doctorindex),
-                          ];
-                        },
-                      ));
-                }),
-            const SizedBox(height: 4),
-            CustomModalCard(
-              text: 'Diagnostic',
-              icon: BootstrapIcons.heart_pulse_fill,
-              ontap: () {
-                loadInfo().then((value) => WoltModalSheet.show(
-                      context: context,
-                      pageListBuilder: (BuildContext context) {
-                        return [
-                          diagnosticModal(context, diagnostic),
-                        ];
+    return ModalContainer(
+      title: 'Rendez-vous de $firstname $name',
+      subtitle: '$dateString de $timeStringStart à $timeStringEnd',
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.person,
+          color: AppColors.grey700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
+        CustomModalCard(
+            text: 'Dossier médical',
+            icon: BootstrapIcons.postcard_heart_fill,
+            ontap: () {
+              final model =
+                  Provider.of<BottomSheetModel>(context, listen: false);
+              model.resetCurrentIndex();
+              loadDoctor().then(
+                (value) => showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(model: model, children: [
+                          ModalMedicFolder(
+                              docs: docs,
+                              doctorindex: doctorindex,
+                              patientInfo: patientInfo)
+                        ]);
                       },
-                    ));
-              },
-            ),
-            const SizedBox(height: 4),
-            CustomModalCard(
-              text: 'Retranscription du chat',
-              icon: BootstrapIcons.file_text_fill,
-              ontap: () {
-                loadInfo().then((value) => WoltModalSheet.show(
-                      context: context,
-                      pageListBuilder: (BuildContext context) {
-                        return [
-                          chatModal(context, diagnostic),
-                        ];
-                      },
-                    ));
-              },
-            ),
-            if (rdvInfo['appointment_status'] == 'WAITING_FOR_REVIEW')
-              Column(children: [
-                const SizedBox(height: 12),
-                Container(height: 2, color: AppColors.blue200),
-                const SizedBox(height: 12),
-                Buttons(
-                  variant: Variante.validate,
-                  size: SizeButton.sm,
-                  msg: const Text(
-                    'Valider le rendez-vous',
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () {
-                    pageIndexNotifier.value = 1;
+                    );
                   },
                 ),
-                const SizedBox(height: 4),
-                Buttons(
-                  variant: Variante.delete,
-                  size: SizeButton.sm,
-                  msg: const Text(
-                    'Annuler le rendez-vous',
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () {
-                    pageIndexNotifier.value = 2;
-                  },
-                )
-              ]),
-          ]),
+              );
+            }),
+        const SizedBox(height: 4),
+        CustomModalCard(
+          text: 'Diagnostic',
+          icon: BootstrapIcons.heart_pulse_fill,
+          ontap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            loadInfo().then(
+              (value) => showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                          model: model,
+                          children: [ModalDiagnostic(summary: diagnostic)]);
+                    },
+                  );
+                },
+              ),
+            );
+          },
         ),
-      ),
+        const SizedBox(height: 4),
+        CustomModalCard(
+          text: 'Retranscription du chat',
+          icon: BootstrapIcons.file_text_fill,
+          ontap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            loadInfo().then(
+              (value) => showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                          model: model, children: [modalChat(diagnostic)]);
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
+      footer: rdvInfo['appointment_status'] == 'WAITING_FOR_REVIEW'
+          ? Column(children: [
+              const SizedBox(height: 12),
+              Container(height: 2, color: AppColors.blue200),
+              const SizedBox(height: 12),
+              Buttons(
+                variant: Variant.validate,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Valider le rendez-vous',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+                onPressed: () {
+                  model.changePage(2);
+                },
+              ),
+              const SizedBox(height: 4),
+              Buttons(
+                variant: Variant.delete,
+                size: SizeButton.sm,
+                msg: const Text(
+                  'Annuler le rendez-vous',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+                onPressed: () {
+                  model.changePage(1);
+                },
+              )
+            ])
+          : Container(),
     );
   }
 
-  SliverWoltModalSheetPage validateModal(BuildContext context,
-      ValueNotifier pageIndexNotifier, Map<String, dynamic> rdvInfo) {
-    return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
-          child: Column(
-            children: [
-              Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.green200,
-                  ),
-                  child: const Icon(
-                    BootstrapIcons.check,
-                    color: AppColors.green700,
-                    size: 40,
-                  )),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Êtes-vous sûr ?",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "En acceptant ce rendez-vous, vous assurez l'utilité de celui-ci auprès de votre patient.",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Annuler'),
-                      onPressed: () {
-                        pageIndexNotifier.value = 0;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.validate,
-                      size: SizeButton.sm,
-                      msg: const Text('Oui, je suis sûr'),
-                      onPressed: () {
-                        postDiagValidation(
-                            context, rdvInfo['id'], true, '', '');
-                        Navigator.pop(context);
-                        widget.refresh();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
+  Widget modalValidate(BottomSheetModel model, Map<String, dynamic> rdvInfo) {
+    return ModalContainer(
+      title: "Êtes-vous sûr ?",
+      subtitle:
+          "En acceptant ce rendez-vous, vous assurez l'utilité de celui-ci auprès de votre patient.",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.check,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                model.changePage(0);
+              },
+            ),
           ),
-        ),
+          const SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variant.validate,
+              size: SizeButton.sm,
+              msg: const Text('Oui, je suis sûr'),
+              onPressed: () {
+                postDiagValidation(context, rdvInfo['id'], true, '', '');
+                Navigator.pop(context);
+                widget.refresh();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  SliverWoltModalSheetPage cancelModal(BuildContext context,
-      ValueNotifier pageIndexNotifier, Map<String, dynamic> rdvInfo) {
+  Widget modalCancel(BottomSheetModel model, Map<String, dynamic> rdvInfo) {
     String cancelreason = '';
     String healthmethod = '';
-    return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      backgroundColor: AppColors.white,
-      hasSabGradient: false,
-      enableDrag: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-        child: SizedBox(
-          child: Column(
-            children: [
-              Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(60),
-                    color: AppColors.red200,
-                  ),
-                  child: const Icon(
-                    BootstrapIcons.x,
-                    color: AppColors.red700,
-                    size: 40,
-                  )),
-              const SizedBox(
-                height: 8,
+    return ModalContainer(
+      title: "Êtes-vous sûr ?",
+      subtitle:
+          "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière.",
+      icon: const IconModal(
+        type: ModalType.error,
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
+        ),
+      ),
+      body: [
+        const Text(
+          "La raison de l'annulation",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: TextFormField(
+            maxLines: 3,
+            minLines: 3,
+            decoration: const InputDecoration(
+              hintStyle: TextStyle(
+                color: AppColors.grey400,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                textBaseline: TextBaseline.ideographic,
               ),
-              const Text(
-                "Êtes-vous sûr ?",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              const Text(
-                "Si vous supprimer ce rendez-vous, vous ne pourrez plus revenir en arrière.",
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey400),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text(
-                  "La raison de l'annulation",
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                AnimatedContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue500, width: 2),
-                  ),
-                  child: TextFormField(
-                    maxLines: 3,
-                    minLines: 3,
-                    decoration: const InputDecoration(
-                      hintStyle: TextStyle(
-                        color: AppColors.grey400,
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        textBaseline: TextBaseline.ideographic,
-                      ),
-                      hintText: 'Renseigner la raison de l\'annulation',
-                      alignLabelWithHint: true,
-                    ),
-                    onChanged: (value) => cancelreason = value,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Text(
-                  "Méthode de soins",
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                AnimatedContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue500, width: 2),
-                  ),
-                  child: TextFormField(
-                    maxLines: 2,
-                    minLines: 2,
-                    decoration: const InputDecoration(
-                      hintStyle: TextStyle(
-                        color: AppColors.grey400,
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        textBaseline: TextBaseline.ideographic,
-                      ),
-                      hintText:
-                          'Renseigner les méthodes de soins pour diminuer les symptômes',
-                      alignLabelWithHint: true,
-                    ),
-                    onChanged: (value) => cancelreason = value,
-                  ),
-                ),
-              ]),
-              const SizedBox(
-                height: 32,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.secondary,
-                      size: SizeButton.sm,
-                      msg: const Text('Annuler'),
-                      onPressed: () {
-                        pageIndexNotifier.value = 0;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    child: Buttons(
-                      variant: Variante.delete,
-                      size: SizeButton.sm,
-                      msg: const Text('Oui, je suis sûr'),
-                      onPressed: () {
-                        if (cancelreason == '') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              ErrorLoginSnackBar(
-                                  context: context,
-                                  message:
-                                      'Veuillez renseigner la raison de l\'annulation'));
-                        } else {
-                          postDiagValidation(context, rdvInfo['id'], false,
-                              cancelreason, healthmethod);
-                          Navigator.pop(context);
-                          widget.refresh();
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              hintText: 'Renseigner la raison de l\'annulation',
+              alignLabelWithHint: true,
+            ),
+            onChanged: (value) => cancelreason = value,
           ),
         ),
-      ),
-    );
-  }
-
-  SliverWoltModalSheetPage diagnosticModal(
-      BuildContext context, Map<String, dynamic> summary) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: BodySummary(summary: summary),
-          )),
-    );
-  }
-
-  SliverWoltModalSheetPage chatModal(
-      BuildContext context, Map<String, dynamic> summary) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-                decoration: BoxDecoration(
-                  color: AppColors.blue50,
-                  borderRadius: BorderRadius.circular(4.0),
-                  border: Border.all(color: AppColors.blue200, width: 1.0),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        BootstrapIcons.file_text_fill,
-                        color: AppColors.blue700,
-                        size: 16,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        'Retranscription du chat',
-                        style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Poppins'),
-                      ),
-                    ],
-                  ),
-                )),
-            const SizedBox(
-              height: 16,
-            ),
-            ChatList(summary: summary),
-            const SizedBox(
-              height: 16,
-            ),
-            Buttons(
-              variant: Variante.secondary,
-              size: SizeButton.sm,
-              msg: const Text(
-                "Revenir en arrière",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.blue700),
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          "Méthode de soins",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        AnimatedContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          child: TextFormField(
+            maxLines: 2,
+            minLines: 2,
+            decoration: const InputDecoration(
+              hintStyle: TextStyle(
+                color: AppColors.grey400,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                textBaseline: TextBaseline.ideographic,
               ),
+              hintText:
+                  'Renseigner les méthodes de soins pour diminuer les symptômes',
+              alignLabelWithHint: true,
+            ),
+            onChanged: (value) => cancelreason = value,
+          ),
+        ),
+      ],
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
               onPressed: () {
-                Navigator.pop(context);
+                model.changePage(0);
               },
             ),
-          ]),
-        ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variant.delete,
+              size: SizeButton.sm,
+              msg: const Text('Oui, je suis sûr'),
+              onPressed: () {
+                if (cancelreason == '') {
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+                      context: context,
+                      message:
+                          'Veuillez renseigner la raison de l\'annulation'));
+                } else {
+                  postDiagValidation(context, rdvInfo['id'], false,
+                      cancelreason, healthmethod);
+                  Navigator.pop(context);
+                  widget.refresh();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  SliverWoltModalSheetPage medicalFolderModal(
-      BuildContext context, List<dynamic> docs, int doctorindex) {
-    return WoltModalSheetPage(
-        backgroundColor: AppColors.white,
-        hasTopBarLayer: false,
-        child: MedicalFolderBody(
-            patientInfo: patientInfo, docs: docs, doctorindex: doctorindex));
+  Widget modalChat(Map<String, dynamic> summary) {
+    return ModalContainer(
+      title: "Retranscription du chat",
+      subtitle: "Voici la retrencription du chat",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.file_text_fill,
+          color: AppColors.grey700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
+        ChatList(summary: summary),
+      ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.sm,
+        msg: const Text(
+          "Revenir en arrière",
+          style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              color: AppColors.blue700),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 }
 
-class BodySummary extends StatelessWidget {
+class ModalDiagnostic extends StatefulWidget {
   final Map<String, dynamic> summary;
-  const BodySummary({super.key, required this.summary});
+  const ModalDiagnostic({super.key, required this.summary});
 
+  @override
+  State<ModalDiagnostic> createState() => ModalDiagnosticState();
+}
+
+class ModalDiagnosticState extends State<ModalDiagnostic> {
   @override
   Widget build(BuildContext context) {
     Color circleColor;
@@ -688,7 +548,7 @@ class BodySummary extends StatelessWidget {
     List<String> symptoms = [];
     List<String> mbSymptoms = [];
     List<String> notSymptoms = [];
-    int value = (summary['fiability'] * 100).round();
+    int value = (widget.summary['fiability'] * 100).round();
     switch (value) {
       case < 30:
         circleColor = AppColors.red600;
@@ -697,54 +557,30 @@ class BodySummary extends StatelessWidget {
       default:
         circleColor = AppColors.green600;
     }
-    for (int i = 0; i < summary['diseases'].length; i++) {
-      disease.add(summary['diseases'][i]);
+    for (int i = 0; i < widget.summary['diseases'].length; i++) {
+      disease.add(widget.summary['diseases'][i]);
     }
-    for (int i = 0; i < summary['symptoms'].length; i++) {
-      if (summary['symptoms'][i]['presence'] == true) {
-        symptoms.add(summary['symptoms'][i]['name']);
-      } else if (summary['symptoms'][i]['presence'] == null) {
-        mbSymptoms.add(summary['symptoms'][i]['name']);
+    for (int i = 0; i < widget.summary['symptoms'].length; i++) {
+      if (widget.summary['symptoms'][i]['presence'] == true) {
+        symptoms.add(widget.summary['symptoms'][i]['name']);
+      } else if (widget.summary['symptoms'][i]['presence'] == null) {
+        mbSymptoms.add(widget.summary['symptoms'][i]['name']);
       } else {
-        notSymptoms.add(summary['symptoms'][i]['name']);
+        notSymptoms.add(widget.summary['symptoms'][i]['name']);
       }
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            decoration: BoxDecoration(
-              color: AppColors.blue50,
-              borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(color: AppColors.blue200, width: 1.0),
-            ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    BootstrapIcons.heart_pulse_fill,
-                    color: AppColors.blue700,
-                    size: 16,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    'Diagnostic',
-                    style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins'),
-                  ),
-                ],
-              ),
-            )),
-        const SizedBox(
-          height: 16,
+    return ModalContainer(
+      title: "Diagnostic",
+      subtitle: "Voici le diagnotic",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.heart_pulse_fill,
+          color: AppColors.grey700,
+          size: 18,
         ),
+        type: ModalType.info,
+      ),
+      body: [
         Wrap(
           runSpacing: 8,
           children: [
@@ -860,45 +696,42 @@ class BodySummary extends StatelessWidget {
               SymptomsList(symptoms: mbSymptoms),
             ],
           ),
-        const SizedBox(
-          height: 16,
-        ),
-        Buttons(
-          variant: Variante.secondary,
-          size: SizeButton.sm,
-          msg: const Text(
-            "Revenir en arrière",
-            style: TextStyle(
-                fontSize: 12,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                color: AppColors.blue700),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.sm,
+        msg: const Text(
+          "Revenir en arrière",
+          style: TextStyle(
+              fontSize: 12,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue700),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
 
 // ignore: must_be_immutable
-class MedicalFolderBody extends StatefulWidget {
+class ModalMedicFolder extends StatefulWidget {
   Map<String, dynamic> patientInfo;
   List<dynamic> docs;
   int doctorindex;
-  MedicalFolderBody(
+  ModalMedicFolder(
       {super.key,
-      required this.patientInfo,
       required this.docs,
-      required this.doctorindex});
+      required this.doctorindex,
+      required this.patientInfo});
 
   @override
-  State<MedicalFolderBody> createState() => _MedicalFolderBodyState();
+  State<ModalMedicFolder> createState() => _ModalMedicFolderState();
 }
 
-class _MedicalFolderBodyState extends State<MedicalFolderBody> {
+class _ModalMedicFolderState extends State<ModalMedicFolder> {
   String sexe(String sexe) {
     switch (sexe) {
       case 'MALE':
@@ -917,122 +750,95 @@ class _MedicalFolderBodyState extends State<MedicalFolderBody> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              decoration: BoxDecoration(
-                color: AppColors.blue50,
-                borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: AppColors.blue200, width: 1.0),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      BootstrapIcons.postcard_heart_fill,
-                      color: AppColors.blue700,
-                      size: 16,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'Dossier médical',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins'),
-                    ),
-                  ],
-                ),
-              )),
-          const SizedBox(
-            height: 16,
-          ),
-          Wrap(
-            alignment: WrapAlignment.start,
-            direction: Axis.vertical,
-            spacing: 12,
-            children: [
-              Text('Prénom: ${widget.patientInfo['Prenom']}',
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500)),
-              Text('Nom: ${widget.patientInfo['Nom']}',
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500)),
+    return ModalContainer(
+      title: "Dossier médical",
+      subtitle: "Dossier médical de ${widget.patientInfo['Prenom']}",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.postcard_heart_fill,
+          color: AppColors.grey700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
+        Wrap(
+          alignment: WrapAlignment.start,
+          direction: Axis.vertical,
+          spacing: 12,
+          children: [
+            Text('Prénom: ${widget.patientInfo['Prenom']}',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            Text('Nom: ${widget.patientInfo['Nom']}',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            Text(
+                'Date de naissance: ${widget.patientInfo['date_de_naissance']}',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            Text('Sexe: ${sexe(widget.patientInfo['sexe'])}',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            Text('Taille: ${taille(widget.patientInfo['taille'])} m',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            Text('Poids: ${taille(widget.patientInfo['poids'])} kg',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500)),
+            if (widget.doctorindex != -1)
               Text(
-                  'Date de naissance: ${widget.patientInfo['date_de_naissance']}',
+                  'Médecin traitant: ${widget.docs[widget.doctorindex]['firstname']} ${widget.docs[widget.doctorindex]['name']}',
                   style: const TextStyle(
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500)),
-              Text('Sexe: ${sexe(widget.patientInfo['sexe'])}',
-                  style: const TextStyle(
+            if (widget.doctorindex == -1)
+              const Text('Médecin traitant: Non indiqué',
+                  style: TextStyle(
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500)),
-              Text('Taille: ${taille(widget.patientInfo['taille'])} m',
-                  style: const TextStyle(
+            if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+              const Text('Antécédants médicaux et sujets de santé: ',
+                  style: TextStyle(
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500)),
-              Text('Poids: ${taille(widget.patientInfo['poids'])} kg',
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500)),
-              if (widget.doctorindex != -1)
-                Text(
-                    'Médecin traitant: ${widget.docs[widget.doctorindex]['firstname']} ${widget.docs[widget.doctorindex]['name']}',
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500)),
-              if (widget.doctorindex == -1)
-                const Text('Médecin traitant: Non indiqué',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500)),
-              if (widget.patientInfo['medical_antecedents'].isNotEmpty)
-                const Text('Antécédants médicaux et sujets de santé: ',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500)),
-              if (widget.patientInfo['medical_antecedents'].isNotEmpty)
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 32,
-                  child: PatientInfoCard(
-                      context: context,
-                      tmpTraitments: widget.patientInfo['medical_antecedents']),
-                )
-            ],
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Buttons(
-            variant: Variante.secondary,
-            size: SizeButton.sm,
-            msg: const Text(
-              "Revenir en arrière",
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ]),
+            if (widget.patientInfo['medical_antecedents'].isNotEmpty)
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 32,
+                child: PatientInfoCard(
+                    context: context,
+                    tmpTraitments: widget.patientInfo['medical_antecedents']),
+              )
+          ],
+        ),
+      ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.sm,
+        msg: const Text(
+          "Revenir en arrière",
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }
 }
+
+// ignore: must_be_immutable

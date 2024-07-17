@@ -1,7 +1,7 @@
 import 'package:edgar_pro/services/logout_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/custom_dashboard_card.dart';
 
 class CustomAppBar extends StatefulWidget {

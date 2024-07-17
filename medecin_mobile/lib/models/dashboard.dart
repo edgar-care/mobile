@@ -8,7 +8,7 @@ import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
 
 class DashBoard extends StatefulWidget {

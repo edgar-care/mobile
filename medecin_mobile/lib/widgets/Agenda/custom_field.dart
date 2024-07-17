@@ -1,4 +1,4 @@
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomField extends StatefulWidget {

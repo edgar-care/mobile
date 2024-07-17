@@ -1,6 +1,6 @@
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
