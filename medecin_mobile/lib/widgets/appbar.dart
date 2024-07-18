@@ -110,15 +110,18 @@ class NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Container(
+      color: AppColors.white,
+      child:
+    GestureDetector(
         onTap: onTap,
         child: Column(children: [
           SvgPicture.asset(
             icon,
             // ignore: deprecated_member_use
             color: color == true ? AppColors.blue800 : AppColors.grey500,
-            height: 25,
-            width: 25,
+            height: 20,
+            width: 20,
           ),
           const SizedBox(
             height: 4,
@@ -131,6 +134,6 @@ class NavBarItem extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: color == true ? AppColors.blue800 : AppColors.grey500),
           )
-        ]));
+        ])));
   }
 }

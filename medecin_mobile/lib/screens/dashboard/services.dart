@@ -54,7 +54,7 @@ class _ServicesState extends State<Services> {
           child: Column(
             children: [
               BarItem(
-                  title: "Mes Patients",
+                  title: "Mes patients",
                   bottomText: "Toutes les informations de vos patients",
                   icon: BootstrapIcons.capsule,
                   ontap: () {
@@ -65,7 +65,7 @@ class _ServicesState extends State<Services> {
                 color: AppColors.blue100,
               ),
               BarItem(
-                  title: "Mes Diagnostics",
+                  title: "Mes diagnostics",
                   bottomText: "Diagnostics en attente de validation",
                   icon: BootstrapIcons.file_earmark_text_fill,
                   ontap: () {
@@ -109,7 +109,10 @@ class BarItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: GestureDetector(
           onTap: ontap,
-          child: Row(
+          child:Container(
+            color: AppColors.white,
+            child : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,13 +147,12 @@ class BarItem extends StatelessWidget {
                   )
                 ],
               ),
-              const Spacer(),
               const Icon(
                 BootstrapIcons.chevron_right,
                 size: 16,
               ),
             ],
           ),
-        ));
+        )));
   }
 }
