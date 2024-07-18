@@ -346,8 +346,9 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "'Démarrez une nouvelle conversation'",
-      subtitle: "Séléctionner un Docteur",
+      title: "Commencer une conversation'",
+      subtitle:
+          "Commencer une nouvelle conversation en sélectionnant un médecin.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.chat_dots_fill,
@@ -366,7 +367,8 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
           },
         ),
         const SizedBox(height: 16),
-        Expanded(
+        Flexible(
+          fit: FlexFit.loose,
           child: FutureBuilder(
             future: fetchData(),
             builder: (context, snapshot) {
@@ -498,8 +500,9 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "Démarrez une nouvelle conversation",
-      subtitle: "Veuiller rentrer votre message",
+      title: "Commencer une conversation",
+      subtitle:
+          "Ecriver votre message pour commencer la conversation avec ce médecin.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.chat_dots_fill,
