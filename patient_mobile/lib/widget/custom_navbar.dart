@@ -187,7 +187,7 @@ class CardNavbar extends StatelessWidget {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.remove('token');
           // ignore: use_build_context_synchronously
-          Navigator.pushNamed(context, '/');
+          Navigator.pushNamed(context, '/login');
         } else if (isDeconnexion == false || isDeconnexion == null) {
           callback(index);
         }

@@ -33,7 +33,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
     String? token = prefs.getString('token');
     if (token == null) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/');
+      Navigator.pushNamed(context, '/login');
     }
   }
 
@@ -322,7 +322,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 .getInstance();
                                         prefs.remove('token');
                                         // ignore: use_build_context_synchronously
-                                        Navigator.pushNamed(context, '/');
+                                        Navigator.pushNamed(context, '/login');
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,

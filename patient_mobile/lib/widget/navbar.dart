@@ -31,7 +31,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
               child: PlainBorderButton(
                 text: 'Espace patient',
                 onPressed: () {
-                  Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/login');
                 },
               ),
             ),
