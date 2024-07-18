@@ -1,14 +1,21 @@
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 import 'models/auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
-  runApp(const MainApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => BottomSheetModel(),
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

@@ -4,7 +4,6 @@ import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -36,7 +35,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
         infoMedical = doctor;
       }
     }
-    Logger().d(infoMedical);
   }
 
   @override
@@ -306,10 +304,12 @@ class NavbarPLusTab extends StatefulWidget {
   final String type; // Ajout de la propriété type
   final Widget? outlineIcon;
   final Color? color;
+  final bool? isActive;
 
   const NavbarPLusTab(
       {super.key,
       this.icon,
+      this.isActive,
       required this.title,
       required this.onTap,
       required this.type,
@@ -360,6 +360,24 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
                   fontFamily: "Poppins",
                 )),
             const Spacer(),
+            if (widget.isActive != null) ...[
+            widget.isActive! ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.green100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text("Activée", style: TextStyle(color: AppColors.green700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
+            ) : Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.red100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text("Désactivée", style: TextStyle(color: AppColors.red700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
+            ),
+            const SizedBox(width: 16),
+            ],
             widget.outlineIcon ?? const SizedBox.shrink(),
           ],
         ),

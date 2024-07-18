@@ -1,4 +1,4 @@
-import 'package:edgar_pro/services/patient_info_service.dart';
+import 'package:edgar_pro/2FA/authentication_page.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +180,7 @@ class _AccountPageState extends State<AccountPage> {
                                           PageRouteBuilder<void>(
                                             opaque: false,
                                             pageBuilder: (BuildContext context, _, __) {
-                                              return AccountPage(infoMedical: infoMedical,);
+                                              return const DoubleAuthentication();
                                             },
                                           ),
                                         );
