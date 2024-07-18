@@ -322,7 +322,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 .getInstance();
                                         prefs.remove('token');
                                         // ignore: use_build_context_synchronously
-                                        Navigator.pushNamed(context, '/login');
+                                        Navigator.pushNamed(context, '/');
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
