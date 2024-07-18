@@ -1,11 +1,11 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/websocket.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/chat_utils.dart';
-import 'package:edgar/widget/field_custom.dart';
+import 'package:Edgar/services/websocket.dart';
+import 'package:Edgar/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 
 // ignore: must_be_immutable
 class ChatPageConversation extends StatefulWidget {

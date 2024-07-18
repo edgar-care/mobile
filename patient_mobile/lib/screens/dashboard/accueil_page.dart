@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:Edgar/services/get_information_patient.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/plain_button.dart';
-import 'package:edgar/widget/pdf_card.dart';
+import 'package:Edgar/widget/plain_button.dart';
+import 'package:Edgar/widget/pdf_card.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,8 +25,8 @@ class _HomePageState extends State<HomePage> {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
     return;

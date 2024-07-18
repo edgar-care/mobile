@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -7,7 +7,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.buttonBlue,
+      backgroundColor: AppColors.blue700,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -17,10 +17,11 @@ class AuthScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Image.asset("assets/images/logo/edgar-high-five.png", width: 82),
             const SizedBox(height: 100),
-            EmptyButton(text: "Enregistrez-vous", onPressed: () {
-              Navigator.pushNamed(context, '/register');
-            
-            }),
+            EmptyButton(
+                text: "Enregistrez-vous",
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                }),
             const SizedBox(height: 20),
           ],
         ),
@@ -39,7 +40,7 @@ class EmptyButton extends StatelessWidget {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         elevation: 0,
-        side: const BorderSide(color: AppColors.lightBlue, width: 2),
+        side: const BorderSide(color: AppColors.blue400, width: 2),
         minimumSize: const Size(180, 52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

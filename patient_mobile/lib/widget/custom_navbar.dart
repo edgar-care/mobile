@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../styles/colors.dart';
+import 'package:edgar/colors.dart';
 
 class Navbar extends StatefulWidget {
   final Function(int) callback;

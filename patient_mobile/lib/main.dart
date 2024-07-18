@@ -1,18 +1,20 @@
-import 'package:edgar/models/onboarding.dart';
-import 'package:edgar/models/simulation_intro.dart';
-import 'package:edgar/screens/simulation/appointement_page.dart';
-import 'package:edgar/screens/simulation/confirmation_page.dart';
+import 'package:Edgar/models/onboarding.dart';
+import 'package:Edgar/models/simulation_intro.dart';
+import 'package:Edgar/screens/simulation/appointement_page.dart';
+import 'package:Edgar/screens/simulation/confirmation_page.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/screens/auth.dart';
-import 'package:edgar/screens/landingPage/help.dart';
-import 'package:edgar/screens/login.dart';
-import 'package:edgar/screens/register.dart';
-import 'package:edgar/screens/simulation/warning_page.dart';
-import 'package:edgar/screens/simulation/chat_page.dart';
-import 'package:edgar/models/dashboard.dart';
+import 'package:Edgar/screens/auth.dart';
+import 'package:Edgar/screens/landingPage/help.dart';
+import 'package:Edgar/screens/login.dart';
+import 'package:Edgar/screens/register.dart';
+import 'package:Edgar/screens/simulation/warning_page.dart';
+import 'package:Edgar/screens/simulation/chat_page.dart';
+import 'package:Edgar/models/dashboard.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/landingPage/annuaire_medecin.dart';
 import 'screens/landingPage/landing_page.dart';
@@ -20,7 +22,13 @@ import 'screens/landingPage/landing_page.dart';
 Future main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
-  runApp(const MyApp());
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => BottomSheetModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

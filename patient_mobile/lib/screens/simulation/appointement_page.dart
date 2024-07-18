@@ -1,12 +1,10 @@
-import 'package:edgar/services/appointement.dart';
-import 'package:edgar/services/doctor.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/appoitement_utils.dart';
-import 'package:edgar/widget/card_doctor_appoitement.dart';
-import 'package:edgar/widget/pagination.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:Edgar/services/appointement.dart';
+import 'package:Edgar/services/doctor.dart';
+import 'package:Edgar/utils/appoitement_utils.dart';
+import 'package:Edgar/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
@@ -235,7 +233,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   onTap: () async {
                     if (selectedId.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        ErrorLoginSnackBar(
+                        ErrorSnackBar(
                           message:
                               "Veuillez sélectionner un rendez-vous avant de continuer.",
                           context: context,
@@ -256,7 +254,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              ErrorLoginSnackBar(
+                              ErrorSnackBar(
                                 message:
                                     "Une erreur s'est produite lors de la validation du rendez-vous.",
                                 context: context,

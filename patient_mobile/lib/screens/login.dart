@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:edgar/widget/snackbar.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -55,7 +55,7 @@ class _LoginState extends State<Login> {
                   ),
                   labelText: 'Adresse mail',
                   labelStyle: const TextStyle(
-                      color: AppColors.textBlue,
+                      color: AppColors.blue700,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
                   ),
                   labelText: 'Mot de passe',
                   labelStyle: const TextStyle(
-                      color: AppColors.textBlue,
+                      color: AppColors.blue700,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
@@ -97,7 +97,7 @@ class _LoginState extends State<Login> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String url = '${dotenv.env['URL']}auth/p/login';
                 ScaffoldMessenger.of(context).showSnackBar(
-                  WaittingSnackBar(
+                  InfoSnackBar(
                     message: 'Connexion en cours...',
                     context: context,
                   ),
@@ -113,10 +113,9 @@ class _LoginState extends State<Login> {
                   final token = jsonDecode(response.body)['token'];
                   prefs.setString('token', token);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    ValidateSnackBar(
+                    SuccessSnackBar(
                       message: 'Connexion réussie',
                       context: context,
-                      duration: const Duration(seconds: 2),
                     ),
                   );
                   await Future.delayed(const Duration(seconds: 3));
@@ -132,7 +131,6 @@ class _LoginState extends State<Login> {
                       message:
                           'Identifiants incorrects ou mot de passe invalide',
                       context: scaffoldContext,
-                      duration: const Duration(seconds: 2),
                     ),
                   );
 
@@ -146,7 +144,7 @@ class _LoginState extends State<Login> {
             const SizedBox(height: 20),
             const Text("Pas encore inscrit ?",
                 style: TextStyle(
-                    color: AppColors.textBlue,
+                    color: AppColors.blue700,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
@@ -192,7 +190,7 @@ class PlainButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: AppColors.buttonBlue,
+        backgroundColor: AppColors.blue700,
         minimumSize: const Size(180, 52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -216,7 +214,7 @@ class EmptyButton extends StatelessWidget {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         elevation: 0,
-        side: const BorderSide(color: AppColors.lightBlue, width: 2),
+        side: const BorderSide(color: AppColors.blue700, width: 2),
         backgroundColor: Colors.white,
         minimumSize: const Size(180, 52),
         shape: RoundedRectangleBorder(
@@ -226,7 +224,7 @@ class EmptyButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(text,
           style: const TextStyle(
-              color: AppColors.textBlue,
+              color: AppColors.blue700,
               fontSize: 16,
               fontWeight: FontWeight.bold)),
     );

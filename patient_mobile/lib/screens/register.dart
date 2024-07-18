@@ -1,8 +1,8 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/auth.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:Edgar/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
@@ -35,7 +35,7 @@ class Register extends StatelessWidget {
                   ),
                   labelText: 'Adresse mail',
                   labelStyle: const TextStyle(
-                      color: AppColors.textBlue,
+                      color: AppColors.blue700,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
@@ -55,7 +55,7 @@ class Register extends StatelessWidget {
                   ),
                   labelText: 'Mot de passe',
                   labelStyle: const TextStyle(
-                      color: AppColors.textBlue,
+                      color: AppColors.blue700,
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
@@ -71,7 +71,7 @@ class Register extends StatelessWidget {
                 if (password == "" || email == "") {
                   // ignore: use_build_context_synchronously
 
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                       message: "Veuillez remplir tous les champs",
                       // ignore: use_build_context_synchronously
                       context: context));
@@ -79,7 +79,7 @@ class Register extends StatelessWidget {
                 }
                 if (password.length < 8) {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                       message:
                           "Le mot de passe doit contenir au moins 8 caractères",
                       // ignore: use_build_context_synchronously
@@ -88,7 +88,7 @@ class Register extends StatelessWidget {
                 }
                 if (!emailValidityChecker(email)) {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                       message: "Adresse mail invalide",
                       // ignore: use_build_context_synchronously
                       context: context));
@@ -97,16 +97,15 @@ class Register extends StatelessWidget {
                 var reponse = await RegisterUser(email, password);
                 if (reponse) {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SuccessLoginSnackBar(
-                          message: "Inscription réussie",
-                          // ignore: use_build_context_synchronously
-                          context: context));
+                  ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+                      message: "Inscription réussie",
+                      // ignore: use_build_context_synchronously
+                      context: context));
                   // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, '/onboarding');
                 } else {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                       message: "Erreur lors de l'inscription",
                       // ignore: use_build_context_synchronously
                       context: context));
@@ -116,7 +115,7 @@ class Register extends StatelessWidget {
             const SizedBox(height: 20),
             const Text("Déjà inscrit ?",
                 style: TextStyle(
-                    color: AppColors.textBlue,
+                    color: AppColors.blue700,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
@@ -158,12 +157,12 @@ class _PasswordTextFieldBlockState extends State<PasswordTextFieldBlock> {
             obscureText: _obscureText,
             decoration: InputDecoration(
               enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.darkBlue, width: 2.0),
+                borderSide: BorderSide(color: AppColors.blue700, width: 2.0),
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               labelText: 'Mot de passe',
               labelStyle: const TextStyle(
-                  color: AppColors.textBlue,
+                  color: AppColors.blue700,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
               suffixIcon: IconButton(
@@ -215,7 +214,7 @@ class PlainButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: AppColors.buttonBlue,
+        backgroundColor: AppColors.blue700,
         minimumSize: const Size(180, 52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -239,7 +238,7 @@ class EmptyButton extends StatelessWidget {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         elevation: 0,
-        side: const BorderSide(color: AppColors.lightBlue, width: 2),
+        side: const BorderSide(color: AppColors.blue700, width: 2),
         backgroundColor: Colors.white,
         minimumSize: const Size(180, 52),
         shape: RoundedRectangleBorder(
@@ -249,7 +248,7 @@ class EmptyButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(text,
           style: const TextStyle(
-              color: AppColors.textBlue,
+              color: AppColors.blue700,
               fontSize: 16,
               fontWeight: FontWeight.bold)),
     );

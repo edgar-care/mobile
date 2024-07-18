@@ -1,14 +1,14 @@
-import 'package:edgar/services/appointement.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/appoitement_utils.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:Edgar/services/appointement.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/widget.dart';
+import 'package:Edgar/utils/appoitement_utils.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 // ignore: must_be_immutable
 class CardAppointementDoctorHour extends StatefulWidget {
@@ -190,18 +190,32 @@ class _CardAppointementDoctorHourState
             ),
           if (widget.appointements.dates.isNotEmpty)
             Buttons(
-              variant: Variante.secondary,
+              variant: Variant.secondary,
               size: SizeButton.sm,
               msg: const Text("Voir plus d'horaires"),
               onPressed: () {
-                WoltModalSheet.show<void>(
+                final model =
+                    Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+
+                showModalBottomSheet(
                   context: context,
-                  pageIndexNotifier: pageIndex,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      seeMore(context, widget.updateId, widget.appointements,
-                          widget.idSelected),
-                    ];
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(
+                          model: model,
+                          children: [
+                            SeeMore(
+                                appointements: widget.appointements,
+                                idSelected: widget.idSelected,
+                                updateId: widget.updateId)
+                          ],
+                        );
+                      },
+                    );
                   },
                 );
               },
@@ -212,42 +226,23 @@ class _CardAppointementDoctorHourState
   }
 }
 
-WoltModalSheetPage seeMore(
-  BuildContext context,
-  final Function updateId,
-  final Appointment appointements,
-  final String idSelected,
-) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: BodySeeMore(
-      appointements: appointements,
-      updateId: updateId,
-      idSelected: idSelected,
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodySeeMore extends StatefulWidget {
+class SeeMore extends StatefulWidget {
   final Appointment appointements;
   final Function updateId;
   String idSelected;
-
-  BodySeeMore(
-      {super.key,
-      required this.appointements,
-      required this.updateId,
-      required this.idSelected});
+  SeeMore({
+    super.key,
+    required this.appointements,
+    required this.idSelected,
+    required this.updateId,
+  });
 
   @override
-  State<BodySeeMore> createState() => _BodySeeMoreState();
+  State<SeeMore> createState() => _SeeMoreState();
 }
 
-class _BodySeeMoreState extends State<BodySeeMore> {
+class _SeeMoreState extends State<SeeMore> {
   String idselected = '';
 
   void updateId(String id) {
@@ -269,129 +264,128 @@ class _BodySeeMoreState extends State<BodySeeMore> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: SizedBox(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.4,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.appointements.dates.length,
-                itemBuilder: (context, index) {
-                  final date = widget.appointements.dates[index];
-                  return Container(
-                    width: 100, // Adjust the width as needed
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right: BorderSide(
-                          color: index == widget.appointements.dates.length - 1
-                              ? Colors.transparent
-                              : AppColors.blue200,
-                          width: 1,
+    return ModalContainer(
+      title: "Séléctionner un rendez-vous",
+      subtitle: "Choisissez vos horraire",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.calendar,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
+      body: [
+        Expanded(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.appointements.dates.length,
+            itemBuilder: (context, index) {
+              final date = widget.appointements.dates[index];
+              return Container(
+                width: 100, // Adjust the width as needed
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(
+                      color: index == widget.appointements.dates.length - 1
+                          ? Colors.transparent
+                          : AppColors.blue200,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      getAbbreviatedWeekday(
+                        DateFormat('EEEE', 'fr').format(
+                          DateFormat('dd/MM/yyyy').parse(date.day),
                         ),
                       ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                        color: AppColors.black,
+                      ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          getAbbreviatedWeekday(
-                            DateFormat('EEEE', 'fr').format(
-                              DateFormat('dd/MM/yyyy').parse(date.day),
-                            ),
-                          ),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: AppColors.black,
-                          ),
-                        ),
-                        Text(
-                          DateFormat('dd MMMM', 'fr').format(
-                            DateFormat('dd/MM/yyyy').parse(date.day),
-                          ),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: AppColors.black,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        SizedBox(
-                          height: 237,
-                          child: ListView(
-                            scrollDirection: Axis.vertical,
-                            children: date.hour
-                                .map((hour) => HourItem(
-                                      hour: hour.hour,
-                                      onTap: () {
-                                        updateId(hour.id);
-                                        widget.updateId(hour.id);
-                                      },
-                                      isSelect: hour.id == widget.idSelected,
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      DateFormat('dd MMMM', 'fr').format(
+                        DateFormat('dd/MM/yyyy').parse(date.day),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                        color: AppColors.black,
+                      ),
                     ),
-                  );
-                },
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    SizedBox(
+                      height: 237,
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        children: date.hour
+                            .map((hour) => HourItem(
+                                  hour: hour.hour,
+                                  onTap: () {
+                                    updateId(hour.id);
+                                    widget.updateId(hour.id);
+                                  },
+                                  isSelect: hour.id == widget.idSelected,
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+      footer: Buttons(
+        variant: Variant.primary,
+        size: SizeButton.sm,
+        msg: const Text("Valider le rendez-vous"),
+        onPressed: () async {
+          if (idselected.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              ErrorSnackBar(
+                message:
+                    "Veuillez sélectionner un rendez-vous avant de continuer.",
+                context: context,
               ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Buttons(
-              variant: Variante.primary,
-              size: SizeButton.sm,
-              msg: const Text("Valider le rendez-vous"),
-              onPressed: () async {
-                if (idselected.isEmpty) {
+            );
+          } else {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String? sessionId = prefs.getString('sessionId');
+            Logger().i("session_id: $sessionId");
+
+            await postAppointementId(idselected, sessionId!).then(
+              (value) {
+                if (value) {
+                  Navigator.pushNamed(
+                    context,
+                    '/simulation/confirmation',
+                  );
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorLoginSnackBar(
+                    ErrorSnackBar(
                       message:
-                          "Veuillez sélectionner un rendez-vous avant de continuer.",
+                          "Une erreur s'est produite lors de la validation du rendez-vous.",
                       context: context,
                     ),
                   );
-                } else {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? sessionId = prefs.getString('sessionId');
-                  Logger().i("session_id: $sessionId");
-
-                  await postAppointementId(idselected, sessionId!).then(
-                    (value) {
-                      if (value) {
-                        Navigator.pushNamed(
-                          context,
-                          '/simulation/confirmation',
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          ErrorLoginSnackBar(
-                            message:
-                                "Une erreur s'est produite lors de la validation du rendez-vous.",
-                            context: context,
-                          ),
-                        );
-                      }
-                    },
-                  );
                 }
               },
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }

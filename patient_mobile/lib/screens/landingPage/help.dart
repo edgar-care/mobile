@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/plain_button.dart';
-import 'package:edgar/widget/navbar.dart';
+import 'package:edgar/colors.dart';
+import 'package:Edgar/widget/plain_button.dart';
+import 'package:Edgar/widget/navbar.dart';
 import 'package:http/http.dart' as http;
 
 class HelpScreen extends StatelessWidget {
@@ -19,23 +19,27 @@ class HelpScreen extends StatelessWidget {
   }
 }
 
-Future<MessageResponse> sendContactForm(String email, String name, String message) async {
+Future<MessageResponse> sendContactForm(
+    String email, String name, String message) async {
   try {
     if (!emailValidityChecker(email)) {
       return MessageResponse(title: 'Adresse mail invalide', status: 'error');
     }
     if (name.isEmpty) {
-      return MessageResponse(title: 'Merci de renseigner votre nom', status: 'error');
+      return MessageResponse(
+          title: 'Merci de renseigner votre nom', status: 'error');
     }
     if (message.isEmpty) {
-      return MessageResponse(title: 'Merci de renseigner votre message', status: 'error');
+      return MessageResponse(
+          title: 'Merci de renseigner votre message', status: 'error');
     }
 
     await dotenv.load();
     final airtableKey = dotenv.env['AIRTABLE_KEY'];
 
     final response = await http.post(
-      Uri.parse('https://api.airtable.com/v0/apppNB1HHznqlQND3/tblYv0iZL8XQLXwGH'),
+      Uri.parse(
+          'https://api.airtable.com/v0/apppNB1HHznqlQND3/tblYv0iZL8XQLXwGH'),
       headers: {
         'Authorization': 'Bearer $airtableKey',
         'Content-Type': 'application/json',
@@ -55,12 +59,15 @@ Future<MessageResponse> sendContactForm(String email, String name, String messag
     );
 
     if (response.statusCode != 200) {
-      return MessageResponse(title: 'Une erreur est survenue, merci de réessayer', status: 'error');
+      return MessageResponse(
+          title: 'Une erreur est survenue, merci de réessayer',
+          status: 'error');
     }
 
     return MessageResponse(title: 'Message envoyé', status: 'success');
   } catch (error) {
-    return MessageResponse(title: 'Une erreur est survenue, merci de réessayer', status: 'error');
+    return MessageResponse(
+        title: 'Une erreur est survenue, merci de réessayer', status: 'error');
   }
 }
 
@@ -79,10 +86,8 @@ class MessageResponse {
 class _ChildBody extends StatelessWidget {
   const _ChildBody();
 
-
   @override
   Widget build(BuildContext context) {
-
     var mail = "";
     var question = "";
     var name = "";
@@ -172,27 +177,29 @@ class _ChildBody extends StatelessWidget {
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(left: 24.0),
-          child: PlainButton(text: "Envoyer", onPressed: () async {
-            final response = await sendContactForm(mail, name, question);
-            // ignore: use_build_context_synchronously
-            showDialog(
-              // ignore: use_build_context_synchronously
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(response.title),
-                  actions: [
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
+          child: PlainButton(
+              text: "Envoyer",
+              onPressed: () async {
+                final response = await sendContactForm(mail, name, question);
+                // ignore: use_build_context_synchronously
+                showDialog(
+                  // ignore: use_build_context_synchronously
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(response.title),
+                      actions: [
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 );
-              },
-            );
-          }),
+              }),
         ),
         const SizedBox(height: 20),
         SizedBox(

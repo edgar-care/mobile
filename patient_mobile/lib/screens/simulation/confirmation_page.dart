@@ -1,6 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/doctor.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:Edgar/services/doctor.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';

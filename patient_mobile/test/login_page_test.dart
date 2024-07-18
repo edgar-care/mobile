@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:edgar/screens/login.dart';
+import 'package:Edgar/screens/login.dart';
 
 void main() {
   testWidgets('Test de la page de login', (WidgetTester tester) async {

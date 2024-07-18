@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:edgar/screens/landingPage/annuaire_medecin.dart';
+import 'package:Edgar/screens/landingPage/annuaire_medecin.dart';
 
 void main() {
   testWidgets(

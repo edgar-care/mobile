@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/navbar.dart';
-import 'package:edgar/widget/plain_button.dart';
+import 'package:edgar/colors.dart';
+import 'package:Edgar/widget/navbar.dart';
+import 'package:Edgar/widget/plain_button.dart';
 
 class AnnuaireMedecin extends StatelessWidget {
   const AnnuaireMedecin({super.key});

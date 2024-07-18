@@ -1,7 +1,7 @@
-import 'package:edgar/models/dashboard.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:Edgar/models/dashboard.dart';
+import 'package:Edgar/services/get_information_patient.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -45,8 +45,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
   }

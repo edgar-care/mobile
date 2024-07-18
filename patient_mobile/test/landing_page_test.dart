@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:edgar/screens/landingPage/landing_page.dart';
+import 'package:Edgar/screens/landingPage/landing_page.dart';
 
 void main() {
   testWidgets('Test fonctionnel de la page d\'accueil',
