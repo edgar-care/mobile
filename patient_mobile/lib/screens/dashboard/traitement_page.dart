@@ -1,10 +1,10 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/services/medecine.dart';
-import 'package:Edgar/services/traitement.dart';
-import 'package:Edgar/utils/traitement_utils.dart';
-import 'package:Edgar/widget/AddPatient/add_button.dart';
-import 'package:Edgar/widget/card_traitement_day.dart';
-import 'package:Edgar/widget/card_traitement_info.dart';
+import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/services/traitement.dart';
+import 'package:edgar_app/utils/traitement_utils.dart';
+import 'package:edgar_app/widget/AddPatient/add_button.dart';
+import 'package:edgar_app/widget/card_traitement_day.dart';
+import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';

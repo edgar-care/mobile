@@ -1,12 +1,12 @@
 import 'package:animations/animations.dart';
-import 'package:Edgar/screens/dashboard/traitement_page.dart';
-import 'package:Edgar/widget/bottom_navbar.dart';
+import 'package:edgar_app/screens/dashboard/traitement_page.dart';
+import 'package:edgar_app/widget/bottom_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:Edgar/screens/dashboard/accueil_page.dart';
-import 'package:Edgar/screens/dashboard/information_personnel.dart';
-import 'package:Edgar/screens/dashboard/gestion_rendez_vous.dart';
-import 'package:Edgar/screens/dashboard/file_page.dart';
-import 'package:Edgar/screens/dashboard/chat_page.dart';
+import 'package:edgar_app/screens/dashboard/accueil_page.dart';
+import 'package:edgar_app/screens/dashboard/information_personnel.dart';
+import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
+import 'package:edgar_app/screens/dashboard/file_page.dart';
+import 'package:edgar_app/screens/dashboard/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoardPage extends StatefulWidget {

@@ -2,12 +2,12 @@
 import 'dart:io';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/widget/card_filter_file.dart';
+import 'package:edgar_app/widget/card_filter_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:Edgar/services/get_files.dart';
-import 'package:Edgar/widget/card_document.dart';
+import 'package:edgar_app/services/get_files.dart';
+import 'package:edgar_app/widget/card_document.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';

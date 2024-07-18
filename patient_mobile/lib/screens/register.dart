@@ -1,5 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/services/auth.dart';
+import 'package:edgar_app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';

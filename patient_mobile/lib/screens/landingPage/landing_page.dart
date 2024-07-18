@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Edgar/widget/navbar.dart';
-import 'package:Edgar/widget/plain_button.dart';
+import 'package:edgar_app/widget/navbar.dart';
+import 'package:edgar_app/widget/plain_button.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});

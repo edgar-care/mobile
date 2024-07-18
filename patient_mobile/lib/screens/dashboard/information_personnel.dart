@@ -1,9 +1,9 @@
-import 'package:Edgar/services/doctor.dart';
-import 'package:Edgar/services/get_information_patient.dart';
-import 'package:Edgar/services/medecine.dart';
-import 'package:Edgar/widget/AddPatient/add_button.dart';
-import 'package:Edgar/widget/card_traitement_day.dart';
-import 'package:Edgar/widget/card_traitement_small.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/widget/AddPatient/add_button.dart';
+import 'package:edgar_app/widget/card_traitement_day.dart';
+import 'package:edgar_app/widget/card_traitement_small.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';

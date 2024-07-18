@@ -1,7 +1,7 @@
-import 'package:Edgar/services/appointement.dart';
-import 'package:Edgar/services/doctor.dart';
-import 'package:Edgar/utils/appoitement_utils.dart';
-import 'package:Edgar/widget/card_doctor_appoitement.dart';
+import 'package:edgar_app/services/appointement.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';

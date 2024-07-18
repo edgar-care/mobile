@@ -1,7 +1,7 @@
-import 'package:Edgar/services/appointement.dart';
+import 'package:edgar_app/services/appointement.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/widget.dart';
-import 'package:Edgar/utils/appoitement_utils.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
 import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';

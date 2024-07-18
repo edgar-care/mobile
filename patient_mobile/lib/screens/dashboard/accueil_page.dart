@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/services/get_information_patient.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:flutter/material.dart';
-import 'package:Edgar/widget/plain_button.dart';
-import 'package:Edgar/widget/pdf_card.dart';
+import 'package:edgar_app/widget/plain_button.dart';
+import 'package:edgar_app/widget/pdf_card.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 

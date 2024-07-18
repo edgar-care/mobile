@@ -1,15 +1,15 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/services/appointement.dart';
-import 'package:Edgar/services/doctor.dart';
-import 'package:Edgar/utils/appoitement_utils.dart';
-import 'package:Edgar/widget/card_doctor_appoitement.dart';
+import 'package:edgar_app/services/appointement.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Edgar/services/get_appointement.dart';
+import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 

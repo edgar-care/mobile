@@ -1,9 +1,9 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/screens/dashboard/conversation_patient.dart';
-import 'package:Edgar/services/doctor.dart';
-import 'package:Edgar/services/websocket.dart';
-import 'package:Edgar/utils/chat_utils.dart';
-import 'package:Edgar/widget/card_conversation.dart';
+import 'package:edgar_app/screens/dashboard/conversation_patient.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
+import 'package:edgar_app/widget/card_conversation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
@@ -358,7 +358,7 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
       ),
       body: [
         CustomFieldSearch(
-          label: 'Docteur Edgar',
+          label: 'Docteur edgar_app',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
           onValidate: (value) {

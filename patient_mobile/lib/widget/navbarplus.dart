@@ -1,5 +1,5 @@
-import 'package:Edgar/models/dashboard.dart';
-import 'package:Edgar/services/get_information_patient.dart';
+import 'package:edgar_app/models/dashboard.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';

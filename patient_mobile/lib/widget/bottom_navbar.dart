@@ -1,4 +1,4 @@
-import 'package:Edgar/widget/navbarplus.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:edgar/colors.dart';

@@ -78,6 +78,6 @@ flutter:
     - assets/images/logo/
     - assets/images/utils/
     - .env  # The following line ensures that the Material Icons font is
-name: Edgar
+name: edgar_app
 publish_to: none
 version: 1.0.0+1

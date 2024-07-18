@@ -1,6 +1,6 @@
-import 'package:Edgar/services/websocket.dart';
+import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar/colors.dart';
-import 'package:Edgar/utils/chat_utils.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:intl/intl.dart';

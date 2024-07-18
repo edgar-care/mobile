@@ -1,6 +1,6 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:Edgar/services/websocket.dart';
-import 'package:Edgar/utils/chat_utils.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';

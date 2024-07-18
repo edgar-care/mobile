@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar/colors.dart';
-import 'package:Edgar/widget/plain_button.dart';
-import 'package:Edgar/widget/navbar.dart';
+import 'package:edgar_app/widget/plain_button.dart';
+import 'package:edgar_app/widget/navbar.dart';
 import 'package:http/http.dart' as http;
 
 class HelpScreen extends StatelessWidget {
