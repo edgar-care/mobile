@@ -75,7 +75,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'Poppins',
                               ),),
-                              const SizedBox(),
+                              const SizedBox(width: 18,),
                             ],
                       ),
                     ),
@@ -90,10 +90,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
                                   color: AppColors.blue700,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(16))
                                 ),
                                 child: FutureBuilder(
                                   future: fetchData(),
@@ -154,11 +151,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               width: 48,
                                               height: 48,
                                               decoration: const BoxDecoration(
-                                                color: AppColors.white,
+                                                color: AppColors.orange500,
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child:
+                                                BoringAvatars(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
@@ -225,10 +223,14 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           ),
                                         );
                                       },
-                                      type: 'Only',
+                                      type: 'Top',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
+                                    ),
+                                    Container(
+                                      color: AppColors.blue100,
+                                      height: 1,
                                     ),
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
@@ -241,7 +243,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       onTap: () {
                                         Navigator.pop(context);
                                       },
-                                      type: 'Only',
+                                      type: 'Bottom',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),

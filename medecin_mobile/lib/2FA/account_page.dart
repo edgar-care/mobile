@@ -52,7 +52,7 @@ class _AccountPageState extends State<AccountPage> {
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'Poppins',
                               ),),
-                              const SizedBox(),
+                              const SizedBox(width: 18),
                             ],
                       ),
                     ),
@@ -141,7 +141,11 @@ class _AccountPageState extends State<AccountPage> {
                                         );
                                       },
                                       type: 'Only',
-                                      outlineIcon: Text(widget.infoMedical["email"], style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w400 ),)
+                                      outlineIcon: Text(widget.infoMedical["email"], style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w400,color: AppColors.grey500),)
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      color: AppColors.blue100,
                                     ),
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
@@ -189,6 +193,10 @@ class _AccountPageState extends State<AccountPage> {
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      color: AppColors.blue100,
                                     ),
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
