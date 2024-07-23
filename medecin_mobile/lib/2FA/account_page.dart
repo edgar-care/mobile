@@ -1,9 +1,13 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/2FA/authentication_page.dart';
 import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 
 // ignore: must_be_immutable
@@ -193,7 +197,22 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
                                       onTap: () {
-                                        Navigator.pop(context);
+                                        final model = Provider.of<BottomSheetModel>(context, listen: false);
+                                        model.resetCurrentIndex();
+                                        showModalBottomSheet(
+                                            context: context,
+                                            backgroundColor: Colors.transparent,
+                                            isScrollControlled: true,
+                                            builder: (context) {
+                                              return Consumer<BottomSheetModel>(
+                                                builder: (context, model, child) {
+                                                  return ListModal(model: model, children: [
+                                                    modalGenerateBackup()
+                                                  ]);
+                                                },
+                                              );
+                                            },
+                                          );
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -216,3 +235,115 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 }
+
+Widget modalReNewBackup() {
+    return ModalContainer(
+      title: 'Vos codes de sauvegarde',
+      subtitle: 'Vous avez déjà consulté vos codes de sauvegarde. Par sourcis de sécurité vous ne pouvez consulter vos code de sauvegarde qu\'une seule fois, lors de la génération de ceux-ci.',
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
+      footer:
+          Buttons(
+            variant: Variante.primary,
+            size: SizeButton.md,
+            msg: const Text('Générer de nouveaux codes'),
+            onPressed: () {},
+          ),
+    );
+}
+
+Widget modalGenerateBackup() {
+  return ModalContainer(
+    title: 'Vos codes de sauvegarde',
+    subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
+      body: const [
+        Text('Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),),
+        SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              ],
+            ),
+            SizedBox(width: 24),
+            Column(
+              children: [
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                SizedBox(height: 8),
+                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              ],
+            )
+          ],
+        ),
+      ],
+    footer: Column(
+        children: [
+          Buttons(
+            variant: Variante.primary,
+            size: SizeButton.md,
+            msg: const Text('Activer l\'authentification'),
+            onPressed: () {},
+          ),
+          const SizedBox(height: 8,),
+          Buttons(
+            variant: Variante.secondary,
+            size: SizeButton.md,
+            msg: const Text('Annuler'),
+            onPressed: () {},
+          ),
+        ],
+      ),
+  );
+}
+
+Widget modalRedirect2FA() {
+  return ModalContainer(
+    title: 'Vos codes de sauvegarde',
+    subtitle: 'Ajouter une méthode de double authentification pour générer vos codes de sauvegarde. Les codes de sauvegarde sont utilisés lorsque vous n\'avez plus accès à votre appareil de double authentification.',
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
+    footer: Buttons(
+            variant: Variante.primary,
+            size: SizeButton.md,
+            msg: const Text('Activer l\'authentification'),
+            onPressed: () {},
+          ),
+    );
+} 

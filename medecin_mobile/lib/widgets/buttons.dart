@@ -10,6 +10,7 @@ enum Variante {
   primaryBordered,
   validate,
   delete,
+  deleteBordered,
 }
 
 enum SizeButton {
@@ -49,7 +50,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 8;
@@ -60,7 +63,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 10;
@@ -71,7 +76,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 12;
@@ -82,7 +89,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 12;
@@ -93,7 +102,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 16;
@@ -104,7 +115,9 @@ class Buttons extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: variant == Variante.secondary
               ? const Color(0xFF2E4C9A)
-              : Colors.white,
+              : variant == Variante.deleteBordered
+                  ? AppColors.red700
+                  : Colors.white,
           fontFamily: 'Poppins',
         );
         radius = 16;
@@ -165,6 +178,14 @@ class Buttons extends StatelessWidget {
         backgroundcolor = AppColors.red600;
         borderSide = const BorderSide(
           color: AppColors.red600,
+          style: BorderStyle.solid,
+          width: 2,
+        );
+        break;
+      case Variante.deleteBordered:
+        backgroundcolor = Colors.white;
+        borderSide = const BorderSide(
+          color: AppColors.red300,
           style: BorderStyle.solid,
           width: 2,
         );

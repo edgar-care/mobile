@@ -56,7 +56,9 @@ class _DeviceTabState extends State<DeviceTab> {
         child: Row(
           children: [
             widget.icon == 'Phone' ? SvgPicture.asset('assets/images/utils/phone-fill.svg') : SvgPicture.asset('assets/images/utils/laptop-fill.svg'),
+            const SizedBox(width: 16),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.title, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
                 Text(widget.subtitle, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500)),

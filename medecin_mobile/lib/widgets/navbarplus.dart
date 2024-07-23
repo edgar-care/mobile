@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:edgar_pro/2FA/account_page.dart';
+import 'package:edgar_pro/2FA/devices_pages.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
+import 'package:edgar_pro/services/logout_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -237,7 +239,15 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Appareils',
                                       onTap: () {
-                                        Navigator.pop(context);
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const DevicesPage();
+                                            },
+                                          ),
+                                        );
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -271,11 +281,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Déconnexion',
                                       onTap: () async {
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        prefs.remove('token');
-                                        Navigator.pushNamed(context, '/login');
+                                        logout(context);
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
