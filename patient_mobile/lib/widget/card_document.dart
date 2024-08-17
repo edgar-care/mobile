@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:io';
+import 'package:download_file/data/models/download_file_options.dart';
+import 'package:download_file/download_file.dart';
 import 'package:edgar/widget/field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/styles/colors.dart';
@@ -8,9 +9,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 import 'package:edgar/widget/buttons.dart';
-import 'package:http/http.dart' as http;
 import 'package:edgar/services/get_files.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 enum TypeDeDocument {
   PRESCRIPTION,
@@ -19,24 +18,28 @@ enum TypeDeDocument {
   XRAY,
 }
 
+Size screenSize = const Size(0, 0);
+
 // ignore: must_be_immutable
 class CardDocument extends StatefulWidget {
   final TypeDeDocument typeDeDocument;
   final String nomDocument;
-  final DateTime dateDocument;
   final String nameDoctor;
   bool isfavorite;
   String id;
   String url;
-  CardDocument(
-      {super.key,
-      required this.typeDeDocument,
-      required this.nomDocument,
-      required this.dateDocument,
-      required this.nameDoctor,
-      required this.isfavorite,
-      required this.id,
-      required this.url});
+  Function updatedata;
+
+  CardDocument({
+    super.key,
+    required this.typeDeDocument,
+    required this.nomDocument,
+    required this.nameDoctor,
+    required this.isfavorite,
+    required this.id,
+    required this.url,
+    required this.updatedata,
+  });
 
   @override
   State<CardDocument> createState() => _CardDocumentState();
@@ -58,121 +61,127 @@ class _CardDocumentState extends State<CardDocument> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.blue200, width: 2),
-          ),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            GestureDetector(
-              onTap: () {
+    setState(() {
+      screenSize = MediaQuery.of(context).size;
+    });
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.blue200, width: 2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (widget.isfavorite) {
+                deleteFavory(widget.id);
+              } else {
                 changeFavorite(widget.id);
-                setState(() {
-                  widget.isfavorite = !widget.isfavorite;
-                });
-              },
-              child: Container(
-                child: widget.isfavorite
-                    ? const Icon(Icons.star, color: AppColors.blue300)
-                    : const Icon(Icons.star_border, color: AppColors.blue300),
-              ),
+              }
+              setState(() {
+                widget.isfavorite = !widget.isfavorite;
+              });
+            },
+            child: Container(
+              child: widget.isfavorite
+                  ? const Icon(Icons.star, color: AppColors.blue700)
+                  : const Icon(Icons.star_border, color: AppColors.blue300),
             ),
-            const SizedBox(width: 8),
-            Container(
-              width: 4,
-              height: 50,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: documentColor(widget.typeDeDocument),
-                borderRadius: BorderRadius.circular(4),
-              ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            width: 4,
+            height: 50,
+            decoration: BoxDecoration(
+              color: documentColor(widget.typeDeDocument),
+              borderRadius: BorderRadius.circular(4),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.nomDocument,
-                      style: const TextStyle(
-                        color: AppColors.black,
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    SizedBox(
-                      width: constraints.maxWidth * 0.7,
-                      child: Text(
-                        "Ajouté le ${widget.dateDocument.day}/${widget.dateDocument.month}/${widget.dateDocument.year} par ${widget.nameDoctor}",
-                        style: const TextStyle(
-                          color: AppColors.black,
-                          fontFamily: 'Poppins',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            openPatient(
-                              context,
-                              pageIndex,
-                              widget.url,
-                              widget.id,
-                              widget.nomDocument,
-                            ),
-                            modifierPatient(context, pageIndex,
-                                widget.nomDocument, widget.id),
-                            deletePatient(context, pageIndex, widget.id),
-                          ];
-                        });
-                  },
-                  child: const Icon(
-                    BootstrapIcons.three_dots_vertical,
+                Text(
+                  widget.nomDocument[0].toUpperCase() +
+                      widget.nomDocument.substring(1),
+                  style: const TextStyle(
                     color: AppColors.black,
-                    size: 24,
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Ajouté par ${widget.nameDoctor}",
+                  style: const TextStyle(
+                    color: AppColors.black,
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-          ]),
-        );
-      },
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              WoltModalSheet.show<void>(
+                context: context,
+                pageIndexNotifier: pageIndex,
+                pageListBuilder: (modalSheetContext) {
+                  return [
+                    openPatient(
+                      context,
+                      pageIndex,
+                      widget.url,
+                      widget.id,
+                      widget.isfavorite,
+                      widget.nomDocument,
+                    ),
+                    modifierPatient(
+                      context,
+                      pageIndex,
+                      widget.nomDocument,
+                      widget.id,
+                      widget.updatedata,
+                    ),
+                    deletePatient(
+                      context,
+                      pageIndex,
+                      widget.id,
+                      widget.updatedata,
+                    ),
+                  ];
+                },
+              );
+            },
+            child: const Icon(
+              BootstrapIcons.three_dots_vertical,
+              color: AppColors.black,
+              size: 24,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 final pageIndex = ValueNotifier(0);
 
-Future<File> downloadFile(String url, String savePath) async {
-  var response = await http.get(Uri.parse(url));
-  var file = File(savePath);
-  await file.writeAsBytes(response.bodyBytes);
-  return file;
-}
-
 WoltModalSheetPage openPatient(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String url,
   String id,
+  bool isfavorite,
   String name,
 ) {
   return WoltModalSheetPage(
@@ -187,32 +196,50 @@ WoltModalSheetPage openPatient(
         runSpacing: 8,
         children: [
           Buttons(
-              variant: Variante.primary,
-              size: SizeButton.sm,
-              msg: const Text('Télécharger'),
-              onPressed: () async {
-                FileDownloader.downloadFile(
-                  url: url,
-                  name: name,
-                  onDownloadCompleted: (String id) {
-                    Logger().i('Télécharger');
-                  },
-                  onDownloadError: (String error) {
-                    Logger().e(error);
-                  },
-                  notificationType: NotificationType.all,
-                );
-              }),
+            variant: Variante.primary,
+            size: SizeButton.md,
+            msg: const Text('Télécharger'),
+            onPressed: () async {
+              DownloadFile.downloadAndSafeFile(
+                downloadFileOptions: DownloadFileOptions(
+                  downloadUrl: url,
+                  fileName: name,
+                ),
+                context: context,
+                loadingWidget: const Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Téléchargement en cours...',
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      CircularProgressIndicator(
+                        color: AppColors.blue700,
+                        strokeWidth: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+              Logger().i('Downloaded');
+            },
+          ),
           Buttons(
               variant: Variante.secondary,
-              size: SizeButton.sm,
+              size: SizeButton.md,
               msg: const Text('Modifier'),
               onPressed: () {
                 pageIndex.value = 1;
               }),
           Buttons(
               variant: Variante.delete,
-              size: SizeButton.sm,
+              size: SizeButton.md,
               msg: const Text('Supprimer'),
               onPressed: () {
                 pageIndex.value = 2;
@@ -228,9 +255,10 @@ WoltModalSheetPage modifierPatient(
   ValueNotifier<int> pageIndex,
   String name,
   String id,
+  Function updatedata,
 ) {
-  int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
-  int maxSize = (MediaQuery.of(context).size.width - 48).toInt();
+  int widthBtn = (screenSize.width / 2 - 32).toInt();
+  int maxSize = (screenSize.width - 48).toInt();
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
@@ -285,6 +313,7 @@ WoltModalSheetPage modifierPatient(
                   name = value;
                 },
                 maxSize: maxSize,
+                action: TextInputAction.done,
               ),
             ],
           ),
@@ -304,9 +333,12 @@ WoltModalSheetPage modifierPatient(
                   size: SizeButton.sm,
                   msg: const Text('Valider'),
                   widthBtn: widthBtn,
-                  onPressed: () {
-                    modifyDocument(id, name);
-                    pageIndex.value = 0;
+                  onPressed: () async {
+                    modifyDocument(id, name).then((value) {
+                      updatedata();
+                      pageIndex.value = 0;
+                      Navigator.pop(context);
+                    });
                   }),
             ],
           ),
@@ -320,8 +352,9 @@ WoltModalSheetPage deletePatient(
   BuildContext context,
   ValueNotifier<int> pageIndex,
   String id,
+  Function updatedata,
 ) {
-  int widthBtn = (MediaQuery.of(context).size.width / 2 - 32).toInt();
+  int widthBtn = (screenSize.width / 2 - 32).toInt();
   return WoltModalSheetPage(
     hasTopBarLayer: false,
     backgroundColor: AppColors.white,
@@ -388,10 +421,12 @@ WoltModalSheetPage deletePatient(
                   size: SizeButton.sm,
                   msg: const Text('Supprimer'),
                   widthBtn: widthBtn,
-                  onPressed: () {
-                    deleteDocument(id);
-                    pageIndex.value = 0;
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    deleteDocument(id).then((value) {
+                      updatedata();
+                      pageIndex.value = 0;
+                      Navigator.pop(context);
+                    });
                   }),
             ],
           ),

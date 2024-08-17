@@ -7,7 +7,24 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/widget/snackbar.dart';
+
+Future<Map<String, dynamic>> getMedicalFolder() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await dotenv.load();
+  final token = prefs.getString('token');
+  final url = '${dotenv.env['URL']}dashboard/medical-info';
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  if (response.statusCode == 200) {
+    final body = response.body;
+    return jsonDecode(body)['medical_folder'];
+  } else {
+    return {};
+  }
+}
 
 Future<Map<String, Object>?> getInformationPersonnel(
     BuildContext context) async {
@@ -22,34 +39,23 @@ Future<Map<String, Object>?> getInformationPersonnel(
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    populateInfoMedical(jsonDecode(body));
-    return infoMedical;
+    return populateInfoMedical(jsonDecode(body));
   } else {
-    final scaffoldContext = context;
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-      SnackBar(
-        content: ErrorSnackBar(
-          message: 'La recuperation des informations personnelles a échoué',
-          context: scaffoldContext,
-          duration: const Duration(seconds: 2),
-        ),
-      ),
-    );
+    Logger().e(response.statusCode);
     return null;
   }
 }
 
-Map<String, Object> infoMedical = {};
-
-void populateInfoMedical(Map<String, dynamic>? data) {
+Map<String, Object> populateInfoMedical(Map<String, dynamic>? data) {
+  Map<String, Object> tmp = {};
   if (data != null) {
-    infoMedical = {
-      'Prenom': data['patient_info']?['name'] ?? 'Inconnu',
-      'Nom': data['patient_info']?['surname'] ?? 'Inconnu',
-      'Sex': data['patient_info']?['sex']?.toString() ?? 'Inconnu',
-      'Anniversaire': data['patient_info']?['birthdate'] ?? 'Inconnu',
-      'Taille': data['patient_info']?['height'] ?? 'Inconnu',
-      'Poids': data['patient_info']?['weight'] ?? 'Inconnu',
+    tmp = {
+      'Prenom': data['Medical-info']?['name'] ?? 'Inconnu',
+      'Nom': data['Medical-info']?['surname'] ?? 'Inconnu',
+      'Sex': data['Medical-info']?['sex']?.toString() ?? 'Inconnu',
+      'Anniversaire': data['Medical-info']?['birthdate'] ?? 'Inconnu',
+      'Taille': data['Medical-info']?['height'] ?? 'Inconnu',
+      'Poids': data['Medical-info']?['weight'] ?? 'Inconnu',
       'Medecin_traitant':
           data['patient_health']?['patients_primary_doctor'] ?? [],
       'Traitement_en_cours':
@@ -58,6 +64,7 @@ void populateInfoMedical(Map<String, dynamic>? data) {
       'Maladies_connues': data['patient_health']?['patients_illness'] ?? [],
     };
   }
+  return tmp;
 }
 
 Future<Map<String, Object>?> putInformationPatient(
@@ -67,7 +74,6 @@ Future<Map<String, Object>?> putInformationPatient(
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
-  Logger().i(info);
   final body = {
     'onboarding_info': {
       'name': info?['Prenom'],
@@ -92,11 +98,9 @@ Future<Map<String, Object>?> putInformationPatient(
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    populateInfoMedical(jsonDecode(body));
-    return infoMedical;
+    return populateInfoMedical(jsonDecode(body));
   } else {
     Logger().e(response.statusCode);
-    Logger().e(response.body);
     return null;
   }
 }

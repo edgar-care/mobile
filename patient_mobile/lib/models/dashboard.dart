@@ -1,77 +1,117 @@
-import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+import 'package:edgar/screens/dashboard/traitement_page.dart';
 import 'package:edgar/widget/bottom_navbar.dart';
+import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
 import 'package:edgar/screens/dashboard/information_personnel.dart';
 import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar/screens/dashboard/file_page.dart';
+import 'package:edgar/screens/dashboard/chat_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _DashBoardPageState createState() => _DashBoardPageState();
+  DashBoardPageState createState() => DashBoardPageState();
 }
 
-class _DashBoardPageState extends State<DashBoardPage>
+class DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
+  int _previousIndex = 0;
 
-  // ignore: unused_field
-  late AnimationController _animationControllers;
+  final List<Widget> _widgetOptions = <Widget>[
+    const HomePage(),
+    const GestionRendezVous(),
+    const TraitmentPage(),
+    const FilePage(),
+    const InformationPersonnel(),
+    const ChatPage(),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _animationControllers = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
+    checkSession(context);
+  }
+
+  final List<int> _navigationStack = [0];
+
+  void checkSession(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+    if (token == null) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/login');
+    }
+  }
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      setState(() {
+        _previousIndex = _selectedIndex;
+        _selectedIndex = index;
+        if (_navigationStack.isEmpty || _navigationStack.last != index) {
+          _navigationStack.add(index);
+        }
+      });
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    if (_navigationStack.length > 1) {
+      setState(() {
+        _selectedIndex = _previousIndex;
+        if (_navigationStack.isNotEmpty) {
+          _previousIndex = _navigationStack.last;
+        }
+      });
+      return false;
+    }
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildPageContent(),
-      bottomNavigationBar: CustomBottomNavigationBars(
-        selectedIndex: _selectedIndex,
-        onTap: (index) {
-          if (index == 4) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
-        },
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                child: PageTransitionSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  reverse: _previousIndex > _selectedIndex,
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> primaryAnimation,
+                    Animation<double> secondaryAnimation,
+                  ) {
+                    return FadeThroughTransition(
+                      animation: primaryAnimation,
+                      secondaryAnimation: secondaryAnimation,
+                      child: child,
+                    );
+                  },
+                  child: _widgetOptions[_selectedIndex],
+                ),
+              ),
+            ),
+            CustomBottomBar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+            ),
+          ],
+        ),
       ),
     );
   }
-
-  Widget _buildPageContent() {
-    final pageOptions = [
-      const HomePage(),
-      const GestionRendezVous(),
-      const FilePage(),
-      const InformationPersonnel(),
-      const SettingsPage(),
-    ];
-
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: pageOptions[_selectedIndex],
-    );
-  }
 }
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Text('Settings Page');
-  }
-}
-// Ajoutez d'autres classes de page ici
+// ignore: must_be_immutable
+
