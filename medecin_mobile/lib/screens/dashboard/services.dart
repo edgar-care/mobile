@@ -49,6 +49,7 @@ class _ServicesState extends State<Services> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.blue200, width: 1)),
           child: Column(
