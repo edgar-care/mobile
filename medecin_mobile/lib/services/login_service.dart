@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 
@@ -23,7 +24,8 @@ Future login(String email, String password, BuildContext context) async {
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-    prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+    Logger().d(decodedPayload);
+    prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
       message: 'Connecté à l\'application',
       context: context,
