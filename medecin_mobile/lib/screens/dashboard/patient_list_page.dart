@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/medecines_services.dart';
@@ -1418,12 +1420,10 @@ class _Onboarding3State extends State<Body3> {
                             }
                           else
                             {
-                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                   ErrorLoginSnackBar(
                                       message:
                                           "Erreur lors de la mises à jour des informations",
-                                      // ignore: use_build_context_synchronously
                                       context: context))
                             }
                         });
