@@ -97,7 +97,7 @@ class _DailyMedicamentCardState extends State<DailyMedicamentCard> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.blue200, width: 2),
       ),
       child: Column(
@@ -211,7 +211,7 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
       case Period.MORNING:
         return 'Matin';
       case Period.NOON:
-        return 'Après-midi';
+        return 'Midi';
       case Period.EVENING:
         return 'Soir';
       case Period.NIGHT:

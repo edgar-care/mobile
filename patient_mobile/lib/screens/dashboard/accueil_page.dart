@@ -7,6 +7,7 @@ import 'package:edgar_app/widget/medicament_day_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 
@@ -92,13 +93,24 @@ class _HomePageState extends State<HomePage> {
                   SvgPicture.asset("assets/images/logo/Group.svg"),
                   const Spacer(),
                   Container(
-                    width: 32,
-                    height: 32,
-                    decoration: const BoxDecoration(
-                      color: AppColors.green500,
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(50)),
+                      ),
+                      child: BoringAvatars(
+                        name:
+                            "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
+                        colors: const [
+                          AppColors.blue700,
+                          AppColors.blue200,
+                          AppColors.blue500
+                        ],
+                        type: BoringAvatarsType.beam,
+                      )
                     ),
-                  )
                 ],
               ),
               const SizedBox(
@@ -126,7 +138,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 8),
               const Divider(
                 color: AppColors.blue700,
-                height: 4,
+                height: 2,
               ),
               const SizedBox(height: 8),
               nextAppointment != null
@@ -156,6 +168,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 textAlign: TextAlign.start,
               ),
+              const SizedBox(height: 12),
               Buttons(
                 msg: const Text("Prendre un rendez-vous"),
                 size: SizeButton.md,
@@ -178,7 +191,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 8),
               const Divider(
                 color: AppColors.blue700,
-                height: 4,
+                height: 2,
               ),
               const SizedBox(height: 8),
               const Expanded(
