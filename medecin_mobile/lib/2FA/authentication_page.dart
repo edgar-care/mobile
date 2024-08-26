@@ -146,7 +146,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    isActive? modalEdgarApp2() : modalEdgarApp1(context),
+                                                    isActive? modalEdgarAppDesactivate() : modalEdgarApp1(context),
                                                   ]);
                                                 },
                                               );
@@ -160,7 +160,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                     ),
                                     NavbarPLusTab(
                                       title: 'Application tierce',
-                                      isActive: false,
+                                      isActive: true,
                                       onTap: () {
                                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                                         model.resetCurrentIndex();
@@ -172,7 +172,8 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    isActive? modalDesactivateTierApp() : modalTierApp(),
+                                                    // isActive? modalDesactivateTierApp() : modalTierApp(),
+                                                    modalDesactivateTierApp(),
                                                   ]);
                                                 },
                                               );
@@ -301,7 +302,7 @@ Widget modalEdgarApp1(BuildContext context) {
               decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: AppColors.blue200,
+                    color: AppColors.blue100,
                     width: 1,
                   ),
                 ),
@@ -330,6 +331,22 @@ Widget modalEdgarApp1(BuildContext context) {
           msg: const Text('Activer l\'authentification'),
           onPressed: () {
             Navigator.pop(context);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalTrustDevice(context),
+                      ]);
+                    },
+                  );
+                },
+              );
           },
         ),
         const SizedBox(height: 8,),
@@ -423,7 +440,25 @@ Widget modalTrustDevice(BuildContext context) {
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
               info: 'Dernière connexion: 12/12/2021',
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                final model = Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+                showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            modalInfoDevices(),
+                          ]);
+                        },
+                      );
+                    },
+                  );
+              },
               type: 'Top',
               outlineIcon: SvgPicture.asset(
                 'assets/images/utils/chevron-right.svg',
@@ -444,7 +479,25 @@ Widget modalTrustDevice(BuildContext context) {
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
               info: 'Dernière connexion: 12/12/2021',
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                final model = Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+                showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            modalInfoDevices(),
+                          ]);
+                        },
+                      );
+                    },
+                  );
+              },
               type: 'Top',
               outlineIcon: SvgPicture.asset(
                 'assets/images/utils/chevron-right.svg',
@@ -467,6 +520,22 @@ Widget modalTrustDevice(BuildContext context) {
           msg: const Text('Ajouter un appareil de confiance'),
           onPressed: () {
             Navigator.pop(context);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalAddTrustDevice(context),
+                      ]);
+                    },
+                  );
+                },
+              );
           },
         ),
         const SizedBox(height: 8,),
@@ -512,7 +581,7 @@ Widget modalEdgarAppDesactivate() {
   );
 }
 
-Widget modalAddTrustDevice() {
+Widget modalAddTrustDevice(BuildContext context) {
   return ModalContainer(
     title: 'Ajouter un appareil de confiance',
     subtitle: 'Sélectionner un appareil ci-dessous, afin d\'ajouter la double authentification sur celui-ci.',
@@ -540,7 +609,8 @@ Widget modalAddTrustDevice() {
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
               info: 'Dernière connexion: 12/12/2021',
-              onTap: () {},
+              onTap: () {
+              },
               type: 'Top',
               outlineIcon: SvgPicture.asset(
                 'assets/images/utils/chevron-right.svg',
@@ -577,14 +647,18 @@ Widget modalAddTrustDevice() {
           variant: Variante.primary,
           size: SizeButton.md,
           msg: const Text('Activer l\'authentification'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         const SizedBox(height: 8,),
         Buttons(
           variant: Variante.secondary,
           size: SizeButton.md,
           msg: const Text('Annuler'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ],
     )
@@ -599,6 +673,7 @@ Widget modalTierApp(){
       Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
             const Text('4535 6798 7894', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
             GestureDetector(
@@ -754,5 +829,42 @@ Widget modalDesactivateTierApp() {
         ),
       ],
     ),
+  );
+}
+
+Widget modalInfoDevices() {
+  return ModalContainer(
+    title: 'Téléphone 1',
+    subtitle: 'Connecté à votre compte edgar.',
+    icon: const Icon(
+      BootstrapIcons.phone_fill,
+      color: AppColors.blue700,
+      size: 17,
+    ),
+    body: const [
+      Column(
+        children: [
+          Row(
+            children: [
+              Text('Dernière connexion: ', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              Text('12/12/2021', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Text('Localisation: ', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              Text('Lyon, Rhône, France', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+            ],
+          ),
+        ],
+      )
+    ],
+    footer: Buttons(
+      variant: Variante.deleteBordered,
+      size: SizeButton.md,
+      msg: const Text('Déconnecter l\'appareil'),
+      onPressed: () {},
+    )
   );
 }

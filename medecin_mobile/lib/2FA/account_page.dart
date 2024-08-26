@@ -207,7 +207,7 @@ class _AccountPageState extends State<AccountPage> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    modalGenerateBackup()
+                                                    modalReNewBackup(context),
                                                   ]);
                                                 },
                                               );
@@ -236,7 +236,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 }
 
-Widget modalReNewBackup() {
+Widget modalReNewBackup(BuildContext context) {
     return ModalContainer(
       title: 'Vos codes de sauvegarde',
       subtitle: 'Vous avez déjà consulté vos codes de sauvegarde. Par sourcis de sécurité vous ne pouvez consulter vos code de sauvegarde qu\'une seule fois, lors de la génération de ceux-ci.',
@@ -253,12 +253,30 @@ Widget modalReNewBackup() {
             variant: Variante.primary,
             size: SizeButton.md,
             msg: const Text('Générer de nouveaux codes'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+              final model = Provider.of<BottomSheetModel>(context, listen: false);
+              model.resetCurrentIndex();
+              showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(model: model, children: [
+                          modalGenerateBackup(context)
+                        ]);
+                      },
+                    );
+                  },
+                );
+            },
           ),
     );
 }
 
-Widget modalGenerateBackup() {
+Widget modalGenerateBackup(BuildContext context) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -313,14 +331,18 @@ Widget modalGenerateBackup() {
             variant: Variante.primary,
             size: SizeButton.md,
             msg: const Text('Activer l\'authentification'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
           const SizedBox(height: 8,),
           Buttons(
             variant: Variante.secondary,
             size: SizeButton.md,
             msg: const Text('Annuler'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

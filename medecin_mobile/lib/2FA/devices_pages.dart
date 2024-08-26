@@ -57,10 +57,7 @@ class _DevicesPageState extends State<DevicesPage> {
                           const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: AppColors.blue200,
                           width: 1,
@@ -82,7 +79,7 @@ class _DevicesPageState extends State<DevicesPage> {
                             decoration: const BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: AppColors.blue200,
+                                  color: AppColors.blue100,
                                   width: 1,
                                 ),
                               ),

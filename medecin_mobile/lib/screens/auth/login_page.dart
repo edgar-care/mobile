@@ -140,7 +140,7 @@ class _LoginState extends State<Login> {
                                   return Consumer<BottomSheetModel>(
                                     builder: (context, model, child) {
                                       return ListModal(model: model, children: [
-                                        modalChoose2FA()
+                                        modalForgotPassword(),
                                       ]);
                                     },
                                   );
@@ -159,7 +159,23 @@ class _LoginState extends State<Login> {
                           msg: const Text("Se connecter"),
                           size: SizeButton.md,
                           onPressed: () {
-                            login(email, password, context);
+                            final model = Provider.of<BottomSheetModel>(context, listen: false);
+                            model.resetCurrentIndex();
+                            showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return Consumer<BottomSheetModel>(
+                                    builder: (context, model, child) {
+                                      return ListModal(model: model, children: [
+                                        modalChoose2FA(),
+                                      ]);
+                                    },
+                                  );
+                                },
+                              );
+                            // login(email, password, context);
                           },
                         ),
                       ],
