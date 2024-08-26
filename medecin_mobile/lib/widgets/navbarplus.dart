@@ -4,7 +4,6 @@ import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -36,7 +35,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
         infoMedical = doctor;
       }
     }
-    Logger().d(infoMedical);
   }
 
   @override
@@ -228,10 +226,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                         'assets/images/utils/chevron-right.svg',
                                       ),
                                     ),
-                                    Container(
-                                      color: AppColors.blue100,
-                                      height: 1,
-                                    ),
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
                                         'assets/images/utils/laptop-fill.svg',
@@ -333,7 +327,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
           border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
-                : const BorderSide(color: AppColors.blue200, width: 1),
+                : const BorderSide(color: AppColors.blue100, width: 1),
           ),
           borderRadius: BorderRadius.only(
             topLeft: widget.type == 'Only' || widget.type == 'Top'

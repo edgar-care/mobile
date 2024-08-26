@@ -144,7 +144,7 @@ class _AccountPageState extends State<AccountPage> {
                                       outlineIcon: Text(widget.infoMedical["email"], style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w400,color: AppColors.grey500),)
                                     ),
                                     Container(
-                                      height: 2,
+                                      height: 1,
                                       color: AppColors.blue100,
                                     ),
                                     NavbarPLusTab(
@@ -196,7 +196,7 @@ class _AccountPageState extends State<AccountPage> {
                                     ),
                                     Container(
                                       color: AppColors.blue100,
-                                      height: 2,
+                                      height: 1,
                                     ),
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
