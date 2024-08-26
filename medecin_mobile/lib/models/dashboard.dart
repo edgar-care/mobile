@@ -77,7 +77,9 @@ class _DashBoardState extends State<DashBoard> {
     final List<Widget> pages = <Widget>[
       const Agenda(),
       const Rdv(),
-      Services(tapped: _onItemTapped,),
+      Services(
+        tapped: _onItemTapped,
+      ),
       const Patient(),
       const Diagnostic(),
       const ChatPageDashBoard(),

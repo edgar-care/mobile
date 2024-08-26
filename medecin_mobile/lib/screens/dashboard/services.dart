@@ -108,51 +108,51 @@ class BarItem extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(8),
         child: GestureDetector(
-          onTap: ontap,
-          child:Container(
-            color: AppColors.white,
-            child : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            onTap: ontap,
+            child: Container(
+              color: AppColors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        icon,
-                        size: 16,
+                      Row(
+                        children: [
+                          Icon(
+                            icon,
+                            size: 16,
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            title,
+                            style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14),
+                          )
+                        ],
                       ),
                       const SizedBox(
-                        width: 12,
+                        height: 4,
                       ),
                       Text(
-                        title,
+                        bottomText,
                         style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14),
+                            fontSize: 12),
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 4,
+                  const Icon(
+                    BootstrapIcons.chevron_right,
+                    size: 16,
                   ),
-                  Text(
-                    bottomText,
-                    style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12),
-                  )
                 ],
               ),
-              const Icon(
-                BootstrapIcons.chevron_right,
-                size: 16,
-              ),
-            ],
-          ),
-        )));
+            )));
   }
 }

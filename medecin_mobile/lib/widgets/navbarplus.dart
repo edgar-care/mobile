@@ -81,16 +81,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ), 
-                            const Text('Profil et paramètres',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                              const SizedBox(),
-                            ],
+                          ),
+                          const Text(
+                            'Profil et paramètres',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
