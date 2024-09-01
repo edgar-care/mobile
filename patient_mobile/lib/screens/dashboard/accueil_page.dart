@@ -2,6 +2,7 @@
 
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
 import 'package:edgar_app/widget/appoitement_card.dart';
 import 'package:edgar_app/widget/medicament_day_card.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
+
+import '../../services/doctor.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +24,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Map<String, dynamic> infoMedical = {};
   List<Map<String, dynamic>> rdv = [];
+  List<dynamic> allDoctor = [];
 
   Future<void> fetchData() async {
+    await getAllDoctor().then((value) {
+      if (value.isNotEmpty) {
+        allDoctor = value;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+            message: "Error on fetching doctors", context: context));
+      }
+    });
+
     await getMedicalFolder().then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
@@ -97,8 +110,7 @@ class _HomePageState extends State<HomePage> {
                       height: 32,
                       decoration: const BoxDecoration(
                         color: AppColors.white,
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(50)),
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
                       child: BoringAvatars(
                         name:
@@ -109,8 +121,7 @@ class _HomePageState extends State<HomePage> {
                           AppColors.blue500
                         ],
                         type: BoringAvatarsType.beam,
-                      )
-                    ),
+                      )),
                 ],
               ),
               const SizedBox(
@@ -147,10 +158,15 @@ class _HomePageState extends State<HomePage> {
                           nextAppointment['start_date'] * 1000),
                       endDate: DateTime.fromMillisecondsSinceEpoch(
                           nextAppointment['end_date'] * 1000),
-                      doctor: "Dr. Jean Dupont",
+                      doctor: findDoctorById(
+                                  allDoctor, nextAppointment['doctor_id'])
+                              ?.name ??
+                          'Docteur inconnu',
                       onTap: () {},
                     )
-                  : const Text('Pas de prochain rendez-vous', style: TextStyle(
+                  : const Text(
+                      'Pas de prochain rendez-vous',
+                      style: TextStyle(
                         color: AppColors.black,
                         fontSize: 14,
                         fontFamily: 'Poppins',

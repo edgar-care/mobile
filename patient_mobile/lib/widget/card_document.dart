@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, use_build_context_synchronously
 
 import 'package:download_file/data/models/download_file_options.dart';
 import 'package:download_file/download_file.dart';
