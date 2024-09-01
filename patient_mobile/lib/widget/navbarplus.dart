@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:edgar_app/models/dashboard.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar/colors.dart';
@@ -32,7 +34,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token == null) {
-      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/login');
     }
   }
@@ -321,7 +322,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                             await SharedPreferences
                                                 .getInstance();
                                         prefs.remove('token');
-                                        // ignore: use_build_context_synchronously
                                         Navigator.pushNamed(context, '/');
                                       },
                                       type: 'Only',

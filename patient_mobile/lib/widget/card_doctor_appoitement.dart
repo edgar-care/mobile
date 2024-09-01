@@ -370,14 +370,17 @@ class _SeeMoreState extends State<SeeMore> {
               (value) {
                 if (value) {
                   Navigator.pushNamed(
+                    // ignore: use_build_context_synchronously
                     context,
                     '/simulation/confirmation',
                   );
                 } else {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     ErrorSnackBar(
                       message:
                           "Une erreur s'est produite lors de la validation du rendez-vous.",
+                      // ignore: use_build_context_synchronously
                       context: context,
                     ),
                   );

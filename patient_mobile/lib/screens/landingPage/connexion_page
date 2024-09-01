@@ -10,6 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:gradient_borders/gradient_borders.dart';
 
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({super.key});
@@ -40,16 +41,15 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 topLeft: Radius.circular(32),
                 topRight: Radius.circular(32),
               ),
-              border: BorderDirectional(
-                top: BorderSide(
-                  gradient: RadialGradient(
-                    colors: [AppColors.blue700, AppColors.white],
-                    center: Alignment.center,
-                    radius: 1.0,
-                  ),
-                  width: 2,
+              border: GradientBoxBorder(
+                gradient: RadialGradient(
+                  colors: [AppColors.blue700, AppColors.white],
+                  center: Alignment.center,
+                  radius: 2,
                 ),
-              ),
+                
+                width: 2,
+              )
             ),
             child: Column(
               children: [
@@ -379,10 +379,13 @@ class ModalRegister extends StatefulWidget {
 }
 
 class _ModalRegisterState extends State<ModalRegister> {
+  
+  String email = "";
+  String password = "";
+
+
   @override
   Widget build(BuildContext context) {
-    String email = "";
-    String password = "";
 
     bool emailValidityChecker(String email) {
       return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
@@ -396,8 +399,6 @@ class _ModalRegisterState extends State<ModalRegister> {
         icon: SvgPicture.asset(
           "assets/images/utils/pailette.svg",
           width: 18,
-          // ignore: deprecated_member_use
-          // color: AppColors.blue700,
         ),
         type: ModalType.info,
       ),
