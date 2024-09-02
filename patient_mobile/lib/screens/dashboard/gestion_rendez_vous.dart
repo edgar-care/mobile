@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/appointement.dart';
 import 'package:edgar_app/services/doctor.dart';
@@ -350,9 +352,7 @@ class _DeleteRdvState extends State<DeleteRdv> {
               msg: const Text('Oui, annuler le rendez-vous'),
               onPressed: () async {
                 await deleteAppointementId(widget.id);
-                // ignore: use_build_context_synchronously
                 widget.updataData(context);
-                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
             ),

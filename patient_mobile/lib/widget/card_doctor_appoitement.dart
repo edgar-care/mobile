@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:edgar_app/services/appointement.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/widget.dart';

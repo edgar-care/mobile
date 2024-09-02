@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:edgar_app/services/appointement.dart';
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';

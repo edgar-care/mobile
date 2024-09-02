@@ -491,6 +491,7 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
     ]);
     Future.delayed(const Duration(milliseconds: 200), () {
       widget.webSocketService?.getMessages();
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     });
   }
