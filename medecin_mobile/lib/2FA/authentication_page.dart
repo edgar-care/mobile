@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
+import 'package:edgar_pro/services/multipleFa_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_modal.dart';
@@ -22,15 +25,38 @@ class DoubleAuthentication extends StatefulWidget {
 class _DoubleAuthenticationState extends State<DoubleAuthentication> {
 
   Map<String, dynamic> infoMedical = {};
-  bool isActive = false;
+  bool emailActive = false;
+  bool thirdActive = false;
+  bool mobileActive = false;
+  String secret = '';
+  String trustDevice = '';
 
   @override
   void initState() {
     super.initState();
-    loadInfo();  
+    loadInfo();
   }
 
   void loadInfo() async {
+    getEnable2fa().then((value) {
+      for (var method in value) {
+        if (method == 'EMAIL') {
+          setState(() {
+            emailActive = true;
+          });
+        }
+        if (method == 'AUTHENTICATOR') {
+          setState(() {
+            thirdActive = true;
+          });
+        }
+        if (method == 'MOBILE') {
+          setState(() {
+            mobileActive = true;
+          });
+        }
+      }
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
     List<dynamic> doctorList = await getAllDoctor();
@@ -108,7 +134,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                   children: [
                                     NavbarPLusTab(
                                       title: 'Email',
-                                      isActive: isActive,
+                                      isActive: emailActive,
                                       onTap: () {
                                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                                         model.resetCurrentIndex();
@@ -120,7 +146,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    isActive? modal2FAEmailDesactivate(infoMedical['email']) : modal2FAEmail(infoMedical['email']),
+                                                    emailActive ? modal2FAEmailDesactivate(infoMedical['email'], context, loadInfo) : modal2FAEmail(infoMedical['email'], context, loadInfo),
                                                   ]);
                                                 },
                                               );
@@ -134,7 +160,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                     ),
                                     NavbarPLusTab(
                                       title: 'Application edgar',
-                                      isActive: false,
+                                      isActive: mobileActive,
                                       onTap: () {
                                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                                         model.resetCurrentIndex();
@@ -146,7 +172,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    isActive? modalEdgarAppDesactivate() : modalEdgarApp1(context),
+                                                    mobileActive? modalEdgarAppDesactivate() : modalEdgarApp1(context),
                                                   ]);
                                                 },
                                               );
@@ -160,7 +186,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                     ),
                                     NavbarPLusTab(
                                       title: 'Application tierce',
-                                      isActive: true,
+                                      isActive: thirdActive,
                                       onTap: () {
                                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                                         model.resetCurrentIndex();
@@ -172,7 +198,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    // isActive? modalDesactivateTierApp() : modalTierApp(),
+                                                    // thirdActive? modalDesactivateTierApp() : modalTierApp(),
                                                     modalDesactivateTierApp(),
                                                   ]);
                                                 },
@@ -200,7 +226,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   }
 }
 
-Widget modal2FAEmail(String email) {
+Widget modal2FAEmail(String email, BuildContext context, Function loadInfo) {
     return ModalContainer(
       title: 'Activer la double authentification par email ?',
       subtitle: 'L\'adresse mail: $email sera utilisée comme méthode de double authentification.',
@@ -218,21 +244,46 @@ Widget modal2FAEmail(String email) {
             variant: Variante.primary,
             size: SizeButton.md,
             msg: const Text('Activer l\'authentification'),
-            onPressed: () {},
+            onPressed: () {
+              enable2FAEmail().then((value) {
+                loadInfo();
+                generateBackupCode().then((value) {
+                  Navigator.pop(context);
+                  final model = Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            modalBackupEmail(value, context),
+                          ]);
+                        },
+                      );
+                    },
+                  );
+                });
+              });
+            },
           ),
           const SizedBox(height: 8,),
           Buttons(
             variant: Variante.secondary,
             size: SizeButton.md,
             msg: const Text('Annuler'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
     );
 }
 
-Widget modal2FAEmailDesactivate(String email) {
+Widget modal2FAEmailDesactivate(String email, BuildContext context, Function loadInfo) {
     return ModalContainer(
       title: 'Désactiver la double authentification par email ?',
       subtitle: 'L\'adresse mail: $email ne sera plus utilisée comme méthode de double authentification.',
@@ -250,14 +301,23 @@ Widget modal2FAEmailDesactivate(String email) {
             variant: Variante.delete,
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
-            onPressed: () {},
+            onPressed: () {
+              delete2faMethod('EMAIL', context).then((value) {
+                if (value == 200) {
+                  loadInfo();
+                  Navigator.pop(context);
+                }
+              });
+            },
           ),
           const SizedBox(height: 8,),
           Buttons(
             variant: Variante.secondary,
             size: SizeButton.md,
             msg: const Text('Annuler'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -360,6 +420,63 @@ Widget modalEdgarApp1(BuildContext context) {
         ),
       ],
     )); 
+}
+
+Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
+  return ModalContainer(
+    title: 'La double authentification avec un email est activée !',
+    subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
+    body: [
+        const Text('Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Text(backupCodes[0].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[1].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[2].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[3].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[4].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              ],
+            ),
+            const SizedBox(width: 24),
+            Column(
+              children: [
+                Text(backupCodes[5].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[6].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[7].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[8].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[9].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+              ],
+            )
+          ],
+        ),
+    ],
+    icon: const Icon(
+      BootstrapIcons.shield_lock_fill,
+      color: AppColors.blue700,
+      size: 17,
+    ),
+    footer: Buttons(
+      variant: Variante.primary,
+      size: SizeButton.md,
+      msg: const Text('Confirmer'),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    )
+  );
 }
 
 Widget modalEdgarApp2() {
