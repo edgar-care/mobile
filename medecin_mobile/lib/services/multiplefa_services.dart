@@ -19,9 +19,6 @@ Future<List<dynamic>> getEnable2fa() async {
   if (response.statusCode == 200) {
     return jsonDecode(response.body)['double_auth']['methods'];
   }
-  if (response.statusCode != 200) {
-    return [];
-  }
   return [];
 }
 

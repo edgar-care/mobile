@@ -11,6 +11,7 @@ class DeviceTab extends StatefulWidget {
   final String type; // Ajout de la propriété type
   final Widget? outlineIcon;
   final Color? color;
+  final bool selected;
   const DeviceTab({super.key,
       required this.icon,
       required this.info,
@@ -18,6 +19,7 @@ class DeviceTab extends StatefulWidget {
       required this.title,
       required this.onTap,
       required this.type,
+      required this.selected,
       this.outlineIcon,
       this.color});
 
@@ -32,7 +34,7 @@ class _DeviceTabState extends State<DeviceTab> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: widget.selected ? AppColors.blue50 : AppColors.white,
           border:Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)

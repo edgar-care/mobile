@@ -6,6 +6,7 @@ import 'package:edgar_pro/services/logout_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -31,12 +32,14 @@ class _NavbarPLusState extends State<NavbarPLus> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
+    
     List<dynamic> doctorList = await getAllDoctor();
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
         infoMedical = doctor;
       }
     }
+    Logger().d(infoMedical);
   }
 
   @override

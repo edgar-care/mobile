@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/services/devices_services.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/multipleFa_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
@@ -12,6 +13,8 @@ import 'package:edgar_pro/widgets/number_list_2fa.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -172,7 +175,8 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    mobileActive? modalEdgarAppDesactivate() : modalEdgarApp1(context),
+                                                    mobileActive? modalEdgarAppDesactivate() :
+                                                    const ModalEdgarApp1(),
                                                   ]);
                                                 },
                                               );
@@ -324,7 +328,33 @@ Widget modal2FAEmailDesactivate(String email, BuildContext context, Function loa
     );
 }
 
-Widget modalEdgarApp1(BuildContext context) {
+class ModalEdgarApp1 extends StatefulWidget {
+  const ModalEdgarApp1({super.key});
+
+  @override
+  State<ModalEdgarApp1> createState() => ModalEdgarApp1State();
+}
+
+class ModalEdgarApp1State extends State<ModalEdgarApp1> {
+
+  List<dynamic> devices = [];
+  int selected = -1;
+  @override
+  void initState() {
+    super.initState();
+    getDevices();
+  }
+
+  Future<void> getDevices() async {
+    List<dynamic> temp = await getAllDevices();
+    setState(() {
+      devices = temp;
+    });
+    Logger().d(devices);
+  }
+
+  @override
+  Widget build(BuildContext context) {
   return ModalContainer(
     title: 'Activer la double authentification avec edgar',
     subtitle: 'Sélectionner un appareil ci-dessous, afin d\'activer la double authentification sur celui-ci.',
@@ -347,38 +377,24 @@ Widget modalEdgarApp1(BuildContext context) {
         ),
         child: Column(
           children: [
-            DeviceTab(
-              icon: 'Phone',
-              title: 'Téléphone 1',
-              subtitle: 'Lyon, Rhône, France',
-              info: 'Dernière connexion: 12/12/2021',
-              onTap: () {},
-              type: 'Top',
-              outlineIcon: SvgPicture.asset(
-                'assets/images/utils/chevron-right.svg',
-              )
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.blue100,
-                    width: 1,
-                  ),
-                ),
-              )
-            ),
-            DeviceTab(
-              icon: 'Phone',
-              title: 'Téléphone 1',
-              subtitle: 'Lyon, Rhône, France',
-              info: 'Dernière connexion: 12/12/2021',
-              onTap: () {},
-              type: 'Top',
-              outlineIcon: SvgPicture.asset(
-                'assets/images/utils/chevron-right.svg',
-              )
-            ),
+            for (var index = 0; index < devices.length; index++) ...[
+              DeviceTab(
+                icon: devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',
+                info: "Dernière connexion: ${DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(devices[index]['date'] * 1000))}",
+                subtitle: "${devices[index]['city']}, ${devices[index]['country']}",
+                title: "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                onTap: () {
+                  setState(() {
+                    selected = index;
+                  });
+                  Logger().d(selected);
+                },
+                type: "Only",
+                selected: selected == index,
+                outlineIcon: SvgPicture.asset(
+                  'assets/images/utils/chevron-right.svg',)
+              ),
+            ]
           ],
         )
       )
@@ -390,6 +406,7 @@ Widget modalEdgarApp1(BuildContext context) {
           size: SizeButton.md,
           msg: const Text('Activer l\'authentification'),
           onPressed: () {
+            addTrustDevices(devices[selected]['id']).then((value) {          
             Navigator.pop(context);
             final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
@@ -401,12 +418,13 @@ Widget modalEdgarApp1(BuildContext context) {
                   return Consumer<BottomSheetModel>(
                     builder: (context, model, child) {
                       return ListModal(model: model, children: [
-                        modalTrustDevice(context),
+                        modalEdgarApp2(context),
                       ]);
                     },
                   );
                 },
               );
+            });
           },
         ),
         const SizedBox(height: 8,),
@@ -420,6 +438,7 @@ Widget modalEdgarApp1(BuildContext context) {
         ),
       ],
     )); 
+  }
 }
 
 Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
@@ -479,7 +498,7 @@ Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
   );
 }
 
-Widget modalEdgarApp2() {
+Widget modalEdgarApp2(BuildContext context) {
   return ModalContainer(
     title: 'La double authentification avec edgar est activée !',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -529,7 +548,9 @@ Widget modalEdgarApp2() {
       variant: Variante.primary,
       size: SizeButton.md,
       msg: const Text('Confirmer'),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pop(context);
+      },
     )
   );
 }
@@ -553,6 +574,7 @@ Widget modalTrustDevice(BuildContext context) {
         child: Column(
           children: [
             DeviceTab(
+              selected: false,
               icon: 'Phone',
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
@@ -592,6 +614,7 @@ Widget modalTrustDevice(BuildContext context) {
               )
             ),
             DeviceTab(
+              selected: false,
               icon: 'Phone',
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
@@ -722,6 +745,7 @@ Widget modalAddTrustDevice(BuildContext context) {
         child: Column(
           children: [
             DeviceTab(
+              selected: false,
               icon: 'Phone',
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',
@@ -744,6 +768,7 @@ Widget modalAddTrustDevice(BuildContext context) {
               )
             ),
             DeviceTab(
+              selected: false,
               icon: 'Phone',
               title: 'Téléphone 1',
               subtitle: 'Lyon, Rhône, France',

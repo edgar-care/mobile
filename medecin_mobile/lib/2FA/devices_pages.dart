@@ -66,6 +66,7 @@ class _DevicesPageState extends State<DevicesPage> {
                       child:Column(
                         children: [
                           DeviceTab(
+                            selected: false,
                             icon: 'Phone',
                             info: 'Il y a 2 jours',
                             subtitle: 'Lyon, Rhône, France',
@@ -86,6 +87,7 @@ class _DevicesPageState extends State<DevicesPage> {
                             )
                           ),
                           DeviceTab(
+                            selected: false,
                             icon: 'PC',
                             info: 'Il y a 3 heures',
                             subtitle: 'Lyon, Rhône, France',
