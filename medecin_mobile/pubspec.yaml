@@ -28,6 +28,7 @@ dependencies:
   skeletonizer: ^1.1.2+1
   flutter_boring_avatars: ^1.1.0
   download_file: ^1.2.0
+  flutter_native_splash: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -36,7 +37,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: launcher_icon
   ios: true
-  image_path: "assets/images/logo/small-width-blue-edgar-logo.png"
+  image_path: "assets/images/logo/Small-logo-color.png"
+flutter_native_splash:
+  color: "#335FC2"
+  image: "assets/images/logo/Small-logo-color.png"
 
 flutter:
   uses-material-design: true
