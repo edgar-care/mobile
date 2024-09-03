@@ -52,7 +52,7 @@ flutter_launcher_icons:
   image_path: "assets/images/logo/Small-logo-color.png"
 flutter_native_splash:
   color: "#335FC2"
-  image: "assets/images/logo/Small-logo-color .png"
+  image: "assets/images/logo/Small-logo-color.png"
 environment:
   sdk: '>=2.18.4 <3.0.0'
 flutter:
