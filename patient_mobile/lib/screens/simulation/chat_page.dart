@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/diagnotic.dart';
 import 'package:edgar/widget/buttons.dart';
@@ -63,7 +65,6 @@ class _ChatPageState extends State<ChatPage> {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.setString('sessionId', sessionId);
-                  // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, '/simulation/appointement');
                 },
               ),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/medecine.dart';
 import 'package:edgar/services/traitement.dart';
@@ -489,7 +491,6 @@ class _DeleteBodyState extends State<DeleteBody> {
                   await deleteTraitementRequest(traitment['id']);
                 }
                 widget.updateData(0);
-                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
               widthBtn: 140,

@@ -894,6 +894,7 @@ class _BodyModalState extends State<BodyModal> {
                           ).then((value) {
                             if (value == true) {
                               widget.updateData();
+                              // ignore: use_build_context_synchronously
                               Navigator.pop(context);
                             }
                           });
