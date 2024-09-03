@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:edgar/widget/navbar.dart';
 import 'package:edgar/widget/plain_button.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    FlutterNativeSplash.remove();
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +36,7 @@ class LandingPage extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 3.0),
               child: Text(
-                "Gagne du temps avec l’assistant\n virtuel du pré-diagnostic",
+                "Gagne du temps avec l'assistant\n virtuel du pré-diagnostic",
                 style: TextStyle(
                   fontSize: 24,
                   fontFamily: 'Poppins',
@@ -40,7 +57,7 @@ class LandingPage extends StatelessWidget {
             const SizedBox(
               width: 300,
               child: Text(
-                "Marre d’attendre pour avoir un rendez-vous  chez le médecin généraliste ? Un Français attend en moyenne 6 jours avant  d’avoir un rendez-vous chez un médecin généraliste",
+                "Marre d'attendre pour avoir un rendez-vous  chez le médecin généraliste ? Un Français attend en moyenne 6 jours avant  d'avoir un rendez-vous chez un médecin généraliste",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black,

@@ -12,6 +12,7 @@ import 'package:edgar/screens/simulation/warning_page.dart';
 import 'package:edgar/screens/simulation/chat_page.dart';
 import 'package:edgar/models/dashboard.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'screens/landingPage/annuaire_medecin.dart';
@@ -20,6 +21,9 @@ import 'screens/landingPage/landing_page.dart';
 Future main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   runApp(const MyApp());
 }
 
