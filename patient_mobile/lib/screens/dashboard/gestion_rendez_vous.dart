@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/services/appointement.dart';
 import 'package:edgar/services/doctor.dart';
@@ -687,7 +689,6 @@ WoltModalSheetPage deleteRDV(
                 msg: const Text('Supprimer'),
                 onPressed: () async {
                   await deleteAppointementId(id);
-                  // ignore: use_build_context_synchronously
                   updataData(context);
                   pageIndexRDV.value = 0;
                 },

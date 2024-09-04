@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:edgar/services/doctor.dart';
 import 'package:edgar/services/get_information_patient.dart';
 import 'package:edgar/services/medecine.dart';
@@ -58,18 +60,14 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
             message: "Error on fetching name",
-            // ignore: use_build_context_synchronously
             context: context));
         return 'test';
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
           message: "Error on fetching name",
-          // ignore: use_build_context_synchronously
           context: context));
       return 'test';
     }
