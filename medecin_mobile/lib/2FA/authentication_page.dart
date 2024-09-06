@@ -44,18 +44,14 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   }
 
   void load2fa() async {
+    emailActive = false;
+    thirdActive = false;
+    mobileActive = false;
      getEnable2fa().then((value) {
       Logger().d(value);
       if (value['secret'].isNotEmpty) {
         setState(() {
           secret = true;
-        });
-      }
-      if (value['methods'].isEmpty) {
-        setState(() {          
-          emailActive = false;
-          thirdActive = false;
-          mobileActive = false;
         });
       }
       for (var method in value['methods']) {
@@ -64,7 +60,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
             emailActive = true;
           });
         }
-        else if (method == 'AUTHENTICATOR') {
+        else if (method == 'AUTHENTIFICATOR') {
           setState(() {
             thirdActive = true;
           });
@@ -221,7 +217,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    thirdActive? modalDesactivateTierApp(context) : ModalTierApp(load2fa: load2fa, secret: secret,),
+                                                    thirdActive? modalDesactivateTierApp(context, load2fa) : ModalTierApp(load2fa: load2fa, secret: secret,),
                                                   ]);
                                                 },
                                               );
@@ -878,9 +874,13 @@ class ModalTierApp extends StatefulWidget {
 class _ModalTierAppState extends State<ModalTierApp> {
 
   Map<String, dynamic> infoGenerate = {};
+  int skip = 0;
 
   Future<void> generateThirdParty() async {
-    infoGenerate = await enable2FA3party();
+    if (skip == 0) {
+      infoGenerate = await enable2FA3party();
+      skip = 1;
+    }
   }
 
   @override
@@ -1030,12 +1030,11 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
           msg: const Text('Continuer'),
           onPressed: () {
             checkTierAppCode(_code).then((value) {
-              if (value == true) {
-                Navigator.pop(context);
+              if (value['otp_verified'] == true) {
+                widget.load2fa();
                 if (widget.secret != true) {
+                Navigator.pop(context);
                 generateBackupCode().then((value) {
-                  Navigator.pop(context);
-                  widget.load2fa();
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
                   showModalBottomSheet(
@@ -1073,7 +1072,9 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
           variant: Variante.secondary,
           size: SizeButton.md,
           msg: const Text('Annuler'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ],
     )
@@ -1138,7 +1139,7 @@ Widget modalBackupTierApp(List<dynamic> backupCodes ,BuildContext context) {
   );
 }
 
-Widget modalDesactivateTierApp(BuildContext context) {
+Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   return ModalContainer(
     title: 'Désactiver la double authentification avec une application tierce ?',
     subtitle: 'Vous ne pourrez plus vous connecter en utilisant votre application de double authentification.',
@@ -1154,8 +1155,9 @@ Widget modalDesactivateTierApp(BuildContext context) {
           size: SizeButton.md,
           msg: const Text('Désactiver l\'authentification'),
           onPressed: () {
-            delete2faMethod('AUTHENTICATOR').then((value) {
+            delete2faMethod('AUTHENTIFICATOR').then((value) {
               if (value == 200) {
+                load2fa();
                 Navigator.pop(context);
               }
           });

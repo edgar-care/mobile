@@ -103,10 +103,10 @@ Future<Map<String, dynamic>> enable2FA3party() async {
   return jsonDecode(response.body);
 }
 
-Future<bool> checkTierAppCode(String code) async{
+Future<Map<String, dynamic>> checkTierAppCode(String code) async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/2fa/verify_code/third_party';
+  String url = '${dotenv.env['URL']}/2fa/method/third_party';
   final response = await http.post(
     Uri.parse(url),
     headers: {
