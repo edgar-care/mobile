@@ -19,16 +19,32 @@ import 'screens/landingPage/annuaire_medecin.dart';
 import 'screens/landingPage/landing_page.dart';
 
 Future main() async {
-  await dotenv.load(fileName: ".env");
-  initializeDateFormatting();
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-
+  await dotenv.load(fileName: ".env");
+  initializeDateFormatting();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    FlutterNativeSplash.remove();
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {

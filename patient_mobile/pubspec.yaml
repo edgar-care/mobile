@@ -41,6 +41,8 @@ dependencies:
   permission_handler: ^11.3.1
   download_file: ^1.2.0
   flutter_native_splash: ^2.4.1
+  
+
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -48,11 +50,18 @@ dev_dependencies:
     sdk: flutter
 flutter_launcher_icons:
   android: launcher_icon
+  adaptive_icon_background: "#335FC2"
+  adaptive_icon_foreground: "assets/images/logo/Launcher_icon.png"
   ios: true
-  image_path: "assets/images/logo/Small-logo-color.png"
+  image_path: "assets/images/logo/Launcher_icon.png"
 flutter_native_splash:
   color: "#335FC2"
-  image: "assets/images/logo/Small-logo-color.png"
+  image: "assets/images/logo/Launcher_icon.png"
+  android: true
+  ios: true
+  web: true
+ 
+
 environment:
   sdk: '>=2.18.4 <3.0.0'
 flutter:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edgar/widget/navbar.dart';
 import 'package:edgar/widget/plain_button.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -18,7 +17,6 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Future<void> fetchData() async {
-    FlutterNativeSplash.remove();
     return;
   }
 
