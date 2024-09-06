@@ -10,6 +10,7 @@ import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 
@@ -29,10 +30,14 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void initState() {
     super.initState();
+    getInfo();
   }
 
   void getInfo() async {
-    enable2fa = await getEnable2fa();
+    var tmp = await getEnable2fa();
+    setState(() {
+      enable2fa = tmp;
+    });
   }
 
   @override
@@ -212,6 +217,7 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
                                       onTap: () {
+                                                    Logger().d(enable2fa['secret']);
                                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                                         model.resetCurrentIndex();
                                         showModalBottomSheet(

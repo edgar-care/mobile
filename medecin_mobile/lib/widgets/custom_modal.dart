@@ -69,13 +69,23 @@ class ListModalState extends State<ListModal>
 }
 
 class ModalContainer extends StatelessWidget {
+  /// Tittle of the modal
   final String title;
+
+  /// Icon de la modal
   final Widget icon;
+
+  /// Subtittle of the modal
   final String subtitle;
+
+  /// The body of the modal
   final List<Widget>? body;
+
+  /// The footer of the modal
   final Widget? footer;
 
-  const ModalContainer({
+  /// Required Tittle, subtittle, and Icon
+  const ModalContainer ({
     super.key,
     required this.title,
     required this.subtitle,
@@ -143,17 +153,16 @@ class ModalContainer extends StatelessWidget {
                 physics:
                     const BouncingScrollPhysics(), // Optional: Add bounce effect
                 child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height -
-                          264, // Adjust as per your needs
-                    ),
-                    child: Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: body!,
-                      ),
-                    )),
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height -
+                        264, // Adjust as needed
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: body!,
+                  ),
+                ),
               ),
             ],
             const SizedBox(height: 24),

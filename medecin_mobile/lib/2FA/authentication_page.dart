@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/devices_services.dart';
@@ -44,9 +44,11 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   }
 
   void load2fa() async {
-    emailActive = false;
-    thirdActive = false;
-    mobileActive = false;
+    setState(() {  
+      emailActive = false;
+      thirdActive = false;
+      mobileActive = false;
+    });
      getEnable2fa().then((value) {
       Logger().d(value);
       if (value['secret'].isNotEmpty) {
@@ -110,7 +112,6 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                         children: [
                           SvgPicture.asset(
                             'assets/images/utils/arrowChat.svg',
-                            // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
                           ), 
@@ -133,7 +134,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                                 Text('Méthode de double authentification', style: TextStyle(fontFamily: 'Poppins', fontSize: 22, fontWeight: FontWeight.w600),),
-                                Text('Paramétrez vos méthodes de double authentification', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                                Text('Paramétrez vos méthodes de double authentification', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.grey600),),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -378,11 +379,14 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
   return ModalContainer(
     title: 'Activer la double authentification avec edgar',
     subtitle: 'Sélectionner un appareil ci-dessous, afin d\'activer la double authentification sur celui-ci.',
-    icon: const Icon(
+    icon: const IconModal(
+        icon: Icon(
           BootstrapIcons.shield_lock_fill,
           color: AppColors.blue700,
           size: 17,
         ),
+        type: ModalType.info,
+      ),
     body: [
       Container(
         padding:
@@ -510,11 +514,14 @@ Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
           ],
         ),
     ],
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Buttons(
       variant: Variante.primary,
       size: SizeButton.md,
@@ -568,11 +575,14 @@ Widget modalEdgarApp2(List<dynamic> backupCodes ,BuildContext context) {
           ],
         ),
     ],
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Buttons(
       variant: Variante.primary,
       size: SizeButton.md,
@@ -664,11 +674,14 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
         )
       )
     ],
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Column(
       children: [
         Buttons(
@@ -730,11 +743,14 @@ Widget modalEdgarAppDesactivate(Function load2fa, BuildContext context) {
   return ModalContainer(
     title: 'Désactiver la double authentification avec edgar ?',
     subtitle: 'Vous ne pourrez plus vous connecter en utilisant votre application edgar sur mobile.',
-    icon: const Icon(
-      BootstrapIcons.shield_slash_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Column(
       children: [
         Buttons(
@@ -795,11 +811,14 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
   return ModalContainer(
     title: 'Ajouter un appareil de confiance',
     subtitle: 'Sélectionner un appareil ci-dessous, afin d\'ajouter la double authentification sur celui-ci.',
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     body: [
       Container(
         padding:
@@ -927,11 +946,14 @@ class _ModalTierAppState extends State<ModalTierApp> {
                         ],
                       )
                     ],
-                    icon: const Icon(
-                      BootstrapIcons.shield_lock_fill,
-                      color: AppColors.blue700,
-                      size: 17,
-                    ),
+                    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
                     footer: Column(
                       children: [
                         Buttons(
@@ -1017,11 +1039,14 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
     body: [
       FieldNumberList2FA(addCode: setCode,)
     ],
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Column(
       children: [
         Buttons(
@@ -1086,11 +1111,14 @@ Widget modalBackupTierApp(List<dynamic> backupCodes ,BuildContext context) {
   return ModalContainer(
     title: 'La double authentification avec une application tierce est activée !',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
-    icon: const Icon(
-      BootstrapIcons.shield_lock_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     body: [
       const Text('Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
               style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),),
@@ -1143,11 +1171,14 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   return ModalContainer(
     title: 'Désactiver la double authentification avec une application tierce ?',
     subtitle: 'Vous ne pourrez plus vous connecter en utilisant votre application de double authentification.',
-    icon: const Icon(
-      BootstrapIcons.shield_slash_fill,
-      color: AppColors.blue700,
-      size: 17,
-    ),
+    icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
     footer: Column(
       children: [
         Buttons(
@@ -1181,8 +1212,10 @@ Widget modalInfoDevices(String name, String date, String location, String id, St
   return ModalContainer(
     title: name,
     subtitle: 'Connecté à votre compte edgar.',
-    // ignore: deprecated_member_use
-    icon: type == 'Phone' ? SvgPicture.asset('assets/images/utils/phone-fill.svg', color: AppColors.blue700,) : SvgPicture.asset('assets/images/utils/laptop-fill.svg', color: AppColors.blue700,),
+    icon: IconModal(
+        icon: type == 'Phone' ? SvgPicture.asset('assets/images/utils/phone-fill.svg', color: AppColors.blue700,) : SvgPicture.asset('assets/images/utils/laptop-fill.svg', color: AppColors.blue700,),
+        type: ModalType.info,
+      ),
     body: [
       Column(
         children: [
