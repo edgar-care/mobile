@@ -95,7 +95,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           CustomField(
                             startUppercase: false,
                             keyboardType: TextInputType.text,
-                            label: '',
+                            label: 'Minimum 8 caractères',
                             onChanged: (value) {
                               setState(() {
                                 newEmail = value;
@@ -108,7 +108,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           CustomField(
                             startUppercase: false,
                             keyboardType: TextInputType.text,
-                            label: '',
+                            label: 'Minimum 8 caractères',
                             onChanged: (value) {
                               setState(() {
                                 repeatEmail = value;
