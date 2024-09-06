@@ -22,6 +22,7 @@ Future<Map<String, dynamic>> getMedicalFolder() async {
     final body = response.body;
     return jsonDecode(body)['medical_folder'];
   } else {
+    Logger().e(response.statusCode);
     return {};
   }
 }
