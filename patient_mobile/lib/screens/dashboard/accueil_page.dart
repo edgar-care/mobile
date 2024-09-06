@@ -89,10 +89,6 @@ class _HomePageState extends State<HomePage> {
               color: AppColors.blue700,
             ),
           );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text('Erreur lors du chargement des données'),
-          );
         } else {
           Map<String, dynamic>? nextAppointment = getNextAppointment();
 
@@ -114,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: BoringAvatars(
                         name:
-                            "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
+                            "${infoMedical['firstname'] ?? 'Ne fonctionne'} ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'Pas'}",
                         colors: const [
                           AppColors.blue700,
                           AppColors.blue200,
@@ -129,8 +125,8 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 DateTime.now().hour > 18
-                    ? 'Bonsoir, ${infoMedical['name']} !'
-                    : 'Bonjour, ${infoMedical['name']} !',
+                    ? 'Bonsoir, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !'
+                    : 'Bonjour, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !',
                 style: const TextStyle(
                   fontSize: 20,
                   fontFamily: 'Poppins',
