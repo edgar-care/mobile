@@ -1,7 +1,13 @@
+import 'package:edgar_pro/2FA/authentication_page.dart';
+import 'package:edgar_pro/services/devices_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:edgar_pro/widgets/devices_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 class DevicesPage extends StatefulWidget {
   const DevicesPage({super.key});
@@ -11,6 +17,22 @@ class DevicesPage extends StatefulWidget {
 }
 
 class _DevicesPageState extends State<DevicesPage> {
+
+  List<dynamic> devices = [];
+  @override
+  void initState() {
+    super.initState();
+    getDevices();
+  }
+
+  Future<void> getDevices() async {
+    List<dynamic> temp = await getAllDevices();
+    setState(() {
+      devices = temp;
+    });
+    Logger().d(devices);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,38 +87,34 @@ class _DevicesPageState extends State<DevicesPage> {
                       ),
                       child:Column(
                         children: [
-                          DeviceTab(
-                            selected: false,
-                            icon: 'Phone',
-                            info: 'Il y a 2 jours',
-                            subtitle: 'Lyon, Rhône, France',
-                            title: 'Iphone de matteo',
-                            onTap: () {},
-                            type: 'Top',
-                            outlineIcon: SvgPicture.asset(
-                              'assets/images/utils/chevron-right.svg',
-                            ),),
-                          Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: AppColors.blue100,
-                                  width: 1,
-                                ),
-                              ),
-                            )
-                          ),
-                          DeviceTab(
-                            selected: false,
-                            icon: 'PC',
-                            info: 'Il y a 3 heures',
-                            subtitle: 'Lyon, Rhône, France',
-                            title: 'DESKTOP-GKTP1F',
-                            onTap: () {},
-                            type: 'Bottom',
-                            outlineIcon: SvgPicture.asset(
-                              'assets/images/utils/chevron-right.svg',
-                            ),),
+                          for (var index = 0; index < devices.length; index++) ...[
+                            DeviceTab(
+                              icon: devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',
+                              info: "Dernière connexion: ${DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(devices[index]['date'] * 1000))}",
+                              subtitle: "${devices[index]['city']}, ${devices[index]['country']}",
+                              title: "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return Consumer<BottomSheetModel>(
+                                        builder: (context, model, child) {
+                                          return ListModal(model: model, children: [
+                                            modalInfoDevices("${devices[index]['device_type']} - ${devices[index]['browser']}", DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(devices[index]['date'] * 1000)), "${devices[index]['city']}, ${devices[index]['country']}" , devices[index]['id'],devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',  context)
+                                          ]);
+                                        },
+                                      );
+                                    },
+                                  );
+                              },
+                              type: devices.length > 1 && index > devices.length - 1 ? 'Top' : 'Only',
+                              selected: false,
+                              outlineIcon: SvgPicture.asset(
+                                'assets/images/utils/chevron-right.svg',)
+                            ),
+                          ],  
                         ],
                       )
                     ),

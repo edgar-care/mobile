@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<dynamic>> getEnable2fa() async {
+Future<Map<String,dynamic>> getEnable2fa() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/dashboard/2fa';
@@ -17,12 +16,12 @@ Future<List<dynamic>> getEnable2fa() async {
     },
   );
   if (response.statusCode == 200) {
-    return jsonDecode(response.body)['double_auth']['methods'];
+    return jsonDecode(response.body)['double_auth'];
   }
-  return [];
+  return {};
 }
 
-Future<int> delete2faMethod(String method, BuildContext context) async {
+Future<int> delete2faMethod(String method) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/dashboard/2fa/$method';
@@ -33,7 +32,7 @@ Future<int> delete2faMethod(String method, BuildContext context) async {
       'Authorization': 'Bearer $token'
     },
   );
-  return(response.statusCode);
+  return response.statusCode;
 }
 
 Future<List<dynamic>> generateBackupCode() async {
@@ -47,6 +46,8 @@ Future<List<dynamic>> generateBackupCode() async {
       'Authorization': 'Bearer $token'
     },
   );
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
   if (response.statusCode == 201) {
     return jsonDecode(response.body)['double_auth'];
   }
@@ -81,11 +82,12 @@ Future enable2FAMobile(String id) async {
     },
     body: jsonEncode({'method_2fa': 'MOBILE', "trusted_device_id": id}),
   );
+  Logger().d(id);
   Logger().d(response.body);
   Logger().d(response.statusCode);
 }
 
-Future enable2FA3party(String id) async {
+Future<Map<String, dynamic>> enable2FA3party() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/2fa/method/third_party/generate';
@@ -98,4 +100,22 @@ Future enable2FA3party(String id) async {
   );
   Logger().d(response.body);
   Logger().d(response.statusCode);
+  return jsonDecode(response.body);
+}
+
+Future<bool> checkTierAppCode(String code) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString('token') ?? '';
+  String url = '${dotenv.env['URL']}/2fa/verify_code/third_party';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    },
+    body: jsonEncode({'token': code}),
+  );
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
+  return jsonDecode(response.body);
 }

@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/2FA/authentication_page.dart';
+import 'package:edgar_pro/services/multiplefa_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/buttons.dart';
 import 'package:edgar_pro/widgets/custom_modal.dart';
@@ -20,6 +23,18 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+
+  Map<String, dynamic> enable2fa = {};
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void getInfo() async {
+    enable2fa = await getEnable2fa();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -207,6 +222,7 @@ class _AccountPageState extends State<AccountPage> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
+                                                    enable2fa['secret'].isEmpty ? modalRedirect2FA(context) :
                                                     modalReNewBackup(context),
                                                   ]);
                                                 },
@@ -254,29 +270,31 @@ Widget modalReNewBackup(BuildContext context) {
             size: SizeButton.md,
             msg: const Text('Générer de nouveaux codes'),
             onPressed: () {
-              Navigator.pop(context);
-              final model = Provider.of<BottomSheetModel>(context, listen: false);
-              model.resetCurrentIndex();
-              showModalBottomSheet(
-                  context: context,
-                  backgroundColor: Colors.transparent,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return Consumer<BottomSheetModel>(
-                      builder: (context, model, child) {
-                        return ListModal(model: model, children: [
-                          modalGenerateBackup(context)
-                        ]);
-                      },
-                    );
-                  },
-                );
+              generateBackupCode().then((value) {
+                  Navigator.pop(context);
+                  final model = Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            modalGenerateBackup(value, context),
+                          ]);
+                        },
+                      );
+                    },
+                  );
+                });
             },
           ),
     );
 }
 
-Widget modalGenerateBackup(BuildContext context) {
+Widget modalGenerateBackup(List<dynamic> backupCodes, BuildContext context) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -288,38 +306,38 @@ Widget modalGenerateBackup(BuildContext context) {
         ),
         type: ModalType.info,
       ),
-      body: const [
-        Text('Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
+      body: [
+        const Text('Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
               style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
               children: [
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                Text(backupCodes[0].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[1].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[2].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[3].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[4].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
               ],
             ),
-            SizedBox(width: 24),
+            const SizedBox(width: 24),
             Column(
               children: [
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
-                SizedBox(height: 8),
-                Text('3J4K5L6M7N8O9P0', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                Text(backupCodes[5].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[6].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[7].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[8].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                const SizedBox(height: 8),
+                Text(backupCodes[9].toString(), style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
               ],
             )
           ],
@@ -349,7 +367,7 @@ Widget modalGenerateBackup(BuildContext context) {
   );
 }
 
-Widget modalRedirect2FA() {
+Widget modalRedirect2FA(BuildContext context) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle: 'Ajouter une méthode de double authentification pour générer vos codes de sauvegarde. Les codes de sauvegarde sont utilisés lorsque vous n\'avez plus accès à votre appareil de double authentification.',
@@ -365,7 +383,17 @@ Widget modalRedirect2FA() {
             variant: Variante.primary,
             size: SizeButton.md,
             msg: const Text('Activer l\'authentification'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder<void>(
+                  opaque: false,
+                  pageBuilder: (BuildContext context, _, __) {
+                    return const DoubleAuthentication();
+                  },
+                ),
+              );
+            },
           ),
     );
 } 
