@@ -189,6 +189,112 @@ class _ConnexionPageState extends State<ConnexionPage> {
   }
 }
 
+class ModalContainerTest extends StatelessWidget {
+  /// Tittle of the modal
+  final String title;
+
+  /// Icon de la modal
+  final Widget icon;
+
+  /// Subtittle of the modal
+  final String subtitle;
+
+  /// The body of the modal
+  final List<Widget>? body;
+
+  /// The footer of the modal
+  final Widget? footer;
+
+  /// Required Tittle, subtittle, and Icon
+  const ModalContainerTest({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.body,
+    this.footer,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height,
+        ),
+        // padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                icon,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 6),
+                    child: Icon(Icons.close),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                height: 1.5,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                fontFamily: "Poppins",
+                color: Colors.black,
+              ),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                height: 1.5,
+                fontSize: 14,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w500,
+                color: AppColors.grey700,
+              ),
+              softWrap: true,
+            ),
+            if (body != null) ...[
+              const SizedBox(height: 24),
+              SingleChildScrollView(
+                physics:
+                    const BouncingScrollPhysics(), // Optional: Add bounce effect
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height -
+                        264, // Adjust as needed
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: body!,
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+            if (footer != null) footer!,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ModalLogin extends StatefulWidget {
   final BottomSheetModel model;
   final bool isLogin;
@@ -204,7 +310,7 @@ class _ModalLoginState extends State<ModalLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalContainer(
+    return ModalContainerTest(
       title: "Bon retour sur la plateforme edgar",
       subtitle:
           "Connectez-vous avec votre compte pour accéder à votre espace patient, gérer vos rendez-vous et bien plus.",
@@ -391,7 +497,7 @@ class _ModalRegisterState extends State<ModalRegister> {
       return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
     }
 
-    return ModalContainer(
+    return ModalContainerTest(
       title: "Bon retour sur la plateforme edgar",
       subtitle:
           "Un compte edgar vous permettra de suivre votre santé ainsi que prendre des rendez-vous pour vous et vos proches.",
