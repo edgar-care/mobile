@@ -36,20 +36,22 @@ class _ConnexionPageState extends State<ConnexionPage> {
           Container(
             padding: const EdgeInsets.all(32),
             height: MediaQuery.of(context).size.height / 2,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32),
                 topRight: Radius.circular(32),
               ),
-              border: GradientBoxBorder(
-                gradient: RadialGradient(
-                  colors: [AppColors.blue700, AppColors.white],
-                  center: Alignment.center,
-                  radius: 2,
+              border: Border(
+                top: BorderSide(color: AppColors.blue200, width: 2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.blue700,
+                  spreadRadius: -1.0,
+                  blurRadius: 4,
+                  offset: Offset(0, -1), // changes position of shadow
                 ),
-                
-                width: 2,
-              )
+              ],
             ),
             child: Column(
               children: [
