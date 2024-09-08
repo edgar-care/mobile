@@ -125,8 +125,8 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 DateTime.now().hour > 18
-                    ? 'Bonsoir, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !'
-                    : 'Bonjour, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !',
+                    ? 'Bonsoir, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !'
+                    : 'Bonjour, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !',
                 style: const TextStyle(
                   fontSize: 20,
                   fontFamily: 'Poppins',
@@ -143,9 +143,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Divider(
-                color: AppColors.blue700,
+              Container(
                 height: 2,
+                decoration: const BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
               ),
               const SizedBox(height: 8),
               nextAppointment != null
@@ -169,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               const Text(
                 'Besoin d’un nouveau rendez-vous ?',
                 style: TextStyle(
@@ -201,9 +204,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Divider(
-                color: AppColors.blue700,
+              Container(
                 height: 2,
+                decoration: const BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
               ),
               const SizedBox(height: 8),
               const Expanded(

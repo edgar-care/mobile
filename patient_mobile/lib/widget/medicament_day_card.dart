@@ -97,7 +97,7 @@ class _DailyMedicamentCardState extends State<DailyMedicamentCard> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.blue200, width: 2),
       ),
       child: Column(
@@ -179,10 +179,6 @@ class _DailyMedicamentCardState extends State<DailyMedicamentCard> {
   }
 }
 
-
-
-
-
 // ignore: must_be_immutable
 class PeriodeMedicCheckListe extends StatefulWidget {
   final Period period;
@@ -228,7 +224,6 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
         .where((treatment) => treatment.periods.contains(widget.period))
         .toList();
 
-
     String getMedicineName(String medicineId) {
       var med = widget.medecines.firstWhere(
         (med) => med['id'] == medicineId,
@@ -245,35 +240,27 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
           style: const TextStyle(
             color: AppColors.black,
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             fontFamily: 'Poppins',
           ),
         ),
-        const SizedBox(height: 8,),
+        const SizedBox(
+          height: 8,
+        ),
         if (filteredTreatments.isEmpty)
           const Text(
-            "Pas de médicament pour cette période", style: TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Poppins',
+            "Pas de médicament pour cette période",
+            style: TextStyle(
+              color: AppColors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
+            ),
           ),
-        ),
-
         for (int index = 0; index < filteredTreatments.length; index++)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
-                style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
               Checkbox(
                 value: widget.followUp.any((element) =>
                     element['treatment_id'] == filteredTreatments[index].id &&
@@ -326,6 +313,30 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
+              ),
+              Text(
+                '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Poppins',
+                  decoration: widget.followUp.any((element) =>
+                          element['treatment_id'] ==
+                              filteredTreatments[index].id &&
+                          element['period'].contains(widget.period
+                              .toString()
+                              .trim()
+                              .split('.')
+                              .last) &&
+                          DateTime.fromMillisecondsSinceEpoch(
+                                      element['date'] * 1000)
+                                  .day ==
+                              widget.date.day)
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
