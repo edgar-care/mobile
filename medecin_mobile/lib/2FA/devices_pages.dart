@@ -33,6 +33,25 @@ class _DevicesPageState extends State<DevicesPage> {
     Logger().d(devices);
   }
 
+  String devicesFormatTime(int time) {
+    var seconds = ((DateTime.now().millisecondsSinceEpoch - time) / 1000).round();
+    List<Map<String, dynamic>> intervals = [
+      {'label': 'année', 'seconds': 31536000},
+      {'label': 'mois', 'seconds': 2592000},
+      {'label': 'jour', 'seconds': 86400},
+      {'label': 'heure', 'seconds': 3600},
+      {'label': 'minute', 'seconds': 60},
+      {'label': 'seconde', 'seconds': 1},
+    ];
+
+	for (var i = 0; i < intervals.length; i += 1) {
+		var interval = intervals[i];
+		var count = (seconds / interval['seconds']).round();
+		if (count > 0) return 'Il y a $count ${interval['seconds']}${count > 1 ? 's' : ''}';
+	}
+	return 'Il y a quelques secondes';
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -90,7 +109,7 @@ class _DevicesPageState extends State<DevicesPage> {
                           for (var index = 0; index < devices.length; index++) ...[
                             DeviceTab(
                               icon: devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',
-                              info: "Dernière connexion: ${DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(devices[index]['date'] * 1000))}",
+                              info: devicesFormatTime(devices[index]['date'] * 1000),
                               subtitle: "${devices[index]['city']}, ${devices[index]['country']}",
                               title: "${devices[index]['device_type']} - ${devices[index]['browser']}",
                               onTap: () {

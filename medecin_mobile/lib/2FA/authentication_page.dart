@@ -267,7 +267,6 @@ Widget modal2FAEmail(String email, BuildContext context, Function load2fa, bool 
               enable2FAEmail().then((value) {
                 load2fa();
                 if (secret != true) {
-                generateBackupCode().then((value) {
                   Navigator.pop(context);
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
@@ -278,14 +277,13 @@ Widget modal2FAEmail(String email, BuildContext context, Function load2fa, bool 
                     builder: (context) {
                       return Consumer<BottomSheetModel>(
                         builder: (context, model, child) {
-                          return ListModal(model: model, children: [
-                            modalBackupEmail(value, context),
+                          return ListModal(model: model, children: const [
+                            ModalBackupEmail()
                           ]);
                         },
                       );
                     },
                   );
-                });
                 } else {
                   Navigator.pop(context);
                 }
@@ -433,7 +431,6 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
             Logger().d(devices[selected]['id']);
             enable2FAMobile(devices[selected]['id']).then((value) {
               if (widget.secret != true) {
-                generateBackupCode().then((value) {
                   Navigator.pop(context);
                   widget.load2fa();
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
@@ -445,14 +442,13 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                       builder: (context) {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
-                            return ListModal(model: model, children: [
-                              modalEdgarApp2(value, context),
+                            return ListModal(model: model, children: const [
+                              ModalEdgarApp2(),
                             ]);
                           },
                         );
                       },
                     );
-                });
               } else {
                 Navigator.pop(context);
               }
@@ -473,7 +469,29 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
   }
 }
 
-Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
+class ModalBackupEmail extends StatefulWidget {
+  const ModalBackupEmail({super.key});
+
+  @override
+  State<ModalBackupEmail> createState() => _ModalBackupEmailState();
+}
+
+class _ModalBackupEmailState extends State<ModalBackupEmail> {
+
+  List<dynamic> backupCodes = [];
+
+  Future<bool> getbackup() async {
+    backupCodes = await generateBackupCode();
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return FutureBuilder(
+    future: getbackup(), 
+    builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == true) {
   return ModalContainer(
     title: 'La double authentification avec un email est activée !',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -531,10 +549,36 @@ Widget modalBackupEmail(List<dynamic> backupCodes, BuildContext context) {
       },
     )
   );
+    } else {
+      return const Center(child: CircularProgressIndicator(color: AppColors.blue700,));
+    }
+  }
+    );
+  }
 }
 
+class ModalEdgarApp2 extends StatefulWidget {
+  const ModalEdgarApp2({super.key});
 
-Widget modalEdgarApp2(List<dynamic> backupCodes ,BuildContext context) {
+  @override
+  State<ModalEdgarApp2> createState() => _ModalEdgarApp2State();
+}
+
+class _ModalEdgarApp2State extends State<ModalEdgarApp2> {
+    List<dynamic> backupCodes = [];
+
+  Future<bool> getbackup() async {
+    backupCodes = await generateBackupCode();
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return FutureBuilder(
+    future: getbackup(), 
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done &&
+          snapshot.data == true) {
   return ModalContainer(
     title: 'La double authentification avec edgar est activée !',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -592,6 +636,13 @@ Widget modalEdgarApp2(List<dynamic> backupCodes ,BuildContext context) {
       },
     )
   );
+  } else {
+    return const Center(child: CircularProgressIndicator(color: AppColors.blue700,));
+  }
+  }
+    );
+  }
+
 }
 
 // ignore: must_be_immutable
@@ -1059,7 +1110,6 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                 widget.load2fa();
                 if (widget.secret != true) {
                 Navigator.pop(context);
-                generateBackupCode().then((value) {
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
                   showModalBottomSheet(
@@ -1069,14 +1119,13 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                       builder: (context) {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
-                            return ListModal(model: model, children: [
-                              modalBackupTierApp(value, context),
+                            return ListModal(model: model, children: const [
+                              ModalBackupTierApp(),
                             ]);
                           },
                         );
                       },
                     );
-                });
               } else {
                 Navigator.pop(context);
               }
@@ -1107,7 +1156,28 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
   }
 }
 
-Widget modalBackupTierApp(List<dynamic> backupCodes ,BuildContext context) {
+class ModalBackupTierApp extends StatefulWidget {
+  const ModalBackupTierApp({super.key});
+
+  @override
+  State<ModalBackupTierApp> createState() => _ModalBackupTierAppState();
+}
+
+class _ModalBackupTierAppState extends State<ModalBackupTierApp> {
+ List<dynamic> backupCodes = [];
+
+  Future<bool> getbackup() async {
+    backupCodes = await generateBackupCode();
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+  return FutureBuilder(
+    future: getbackup(), 
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done &&
+          snapshot.data == true) {
   return ModalContainer(
     title: 'La double authentification avec une application tierce est activée !',
     subtitle: 'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
@@ -1165,6 +1235,12 @@ Widget modalBackupTierApp(List<dynamic> backupCodes ,BuildContext context) {
       },
     )
   );
+          } else {
+            return const Center(child: CircularProgressIndicator(color: AppColors.blue700,));
+          }
+    }
+  );
+  }
 }
 
 Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
