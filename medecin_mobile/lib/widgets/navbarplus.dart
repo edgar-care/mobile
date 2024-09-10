@@ -6,7 +6,6 @@ import 'package:edgar_pro/services/logout_service.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -39,7 +38,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
         infoMedical = doctor;
       }
     }
-    Logger().d(infoMedical);
   }
 
   @override
@@ -95,10 +93,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
                                   color: AppColors.blue700,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(16))
                                 ),
                                 child: FutureBuilder(
                                   future: fetchData(),
@@ -159,11 +154,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               width: 48,
                                               height: 48,
                                               decoration: const BoxDecoration(
-                                                color: AppColors.white,
+                                                color: AppColors.orange500,
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child:
+                                                BoringAvatars(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
@@ -239,7 +235,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           ),
                                         );
                                       },
-                                      type: 'Only',
+                                      type: 'Top',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
@@ -264,7 +260,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           ),
                                         );
                                       },
-                                      type: 'Only',
+                                      type: 'Bottom',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
@@ -352,7 +348,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
           border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
-                : const BorderSide(color: AppColors.blue200, width: 1),
+                : const BorderSide(color: AppColors.blue100, width: 1),
           ),
           borderRadius: BorderRadius.only(
             topLeft: widget.type == 'Only' || widget.type == 'Top'

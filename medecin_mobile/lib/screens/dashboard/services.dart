@@ -49,30 +49,31 @@ class _ServicesState extends State<Services> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.blue200, width: 1)),
           child: Column(
             children: [
               BarItem(
-                  title: "Mes Patients",
+                  title: "Mes patients",
                   bottomText: "Toutes les informations de vos patients",
                   icon: BootstrapIcons.capsule,
                   ontap: () {
                     widget.tapped(3);
                   }),
               const Divider(
-                thickness: 2,
+                thickness: 1,
                 color: AppColors.blue100,
               ),
               BarItem(
-                  title: "Mes Diagnostics",
+                  title: "Mes diagnostics",
                   bottomText: "Diagnostics en attente de validation",
                   icon: BootstrapIcons.file_earmark_text_fill,
                   ontap: () {
                     widget.tapped(4);
                   }),
               const Divider(
-                thickness: 2,
+                thickness: 1,
                 color: AppColors.blue100,
               ),
               BarItem(
@@ -108,49 +109,51 @@ class BarItem extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(8),
         child: GestureDetector(
-          onTap: ontap,
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            onTap: ontap,
+            child: Container(
+              color: AppColors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        icon,
-                        size: 16,
+                      Row(
+                        children: [
+                          Icon(
+                            icon,
+                            size: 16,
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            title,
+                            style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14),
+                          )
+                        ],
                       ),
                       const SizedBox(
-                        width: 12,
+                        height: 4,
                       ),
                       Text(
-                        title,
+                        bottomText,
                         style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14),
+                            fontSize: 12),
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 4,
+                  const Icon(
+                    BootstrapIcons.chevron_right,
+                    size: 16,
                   ),
-                  Text(
-                    bottomText,
-                    style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12),
-                  )
                 ],
               ),
-              const Spacer(),
-              const Icon(
-                BootstrapIcons.chevron_right,
-                size: 16,
-              ),
-            ],
-          ),
-        ));
+            )));
   }
 }

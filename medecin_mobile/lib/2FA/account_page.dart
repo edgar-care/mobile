@@ -66,18 +66,16 @@ class _AccountPageState extends State<AccountPage> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ),
-                          const Text(
-                            'Compte',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          const SizedBox(),
-                        ],
+                          ), 
+                            const Text('Compte',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                              ),),
+                              const SizedBox(width: 18),
+                            ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -151,28 +149,25 @@ class _AccountPageState extends State<AccountPage> {
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
-                                        title: 'Email',
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageRouteBuilder<void>(
-                                              opaque: false,
-                                              pageBuilder:
-                                                  (BuildContext context, _,
-                                                      __) {
-                                                return const SizedBox();
-                                              },
-                                            ),
-                                          );
-                                        },
-                                        type: 'Only',
-                                        outlineIcon: Text(
-                                          widget.infoMedical["email"],
-                                          style: const TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400),
-                                        )),
+                                      title: 'Email',
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const SizedBox();
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      type: 'Only',
+                                      outlineIcon: Text(widget.infoMedical["email"], style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w400,color: AppColors.grey500),)
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      color: AppColors.blue100,
+                                    ),
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
                                       onTap: () {
@@ -202,7 +197,7 @@ class _AccountPageState extends State<AccountPage> {
                                   color: AppColors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: AppColors.blue200,
+                                    color: AppColors.blue100,
                                     width: 1,
                                   ),
                                 ),
@@ -226,6 +221,10 @@ class _AccountPageState extends State<AccountPage> {
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
+                                    ),
+                                    Container(
+                                      color: AppColors.blue100,
+                                      height: 1,
                                     ),
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
