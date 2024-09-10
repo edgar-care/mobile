@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
+import 'package:edgar_pro/2FA/account_page.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -25,33 +24,17 @@ class _NavbarPLusState extends State<NavbarPLus> {
   @override
   void initState() {
     super.initState();
-    checkToken();
-  }
-
-  void checkToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token == null) {
-      Navigator.pushNamed(context, '/login');
-    } else {
-      if (token.isNotEmpty) {
-        String encodedPayload = token.split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
-      }
-      fetchData();
-    }
   }
 
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
-      setState(() {
-        infoMedical = value.where((element) {
-          return element['id'] == idDoctor;
-        }).first;
-      });
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('id');
+    List<dynamic> doctorList = await getAllDoctor();
+    for (var doctor in doctorList) {
+      if (doctor['id'] == id) {
+        infoMedical = doctor;
+      }
+    }
   }
 
   @override
@@ -63,6 +46,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
         useMaterial3: true,
       ),
       home: Scaffold(
+        backgroundColor: AppColors.blue50,
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -106,10 +90,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
                                   color: AppColors.blue700,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(16))
                                 ),
                                 child: FutureBuilder(
                                   future: fetchData(),
@@ -170,11 +151,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               width: 48,
                                               height: 48,
                                               decoration: const BoxDecoration(
-                                                color: AppColors.white,
+                                                color: AppColors.orange500,
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child:
+                                                BoringAvatars(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
@@ -206,39 +188,61 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   },
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              const Text("Paramètres du compte", style: TextStyle(fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w500),),
+                              const SizedBox(height: 4),
                               Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: AppColors.white,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  border: Border(
-                                    left: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    right: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    bottom: BorderSide(
-                                        color: AppColors.blue200, width: 1),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue200,
+                                    width: 1,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/question-circle-fill.svg',
+                                        'assets/images/utils/person-fill.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Aide',
+                                      title: 'Compte',
                                       onTap: () {
-                                        widget.onItemTapped(5);
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return AccountPage(infoMedical: infoMedical,);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      type: 'Top',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
+                                    ),
+                                    NavbarPLusTab(
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/laptop-fill.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 18,
+                                      ),
+                                      title: 'Appareils',
+                                      onTap: () {
                                         Navigator.pop(context);
                                       },
                                       type: 'Bottom',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -325,7 +329,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
           border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
-                : const BorderSide(color: AppColors.blue200, width: 1),
+                : const BorderSide(color: AppColors.blue100, width: 1),
           ),
           borderRadius: BorderRadius.only(
             topLeft: widget.type == 'Only' || widget.type == 'Top'
@@ -345,7 +349,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         child: Row(
           children: [
             widget.icon ?? const SizedBox.shrink(),
-            const SizedBox(width: 16),
+            widget.icon != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,

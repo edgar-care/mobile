@@ -62,7 +62,7 @@ class _ServicesState extends State<Services> {
                     widget.tapped(3);
                   }),
               const Divider(
-                thickness: 2,
+                thickness: 1,
                 color: AppColors.blue100,
               ),
               BarItem(
@@ -73,7 +73,7 @@ class _ServicesState extends State<Services> {
                     widget.tapped(4);
                   }),
               const Divider(
-                thickness: 2,
+                thickness: 1,
                 color: AppColors.blue100,
               ),
               BarItem(
