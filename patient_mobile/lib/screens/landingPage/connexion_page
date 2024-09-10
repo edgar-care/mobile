@@ -500,7 +500,7 @@ class _ModalRegisterState extends State<ModalRegister> {
     }
 
     return ModalContainerTest(
-      title: "Bon retour sur la plateforme edgar",
+      title: "Bienvenue sur la plateforme edgar",
       subtitle:
           "Un compte edgar vous permettra de suivre votre santé ainsi que prendre des rendez-vous pour vous et vos proches.",
       icon: IconModal(
