@@ -1,7 +1,7 @@
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edgar_pro/screens/auth/login_page.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
 
 void main() {
   testWidgets('Test de la page de login', (WidgetTester tester) async {

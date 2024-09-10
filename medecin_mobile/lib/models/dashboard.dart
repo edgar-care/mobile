@@ -2,7 +2,6 @@ import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:animations/animations.dart';
 import 'package:edgar_pro/screens/dashboard/chat_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
-import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +79,6 @@ class _DashBoardState extends State<DashBoard> {
       Services(
         tapped: _onItemTapped,
       ),
-      const Patient(),
       const Diagnostic(),
       const ChatPageDashBoard(),
     ];

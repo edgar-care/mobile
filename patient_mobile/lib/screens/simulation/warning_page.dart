@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/plain_button.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar_app/widget/plain_button.dart';
 
 class WarningPage extends StatefulWidget {
   const WarningPage({super.key});
@@ -9,8 +9,8 @@ class WarningPage extends StatefulWidget {
   State<WarningPage> createState() => _WarningPageState();
 }
 
-class _WarningPageState extends State<WarningPage> with SingleTickerProviderStateMixin {
-   
+class _WarningPageState extends State<WarningPage>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +22,6 @@ class _WarningPageState extends State<WarningPage> with SingleTickerProviderStat
             Image.asset(
               'assets/images/logo/full-width-colored-edgar-logo.png',
               width: 100,
-
             ),
             const SizedBox(height: 100),
             const Text(
@@ -40,20 +39,20 @@ class _WarningPageState extends State<WarningPage> with SingleTickerProviderStat
             const Card(
               color: AppColors.blue100,
               elevation: 0,
-              child : Padding(  
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                    'Cette session, n’a pas pour but de\ndiagnostiquer une maladie. À l’issue de\nla session, votre pré-diagnostic sera\ntransmis à un médecin pour être\nexaminé. Une réponse vous sera fournie\ndans un délai maximum de 48h',
-                    style: TextStyle(
-                      color: AppColors.grey950,
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      leadingDistribution: TextLeadingDistribution.even,
-                    ),
-                    textAlign: TextAlign.center,
+                  'Cette session, n’a pas pour but de\ndiagnostiquer une maladie. À l’issue de\nla session, votre pré-diagnostic sera\ntransmis à un médecin pour être\nexaminé. Une réponse vous sera fournie\ndans un délai maximum de 48h',
+                  style: TextStyle(
+                    color: AppColors.grey950,
+                    fontSize: 12,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    leadingDistribution: TextLeadingDistribution.even,
                   ),
+                  textAlign: TextAlign.center,
                 ),
+              ),
             ),
             const SizedBox(height: 100),
             Padding(
