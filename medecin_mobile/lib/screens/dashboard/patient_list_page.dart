@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/medecines_services.dart';
@@ -10,8 +12,8 @@ import 'package:edgar_pro/widgets/card_doctor.dart';
 import 'package:edgar_pro/widgets/card_traitement_day.dart';
 import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:edgar_pro/widgets/custom_date_picker.dart';
-import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
+import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:edgar_pro/widgets/field_custom.dart';
 import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -21,13 +23,10 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 // ignore: must_be_immutable
 class PatientPage extends StatefulWidget {
   String id;
-  final Function setPages;
-  final Function setId;
-  PatientPage(
-      {super.key,
-      required this.id,
-      required this.setPages,
-      required this.setId});
+  PatientPage({
+    super.key,
+    required this.id,
+  });
 
   @override
   State<PatientPage> createState() => _PatientPageState();
@@ -116,8 +115,7 @@ class _PatientPageState extends State<PatientPage> {
                           context: context,
                           pageListBuilder: (modalSheetContext) {
                             return [
-                              patientNavigation(context, patientInfo,
-                                  widget.setPages, widget.setId),
+                              patientNavigation(context, patientInfo, []),
                             ];
                           });
                     },
@@ -299,75 +297,6 @@ class _PatientPageState extends State<PatientPage> {
             );
           }
         });
-  }
-
-  SliverWoltModalSheetPage patientNavigation(BuildContext context,
-      Map<String, dynamic> patient, Function setPages, Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  setPages(1);
-                  Navigator.pop(context);
-                }),
-          ]),
-        ),
-      ),
-    );
   }
 
   SliverWoltModalSheetPage addPatient(BuildContext context,
@@ -1491,12 +1420,10 @@ class _Onboarding3State extends State<Body3> {
                             }
                           else
                             {
-                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                   ErrorLoginSnackBar(
                                       message:
                                           "Erreur lors de la mises à jour des informations",
-                                      // ignore: use_build_context_synchronously
                                       context: context))
                             }
                         });

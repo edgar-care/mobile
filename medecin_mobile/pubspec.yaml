@@ -28,6 +28,7 @@ dependencies:
   skeletonizer: ^1.1.2+1
   flutter_boring_avatars: ^1.1.0
   download_file: ^1.2.0
+  animations: ^2.0.11
 
 dev_dependencies:
   flutter_test:

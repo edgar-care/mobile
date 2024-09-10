@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
@@ -13,6 +15,7 @@ import 'package:edgar_pro/widgets/rdv/modif_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+
 // ignore: must_be_immutable
 class CustomCardRdvPatient extends StatefulWidget {
   final Map<String, dynamic> rdvInfo;
@@ -61,9 +64,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
           WoltModalSheet.show(
             context: context,
             pageListBuilder: (BuildContext context) {
-              return [
-                modalRdv(context, widget.rdvInfo)
-              ];
+              return [modalRdv(context, widget.rdvInfo)];
             },
           );
         },

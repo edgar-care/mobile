@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
@@ -21,7 +23,8 @@ class DiagnosticCard extends StatefulWidget {
   Map<String, dynamic> rdvInfo;
   int type;
   Function refresh;
-  DiagnosticCard({super.key,
+  DiagnosticCard(
+      {super.key,
       required this.rdvInfo,
       required this.type,
       required this.refresh});
@@ -31,15 +34,13 @@ class DiagnosticCard extends StatefulWidget {
 }
 
 class _DiagnosticCardState extends State<DiagnosticCard> {
-
-   ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
+  ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient']).then((value) => 
-    setState(() {
-      patientInfo = value;
-    }));
+    getPatientById(widget.rdvInfo['id_patient']).then((value) => setState(() {
+          patientInfo = value;
+        }));
   }
 
   @override
@@ -51,8 +52,8 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime start =
-        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
+    DateTime start = DateTime.fromMillisecondsSinceEpoch(
+        widget.rdvInfo['start_date'] * 1000);
     DateTime end =
         DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['end_date'] * 1000);
 
@@ -67,112 +68,111 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
     }
 
     return Skeletonizer(
-      enabled: patientInfo.isEmpty,
-      child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: AppColors.blue200, width: 2.0),
-          ),
-          child: InkWell(
-              onTap: () {
-                WoltModalSheet.show<void>(
-                  onModalDismissedWithBarrierTap: () {
-                    pageIndexNotifier.value = 0;
-                  },
-                  onModalDismissedWithDrag: () {
-                    pageIndexNotifier.value = 0;
-                  },
-                  pageIndexNotifier: pageIndexNotifier,
-                  context: context,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      navModal(
-                          modalSheetContext,
-                          patientInfo["Nom"],
-                          patientInfo["Prenom"],
-                          widget.rdvInfo,
-                          pageIndexNotifier),
-                      validateModal(modalSheetContext,
-                          pageIndexNotifier, widget.rdvInfo),
-                      cancelModal(modalSheetContext, pageIndexNotifier,
-                          widget.rdvInfo),
-                    ];
-                  },
-                );
-              },
-              child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(children: [
-                    Container(
-                      height: 50,
-                      width: 4,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8.0),
+        enabled: patientInfo.isEmpty,
+        child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: AppColors.blue200, width: 2.0),
+            ),
+            child: InkWell(
+                onTap: () {
+                  WoltModalSheet.show<void>(
+                    onModalDismissedWithBarrierTap: () {
+                      pageIndexNotifier.value = 0;
+                    },
+                    onModalDismissedWithDrag: () {
+                      pageIndexNotifier.value = 0;
+                    },
+                    pageIndexNotifier: pageIndexNotifier,
+                    context: context,
+                    pageListBuilder: (modalSheetContext) {
+                      return [
+                        navModal(
+                            modalSheetContext,
+                            patientInfo["Nom"],
+                            patientInfo["Prenom"],
+                            widget.rdvInfo,
+                            pageIndexNotifier),
+                        validateModal(modalSheetContext, pageIndexNotifier,
+                            widget.rdvInfo),
+                        cancelModal(modalSheetContext, pageIndexNotifier,
+                            widget.rdvInfo),
+                      ];
+                    },
+                  );
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(children: [
+                      Container(
+                        height: 50,
+                        width: 4,
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Row(children: [
-                            Text(DateFormat('yMd', 'fr').format(start),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                "${patientInfo["Nom"]} ${patientInfo["Prenom"]}",
                                 style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins')),
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
                             const SizedBox(
-                              width: 4,
-                            ),
-                            const Text("-",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins')),
-                            const SizedBox(
-                              width: 4,
+                              height: 8,
                             ),
                             Row(children: [
-                              Text(DateFormat('jm', 'fr').format(start),
+                              Text(DateFormat('yMd', 'fr').format(start),
                                   style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'Poppins')),
                               const SizedBox(
-                                width: 2,
+                                width: 4,
                               ),
-                              const Icon(
-                                BootstrapIcons.arrow_right,
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              Text(DateFormat('jm', 'fr').format(end),
-                                  style: const TextStyle(
+                              const Text("-",
+                                  style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'Poppins')),
-                            ]),
-                          ])
-                        ]),
-                    const Spacer(),
-                    const Icon(
-                      BootstrapIcons.chevron_right,
-                      size: 16,
-                    ),
-                  ])))));
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Row(children: [
+                                Text(DateFormat('jm', 'fr').format(start),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                const Icon(
+                                  BootstrapIcons.arrow_right,
+                                  size: 16,
+                                ),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(DateFormat('jm', 'fr').format(end),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins')),
+                              ]),
+                            ])
+                          ]),
+                      const Spacer(),
+                      const Icon(
+                        BootstrapIcons.chevron_right,
+                        size: 16,
+                      ),
+                    ])))));
   }
 
   SliverWoltModalSheetPage navModal(BuildContext context, String name,
