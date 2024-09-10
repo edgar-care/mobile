@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
 
@@ -146,7 +145,6 @@ Future putInformationPatient(
   final url = '${dotenv.env['URL']}doctor/patient/$id';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-  Logger().d(body);
   final response = await http.put(
     Uri.parse(url),
     body: jsonEncode(body),
