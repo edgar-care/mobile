@@ -52,7 +52,12 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               text: "Rdv",
             ),
             NavBarItem(
-              color: (widget.selectedIndex == 2 || widget.selectedIndex == 3 || widget.selectedIndex == 4 || widget.selectedIndex == 5)  ? true : false,
+              color: (widget.selectedIndex == 2 ||
+                      widget.selectedIndex == 3 ||
+                      widget.selectedIndex == 4 ||
+                      widget.selectedIndex == 5)
+                  ? true
+                  : false,
               icon: "assets/images/utils/clipboard2-pulse-fill.svg",
               onTap: () {
                 widget.onItemTapped(2);
@@ -61,7 +66,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
             ),
             NavBarItem(
               color: false,
-              icon: "assets/images/utils/person-fill.svg",
+              icon: "assets/images/utils/profil-fill.svg",
               text: "Profil",
               onTap: () {
                 Navigator.push(
@@ -110,27 +115,30 @@ class NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Column(children: [
-          SvgPicture.asset(
-            icon,
-            // ignore: deprecated_member_use
-            color: color == true ? AppColors.blue800 : AppColors.grey500,
-            height: 25,
-            width: 25,
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Text(
-            text,
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: color == true ? AppColors.blue800 : AppColors.grey500),
-          )
-        ]));
+    return Container(
+        color: AppColors.white,
+        child: GestureDetector(
+            onTap: onTap,
+            child: Column(children: [
+              SvgPicture.asset(
+                icon,
+                // ignore: deprecated_member_use
+                color: color == true ? AppColors.blue800 : AppColors.grey500,
+                height: 20,
+                width: 20,
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                text,
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color:
+                        color == true ? AppColors.blue800 : AppColors.grey500),
+              )
+            ])));
   }
 }
