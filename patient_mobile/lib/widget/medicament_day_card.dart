@@ -239,8 +239,8 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
           getPeriodInFrench(widget.period),
           style: const TextStyle(
             color: AppColors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
             fontFamily: 'Poppins',
           ),
         ),
@@ -314,30 +314,32 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              Text(
-                '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Poppins',
-                  decoration: widget.followUp.any((element) =>
-                          element['treatment_id'] ==
-                              filteredTreatments[index].id &&
-                          element['period'].contains(widget.period
-                              .toString()
-                              .trim()
-                              .split('.')
-                              .last) &&
-                          DateTime.fromMillisecondsSinceEpoch(
-                                      element['date'] * 1000)
-                                  .day ==
-                              widget.date.day)
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
+              Flexible(
+                child: Text(
+                  '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                    decoration: widget.followUp.any((element) =>
+                            element['treatment_id'] ==
+                                filteredTreatments[index].id &&
+                            element['period'].contains(widget.period
+                                .toString()
+                                .trim()
+                                .split('.')
+                                .last) &&
+                            DateTime.fromMillisecondsSinceEpoch(
+                                        element['date'] * 1000)
+                                    .day ==
+                                widget.date.day)
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
+              )
             ],
           ),
       ],
