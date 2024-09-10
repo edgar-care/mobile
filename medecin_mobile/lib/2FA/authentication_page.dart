@@ -664,14 +664,10 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getAllDevices();
-    for (var device in temp) {
-      if (device['trusted'] == true) {
-        setState(() {
-          devices.add(device);
-        });
-      }
-    }
+    List<dynamic> temp = await getTrustedDevices();
+    setState(() {
+      devices = temp;
+    });
   }
 
   @override

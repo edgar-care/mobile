@@ -47,7 +47,7 @@ class _DevicesPageState extends State<DevicesPage> {
 	for (var i = 0; i < intervals.length; i += 1) {
 		var interval = intervals[i];
 		var count = (seconds / interval['seconds']).round();
-		if (count > 0) return 'Il y a $count ${interval['seconds']}${count > 1 ? 's' : ''}';
+		if (count > 0) return 'Il y a $count ${interval['label']}${count > 1 ? 's' : ''}';
 	}
 	return 'Il y a quelques secondes';
   }

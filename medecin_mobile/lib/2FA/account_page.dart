@@ -228,7 +228,7 @@ class _AccountPageState extends State<AccountPage> {
                                               return Consumer<BottomSheetModel>(
                                                 builder: (context, model, child) {
                                                   return ListModal(model: model, children: [
-                                                    enable2fa['secret'].isEmpty ? modalRedirect2FA(context) :
+                                                    enable2fa['methods'].isEmpty ? modalRedirect2FA(context) :
                                                     modalReNewBackup(context),
                                                   ]);
                                                 },
