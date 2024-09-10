@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<Map<String,dynamic>> getEnable2fa() async {
+Future<Map<String, dynamic>> getEnable2fa() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/dashboard/2fa';
@@ -103,7 +103,7 @@ Future<Map<String, dynamic>> enable2FA3party() async {
   return jsonDecode(response.body);
 }
 
-Future<Map<String, dynamic>> checkTierAppCode(String code) async{
+Future<Map<String, dynamic>> checkTierAppCode(String code) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/2fa/method/third_party';

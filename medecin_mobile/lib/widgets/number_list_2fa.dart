@@ -21,7 +21,7 @@ class _FieldNumberList2FAState extends State<FieldNumberList2FA> {
     }
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -36,7 +36,7 @@ class _FieldNumberList2FAState extends State<FieldNumberList2FA> {
                   focusNodes[index + 1].requestFocus();
                   widget.addCode('ADD', value);
                 } else if (value.isEmpty && index > 0) {
-                  Logger().i('Backspace on index ${ index - 1}'); 
+                  Logger().i('Backspace on index ${index - 1}');
                   focusNodes[index].unfocus();
                   focusNodes[index - 1].requestFocus();
                   widget.addCode('DELETE', '');
@@ -81,7 +81,9 @@ class NumberField extends StatelessWidget {
         keyboardType: TextInputType.number,
         textInputAction: TextInputAction.next,
         maxLength: 1,
-        buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
+        buildCounter: (context,
+                {required currentLength, required isFocused, maxLength}) =>
+            null,
         onChanged: (value) {
           onChanged(value);
         },

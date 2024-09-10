@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 Future<List<dynamic>> getAllDevices() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('token');
@@ -38,7 +37,7 @@ Future addTrustDevices(String id) async {
   return;
 }
 
-Future removeDevice(String id) async{
+Future removeDevice(String id) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('token');
   String url = '${dotenv.env['URL']}/dashboard/2fa/device/$id';
@@ -53,7 +52,7 @@ Future removeDevice(String id) async{
   Logger().d(response.statusCode);
 }
 
-Future <List<dynamic>> getTrustedDevices() async {
+Future<List<dynamic>> getTrustedDevices() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('token');
   String url = '${dotenv.env['URL']}/dashboard/2fa/devices';

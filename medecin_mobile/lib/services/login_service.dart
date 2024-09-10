@@ -20,13 +20,13 @@ Future login(String email, String password, BuildContext context) async {
   );
   Logger().d(response.body);
   Logger().d(response.statusCode);
-   ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
       message: 'Connecté à l\'application',

@@ -85,7 +85,7 @@ class ModalContainer extends StatelessWidget {
   final Widget? footer;
 
   /// Required Tittle, subtittle, and Icon
-  const ModalContainer ({
+  const ModalContainer({
     super.key,
     required this.title,
     required this.subtitle,

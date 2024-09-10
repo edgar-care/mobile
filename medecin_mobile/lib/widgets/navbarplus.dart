@@ -32,7 +32,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
-    
+
     List<dynamic> doctorList = await getAllDoctor();
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
@@ -70,16 +70,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ), 
-                            const Text('Profil et paramètres',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                              const SizedBox(),
-                            ],
+                          ),
+                          const Text(
+                            'Profil et paramètres',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -194,7 +196,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              const Text("Paramètres du compte", style: TextStyle(fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w500),),
+                              const Text(
+                                "Paramètres du compte",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                              ),
                               const SizedBox(height: 4),
                               Container(
                                 padding:
@@ -222,8 +230,11 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return AccountPage(infoMedical: infoMedical,);
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return AccountPage(
+                                                infoMedical: infoMedical,
+                                              );
                                             },
                                           ),
                                         );
@@ -246,7 +257,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
                                               return const DevicesPage();
                                             },
                                           ),
@@ -360,7 +372,9 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         child: Row(
           children: [
             widget.icon ?? const SizedBox.shrink(),
-            widget.icon != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
+            widget.icon != null
+                ? const SizedBox(width: 16)
+                : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,
@@ -370,22 +384,40 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
                 )),
             const Spacer(),
             if (widget.isActive != null) ...[
-            widget.isActive! ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.green100,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text("Activée", style: TextStyle(color: AppColors.green700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
-            ) : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.red100,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text("Désactivée", style: TextStyle(color: AppColors.red700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
-            ),
-            const SizedBox(width: 16),
+              widget.isActive!
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.green100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Activée",
+                        style: TextStyle(
+                            color: AppColors.green700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.red100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Désactivée",
+                        style: TextStyle(
+                            color: AppColors.red700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+              const SizedBox(width: 16),
             ],
             widget.outlineIcon ?? const SizedBox.shrink(),
           ],

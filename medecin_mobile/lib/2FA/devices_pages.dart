@@ -17,7 +17,6 @@ class DevicesPage extends StatefulWidget {
 }
 
 class _DevicesPageState extends State<DevicesPage> {
-
   List<dynamic> devices = [];
   @override
   void initState() {
@@ -34,7 +33,8 @@ class _DevicesPageState extends State<DevicesPage> {
   }
 
   String devicesFormatTime(int time) {
-    var seconds = ((DateTime.now().millisecondsSinceEpoch - time) / 1000).round();
+    var seconds =
+        ((DateTime.now().millisecondsSinceEpoch - time) / 1000).round();
     List<Map<String, dynamic>> intervals = [
       {'label': 'année', 'seconds': 31536000},
       {'label': 'mois', 'seconds': 2592000},
@@ -44,12 +44,14 @@ class _DevicesPageState extends State<DevicesPage> {
       {'label': 'seconde', 'seconds': 1},
     ];
 
-	for (var i = 0; i < intervals.length; i += 1) {
-		var interval = intervals[i];
-		var count = (seconds / interval['seconds']).round();
-		if (count > 0) return 'Il y a $count ${interval['label']}${count > 1 ? 's' : ''}';
-	}
-	return 'Il y a quelques secondes';
+    for (var i = 0; i < intervals.length; i += 1) {
+      var interval = intervals[i];
+      var count = (seconds / interval['seconds']).round();
+      if (count > 0) {
+        return 'Il y a $count ${interval['label']}${count > 1 ? 's' : ''}';
+      }
+    }
+    return 'Il y a quelques secondes';
   }
 
   @override
@@ -80,63 +82,94 @@ class _DevicesPageState extends State<DevicesPage> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ), 
-                            const Text('Appareils',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                              const SizedBox(),
-                            ],
+                          ),
+                          const Text(
+                            'Appareils',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: AppColors.blue200,
-                          width: 1,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.blue200,
+                            width: 1,
+                          ),
                         ),
-                      ),
-                      child:Column(
-                        children: [
-                          for (var index = 0; index < devices.length; index++) ...[
-                            DeviceTab(
-                              icon: devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',
-                              info: devicesFormatTime(devices[index]['date'] * 1000),
-                              subtitle: "${devices[index]['city']}, ${devices[index]['country']}",
-                              title: "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                              onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: Colors.transparent,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      return Consumer<BottomSheetModel>(
-                                        builder: (context, model, child) {
-                                          return ListModal(model: model, children: [
-                                            modalInfoDevices("${devices[index]['device_type']} - ${devices[index]['browser']}", DateFormat('dd/MM/yyyy').format(DateTime.fromMillisecondsSinceEpoch(devices[index]['date'] * 1000)), "${devices[index]['city']}, ${devices[index]['country']}" , devices[index]['id'],devices[index]['type'] == 'iPhone' || devices[index]['type'] == 'Android' ? 'PHONE' : 'PC',  context)
-                                          ]);
-                                        },
-                                      );
-                                    },
-                                  );
-                              },
-                              type: devices.length > 1 && index > devices.length - 1 ? 'Top' : 'Only',
-                              selected: false,
-                              outlineIcon: SvgPicture.asset(
-                                'assets/images/utils/chevron-right.svg',)
-                            ),
-                          ],  
-                        ],
-                      )
-                    ),
+                        child: Column(
+                          children: [
+                            for (var index = 0;
+                                index < devices.length;
+                                index++) ...[
+                              DeviceTab(
+                                  icon: devices[index]['type'] == 'iPhone' ||
+                                          devices[index]['type'] == 'Android'
+                                      ? 'PHONE'
+                                      : 'PC',
+                                  info: devicesFormatTime(
+                                      devices[index]['date'] * 1000),
+                                  subtitle:
+                                      "${devices[index]['city']}, ${devices[index]['country']}",
+                                  title:
+                                      "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return Consumer<BottomSheetModel>(
+                                          builder: (context, model, child) {
+                                            return ListModal(
+                                                model: model,
+                                                children: [
+                                                  modalInfoDevices(
+                                                      "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                                                      DateFormat('dd/MM/yyyy')
+                                                          .format(DateTime
+                                                              .fromMillisecondsSinceEpoch(
+                                                                  devices[index]
+                                                                          [
+                                                                          'date'] *
+                                                                      1000)),
+                                                      "${devices[index]['city']}, ${devices[index]['country']}",
+                                                      devices[index]['id'],
+                                                      devices[index]['type'] ==
+                                                                  'iPhone' ||
+                                                              devices[index][
+                                                                      'type'] ==
+                                                                  'Android'
+                                                          ? 'PHONE'
+                                                          : 'PC',
+                                                      context)
+                                                ]);
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  type: devices.length > 1 &&
+                                          index > devices.length - 1
+                                      ? 'Top'
+                                      : 'Only',
+                                  selected: false,
+                                  outlineIcon: SvgPicture.asset(
+                                    'assets/images/utils/chevron-right.svg',
+                                  )),
+                            ],
+                          ],
+                        )),
                   ],
                 ),
               )),

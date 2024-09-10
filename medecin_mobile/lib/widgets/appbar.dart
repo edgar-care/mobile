@@ -52,7 +52,12 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               text: "Rdv",
             ),
             NavBarItem(
-              color: (widget.selectedIndex == 2 || widget.selectedIndex == 3 || widget.selectedIndex == 4 || widget.selectedIndex == 5)  ? true : false,
+              color: (widget.selectedIndex == 2 ||
+                      widget.selectedIndex == 3 ||
+                      widget.selectedIndex == 4 ||
+                      widget.selectedIndex == 5)
+                  ? true
+                  : false,
               icon: "assets/images/utils/clipboard2-pulse-fill.svg",
               onTap: () {
                 widget.onItemTapped(2);
