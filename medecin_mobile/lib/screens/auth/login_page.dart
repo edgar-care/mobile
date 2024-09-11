@@ -1,7 +1,11 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   final Function(int) callback;
@@ -120,12 +124,57 @@ class _LoginState extends State<Login> {
                             });
                           },
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () {
+                            final model = Provider.of<BottomSheetModel>(context,
+                                listen: false);
+                            model.resetCurrentIndex();
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              builder: (context) {
+                                return Consumer<BottomSheetModel>(
+                                  builder: (context, model, child) {
+                                    return ListModal(model: model, children: [
+                                      modalForgotPassword(),
+                                    ]);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: const Text(
+                            "Mot de passe oublié ?",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
                         Buttons(
                           variant: Variant.primary,
                           msg: const Text("Se connecter"),
                           size: SizeButton.md,
                           onPressed: () {
+                            // final model = Provider.of<BottomSheetModel>(context, listen: false);
+                            // model.resetCurrentIndex();
+                            // showModalBottomSheet(
+                            //     context: context,
+                            //     backgroundColor: Colors.transparent,
+                            //     isScrollControlled: true,
+                            //     builder: (context) {
+                            //       return Consumer<BottomSheetModel>(
+                            //         builder: (context, model, child) {
+                            //           return ListModal(model: model, children: [
+                            //             modalChoose2FA(),
+                            //           ]);
+                            //         },
+                            //       );
+                            //     },
+                            //   );
                             login(email, password, context);
                           },
                         ),
@@ -166,4 +215,119 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+}
+
+Widget modalForgotPassword() {
+  String email = "";
+  return ModalContainer(
+    title: "Mot de passe oublié ?",
+    subtitle:
+        "Renseigner votre adresse mail pour réinitialiser votre mot de passe.",
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+      type: ModalType.info,
+    ),
+    body: [
+      const Text('Adresse mail du compte perdu',
+          style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500)),
+      const SizedBox(height: 4),
+      CustomField(
+        action: TextInputAction.none,
+        isNotCapitalize: true,
+        value: email,
+        label: "prenom.nom@gmail.com",
+        keyboardType: TextInputType.emailAddress,
+        onChanged: (value) {
+          email = value.trim();
+        },
+      ),
+    ],
+    footer: Buttons(
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Réinitialiser le mot de passe'),
+      onPressed: () {},
+    ),
+  );
+}
+
+Widget modalChoose2FA() {
+  return ModalContainer(
+    title: 'Vérifier votre identité',
+    subtitle:
+        'Sélectionner une des méthodes d\'authentification ci-dessous, afin de vérifier votre identité.',
+    body: [
+      Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            border: Border.all(
+              color: AppColors.blue200,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              NavbarPLusTab(
+                title: 'Code envoyé par email',
+                onTap: (index) {},
+                type: 'Top',
+                icon: SvgPicture.asset('assets/images/utils/envelope-fill.svg',
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.black, BlendMode.srcIn)),
+                outlineIcon: SvgPicture.asset(
+                  'assets/images/utils/chevron-right.svg',
+                ),
+              ),
+              Container(
+                height: 1,
+                color: AppColors.blue100,
+              ),
+              NavbarPLusTab(
+                title: 'Application d\'authentification',
+                onTap: (index) {},
+                type: 'Only',
+                icon: SvgPicture.asset(
+                    'assets/images/utils/shield-lock-fill.svg',
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.black, BlendMode.srcIn)),
+                outlineIcon: SvgPicture.asset(
+                  'assets/images/utils/chevron-right.svg',
+                ),
+              ),
+              Container(
+                height: 1,
+                color: AppColors.blue100,
+              ),
+              NavbarPLusTab(
+                title: 'Code de sauvegarde',
+                onTap: (index) {},
+                type: 'Bottom',
+                icon: SvgPicture.asset('assets/images/utils/key-fill.svg',
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.black, BlendMode.srcIn)),
+                outlineIcon: SvgPicture.asset(
+                  'assets/images/utils/chevron-right.svg',
+                ),
+              ),
+            ],
+          ))
+    ],
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+      type: ModalType.info,
+    ),
+  );
 }

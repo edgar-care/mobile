@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:edgar_pro/2FA/account_page.dart';
+import 'package:edgar_pro/2FA/devices_pages.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_pro/services/logout_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +31,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
+
     List<dynamic> doctorList = await getAllDoctor();
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
@@ -245,7 +248,16 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Appareils',
                                       onTap: () {
-                                        Navigator.pop(context);
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return const DevicesPage();
+                                            },
+                                          ),
+                                        );
                                       },
                                       type: 'Bottom',
                                       outlineIcon: SvgPicture.asset(
@@ -279,11 +291,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Déconnexion',
                                       onTap: () async {
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        prefs.remove('token');
-                                        Navigator.pushNamed(context, '/login');
+                                        logout(context);
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
@@ -312,10 +320,12 @@ class NavbarPLusTab extends StatefulWidget {
   final String type; // Ajout de la propriété type
   final Widget? outlineIcon;
   final Color? color;
+  final bool? isActive;
 
   const NavbarPLusTab(
       {super.key,
       this.icon,
+      this.isActive,
       required this.title,
       required this.onTap,
       required this.type,
@@ -368,6 +378,42 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
                   fontFamily: "Poppins",
                 )),
             const Spacer(),
+            if (widget.isActive != null) ...[
+              widget.isActive!
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.green100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Activée",
+                        style: TextStyle(
+                            color: AppColors.green700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.red100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Désactivée",
+                        style: TextStyle(
+                            color: AppColors.red700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+              const SizedBox(width: 16),
+            ],
             widget.outlineIcon ?? const SizedBox.shrink(),
           ],
         ),

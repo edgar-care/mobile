@@ -6,4 +6,6 @@ Future logout(BuildContext context) async {
   prefs.remove("token");
   // ignore: use_build_context_synchronously
   Navigator.pop(context);
+  // ignore: use_build_context_synchronously
+  Navigator.pop(context);
 }
