@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/appointement.dart';
@@ -9,17 +9,14 @@ import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-  import 'package:logger/logger.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 
-enum RdvStatus {
-  done,
-  waiting
-}
+enum RdvStatus { done, waiting }
 
 int screenWidth = 0;
 
@@ -50,11 +47,10 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
       if (value.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching appointement", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+            message: "Error on fetching appointement", context: context));
       }
-    }
-    );
+    });
 
     doctor = await getAllDoctor();
   }
@@ -66,20 +62,23 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
   List<Map<String, dynamic>> getPastAppointments() {
     DateTime now = DateTime.now();
     return rdv.where((appointment) {
-      return DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000).isBefore(now);
+      return DateTime.fromMillisecondsSinceEpoch(
+              appointment['start_date'] * 1000)
+          .isBefore(now);
     }).toList();
   }
 
   List<Map<String, dynamic>> getUpcomingAppointments() {
     DateTime now = DateTime.now();
     return rdv.where((appointment) {
-      return DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000).isAfter(now);
+      return DateTime.fromMillisecondsSinceEpoch(
+              appointment['start_date'] * 1000)
+          .isAfter(now);
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -106,84 +105,122 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
             ),
           ]),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(
+          height: 16,
+        ),
         Row(
           children: [
-            Flexible(child: Buttons(variant: status == RdvStatus.waiting ? Variant.primary : Variant.secondary, size: SizeButton.sm, msg: const Text('Prochain rendez-vous'), onPressed: () {
-              setState(() {
-                status = RdvStatus.waiting;
-              });
-            },)),
-            const SizedBox(width: 8),
-            Flexible(child: Buttons(variant: status == RdvStatus.done
+            Flexible(
+                child: Buttons(
+              variant: status == RdvStatus.waiting
                   ? Variant.primary
-                  : Variant.secondary, size: SizeButton.sm, msg: const Text('Rendez-vous passés'), onPressed: () {
-              setState(() {
-                status = RdvStatus.done;
-              });
-            },
-            )
-            ),
+                  : Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Prochain rendez-vous'),
+              onPressed: () {
+                setState(() {
+                  status = RdvStatus.waiting;
+                });
+              },
+            )),
+            const SizedBox(width: 8),
+            Flexible(
+                child: Buttons(
+              variant: status == RdvStatus.done
+                  ? Variant.primary
+                  : Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Rendez-vous passés'),
+              onPressed: () {
+                setState(() {
+                  status = RdvStatus.done;
+                });
+              },
+            )),
           ],
         ),
         const SizedBox(height: 16),
-        Expanded(child: FutureBuilder(future: fetchData(), builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.blue700,
-                strokeWidth: 2,
-              ),
-            );
-          } else {
-              final tmp = status == RdvStatus.done ? getPastAppointments() : getUpcomingAppointments();
-              return ListView.separated( separatorBuilder: (context, index) {
-                return const SizedBox(height: 4);
-              }, itemBuilder: (context, index) {
-                final Doctor dct = findDoctorById(doctor, tmp[index]["doctor_id"]) ?? Doctor(id: '', firstname: '', name: '', address: Address(street: '', zipCode: '', country: '', city: ''));
-                return AppoitementCard(
-                  startDate: DateTime.fromMillisecondsSinceEpoch(
+        Expanded(
+          child: FutureBuilder(
+              future: fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeWidth: 2,
+                    ),
+                  );
+                } else {
+                  final tmp = status == RdvStatus.done
+                      ? getPastAppointments()
+                      : getUpcomingAppointments();
+                  return ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(height: 4);
+                      },
+                      itemBuilder: (context, index) {
+                        final Doctor dct =
+                            findDoctorById(doctor, tmp[index]["doctor_id"]) ??
+                                Doctor(
+                                    id: '',
+                                    firstname: '',
+                                    name: '',
+                                    address: Address(
+                                        street: '',
+                                        zipCode: '',
+                                        country: '',
+                                        city: ''));
+                        return AppoitementCard(
+                            startDate: DateTime.fromMillisecondsSinceEpoch(
                                 tmp[index]["start_date"] * 1000),
-                  endDate: DateTime.fromMillisecondsSinceEpoch(
+                            endDate: DateTime.fromMillisecondsSinceEpoch(
                                 tmp[index]["end_date"] * 1000),
-                  doctor: '${dct.name} ${dct.firstname}',
-                  onTap: () {
-                    final model = Provider.of<BottomSheetModel>(context,
-                              listen: false);
-                          model.resetCurrentIndex();
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) {
-                              return Consumer<BottomSheetModel>(
-                                builder: (context, model, child) {
-                                  return ListModal(
-                                    model: model,
-                                    children: [
-                                      OpenRdv(model: model, rdv: tmp[index], doctor: doctor,),
-                                      DeleteRdv(
-                                        updataData: updateDate,
+                            doctor: '${dct.name} ${dct.firstname}',
+                            onTap: () {
+                              final model = Provider.of<BottomSheetModel>(
+                                  context,
+                                  listen: false);
+                              model.resetCurrentIndex();
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) {
+                                  return Consumer<BottomSheetModel>(
+                                    builder: (context, model, child) {
+                                      return ListModal(
                                         model: model,
-                                        id: tmp[index]['id']!.toString(),
-                                      ),
-                                      ModifyRdv(
-                                        id: tmp[index]['id']!.toString(),
-                                        updataData: updateDate,
-                                        model: model,
-                                      )
-                                    ],
+                                        children: [
+                                          OpenRdv(
+                                            model: model,
+                                            rdv: tmp[index],
+                                            doctor: doctor,
+                                          ),
+                                          DeleteRdv(
+                                            updataData: updateDate,
+                                            model: model,
+                                            id: tmp[index]['id']!.toString(),
+                                          ),
+                                          ModifyRdv(
+                                            id: tmp[index]['id']!.toString(),
+                                            updataData: updateDate,
+                                            model: model,
+                                          )
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
                               );
                             },
-                          );
-                  },
-                  status: status == RdvStatus.done ? AppointementStatus.done : AppointementStatus.waiting
-                );
-              }, itemCount: tmp.length);
-          }
-        }),
+                            status: status == RdvStatus.done
+                                ? AppointementStatus.done
+                                : AppointementStatus.waiting);
+                      },
+                      itemCount: tmp.length);
+                }
+              }),
         ),
       ],
     );
@@ -196,7 +233,9 @@ class OpenRdv extends StatefulWidget {
   final List<dynamic> doctor;
   const OpenRdv({
     super.key,
-    required this.model, required this.rdv, required this.doctor,
+    required this.model,
+    required this.rdv,
+    required this.doctor,
   });
 
   @override
@@ -212,24 +251,32 @@ class _OpenRdvState extends State<OpenRdv> {
             firstname: '',
             name: '',
             address: Address(street: '', zipCode: '', country: '', city: ''));
-    final DateTime startDate = DateTime.fromMillisecondsSinceEpoch(
-        widget.rdv["start_date"] * 1000);
-    final DateTime endDate = DateTime.fromMillisecondsSinceEpoch(
-        widget.rdv["end_date"] * 1000);
+    final DateTime startDate =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdv["start_date"] * 1000);
+    final DateTime endDate =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdv["end_date"] * 1000);
     return ModalContainer(
       title: "Informations sur votre rendez-vous",
       subtitle: "Consulter et gérer votre rendez-vous.",
       icon: IconModal(
-        icon: SvgPicture.asset("assets/images/utils/calendar_modal.svg", width: 18,),
+        icon: SvgPicture.asset(
+          "assets/images/utils/calendar_modal.svg",
+          width: 18,
+        ),
         type: ModalType.info,
       ),
       body: [
         Row(
           children: [
             // ignore: deprecated_member_use
-            SvgPicture.asset("assets/images/utils/calendar_modal.svg", width: 18, color: AppColors.black,),
+            SvgPicture.asset(
+              "assets/images/utils/calendar_modal.svg",
+              width: 18,
+              color: AppColors.black,
+            ),
             const SizedBox(width: 12),
-            Flexible(child: Text(
+            Flexible(
+              child: Text(
                 "Rendez-vous du ${DateFormat('dd MMMM yyyy', 'fr').format(startDate)} de ${startDate.hour.toString().padLeft(2, '0')}h${startDate.minute.toString().padLeft(2, '0')} à ${endDate.hour.toString().padLeft(2, '0')}h${endDate.minute.toString().padLeft(2, '0')}",
                 style: const TextStyle(
                   color: AppColors.black,
@@ -346,20 +393,20 @@ class _DeleteRdvState extends State<DeleteRdv> {
       ),
       footer: Column(
         children: [
-           Buttons(
-              variant: Variant.delete,
-              size: SizeButton.md,
-              msg: const Text('Oui, annuler le rendez-vous'),
-              onPressed: () async {
-                await deleteAppointementId(widget.id);
-                widget.updataData(context);
-                Navigator.pop(context);
-              },
-            ),
-                      const SizedBox(
+          Buttons(
+            variant: Variant.delete,
+            size: SizeButton.md,
+            msg: const Text('Oui, annuler le rendez-vous'),
+            onPressed: () async {
+              await deleteAppointementId(widget.id);
+              widget.updataData(context);
+              Navigator.pop(context);
+            },
+          ),
+          const SizedBox(
             height: 8,
           ),
-                       Buttons(
+          Buttons(
             variant: Variant.secondary,
             size: SizeButton.md,
             msg: const Text('Non, garder le rendez-vous'),
@@ -367,7 +414,6 @@ class _DeleteRdvState extends State<DeleteRdv> {
               widget.model.changePage(0);
             },
           ),
-
         ],
       ),
     );
@@ -547,51 +593,55 @@ class _ModifyRdvState extends State<ModifyRdv> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title:
-          "Modifier votre rendez-vous",
-      subtitle: "Sélectionner une nouvelle date pour votre rendez-vous. Vous pouvez garder le même médecin ou en choisir un autre.",
-      icon:  IconModal(
-        icon: SvgPicture.asset("assets/images/utils/calendar_modal.svg" ,width: 32, height: 18,),
-        type: ModalType.info,
-      ),
-      body: [
-        CustomFieldSearch(
-          label: "Rechercher par le nom du médecin",
-          icon: SvgPicture.asset("assets/images/utils/search.svg"),
-          keyboardType: TextInputType.text,
-          onValidate: (value) {
-            filterDoctors(value);
-          },
+        title: "Modifier votre rendez-vous",
+        subtitle:
+            "Sélectionner une nouvelle date pour votre rendez-vous. Vous pouvez garder le même médecin ou en choisir un autre.",
+        icon: IconModal(
+          icon: SvgPicture.asset(
+            "assets/images/utils/calendar_modal.svg",
+            width: 32,
+            height: 18,
+          ),
+          type: ModalType.info,
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                  color: AppColors.blue700,
-                  strokeWidth: 2,
-                )) // Afficher l'indicateur de chargement
-              : ListView.builder(
-                  itemCount: appointments.length,
-                  itemBuilder: (context, index) {
-                    return CardAppointementDoctorHour(
-                      appointements: appointments[index],
-                      updateId: updateSelectedAppointment,
-                      idSelected: selectedId,
-                    );
-                  },
-                ),
-        ),
-        Pagination(
-          currentPage: currentPage,
-          totalPages: totalPages,
-          onPageChanged: onPageChanged,
-        ),
-      ],
-      footer: Column(
-        children: [
-          Buttons(
+        body: [
+          CustomFieldSearch(
+            label: "Rechercher par le nom du médecin",
+            icon: SvgPicture.asset("assets/images/utils/search.svg"),
+            keyboardType: TextInputType.text,
+            onValidate: (value) {
+              filterDoctors(value);
+            },
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: AppColors.blue700,
+                    strokeWidth: 2,
+                  )) // Afficher l'indicateur de chargement
+                : ListView.builder(
+                    itemCount: appointments.length,
+                    itemBuilder: (context, index) {
+                      return CardAppointementDoctorHour(
+                        appointements: appointments[index],
+                        updateId: updateSelectedAppointment,
+                        idSelected: selectedId,
+                      );
+                    },
+                  ),
+          ),
+          Pagination(
+            currentPage: currentPage,
+            totalPages: totalPages,
+            onPageChanged: onPageChanged,
+          ),
+        ],
+        footer: Column(
+          children: [
+            Buttons(
               variant: Variant.primary,
               size: SizeButton.md,
               msg: const Text("Valider le changement"),
@@ -611,7 +661,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
                   Logger().i("session_id: $sessionId");
 
                   await putAppoitement(widget.id, selectedId).whenComplete(
-                    () {
+                    () async {
                       widget.updataData(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SuccessSnackBar(
@@ -621,30 +671,37 @@ class _ModifyRdvState extends State<ModifyRdv> {
                       );
                       widget.model.changePage(0);
 
-            await putAppoitement(widget.id, selectedId).whenComplete(
-              () {
-                // ignore: use_build_context_synchronously
-                widget.updataData(context);
-                // ignore: use_build_context_synchronously
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SuccessSnackBar(
-                    message: "Rendez-vous validé avec succès.",
-                    // ignore: use_build_context_synchronously
-                    context: context,
-                  ),
-                );
-                widget.model.changePage(0);
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
+                      await putAppoitement(widget.id, selectedId).whenComplete(
+                        () {
+                          // ignore: use_build_context_synchronously
+                          widget.updataData(context);
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SuccessSnackBar(
+                              message: "Rendez-vous validé avec succès.",
+                              // ignore: use_build_context_synchronously
+                              context: context,
+                            ),
+                          );
+                          widget.model.changePage(0);
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
-            const SizedBox(height: 8,),
-            Buttons(variant: Variant.secondary, size: SizeButton.md, msg: const Text("Annuler"), onPressed: () {
-              Navigator.pop(context);
-            }),
-        ],
-      )
-
-    );
+            const SizedBox(height: 8),
+            Buttons(
+                variant: Variant.secondary,
+                size: SizeButton.md,
+                msg: const Text("Annuler"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ],
+        ));
   }
 }

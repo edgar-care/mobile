@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
@@ -38,9 +38,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-            // ignore: use_build_context_synchronously
             ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
