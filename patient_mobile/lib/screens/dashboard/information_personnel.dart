@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
@@ -59,13 +59,15 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+            message: "Error on fetching name",
+            context: context));
         return 'test';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          ErrorSnackBar(message: "Error on fetching name", context: context));
+      ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+          message: "Error on fetching name",
+          context: context));
       return 'test';
     }
     return 'Dr.Edgar'; // default return value if no doctor matches
