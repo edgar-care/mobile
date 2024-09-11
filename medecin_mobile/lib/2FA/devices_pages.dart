@@ -152,7 +152,7 @@ class _DevicesPageState extends State<DevicesPage> {
                                                                   'Android'
                                                           ? 'PHONE'
                                                           : 'PC',
-                                                      context)
+                                                      context, getDevices)
                                                 ]);
                                           },
                                         );
