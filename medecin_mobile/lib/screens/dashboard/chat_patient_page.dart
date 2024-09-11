@@ -18,11 +18,19 @@ class ChatPatient extends StatefulWidget {
   String id;
   final Function setPages;
   final Function setId;
-  ChatPatient(
-      {super.key,
-      required this.id,
-      required this.setPages,
-      required this.setId});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  final List<Chat> chats;
+  ChatPatient({
+    super.key,
+    required this.id,
+    required this.setPages,
+    required this.setId,
+    required this.chats,
+    required this.webSocketService,
+    required this.scrollController,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -31,68 +39,13 @@ class ChatPatient extends StatefulWidget {
 
 class ChatPatientState extends State<ChatPatient> {
   Map<String, dynamic> patientInfo = {};
-  WebSocketService? _webSocketService;
   String idDoctor = '';
-  List<Chat> chats = [];
   String id = "";
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _initializeWebSocketService();
     _loadInfo();
-  }
-
-  Future<void> _initializeWebSocketService() async {
-    _webSocketService = WebSocketService(
-      onReceiveMessage: (data) {
-        setState(() {
-          Chat? chatToUpdate = chats.firstWhere(
-            (chat) => chat.id == data['chat_id'],
-          );
-          chatToUpdate.messages.add(
-            Message(
-              message: data['message'],
-              ownerId: data['owner_id'],
-              time: data['sended_time'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
-                  : DateTime.now(),
-            ),
-          );
-        });
-        Future.delayed(const Duration(milliseconds: 300), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        });
-      },
-      onReady: (data) {},
-      onGetMessages: (data) {
-        setState(() {
-          chats = transformChats(data);
-        });
-        Future.delayed(const Duration(milliseconds: 300), () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        });
-      },
-      onReadMessage: (data) {},
-    );
-    await _webSocketService?.connect();
-    _webSocketService?.sendReadyAction();
-    _webSocketService?.getMessages();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _webSocketService?.disconnect();
   }
 
   Future<void> _loadInfo() async {
@@ -119,7 +72,7 @@ class ChatPatientState extends State<ChatPatient> {
   }
 
   Future<bool> checkData() async {
-    if (chats.isNotEmpty && patientInfo.isNotEmpty) {
+    if (widget.chats.isNotEmpty && patientInfo.isNotEmpty) {
       return true;
     }
     return false;
@@ -203,9 +156,9 @@ class ChatPatientState extends State<ChatPatient> {
               ),
               Expanded(
                 child: ChatPagePatient(
-                  controller: _scrollController,
-                  webSocketService: _webSocketService,
-                  chat: chats.firstWhere(
+                  controller: widget.scrollController,
+                  webSocketService: widget.webSocketService,
+                  chat: widget.chats.firstWhere(
                     (chat) => (chat.recipientIds.first.id == widget.id ||
                         chat.recipientIds.first.id == idDoctor &&
                             (chat.recipientIds.last.id == widget.id ||

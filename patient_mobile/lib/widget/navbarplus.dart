@@ -2,7 +2,9 @@
 
 import 'package:edgar/models/dashboard.dart';
 import 'package:edgar/services/get_information_patient.dart';
+import 'package:edgar/services/websocket.dart';
 import 'package:edgar/styles/colors.dart';
+import 'package:edgar/utils/chat_utils.dart';
 import 'package:edgar/widget/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,11 +12,25 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
+// ignore: must_be_immutable
 class NavbarPLus extends StatefulWidget {
   final void Function(int) onItemTapped;
   final BuildContext context;
-  const NavbarPLus(
-      {super.key, required this.onItemTapped, required this.context});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  bool isChatting;
+  final List<Chat> chats;
+  void Function(bool) updateIsChatting;
+  NavbarPLus(
+      {super.key,
+      required this.onItemTapped,
+      required this.context,
+      required this.chats,
+      required this.webSocketService,
+      required this.isChatting,
+      required this.scrollController,
+      required this.updateIsChatting});
 
   @override
   State<NavbarPLus> createState() => _NavbarPLusState();
@@ -74,7 +90,12 @@ class _NavbarPLusState extends State<NavbarPLus> {
                           PageRouteBuilder<void>(
                             opaque: false,
                             pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoardPage();
+                              return DashBoardPage(
+                                  chats: widget.chats,
+                                  webSocketService: widget.webSocketService,
+                                  isChatting: widget.isChatting,
+                                  scrollController: widget.scrollController,
+                                  updateIsChatting: widget.updateIsChatting);
                             },
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {

@@ -15,6 +15,8 @@ class WebSocketService {
   Function(Map<String, dynamic>)? onCreateChat;
   Function(Map<String, dynamic>)? onGetMessages;
   Function(Map<String, dynamic>)? onReadMessage;
+  Function(Map<String, dynamic>)? onAskMobileConnection;
+  Function(Map<String, dynamic>)? onResponseMobileConnection;
 
   WebSocketService({
     this.onReceiveMessage,
@@ -22,6 +24,8 @@ class WebSocketService {
     this.onCreateChat,
     this.onGetMessages,
     this.onReadMessage,
+    this.onAskMobileConnection,
+    this.onResponseMobileConnection,
   });
 
   // Connect to WebSocket
@@ -127,6 +131,27 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
+  void askMobileConnection(String uuid, String email, String password) {
+    final askMobileConnection = jsonEncode({
+      'action': 'askMobileConnection',
+      'uuid': uuid,
+      'type': 0,
+      'email': email,
+      'password': password,
+    });
+    _channel?.sink.add(askMobileConnection);
+  }
+
+  void responseMobileConnection(String patientAuthTokenWS, String uuid) {
+    final responseMobileConnection = jsonEncode({
+      'action': 'responseMobileConnection',
+      'patientAuthTokenWS': patientAuthTokenWS,
+      'uuid': uuid,
+      "response": true,
+    });
+    _channel?.sink.add(responseMobileConnection);
+  }
+
   // Handle incoming messages
   void _handleMessage(String message) {
     final decodedMessage = jsonDecode(message);
@@ -143,6 +168,12 @@ class WebSocketService {
         break;
       case 'receive_message':
         onReceiveMessage?.call(decodedMessage);
+        break;
+      case 'askMobileConnection':
+        onAskMobileConnection?.call(decodedMessage);
+        break;
+      case 'responseMobileConnection':
+        onResponseMobileConnection?.call(decodedMessage);
         break;
       case 'read_message':
         onReadMessage?.call(decodedMessage);

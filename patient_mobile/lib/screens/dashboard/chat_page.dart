@@ -17,22 +17,31 @@ import 'dart:convert';
 
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
+// ignore: must_be_immutable
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  bool isChatting;
+  final List<Chat> chats;
+  void Function(bool) updateIsChatting;
+  ChatPage(
+      {super.key,
+      required this.chats,
+      required this.webSocketService,
+      required this.isChatting,
+      required this.scrollController,
+      required this.updateIsChatting});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  WebSocketService? _webSocketService;
   String idPatient = '';
-  List<Chat> chats = [];
   List<dynamic> doctors = [];
   String doctorname = '';
-  final ScrollController _scrollController = ScrollController();
   Chat? chatSelected;
-  bool isChatting = false;
   List<String> doctorName = [];
   final ValueNotifier<int> pageIndex = ValueNotifier(0);
 
@@ -40,7 +49,6 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     getDoctors();
-    _initializeWebSocketService();
     fetchData();
   }
 
@@ -50,81 +58,6 @@ class _ChatPageState extends State<ChatPage> {
         doctors = value;
       });
     });
-  }
-
-  Future<void> _initializeWebSocketService() async {
-    _webSocketService = WebSocketService(
-      onReceiveMessage: (data) {
-        setState(() {
-          Chat? chatToUpdate = chats.firstWhere(
-            (chat) => chat.id == data['chat_id'],
-          );
-          chatToUpdate.messages.add(
-            Message(
-              message: data['message'],
-              ownerId: data['owner_id'],
-              time: data['sended_time'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
-                  : DateTime.now(),
-            ),
-          );
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReady: (data) {},
-      onCreateChat: (data) {
-        setState(() {
-          chats.add(
-            Chat(
-              id: data['chat_id'],
-              messages: [],
-              recipientIds: [
-                Participant(
-                  id: data['recipient_ids'][0],
-                  lastSeen: DateTime.now(),
-                ),
-                Participant(
-                  id: data['recipient_ids'][1],
-                  lastSeen: DateTime.now(),
-                ),
-              ],
-            ),
-          );
-        });
-      },
-      onGetMessages: (data) {
-        setState(() {
-          chats = transformChats(data);
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReadMessage: (data) {},
-    );
-    await _webSocketService?.connect();
-    _webSocketService?.sendReadyAction();
-    _webSocketService?.getMessages();
-  }
-
-  @override
-  void dispose() {
-    _webSocketService?.disconnect();
-    super.dispose();
   }
 
   Future<void> fetchData() async {
@@ -148,7 +81,7 @@ class _ChatPageState extends State<ChatPage> {
   void setChatting(bool value, Chat? chat) {
     if (chat != null) {
       setState(() {
-        isChatting = value;
+        widget.updateIsChatting(value);
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
@@ -172,7 +105,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getAllDoctorName() async {
-    for (var chat in chats) {
+    for (var chat in widget.chats) {
       var doctor1 = doctors.firstWhere(
         (element) =>
             element['id'] == chat.recipientIds[0].id ||
@@ -224,21 +157,21 @@ class _ChatPageState extends State<ChatPage> {
               ]),
             ),
             const SizedBox(height: 16),
-            if (isChatting) ...[
+            if (widget.isChatting) ...[
               Expanded(
                 child: ChatPageConversation(
                   doctorName: doctorname,
-                  chat: chats.firstWhere(
+                  chat: widget.chats.firstWhere(
                     (chat) => chat.id == chatSelected!.id,
                   ),
-                  webSocketService: _webSocketService,
-                  controller: _scrollController,
+                  webSocketService: widget.webSocketService,
+                  controller: widget.scrollController,
                   onClick: setChatting,
                   patientId: idPatient,
                 ),
               ),
             ],
-            if (!isChatting) ...[
+            if (!widget.isChatting) ...[
               Buttons(
                   variant: Variante.primary,
                   size: SizeButton.md,
@@ -250,9 +183,9 @@ class _ChatPageState extends State<ChatPage> {
                         pageListBuilder: (modalSheetContext) {
                           return [
                             createDiscussion(modalSheetContext,
-                                _webSocketService, updateData),
+                                widget.webSocketService, updateData),
                             createDiscussion2(modalSheetContext,
-                                _webSocketService, updateData, idPatient),
+                                widget.webSocketService, updateData, idPatient),
                           ];
                         });
                   }),
@@ -272,14 +205,15 @@ class _ChatPageState extends State<ChatPage> {
                         padding: const EdgeInsets.all(0),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 4),
-                        itemCount: chats.length,
+                        itemCount: widget.chats.length,
                         itemBuilder: (context, index) {
                           return ChatCard(
-                            chat: chats[index],
-                            unread: getUnreadMessages(chats[index], idPatient),
-                            service: _webSocketService!,
+                            chat: widget.chats[index],
+                            unread: getUnreadMessages(
+                                widget.chats[index], idPatient),
+                            service: widget.webSocketService!,
                             doctorName: getDoctorName(
-                                chats[index]), //doctorName[index],
+                                widget.chats[index]), //doctorName[index],
                             onClick: setChatting,
                           );
                         },

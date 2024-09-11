@@ -7,12 +7,24 @@ import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
+import 'package:edgar_pro/services/web_socket_services.dart';
+import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
 
+// ignore: must_be_immutable
 class DashBoard extends StatefulWidget {
-  const DashBoard({super.key});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  final List<Chat> chats;
+  DashBoard({
+    super.key,
+    required this.chats,
+    required this.webSocketService,
+    required this.scrollController,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -55,7 +67,10 @@ class _DashBoardState extends State<DashBoard> {
       Patient(setPages: updateSelectedIndex, setId: updateId),
       const Rdv(),
       const Diagnostic(),
-      const ChatPageDashBoard(),
+      ChatPageDashBoard(
+          chats: widget.chats,
+          webSocketService: widget.webSocketService,
+          scrollController: widget.scrollController),
       const Text('Aide',
           style: TextStyle(
               fontSize: 24,
@@ -72,7 +87,13 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex,
         setId: updateId,
       ),
-      ChatPatient(id: getId(), setPages: updateSelectedIndex, setId: updateId)
+      ChatPatient(
+          id: getId(),
+          setPages: updateSelectedIndex,
+          setId: updateId,
+          chats: widget.chats,
+          webSocketService: widget.webSocketService,
+          scrollController: widget.scrollController),
     ];
     return Scaffold(
       backgroundColor: AppColors.blue50,

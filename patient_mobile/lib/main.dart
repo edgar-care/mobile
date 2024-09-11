@@ -2,6 +2,7 @@ import 'package:edgar/models/onboarding.dart';
 import 'package:edgar/models/simulation_intro.dart';
 import 'package:edgar/screens/simulation/appointement_page.dart';
 import 'package:edgar/screens/simulation/confirmation_page.dart';
+import 'package:edgar/services/websocket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar/screens/auth.dart';
@@ -17,6 +18,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:push/push.dart';
+import 'package:edgar/utils/chat_utils.dart';
 
 import 'screens/landingPage/annuaire_medecin.dart';
 import 'screens/landingPage/landing_page.dart';
@@ -104,11 +106,22 @@ Future<void> showNotification(
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  WebSocketService? _webSocketService;
+  List<Chat> chats = [];
+  bool isChatting = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Initialize notifications
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -117,12 +130,115 @@ class MyApp extends StatelessWidget {
       // Initialize push notifications and request permissions
       await initializePushNotifications();
 
+      // Initialize WebSocket service
+      await _initializeWebSocketService(flutterLocalNotificationsPlugin);
+
       // Show a test notification (optional, remove in production)
       await Future.delayed(const Duration(seconds: 5));
       await showNotification(flutterLocalNotificationsPlugin, "Test",
           "This is a test notification");
     });
+  }
 
+  void updateIsChatting(bool value) {
+    setState(() {
+      isChatting = value;
+    });
+  }
+
+  Future<void> _initializeWebSocketService(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    _webSocketService = WebSocketService(
+      onReceiveMessage: (data) {
+        setState(() {
+          Chat? chatToUpdate = chats.firstWhere(
+            (chat) => chat.id == data['chat_id'],
+          );
+          chatToUpdate.messages.add(
+            Sms(
+              message: data['message'],
+              ownerId: data['owner_id'],
+              time: data['sended_time'] != null
+                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
+                  : DateTime.now(),
+            ),
+          );
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReady: (data) {},
+      onCreateChat: (data) {
+        setState(() {
+          chats.add(
+            Chat(
+              id: data['chat_id'],
+              messages: [],
+              recipientIds: [
+                Participant(
+                  id: data['recipient_ids'][0],
+                  lastSeen: DateTime.now(),
+                ),
+                Participant(
+                  id: data['recipient_ids'][1],
+                  lastSeen: DateTime.now(),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+      onGetMessages: (data) {
+        setState(() {
+          chats = transformChats(data);
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReadMessage: (data) {},
+      // Handle the askMobileConnection action
+      onAskMobileConnection: (data) {
+        // Handle the askMobileConnection action
+      },
+      onResponseMobileConnection: (data) async {
+        // Handle the responseMobileConnection action
+        await showNotification(flutterLocalNotificationsPlugin,
+            "Connexion mobile", "Connexion mobile établie avec succès");
+      },
+    );
+    await _webSocketService?.connect();
+    _webSocketService?.sendReadyAction();
+    _webSocketService?.getMessages();
+    // _webSocketService?.askMobileConnection(
+    //   'uuid',
+    //   'email',
+    //   'password',
+    // );
+    // Ce que tu devras faire nico c'est de remplacer les valeurs de 'uuid', 'email', 'password' par les valeurs que tu veux
+  }
+
+  @override
+  void dispose() {
+    _webSocketService?.disconnect();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'edgar',
       debugShowCheckedModeBanner: false,
@@ -145,7 +261,12 @@ class MyApp extends StatelessWidget {
         '/annuaire-medecin': (context) => const AnnuaireMedecin(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
-        '/dashboard': (context) => const DashBoardPage(),
+        '/dashboard': (context) => DashBoardPage(
+            chats: chats,
+            webSocketService: _webSocketService,
+            isChatting: isChatting,
+            scrollController: _scrollController,
+            updateIsChatting: updateIsChatting),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
         '/simulation/appointement': (context) => const AppointmentPage(),

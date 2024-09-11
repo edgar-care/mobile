@@ -1,5 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:edgar/screens/dashboard/traitement_page.dart';
+import 'package:edgar/services/websocket.dart';
+import 'package:edgar/utils/chat_utils.dart';
 import 'package:edgar/widget/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/screens/dashboard/accueil_page.dart';
@@ -9,8 +11,21 @@ import 'package:edgar/screens/dashboard/file_page.dart';
 import 'package:edgar/screens/dashboard/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class DashBoardPage extends StatefulWidget {
-  const DashBoardPage({super.key});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  bool isChatting;
+  final List<Chat> chats;
+  void Function(bool) updateIsChatting;
+  DashBoardPage(
+      {super.key,
+      required this.chats,
+      required this.webSocketService,
+      required this.isChatting,
+      required this.scrollController,
+      required this.updateIsChatting});
 
   @override
   DashBoardPageState createState() => DashBoardPageState();
@@ -20,15 +35,6 @@ class DashBoardPageState extends State<DashBoardPage>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
   int _previousIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const GestionRendezVous(),
-    const TraitmentPage(),
-    const FilePage(),
-    const InformationPersonnel(),
-    const ChatPage(),
-  ];
 
   @override
   void initState() {
@@ -43,7 +49,7 @@ class DashBoardPageState extends State<DashBoardPage>
     final String? token = prefs.getString('token');
     if (token == null) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/login');
+      Navigator.pushNamed(context, '/');
     }
   }
 
@@ -74,6 +80,19 @@ class DashBoardPageState extends State<DashBoardPage>
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> widgetOptions = <Widget>[
+      const HomePage(),
+      const GestionRendezVous(),
+      const TraitmentPage(),
+      const FilePage(),
+      const InformationPersonnel(),
+      ChatPage(
+          chats: widget.chats,
+          webSocketService: widget.webSocketService,
+          isChatting: widget.isChatting,
+          scrollController: widget.scrollController,
+          updateIsChatting: widget.updateIsChatting),
+    ];
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -97,13 +116,18 @@ class DashBoardPageState extends State<DashBoardPage>
                       child: child,
                     );
                   },
-                  child: _widgetOptions[_selectedIndex],
+                  child: widgetOptions[_selectedIndex],
                 ),
               ),
             ),
             CustomBottomBar(
               selectedIndex: _selectedIndex,
               onItemTapped: _onItemTapped,
+              chats: widget.chats,
+              webSocketService: widget.webSocketService,
+              isChatting: widget.isChatting,
+              scrollController: widget.scrollController,
+              updateIsChatting: widget.updateIsChatting,
             ),
           ],
         ),
