@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:edgar/colors.dart';
@@ -10,7 +12,6 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:gradient_borders/gradient_borders.dart';
 
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({super.key});
@@ -20,7 +21,6 @@ class ConnexionPage extends StatefulWidget {
 }
 
 class _ConnexionPageState extends State<ConnexionPage> {
-
   @override
   void initState() {
     super.initState();
@@ -51,7 +51,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
           Container(
             padding: const EdgeInsets.all(32),
             height: MediaQuery.of(context).size.height / 2,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32),
                 topRight: Radius.circular(32),
@@ -409,11 +409,9 @@ class _ModalLoginState extends State<ModalLogin> {
             await dotenv.load();
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String url = '${dotenv.env['URL']}auth/p/login';
-            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(
               InfoSnackBar(
                 message: 'Connexion en cours...',
-                // ignore: use_build_context_synchronously
                 context: context,
               ),
             );
@@ -425,30 +423,23 @@ class _ModalLoginState extends State<ModalLogin> {
 
             Logger().i("Good");
             if (response.statusCode == 200) {
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               final token = jsonDecode(response.body)['token'];
               prefs.setString('token', token);
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
                 SuccessSnackBar(
                   message: 'Connexion réussie',
-                  // ignore: use_build_context_synchronously
                   context: context,
                 ),
               );
               await Future.delayed(const Duration(seconds: 3));
-              // ignore: use_build_context_synchronously
               Navigator.pushNamed(context, '/dashboard');
             } else {
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               final scaffoldContext = context;
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                 ErrorSnackBar(
                   message: 'Identifiants incorrects ou mot de passe invalide',
-                  // ignore: use_build_context_synchronously
                   context: scaffoldContext,
                 ),
               );
@@ -502,14 +493,11 @@ class ModalRegister extends StatefulWidget {
 }
 
 class _ModalRegisterState extends State<ModalRegister> {
-  
   String email = "";
   String password = "";
 
-
   @override
   Widget build(BuildContext context) {
-
     bool emailValidityChecker(String email) {
       return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
     }
@@ -580,46 +568,32 @@ class _ModalRegisterState extends State<ModalRegister> {
           msg: const Text("Inscription"),
           onPressed: () async {
             if (password == "" || email == "") {
-              // ignore: use_build_context_synchronously
-
               ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                   message: "Veuillez remplir tous les champs",
-                  // ignore: use_build_context_synchronously
                   context: context));
               return;
             }
             if (password.length < 8) {
-              // ignore: use_build_context_synchronously
+              // ignore: use_build_context_synchronouslyx
               ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
                   message:
                       "Le mot de passe doit contenir au moins 8 caractères",
-                  // ignore: use_build_context_synchronously
                   context: context));
               return;
             }
             if (!emailValidityChecker(email)) {
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Adresse mail invalide",
-                  // ignore: use_build_context_synchronously
-                  context: context));
+                  message: "Adresse mail invalide", context: context));
               return;
             }
             var reponse = await RegisterUser(email, password);
             if (reponse) {
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                  message: "Inscription réussie",
-                  // ignore: use_build_context_synchronously
-                  context: context));
-              // ignore: use_build_context_synchronously
+                  message: "Inscription réussie", context: context));
               Navigator.pushNamed(context, '/onboarding');
             } else {
-              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Erreur lors de l'inscription",
-                  // ignore: use_build_context_synchronously
-                  context: context));
+                  message: "Erreur lors de l'inscription", context: context));
             }
           },
         )
