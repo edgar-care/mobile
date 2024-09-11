@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:push/push.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -192,13 +193,18 @@ class _MainAppState extends State<MainApp> {
       },
       onReadMessage: (data) {},
       // Handle the askMobileConnection action
-      onAskMobileConnection: (data) {
-        // Handle the askMobileConnection action
+      onAskMobileConnection: (data) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+        Logger().i('AskMobileConnection: $data');
+        _webSocketService?.responseMobileConnection(
+          token!,
+          data['uuid'],
+        );
       },
-      onResponseMobileConnection: (data) async {
-        // Handle the responseMobileConnection action
-        await showNotification(flutterLocalNotificationsPlugin,
-            "Connexion mobile", "Connexion mobile établie avec succès");
+
+      onResponseMobileConnection: (data) {
+        Logger().i('ResponseMobileConnection: $data');
       },
     );
     await _webSocketService?.connect();

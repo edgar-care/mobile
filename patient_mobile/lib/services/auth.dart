@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -35,6 +36,7 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
     headers: {'Authorization': 'Bearer $token'},
     body: jsonEncode(traitement),
   );
+  Logger().i(response.statusCode);
   if (response.statusCode == 201) {
     return true;
   } else {

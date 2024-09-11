@@ -19,6 +19,7 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:push/push.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -218,24 +219,23 @@ class _MyAppState extends State<MyApp> {
       },
       onReadMessage: (data) {},
       // Handle the askMobileConnection action
-      onAskMobileConnection: (data) {
-        // Handle the askMobileConnection action
+      onAskMobileConnection: (data) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+        Logger().i('AskMobileConnection: $data');
+        _webSocketService?.responseMobileConnection(
+          token!,
+          data['uuid'],
+        );
       },
-      onResponseMobileConnection: (data) async {
-        // Handle the responseMobileConnection action
-        await showNotification(flutterLocalNotificationsPlugin,
-            "Connexion mobile", "Connexion mobile établie avec succès");
+
+      onResponseMobileConnection: (data) {
+        Logger().i('ResponseMobileConnection: $data');
       },
     );
     await _webSocketService?.connect();
     _webSocketService?.sendReadyAction();
     _webSocketService?.getMessages();
-    // _webSocketService?.askMobileConnection(
-    //   'uuid',
-    //   'email',
-    //   'password',
-    // );
-    // Ce que tu devras faire nico c'est de remplacer les valeurs de 'uuid', 'email', 'password' par les valeurs que tu veux
   }
 
   @override
