@@ -134,9 +134,9 @@ class _MyAppState extends State<MyApp> {
 
       // Initialize push notifications and request permissions
       await initializePushNotifications();
-      
+
       fetchData();
-      
+
       // Initialize WebSocket service
       await _initializeWebSocketService(flutterLocalNotificationsPlugin);
 
@@ -242,10 +242,8 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     _webSocketService?.disconnect();
     super.dispose();
-  // ignore: library_private_types_in_public_api
-  _MyAppState createState() => _MyAppState();
-}
-
+    // ignore: library_private_types_in_public_api
+  }
 
   Future<void> fetchData() async {
     FlutterNativeSplash.remove();
