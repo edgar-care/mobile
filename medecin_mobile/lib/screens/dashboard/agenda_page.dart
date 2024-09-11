@@ -82,7 +82,7 @@ class _AgendaState extends State<Agenda> {
           ),
         ),
         const SizedBox(
-          height: 8,
+          height: 16,
         ),
         Expanded(
           child: Container(

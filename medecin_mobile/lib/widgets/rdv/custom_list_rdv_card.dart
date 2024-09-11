@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';

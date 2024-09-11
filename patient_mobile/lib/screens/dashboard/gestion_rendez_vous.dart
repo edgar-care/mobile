@@ -621,9 +621,21 @@ class _ModifyRdvState extends State<ModifyRdv> {
                       );
                       widget.model.changePage(0);
 
-                    },
-                  );
-                }
+            await putAppoitement(widget.id, selectedId).whenComplete(
+              () {
+                // ignore: use_build_context_synchronously
+                widget.updataData(context);
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SuccessSnackBar(
+                    message: "Rendez-vous validé avec succès.",
+                    // ignore: use_build_context_synchronously
+                    context: context,
+                  ),
+                );
+                widget.model.changePage(0);
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
               },
             ),
             const SizedBox(height: 8,),

@@ -10,8 +10,8 @@ import 'package:edgar/widget.dart';
 Future login(String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/d/login';
-  ScaffoldMessenger.of(context).showSnackBar(InfoSnackBar(
-      message: "Connexion à l'application ...", context: context));
+  ScaffoldMessenger.of(context).showSnackBar(
+      InfoSnackBar(message: "Connexion à l'application ...", context: context));
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
