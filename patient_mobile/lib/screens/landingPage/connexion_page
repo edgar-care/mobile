@@ -20,6 +20,21 @@ class ConnexionPage extends StatefulWidget {
 }
 
 class _ConnexionPageState extends State<ConnexionPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    checkToken();
+  }
+
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null) {
+      Navigator.pushNamed(context, '/dashboard');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
