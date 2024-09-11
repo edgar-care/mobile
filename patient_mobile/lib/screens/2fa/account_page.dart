@@ -398,27 +398,6 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Désactiver le compte',
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder:
-                                                (BuildContext context, _, __) {
-                                              return const DoubleAuthentication();
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      type: 'Only',
-                                    ),
-                                    Container(
-                                      color: AppColors.blue100,
-                                      height: 1,
-                                    ),
-                                    NavbarPLusTab(
-                                      title: 'Supprimer le compte',
-                                      color: AppColors.grey300,
-                                      onTap: () {
                                         Logger().d(enable2fa['secret']);
                                         final model =
                                             Provider.of<BottomSheetModel>(
@@ -435,17 +414,24 @@ class _AccountPageState extends State<AccountPage> {
                                                 return ListModal(
                                                     model: model,
                                                     children: [
-                                                      enable2fa['methods']
-                                                              .isEmpty
-                                                          ? modalRedirect2FA(
-                                                              context)
-                                                          : modalReNewBackup(
-                                                              context),
+                                                      modalDisableAccount(
+                                                          context),
                                                     ]);
                                               },
                                             );
                                           },
                                         );
+                                      },
+                                      type: 'Only',
+                                    ),
+                                    Container(
+                                      color: AppColors.blue100,
+                                      height: 1,
+                                    ),
+                                    NavbarPLusTab(
+                                      title: 'Supprimer le compte',
+                                      color: AppColors.grey300,
+                                      onTap: () {
                                       },
                                       type: 'Only',
                                     ),
@@ -466,7 +452,7 @@ Widget modalDisableAccount(BuildContext context) {
   return ModalContainer(
     title: 'Désactiver le compte',
     subtitle:
-        'Vous êtes sur le point de désactiver votre compte. Vous ne pourrez plus accéder à votre compte et toutes vos données seront supprimées.',
+        'Vous êtes sur le point de désactiver votre compte. Vous ne pourrez plus accéder à votre compte.',
     icon: const IconModal(
       icon: Icon(
         BootstrapIcons.person_x_fill,
@@ -478,7 +464,7 @@ Widget modalDisableAccount(BuildContext context) {
     footer: Column(
       children: [
         Buttons(
-          variant: Variant.primary,
+          variant: Variant.delete,
           size: SizeButton.md,
           msg: const Text('Désactiver le compte'),
           onPressed: () {
