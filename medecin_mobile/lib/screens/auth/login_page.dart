@@ -255,7 +255,7 @@ Widget modalForgotPassword(BuildContext context) {
       ),
     ],
     footer: Buttons(
-            variant: Variante.primary,
+            variant: Variant.primary,
             size: SizeButton.md,
             msg: const Text('Réinitialiser le mot de passe'),
             onPressed: () {
@@ -459,7 +459,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     footer: Column(
       children: [
         Buttons(
-          variant: Variante.primary,
+          variant: Variant.primary,
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
@@ -469,7 +469,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
         ),
         const SizedBox(height: 8,),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Revenir en arrière'),
           onPressed: () {
@@ -526,7 +526,7 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
     footer: Column(
       children: [
         Buttons(
-          variant: Variante.primary,
+          variant: Variant.primary,
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
@@ -536,7 +536,7 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
         ),
         const SizedBox(height: 8,),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Revenir en arrière'),
           onPressed: () {
@@ -558,12 +558,13 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
       const Text('Code de sauvegarde', style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w500)),
       const SizedBox(height: 8),
       CustomField(
-        startUppercase: false,
+        isNotCapitalize: true,
         label: "XXXXXXXX",
         keyboardType: TextInputType.text,
         onChanged: (value) {
           code = value.trim();
         },
+        action: TextInputAction.none,
       ),
     ],
     icon: const IconModal(
@@ -577,7 +578,7 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
     footer:Column(
       children: [
         Buttons(
-          variant: Variante.primary,
+          variant: Variant.primary,
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
@@ -587,7 +588,7 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
         ),
         const SizedBox(height: 8,),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Revenir en arrière'),
           onPressed: () {

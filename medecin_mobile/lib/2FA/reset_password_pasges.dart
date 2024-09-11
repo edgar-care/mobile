@@ -1,8 +1,6 @@
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -80,7 +78,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           const Text('Votre mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
                           const SizedBox(height: 4),
                           CustomField(
-                            startUppercase: false,
+                            isNotCapitalize: true,
                             keyboardType: TextInputType.text,
                             label: '',
                             onChanged: (value) {
@@ -88,12 +86,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 actualEmail = value;
                               });
                             },
+                            action: TextInputAction.none,
                           ),
                           const SizedBox(height: 8),
                           const Text('Votre nouveau mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
                           const SizedBox(height: 4,),
                           CustomField(
-                            startUppercase: false,
+                            isNotCapitalize: true,
                             keyboardType: TextInputType.text,
                             label: 'Minimum 8 caractères',
                             onChanged: (value) {
@@ -101,12 +100,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 newEmail = value;
                               });
                             },
+                            action: TextInputAction.none,
                           ),
                           const SizedBox(height: 8),
                           const Text('Confirmer votre nouveau mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
                           const SizedBox(height: 4,),
                           CustomField(
-                            startUppercase: false,
+                            isNotCapitalize: true,
                             keyboardType: TextInputType.text,
                             label: 'Minimum 8 caractères',
                             onChanged: (value) {
@@ -114,16 +114,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 repeatEmail = value;
                               });
                             },
+                            action: TextInputAction.none,
                           ),
                           const SizedBox(height: 16),
                           Buttons(
-                            variant: Variante.primary,
+                            variant: Variant.primary,
                             size: SizeButton.md,
                             msg: const Text("Changer le mot de passe"),
                             onPressed: () {
                               if (newEmail != repeatEmail) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  ErrorLoginSnackBar(
+                                  ErrorSnackBar(
                                     context: context,
                                     message: 'Les mots de passe ne correspondent pas',
                                   ),
