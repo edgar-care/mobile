@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/devices.dart';
-import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/multiplefa.dart';
 import 'package:edgar_app/widget/devices_tab.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
