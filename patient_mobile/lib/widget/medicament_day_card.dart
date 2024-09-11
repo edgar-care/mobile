@@ -4,6 +4,7 @@ import 'package:edgar_app/services/medecine.dart';
 import 'package:edgar_app/services/traitement.dart';
 import 'package:edgar_app/utils/traitement_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class DailyMedicamentCard extends StatefulWidget {
   const DailyMedicamentCard({super.key});
@@ -225,10 +226,13 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
         .toList();
 
     String getMedicineName(String medicineId) {
+      Logger().i(widget.medecines);
+      Logger().i(medicineId);
       var med = widget.medecines.firstWhere(
         (med) => med['id'] == medicineId,
         orElse: () => {'name': ''},
       );
+      Logger().i(med);
       return med['name'];
     }
 
@@ -239,9 +243,9 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
           getPeriodInFrench(widget.period),
           style: const TextStyle(
             color: AppColors.black,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
+            fontFamily: 'poppins',
           ),
         ),
         const SizedBox(
@@ -259,7 +263,6 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
           ),
         for (int index = 0; index < filteredTreatments.length; index++)
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Checkbox(
                 value: widget.followUp.any((element) =>
@@ -311,35 +314,36 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                 },
                 activeColor: AppColors.blue700,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
+                    borderRadius: BorderRadius.circular(4),
+                    side: const BorderSide(color: AppColors.blue200, width: 2)),
               ),
-              Flexible(
-                child: Text(
-                  '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    decoration: widget.followUp.any((element) =>
-                            element['treatment_id'] ==
-                                filteredTreatments[index].id &&
-                            element['period'].contains(widget.period
-                                .toString()
-                                .trim()
-                                .split('.')
-                                .last) &&
-                            DateTime.fromMillisecondsSinceEpoch(
-                                        element['date'] * 1000)
-                                    .day ==
-                                widget.date.day)
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              // const SizedBox(
+              //   width: 8,
+              // ),
+              Text(
+                '${filteredTreatments[index].quantity} x ${getMedicineName(filteredTreatments[index].medicineId)}',
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'poppins',
+                  decoration: widget.followUp.any((element) =>
+                          element['treatment_id'] ==
+                              filteredTreatments[index].id &&
+                          element['period'].contains(widget.period
+                              .toString()
+                              .trim()
+                              .split('.')
+                              .last) &&
+                          DateTime.fromMillisecondsSinceEpoch(
+                                      element['date'] * 1000)
+                                  .day ==
+                              widget.date.day)
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
                 ),
-              )
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
       ],

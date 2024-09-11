@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_information_patient.dart';

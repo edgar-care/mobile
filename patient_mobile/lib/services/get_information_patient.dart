@@ -20,6 +20,8 @@ Future<Map<String, dynamic>> getMedicalFolder() async {
   );
   if (response.statusCode == 200) {
     final body = response.body;
+    Logger().i(jsonDecode(body)['medical_folder']);
+    Logger().i(token);
     return jsonDecode(body)['medical_folder'];
   } else {
     Logger().e(response.statusCode);

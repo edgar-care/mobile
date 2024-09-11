@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, use_build_context_synchronously
+// ignore_for_file: public_member_api_docs, sort_constructors_first, use_build_context_synchronously, duplicate_ignore
 import 'dart:io';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
