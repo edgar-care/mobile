@@ -1,6 +1,6 @@
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CustomBottomBar extends StatefulWidget {

@@ -30,6 +30,8 @@ dependencies:
   download_file: ^1.2.0
 
   flutter_native_splash: ^2.4.1
+  edgar: ^0.2.2
+  provider: ^6.1.2
   animations: ^2.0.11
 
 dev_dependencies:

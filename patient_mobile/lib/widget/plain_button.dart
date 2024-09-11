@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
 
 class PlainButton extends StatelessWidget {
   final String text;
@@ -11,7 +11,7 @@ class PlainButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: AppColors.buttonBlue,
+        backgroundColor: AppColors.blue700,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -37,7 +37,7 @@ class PlainBorderButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: AppColors.buttonBlue,
+        backgroundColor: AppColors.blue700,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -84,7 +84,10 @@ class GreenPlainButtonWithIcon extends StatelessWidget {
   final IconData icon;
   final Function() onPressed;
   const GreenPlainButtonWithIcon(
-      {super.key, required this.text, required this.onPressed, required this.icon});
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -106,19 +109,17 @@ class GreenPlainButtonWithIcon extends StatelessWidget {
       ),
       onPressed: onPressed,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children : [
-          Text(text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 16, 
-                fontWeight: FontWeight.bold
-            )
-          ),
-          Icon(icon, color: Colors.white, size: 18)
-        ]
-      ),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(text,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            Icon(icon, color: Colors.white, size: 18)
+          ]),
     );
   }
 }

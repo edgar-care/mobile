@@ -17,6 +17,8 @@ dependencies:
   dart_jsonwebtoken: ^2.11.0
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
+  edgar: ^0.2.2
+
   http: ^1.1.0
   path_provider: ^2.0.5
   flutter_pdfview: ^1.0.0
@@ -30,7 +32,6 @@ dependencies:
   auto_size_text: ^3.0.0
   aligned_dialog: ^0.0.7
   logger: ^2.0.2+1
-  wolt_modal_sheet: ^0.5.0
   flutter_datetime_picker: ^1.5.1
   file_picker: ^8.0.0+1
   confetti: ^0.7.0
@@ -43,6 +44,8 @@ dependencies:
   flutter_native_splash: ^2.4.1
   
 
+  provider: ^6.1.2
+  gradient_borders: ^1.0.1
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -89,6 +92,6 @@ flutter:
     - assets/images/logo/
     - assets/images/utils/
     - .env  # The following line ensures that the Material Icons font is
-name: edgar
+name: edgar_app
 publish_to: none
 version: 1.0.0+1

@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:edgar_pro/2FA/account_page.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,9 +89,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.blue700,
-                                  borderRadius: BorderRadius.all(Radius.circular(16))
-                                ),
+                                    color: AppColors.blue700,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16))),
                                 child: FutureBuilder(
                                   future: fetchData(),
                                   builder: (context, snapshot) {
@@ -155,8 +155,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child:
-                                                BoringAvatars(
+                                              child: BoringAvatars(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
@@ -189,7 +188,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              const Text("Paramètres du compte", style: TextStyle(fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w500),),
+                              const Text(
+                                "Paramètres du compte",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                              ),
                               const SizedBox(height: 4),
                               Container(
                                 padding:
@@ -217,8 +222,11 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return AccountPage(infoMedical: infoMedical,);
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return AccountPage(
+                                                infoMedical: infoMedical,
+                                              );
                                             },
                                           ),
                                         );
@@ -349,7 +357,9 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         child: Row(
           children: [
             widget.icon ?? const SizedBox.shrink(),
-            widget.icon != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
+            widget.icon != null
+                ? const SizedBox(width: 16)
+                : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,

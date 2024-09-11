@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:edgar/models/dashboard.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:edgar_app/models/dashboard.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -46,8 +46,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
   }
@@ -322,7 +322,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                             await SharedPreferences
                                                 .getInstance();
                                         prefs.remove('token');
-                                        Navigator.pushNamed(context, '/login');
+                                        Navigator.pushNamed(context, '/');
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
