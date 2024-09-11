@@ -1105,7 +1105,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
   Future<void> getDevices() async {
     List<dynamic> temp = await getAllDevices();
     for (int i = 0; i < temp.length; i++) {
-      if (temp[i]['trusted'] == true) {
+      if (temp[i]['trusted'] == false) {
         setState(() {
           devices.add(temp[i]);
         });
