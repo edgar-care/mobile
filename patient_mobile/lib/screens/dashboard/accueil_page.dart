@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchData() async {
     await getMedicalFolder().then((value) {
+      
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
