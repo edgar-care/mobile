@@ -37,7 +37,7 @@ Future addTrustDevices(String id) async {
   return;
 }
 
-Future removeDevice(String id) async {
+Future removeTrustDevice(String id) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('token');
   String url = '${dotenv.env['URL']}/dashboard/2fa/device/$id';
@@ -67,4 +67,19 @@ Future<List<dynamic>> getTrustedDevices() async {
     return jsonDecode(response.body)['devices'];
   }
   return [];
+}
+
+Future removeDevice(String id) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('token');
+  String url = '${dotenv.env['URL']}/dashboard/device/$id';
+  final response = await http.delete(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    },
+  );
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
 }

@@ -944,7 +944,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                             return Consumer<BottomSheetModel>(
                               builder: (context, model, child) {
                                 return ListModal(model: model, children: [
-                                  modalInfoDevices(
+                                  modalInfoTrustDevices(
                                       "${devices[index]['device_type']} - ${devices[index]['browser']}",
                                       DateFormat('dd/MM/yyyy').format(
                                           DateTime.fromMillisecondsSinceEpoch(
@@ -1659,7 +1659,7 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   );
 }
 
-Widget modalInfoDevices(String name, String date, String location, String id,
+Widget modalInfoTrustDevices(String name, String date, String location, String id,
     String type, BuildContext context, Function load2fa) {
   return ModalContainer(
       title: name,
@@ -1724,7 +1724,7 @@ Widget modalInfoDevices(String name, String date, String location, String id,
         size: SizeButton.md,
         msg: const Text('Déconnecter l\'appareil'),
         onPressed: () {
-          removeDevice(id).then((name) {
+          removeTrustDevice(id).then((name) {
             load2fa();
             Navigator.pop(context);
           });
