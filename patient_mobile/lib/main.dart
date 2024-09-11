@@ -1,6 +1,6 @@
 import 'package:edgar_app/models/onboarding.dart';
 import 'package:edgar_app/models/simulation_intro.dart';
-import 'package:edgar_app/screens/landingPage/connexion_page';
+import 'package:edgar_app/screens/landingPage/connexion_page.dart';
 import 'package:edgar_app/screens/simulation/appointement_page.dart';
 import 'package:edgar_app/screens/simulation/confirmation_page.dart';
 import 'package:edgar/widget.dart';
