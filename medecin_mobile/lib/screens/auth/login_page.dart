@@ -4,11 +4,9 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:edgar_pro/widgets/number_list_2fa.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
-import 'package:edgar_pro/widgets/custom_modal.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -97,8 +95,7 @@ class _LoginState extends State<Login> {
                           height: 8,
                         ),
                         CustomField(
-                          startUppercase: false,
-                          text: email,
+                          action: TextInputAction.next,
                           label: "prenom.nom@gmail.com",
                           keyboardType: TextInputType.emailAddress,
                           onChanged: (value) {
@@ -120,7 +117,7 @@ class _LoginState extends State<Login> {
                           height: 8,
                         ),
                         CustomField(
-                          startUppercase: false,
+                          action: TextInputAction.next,
                           label: "Minimum 8 caractères",
                           keyboardType: TextInputType.text,
                           isPassword: true,
@@ -133,7 +130,8 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 12),
                         GestureDetector(
                           onTap: () {
-                            final model = Provider.of<BottomSheetModel>(context, listen: false);
+                            final model = Provider.of<BottomSheetModel>(context,
+                                listen: false);
                             model.resetCurrentIndex();
                             showModalBottomSheet(
                                 context: context,
@@ -150,15 +148,17 @@ class _LoginState extends State<Login> {
                                 },
                               );
                           },
-                          child: const Text("Mot de passe oublié ?",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500),
-                        ),),
+                          child: const Text(
+                            "Mot de passe oublié ?",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         const SizedBox(height: 32),
                         Buttons(
-                          variant: Variante.primary,
+                          variant: Variant.primary,
                           msg: const Text("Se connecter"),
                           size: SizeButton.md,
                           onPressed: () {
@@ -203,7 +203,7 @@ class _LoginState extends State<Login> {
                         height: 8,
                       ),
                       Buttons(
-                        variant: Variante.secondary,
+                        variant: Variant.secondary,
                         msg: const Text("Créer un compte"),
                         size: SizeButton.md,
                         onPressed: () {
@@ -226,28 +226,34 @@ Widget modalForgotPassword(BuildContext context) {
   String email = "";
   return ModalContainer(
     title: "Mot de passe oublié ?",
-    subtitle: "Renseigner votre adresse mail pour réinitialiser votre mot de passe.",
+    subtitle:
+        "Renseigner votre adresse mail pour réinitialiser votre mot de passe.",
     icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.shield_lock_fill,
-          color: AppColors.blue700,
-          size: 17,
-        ),
-        type: ModalType.info,
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
       ),
-      body: [
-        const Text('Adresse mail du compte perdu', style: TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w500)),
-        const SizedBox(height: 4),
-        CustomField(
-          startUppercase: false,
-          text: email,
-          label: "prenom.nom@gmail.com",
-          keyboardType: TextInputType.emailAddress,
-          onChanged: (value) {
-              email = value.trim();
-          },
-        ),
-      ],
+      type: ModalType.info,
+    ),
+    body: [
+      const Text('Adresse mail du compte perdu',
+          style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500)),
+      const SizedBox(height: 4),
+      CustomField(
+        action: TextInputAction.none,
+        isNotCapitalize: true,
+        value: email,
+        label: "prenom.nom@gmail.com",
+        keyboardType: TextInputType.emailAddress,
+        onChanged: (value) {
+          email = value.trim();
+        },
+      ),
+    ],
     footer: Buttons(
             variant: Variante.primary,
             size: SizeButton.md,

@@ -6,13 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
+import 'package:edgar/widget.dart';
 
 Future<List<dynamic>> login(String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/d/login';
-  ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
-      message: "Connexion à l'application ...", context: context));
+  ScaffoldMessenger.of(context).showSnackBar(
+      InfoSnackBar(message: "Connexion à l'application ...", context: context));
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -20,6 +20,7 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
   );
   Logger().d(response.body);
   Logger().d(response.statusCode);
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
     if ( jsonDecode(response.body)['token'] != null) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -28,7 +29,7 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
       message: 'Connecté à l\'application',
       context: context,
     ));
@@ -41,7 +42,7 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
     }
   } else {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
       message: 'Les identifiants ne correspondent pas !',
       context: context,
     ));

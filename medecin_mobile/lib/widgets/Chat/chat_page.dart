@@ -1,8 +1,8 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
-import 'package:edgar_pro/widgets/field_custom.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';

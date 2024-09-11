@@ -1,19 +1,19 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/screens/dashboard/conversation_patient.dart';
-import 'package:edgar/services/doctor.dart';
-import 'package:edgar/services/websocket.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/utils/chat_utils.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:edgar/widget/card_conversation.dart';
-import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar_app/screens/dashboard/conversation_patient.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
+import 'package:edgar_app/widget/card_conversation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -186,12 +186,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void updateData(int index) {
-    setState(() {
-      pageIndex.value = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -238,22 +232,41 @@ class _ChatPageState extends State<ChatPage> {
             ],
             if (!isChatting) ...[
               Buttons(
-                  variant: Variante.primary,
-                  size: SizeButton.md,
-                  msg: const Text('Commencer une conversation'),
-                  onPressed: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageIndexNotifier: pageIndex,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            createDiscussion(modalSheetContext,
-                                _webSocketService, updateData),
-                            createDiscussion2(modalSheetContext,
-                                _webSocketService, updateData, idPatient),
-                          ];
-                        });
-                  }),
+                variant: Variant.primary,
+                size: SizeButton.md,
+                msg: const Text('Commencer une conversation'),
+                onPressed: () {
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(
+                            model: model,
+                            children: [
+                              CreateDiscusion(
+                                model: model,
+                                webSocketService: _webSocketService,
+                              ),
+                              CreateDiscusion2(
+                                model: model,
+                                webSocketService: _webSocketService,
+                                idPatient: idPatient,
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 8),
               Expanded(
                 child: FutureBuilder(
@@ -296,39 +309,21 @@ class _ChatPageState extends State<ChatPage> {
 
 String doctorIdSelected = '';
 
-WoltModalSheetPage createDiscussion(BuildContext context,
-    WebSocketService? webSocketService, Function updateData) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodycreateDiscussionModal(
-          webSocketService: webSocketService,
-          updateData: updateData,
-        ),
-      ),
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodycreateDiscussionModal extends StatefulWidget {
+class CreateDiscusion extends StatefulWidget {
   WebSocketService? webSocketService;
-  Function updateData;
-  BodycreateDiscussionModal(
-      {super.key, required this.webSocketService, required this.updateData});
+  BottomSheetModel model;
+  CreateDiscusion({
+    super.key,
+    required this.model,
+    required this.webSocketService,
+  });
 
   @override
-  State<BodycreateDiscussionModal> createState() =>
-      BodycreateDiscussionModalState();
+  State<CreateDiscusion> createState() => _CreateDiscusionState();
 }
 
-class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
+class _CreateDiscusionState extends State<CreateDiscusion> {
   List<dynamic> doctors = [];
   List<dynamic> filtereddoctors = [];
   String nameFilter = '';
@@ -352,40 +347,20 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: AppColors.green200,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(
-                BootstrapIcons.chat_dots_fill,
-                color: AppColors.green700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Démarrez une nouvelle conversation',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
+    return ModalContainer(
+      title: "'Démarrez une nouvelle conversation'",
+      subtitle: "Séléctionner un Docteur",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.chat_dots_fill,
+          color: AppColors.green700,
+          size: 18,
         ),
-        const SizedBox(height: 16),
+        type: ModalType.success,
+      ),
+      body: [
         CustomFieldSearch(
-          label: 'Docteur Edgar',
+          label: 'Docteur edgar_app',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
           onValidate: (value) {
@@ -394,36 +369,35 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
         ),
         const SizedBox(height: 16),
         Expanded(
-            child: FutureBuilder(
-          future: fetchData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.blue700,
-                    strokeWidth: 2,
+          child: FutureBuilder(
+            future: fetchData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeWidth: 2,
+                    ),
                   ),
-                ),
-              );
-            } else {
-              return ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(height: 8),
-                itemCount: filtereddoctors.length,
-                padding: const EdgeInsets.all(0),
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // ignore: unused_label
-                      setState(() {
-                        doctorIdSelected = filtereddoctors[index]['id'];
-                      });
-
-                      Logger().i(doctorIdSelected);
-                      widget.updateData(1);
-                    },
-                    child: Container(
+                );
+              } else {
+                return ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
+                  itemCount: filtereddoctors.length,
+                  padding: const EdgeInsets.all(0),
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        // ignore: unused_label
+                        setState(() {
+                          doctorIdSelected = filtereddoctors[index]['id'];
+                        });
+                        widget.model.changePage(1);
+                      },
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
@@ -466,65 +440,45 @@ class BodycreateDiscussionModalState extends State<BodycreateDiscussionModal> {
                               size: 16,
                             ),
                           ],
-                        )),
-                  );
-                },
-              );
-            }
-          },
-        )),
-        const SizedBox(height: 16),
-        Buttons(
-          variant: Variante.secondary,
-          size: SizeButton.md,
-          msg: const Text('Annuler'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          ),
         ),
       ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.md,
+        msg: const Text('Annuler'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
 
-WoltModalSheetPage createDiscussion2(BuildContext context,
-    WebSocketService? webSocketService, Function updateData, String idPatient) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodycreateDiscussion2Modal(
-          webSocketService: webSocketService,
-          updateData: updateData,
-          idPatient: idPatient,
-        ),
-      ),
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodycreateDiscussion2Modal extends StatefulWidget {
+class CreateDiscusion2 extends StatefulWidget {
   WebSocketService? webSocketService;
-  Function updateData;
+  BottomSheetModel model;
   String idPatient;
-  BodycreateDiscussion2Modal(
-      {super.key,
-      required this.webSocketService,
-      required this.updateData,
-      required this.idPatient});
+  CreateDiscusion2({
+    super.key,
+    required this.idPatient,
+    required this.model,
+    required this.webSocketService,
+  });
 
   @override
-  State<BodycreateDiscussion2Modal> createState() =>
-      BodycreateDiscussion2ModalState();
+  State<CreateDiscusion2> createState() => _CreateDiscusion2State();
 }
 
-class BodycreateDiscussion2ModalState
-    extends State<BodycreateDiscussion2Modal> {
+class _CreateDiscusion2State extends State<CreateDiscusion2> {
   String message = '';
 
   Future<void> fetchData() async {}
@@ -539,45 +493,25 @@ class BodycreateDiscussion2ModalState
     ]);
     Future.delayed(const Duration(milliseconds: 200), () {
       widget.webSocketService?.getMessages();
-      widget.updateData(0);
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                color: AppColors.green200,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(
-                BootstrapIcons.chat_dots_fill,
-                color: AppColors.green700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Démarrez une nouvelle conversation',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
+    return ModalContainer(
+      title: "Démarrez une nouvelle conversation",
+      subtitle: "Veuiller rentrer votre message",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.chat_dots_fill,
+          color: AppColors.green700,
+          size: 18,
         ),
-        const SizedBox(height: 16),
+        type: ModalType.success,
+      ),
+      body: [
         CustomFieldSearchMaxLines(
           label: 'Votre message',
           maxLines: 5,
@@ -591,17 +525,15 @@ class BodycreateDiscussion2ModalState
             updateData(value);
           },
         ),
-        const SizedBox(height: 16),
-        Buttons(
-          variant: Variante.secondary,
-          size: SizeButton.md,
-          msg: const Text('Annuler'),
-          onPressed: () {
-            widget.updateData(0);
-            Navigator.pop(context);
-          },
-        ),
       ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.md,
+        msg: const Text('Annuler'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }

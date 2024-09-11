@@ -1,16 +1,17 @@
-import 'package:edgar/services/doctor.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/services/medecine.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/AddPatient/add_button.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:edgar/widget/card_traitement_day.dart';
-import 'package:edgar/widget/card_traitement_small.dart';
-import 'package:edgar/widget/snackbar.dart';
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/widget/AddPatient/add_button.dart';
+import 'package:edgar_app/widget/card_traitement_day.dart';
+import 'package:edgar_app/widget/card_traitement_small.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
+import 'package:provider/provider.dart';
 
 class InformationPersonnel extends StatefulWidget {
   const InformationPersonnel({super.key});
@@ -37,8 +38,8 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
     doctorName = await getNameDoctor();
@@ -58,18 +59,14 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
             message: "Error on fetching name",
-            // ignore: use_build_context_synchronously
             context: context));
         return 'test';
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
           message: "Error on fetching name",
-          // ignore: use_build_context_synchronously
           context: context));
       return 'test';
     }
@@ -134,7 +131,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
         ),
         const SizedBox(height: 16),
         Buttons(
-            variant: Variante.primary,
+            variant: Variant.primary,
             size: SizeButton.md,
             msg: const Text('Modifier les informations'),
             onPressed: () {}),
@@ -236,15 +233,27 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                     child: GestureDetector(
                       onTap: () {
                         if (treatment['medicines'] != null) {
-                          WoltModalSheet.show<void>(
+                          final model = Provider.of<BottomSheetModel>(context,
+                              listen: false);
+                          model.resetCurrentIndex();
+
+                          showModalBottomSheet(
                             context: context,
-                            pageListBuilder: (modalSheetContext) {
-                              return [
-                                infoTraitement(
-                                  context,
-                                  treatment,
-                                ),
-                              ];
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return Consumer<BottomSheetModel>(
+                                builder: (context, model, child) {
+                                  return ListModal(
+                                    model: model,
+                                    children: [
+                                      InfoTreatment(
+                                        traitement: treatment,
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
                             },
                           );
                         }
@@ -267,37 +276,16 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
   }
 }
 
-WoltModalSheetPage infoTraitement(
-  BuildContext context,
-  Map<String, dynamic> traitement,
-) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BodyInfoModal(
-          traitement: traitement,
-        ),
-      ),
-    ),
-  );
-}
-
 // ignore: must_be_immutable
-class BodyInfoModal extends StatefulWidget {
+class InfoTreatment extends StatefulWidget {
   Map<String, dynamic> traitement;
-  BodyInfoModal({super.key, required this.traitement});
+  InfoTreatment({super.key, required this.traitement});
 
   @override
-  State<BodyInfoModal> createState() => _BodyInfoModalState();
+  State<InfoTreatment> createState() => _InfoTreatmentState();
 }
 
-class _BodyInfoModalState extends State<BodyInfoModal> {
+class _InfoTreatmentState extends State<InfoTreatment> {
   late Future<bool> _futureData;
 
   @override
@@ -331,46 +319,22 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
   Widget build(BuildContext context) {
     ValueNotifier<bool> isHealth =
         ValueNotifier(widget.traitement['still_relevant']);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            decoration: BoxDecoration(
-              color: AppColors.blue50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: AppColors.blue200,
-                width: 1,
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/images/utils/Union.svg',
-                  width: 16,
-                  height: 16,
-                  // ignore: deprecated_member_use
-                  color: widget.traitement['medicines'].isEmpty
-                      ? AppColors.grey300
-                      : AppColors.blue700,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.traitement['name'],
-                  style: const TextStyle(
-                    color: AppColors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Poppins',
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            )),
-        const SizedBox(height: 12),
+    return ModalContainer(
+      title: widget.traitement['name'],
+      subtitle: "Voici les information du traitement",
+      icon: IconModal(
+        icon: SvgPicture.asset(
+          'assets/images/utils/Union.svg',
+          width: 16,
+          height: 16,
+          // ignore: deprecated_member_use
+          color: widget.traitement['medicines'].isEmpty
+              ? AppColors.grey300
+              : AppColors.blue700,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
         const Text(
           'Le sujet de santé est toujours en cours ?',
           style: TextStyle(
@@ -409,9 +373,7 @@ class _BodyInfoModalState extends State<BodyInfoModal> {
               fontFamily: 'Poppins'),
         ),
         const SizedBox(height: 8),
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.55,
+        Expanded(
           child: FutureBuilder<bool>(
             future: _futureData,
             builder: (context, snapshot) {

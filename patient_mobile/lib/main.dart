@@ -1,30 +1,52 @@
-import 'package:edgar/models/onboarding.dart';
-import 'package:edgar/models/simulation_intro.dart';
-import 'package:edgar/screens/simulation/appointement_page.dart';
-import 'package:edgar/screens/simulation/confirmation_page.dart';
+import 'package:edgar_app/models/onboarding.dart';
+import 'package:edgar_app/models/simulation_intro.dart';
+import 'package:edgar_app/screens/landingPage/connexion_page.dart';
+import 'package:edgar_app/screens/simulation/appointement_page.dart';
+import 'package:edgar_app/screens/simulation/confirmation_page.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/screens/auth.dart';
-import 'package:edgar/screens/landingPage/help.dart';
-import 'package:edgar/screens/login.dart';
-import 'package:edgar/screens/register.dart';
-import 'package:edgar/screens/simulation/warning_page.dart';
-import 'package:edgar/screens/simulation/chat_page.dart';
-import 'package:edgar/models/dashboard.dart';
+import 'package:edgar_app/screens/simulation/warning_page.dart';
+import 'package:edgar_app/screens/simulation/chat_page.dart';
+import 'package:edgar_app/models/dashboard.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'screens/landingPage/annuaire_medecin.dart';
-import 'screens/landingPage/landing_page.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
-  runApp(const MyApp());
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => BottomSheetModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    FlutterNativeSplash.remove();
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +64,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Raleway'),
       initialRoute: "/",
       routes: {
-        '/': (context) => const LandingPage(),
-        '/login': (context) => const Login(),
-        '/auth': (context) => const AuthScreen(),
-        '/register': (context) => const Register(),
-        '/help': (context) => const HelpScreen(),
-        '/annuaire-medecin': (context) => const AnnuaireMedecin(),
+        '/': (context) => const ConnexionPage(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
         '/dashboard': (context) => const DashBoardPage(),

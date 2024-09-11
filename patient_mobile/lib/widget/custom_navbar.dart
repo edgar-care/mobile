@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../styles/colors.dart';
+import 'package:edgar/colors.dart';
 
 class Navbar extends StatefulWidget {
   final Function(int) callback;
@@ -187,7 +187,7 @@ class CardNavbar extends StatelessWidget {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.remove('token');
           // ignore: use_build_context_synchronously
-          Navigator.pushNamed(context, '/login');
+          Navigator.pushNamed(context, '/');
         } else if (isDeconnexion == false || isDeconnexion == null) {
           callback(index);
         }

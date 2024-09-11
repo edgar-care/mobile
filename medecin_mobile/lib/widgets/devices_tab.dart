@@ -1,4 +1,4 @@
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -12,7 +12,8 @@ class DeviceTab extends StatefulWidget {
   final Widget? outlineIcon;
   final Color? color;
   final bool selected;
-  const DeviceTab({super.key,
+  const DeviceTab(
+      {super.key,
       required this.icon,
       required this.info,
       required this.subtitle,
@@ -35,7 +36,7 @@ class _DeviceTabState extends State<DeviceTab> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
           color: widget.selected ? AppColors.blue50 : AppColors.white,
-          border:Border(
+          border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
                 : const BorderSide(color: AppColors.blue200, width: 1),
@@ -57,14 +58,30 @@ class _DeviceTabState extends State<DeviceTab> {
         ),
         child: Row(
           children: [
-            widget.icon == 'Phone' ? SvgPicture.asset('assets/images/utils/phone-fill.svg') : SvgPicture.asset('assets/images/utils/laptop-fill.svg'),
+            widget.icon == 'Phone'
+                ? SvgPicture.asset('assets/images/utils/phone-fill.svg')
+                : SvgPicture.asset('assets/images/utils/laptop-fill.svg'),
             const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.title, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),),
-                Text(widget.subtitle, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500)),
-                Text(widget.info, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500)),  
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
+                Text(widget.subtitle,
+                    style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500)),
+                Text(widget.info,
+                    style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500)),
               ],
             ),
             const Spacer(),

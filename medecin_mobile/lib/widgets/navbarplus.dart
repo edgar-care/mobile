@@ -2,11 +2,10 @@
 import 'package:edgar_pro/2FA/account_page.dart';
 import 'package:edgar_pro/2FA/devices_pages.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/services/logout_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -32,14 +31,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
-    
+
     List<dynamic> doctorList = await getAllDoctor();
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
         infoMedical = doctor;
       }
     }
-    Logger().d(infoMedical);
   }
 
   @override
@@ -70,16 +68,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ), 
-                            const Text('Profil et paramètres',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                              const SizedBox(),
-                            ],
+                          ),
+                          const Text(
+                            'Profil et paramètres',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -92,12 +92,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.blue700,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
-                                ),
+                                    color: AppColors.blue700,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16))),
                                 child: FutureBuilder(
                                   future: fetchData(),
                                   builder: (context, snapshot) {
@@ -157,7 +154,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               width: 48,
                                               height: 48,
                                               decoration: const BoxDecoration(
-                                                color: AppColors.white,
+                                                color: AppColors.orange500,
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
@@ -194,7 +191,13 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              const Text("Paramètres du compte", style: TextStyle(fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w500),),
+                              const Text(
+                                "Paramètres du compte",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                              ),
                               const SizedBox(height: 4),
                               Container(
                                 padding:
@@ -222,13 +225,16 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return AccountPage(infoMedical: infoMedical,);
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return AccountPage(
+                                                infoMedical: infoMedical,
+                                              );
                                             },
                                           ),
                                         );
                                       },
-                                      type: 'Only',
+                                      type: 'Top',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
@@ -246,13 +252,14 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
                                               return const DevicesPage();
                                             },
                                           ),
                                         );
                                       },
-                                      type: 'Only',
+                                      type: 'Bottom',
                                       outlineIcon: SvgPicture.asset(
                                         'assets/images/utils/chevron-right.svg',
                                       ),
@@ -340,7 +347,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
           border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
-                : const BorderSide(color: AppColors.blue200, width: 1),
+                : const BorderSide(color: AppColors.blue100, width: 1),
           ),
           borderRadius: BorderRadius.only(
             topLeft: widget.type == 'Only' || widget.type == 'Top'
@@ -360,7 +367,9 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         child: Row(
           children: [
             widget.icon ?? const SizedBox.shrink(),
-            widget.icon != null ? const SizedBox(width: 16) : const SizedBox.shrink(),
+            widget.icon != null
+                ? const SizedBox(width: 16)
+                : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,
@@ -370,22 +379,40 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
                 )),
             const Spacer(),
             if (widget.isActive != null) ...[
-            widget.isActive! ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.green100,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text("Activée", style: TextStyle(color: AppColors.green700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
-            ) : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.red100,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text("Désactivée", style: TextStyle(color: AppColors.red700, fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w500),),
-            ),
-            const SizedBox(width: 16),
+              widget.isActive!
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.green100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Activée",
+                        style: TextStyle(
+                            color: AppColors.green700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.red100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Désactivée",
+                        style: TextStyle(
+                            color: AppColors.red700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+              const SizedBox(width: 16),
             ],
             widget.outlineIcon ?? const SizedBox.shrink(),
           ],

@@ -2,7 +2,6 @@ import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:animations/animations.dart';
 import 'package:edgar_pro/screens/dashboard/chat_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
-import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
 import 'package:flutter/material.dart';
@@ -77,8 +76,9 @@ class _DashBoardState extends State<DashBoard> {
     final List<Widget> pages = <Widget>[
       const Agenda(),
       const Rdv(),
-      Services(tapped: _onItemTapped,),
-      const Patient(),
+      Services(
+        tapped: _onItemTapped,
+      ),
       const Diagnostic(),
       const ChatPageDashBoard(),
     ];
