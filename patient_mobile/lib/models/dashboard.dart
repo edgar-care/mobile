@@ -43,7 +43,7 @@ class DashBoardPageState extends State<DashBoardPage>
     final String? token = prefs.getString('token');
     if (token == null) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/login');
+      Navigator.pushNamed(context, '/');
     }
   }
 

@@ -867,6 +867,7 @@ class _AddDocumentState extends State<AddDocument> {
                   ).then((value) {
                     if (value == true) {
                       widget.updateData();
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context);
                     }
                   });

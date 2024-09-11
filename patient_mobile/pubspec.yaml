@@ -17,7 +17,7 @@ dependencies:
   dart_jsonwebtoken: ^2.11.0
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
-  edgar: ^0.1.0
+  edgar: ^0.2.2
 
   http: ^1.1.0
   path_provider: ^2.0.5
@@ -42,6 +42,7 @@ dependencies:
   permission_handler: ^11.3.1
   download_file: ^1.2.0
   provider: ^6.1.2
+  gradient_borders: ^1.0.1
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^4.0.0

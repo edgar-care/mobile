@@ -1,12 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:edgar_app/models/dashboard.dart';
-import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_pro/2FA/account_page.dart';
+import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar/colors.dart';
-import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
@@ -22,34 +19,22 @@ class NavbarPLus extends StatefulWidget {
 
 class _NavbarPLusState extends State<NavbarPLus> {
   Map<String, dynamic> infoMedical = {};
-  String birthdate = '';
+  String idDoctor = '';
 
   @override
   void initState() {
     super.initState();
-    checkToken();
-  }
-
-  void checkToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token == null) {
-      Navigator.pushNamed(context, '/login');
-    }
   }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
-      if (value.isNotEmpty) {
-        infoMedical = value;
-        birthdate = DateFormat('dd/MM/yyyy').format(
-            DateTime.fromMillisecondsSinceEpoch(
-                infoMedical['birthdate'] * 1000));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('id');
+    List<dynamic> doctorList = await getAllDoctor();
+    for (var doctor in doctorList) {
+      if (doctor['id'] == id) {
+        infoMedical = doctor;
       }
-    });
+    }
   }
 
   @override
@@ -61,6 +46,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
         useMaterial3: true,
       ),
       home: Scaffold(
+        backgroundColor: AppColors.blue50,
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -69,42 +55,27 @@ class _NavbarPLusState extends State<NavbarPLus> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<void>(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoardPage();
-                            },
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const curve = Curves.easeInOut;
-                              return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                    .animate(CurvedAnimation(
-                                        parent: animation, curve: curve)),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SvgPicture.asset(
-                            'assets/images/utils/arrowNavbar.svg',
+                            'assets/images/utils/arrowChat.svg',
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
                           ),
-                          const SizedBox(width: 8),
-                          const Text('Revenir en arrière',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              )),
+                          const Text(
+                            'Profil et paramètres',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(),
                         ],
                       ),
                     ),
@@ -118,12 +89,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.blue700,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
-                                ),
+                                    color: AppColors.blue700,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16))),
                                 child: FutureBuilder(
                                   future: fetchData(),
                                   builder: (context, snapshot) {
@@ -183,7 +151,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               width: 48,
                                               height: 48,
                                               decoration: const BoxDecoration(
-                                                color: AppColors.white,
+                                                color: AppColors.orange500,
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
@@ -211,30 +179,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                   fontFamily: "Poppins",
                                                 ),
                                               ),
-                                              if (infoMedical['sex'] ==
-                                                      "MALE" ||
-                                                  infoMedical['sex'] ==
-                                                      'OTHER') ...[
-                                                Text(
-                                                  'Né le $birthdate',
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColors.white,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontFamily: "Poppins",
-                                                  ),
-                                                )
-                                              ] else ...[
-                                                Text(
-                                                  'Née le $birthdate',
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColors.white,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontFamily: "Poppins",
-                                                  ),
-                                                )
-                                              ]
                                             ],
                                           ),
                                         ],
@@ -243,53 +187,70 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   },
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                "Paramètres du compte",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 4),
                               Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: AppColors.white,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                  border: Border(
-                                    left: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    right: BorderSide(
-                                        color: AppColors.blue200, width: 1),
-                                    bottom: BorderSide(
-                                        color: AppColors.blue200, width: 1),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue200,
+                                    width: 1,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/MedicalFolder.svg',
+                                        'assets/images/utils/person-fill.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Dossier médical',
+                                      title: 'Compte',
                                       onTap: () {
-                                        widget.onItemTapped(4);
-                                        Navigator.pop(context);
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return AccountPage(
+                                                infoMedical: infoMedical,
+                                              );
+                                            },
+                                          ),
+                                        );
                                       },
-                                      type: 'Middle',
+                                      type: 'Top',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
                                     ),
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/Messagerie.svg',
+                                        'assets/images/utils/laptop-fill.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Messagerie',
+                                      title: 'Appareils',
                                       onTap: () {
-                                        widget.onItemTapped(5);
                                         Navigator.pop(context);
                                       },
                                       type: 'Bottom',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -311,9 +272,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/ArrowRightCircle.svg',
+                                        'assets/images/utils/arrow-right-circle-fill.svg',
                                         // ignore: deprecated_member_use
-                                        color: AppColors.black,
+                                        color: AppColors.red600,
                                         height: 18,
                                       ),
                                       title: 'Déconnexion',
@@ -322,8 +283,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                             await SharedPreferences
                                                 .getInstance();
                                         prefs.remove('token');
-
-                                        Navigator.pushNamed(context, '/');
+                                        Navigator.pushNamed(context, '/login');
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
@@ -346,7 +306,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
 }
 
 class NavbarPLusTab extends StatefulWidget {
-  final Widget icon;
+  final Widget? icon;
   final String title;
   final Function onTap;
   final String type; // Ajout de la propriété type
@@ -355,7 +315,7 @@ class NavbarPLusTab extends StatefulWidget {
 
   const NavbarPLusTab(
       {super.key,
-      required this.icon,
+      this.icon,
       required this.title,
       required this.onTap,
       required this.type,
@@ -377,7 +337,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
           border: Border(
             bottom: widget.type == 'Bottom' || widget.type == 'Only'
                 ? const BorderSide(color: Colors.transparent, width: 1)
-                : const BorderSide(color: AppColors.blue200, width: 1),
+                : const BorderSide(color: AppColors.blue100, width: 1),
           ),
           borderRadius: BorderRadius.only(
             topLeft: widget.type == 'Only' || widget.type == 'Top'
@@ -396,8 +356,10 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         ),
         child: Row(
           children: [
-            widget.icon,
-            const SizedBox(width: 16),
+            widget.icon ?? const SizedBox.shrink(),
+            widget.icon != null
+                ? const SizedBox(width: 16)
+                : const SizedBox.shrink(),
             Text(widget.title,
                 style: TextStyle(
                   fontSize: 14,

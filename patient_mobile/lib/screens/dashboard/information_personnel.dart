@@ -38,7 +38,9 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
+            // ignore: use_build_context_synchronously
             ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
