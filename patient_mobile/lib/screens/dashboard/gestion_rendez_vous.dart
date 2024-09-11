@@ -272,6 +272,7 @@ class _OpenRdvState extends State<OpenRdv> {
             SvgPicture.asset(
               "assets/images/utils/calendar_modal.svg",
               width: 18,
+              // ignore: deprecated_member_use
               color: AppColors.black,
             ),
             const SizedBox(width: 12),

@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     await getAppointement(context).then((value) {
-      if (value!.isNotEmpty) {
+      if (value.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
