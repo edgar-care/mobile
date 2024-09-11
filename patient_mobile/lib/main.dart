@@ -13,6 +13,7 @@ import 'package:edgar_app/screens/simulation/chat_page.dart';
 import 'package:edgar_app/models/dashboard.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,6 +21,8 @@ import 'package:provider/provider.dart';
 import 'package:push/push.dart';
 
 Future main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
 
@@ -131,7 +134,9 @@ class _MyAppState extends State<MyApp> {
 
       // Initialize push notifications and request permissions
       await initializePushNotifications();
-
+      
+      fetchData();
+      
       // Initialize WebSocket service
       await _initializeWebSocketService(flutterLocalNotificationsPlugin);
 
@@ -237,6 +242,14 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     _webSocketService?.disconnect();
     super.dispose();
+  // ignore: library_private_types_in_public_api
+  _MyAppState createState() => _MyAppState();
+}
+
+
+  Future<void> fetchData() async {
+    FlutterNativeSplash.remove();
+    return;
   }
 
   @override
