@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/screens/dashboard/conversation_patient.dart';
 import 'package:edgar_app/services/doctor.dart';
