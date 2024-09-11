@@ -2,6 +2,7 @@ import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'models/auth.dart';
@@ -10,6 +11,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runApp(const MainApp());
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => BottomSheetModel(),

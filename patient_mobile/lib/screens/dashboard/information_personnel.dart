@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar_app/services/medecine.dart';
@@ -36,9 +38,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-            // ignore: use_build_context_synchronously
             ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
@@ -59,18 +59,14 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
             message: "Error on fetching name",
-            // ignore: use_build_context_synchronously
             context: context));
         return 'test';
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
           message: "Error on fetching name",
-          // ignore: use_build_context_synchronously
           context: context));
       return 'test';
     }

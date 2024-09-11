@@ -322,6 +322,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                             await SharedPreferences
                                                 .getInstance();
                                         prefs.remove('token');
+
                                         Navigator.pushNamed(context, '/');
                                       },
                                       type: 'Only',
