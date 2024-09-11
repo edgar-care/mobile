@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +15,7 @@ void mapperDiagnostic(Map<String, dynamic> data) {
     "diseases": data['diseases'] ?? [],
     "symptoms": data['symptoms'] ?? [],
     "logs": data['logs'] ?? [],
-    "session_id" : data['session_id'] ?? '',
+    "session_id": data['session_id'] ?? '',
   };
 }
 
@@ -54,10 +54,10 @@ Future<void> postDiagValidation(BuildContext context, String id,
         if (health != '') "health_method": health
       }));
   if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
         message: "Réponse envoyée avec succes", context: context));
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
         message: "Une erreur est survenue", context: context));
   }
 }

@@ -2,7 +2,7 @@
 
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/slot_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Agenda/slot.dart';
 import 'package:flutter/material.dart';
 

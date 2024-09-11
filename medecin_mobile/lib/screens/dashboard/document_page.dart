@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_document_service.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/document_patient_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class DocumentPage extends StatefulWidget {
@@ -58,14 +58,28 @@ class _DocumentPageState extends State<DocumentPage> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    WoltModalSheet.show<void>(
-                        context: context,
-                        pageListBuilder: (modalSheetContext) {
-                          return [
-                            patientNavigation(context, patientInfo,
-                                widget.setPages, widget.setId),
-                          ];
-                        });
+                    final model =
+                        Provider.of<BottomSheetModel>(context, listen: false);
+                    model.resetCurrentIndex();
+
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return Consumer<BottomSheetModel>(
+                          builder: (context, model, child) {
+                            return ListModal(
+                              model: model,
+                              children: [
+                                navigationPatient(context, patientInfo,
+                                    widget.setPages, widget.setId)
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -130,17 +144,33 @@ class _DocumentPageState extends State<DocumentPage> {
                         );
                       })),
               Buttons(
-                variant: Variante.primary,
+                variant: Variant.primary,
                 size: SizeButton.md,
                 msg: const Text('Ajouter un document'),
                 onPressed: () {
-                  WoltModalSheet.show<void>(
-                      context: context,
-                      pageListBuilder: (modalSheetContext) {
-                        return [
-                          addDocument(updateData, patientInfo),
-                        ];
-                      });
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(
+                            model: model,
+                            children: [
+                              AddDocument(
+                                  patientInfo: patientInfo,
+                                  updateData: updateData)
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
                 },
               ),
             ],
@@ -154,95 +184,79 @@ class _DocumentPageState extends State<DocumentPage> {
     );
   }
 
-  SliverWoltModalSheetPage patientNavigation(BuildContext context,
-      Map<String, dynamic> patient, Function setPages, Function setId) {
-    return WoltModalSheetPage(
-      backgroundColor: AppColors.white,
-      hasTopBarLayer: false,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          child: Column(children: [
-            Text(
-              '${patient['Prenom']} ${patient['Nom']}',
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            CustomNavPatientCard(
-                text: 'Dossier médical',
-                icon: BootstrapIcons.postcard_heart_fill,
-                setPages: setPages,
-                pageTo: 6,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Rendez-vous',
-                icon: BootstrapIcons.calendar2_week_fill,
-                setPages: setPages,
-                pageTo: 7,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Documents',
-                icon: BootstrapIcons.file_earmark_text_fill,
-                setPages: setPages,
-                pageTo: 8,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 4),
-            CustomNavPatientCard(
-                text: 'Messagerie',
-                icon: BootstrapIcons.chat_dots_fill,
-                setPages: setPages,
-                pageTo: 9,
-                id: patient['id'],
-                setId: setId),
-            const SizedBox(height: 12),
-            Container(height: 2, color: AppColors.blue200),
-            const SizedBox(height: 12),
-            Buttons(
-                variant: Variante.primary,
-                size: SizeButton.sm,
-                msg: const Text(
-                  'Revenir à la patientèle',
-                  style: TextStyle(fontFamily: 'Poppins'),
-                ),
-                onPressed: () {
-                  setPages(1);
-                  Navigator.pop(context);
-                }),
-          ]),
+  Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
+      Function setPages, Function setId) {
+    return ModalContainer(
+      title: '${patient['Prenom']} ${patient['Nom']}',
+      subtitle: "Séléctionner une catégorie",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.person,
+          size: 18,
         ),
+        type: ModalType.info,
       ),
-    );
-  }
-
-  SliverWoltModalSheetPage addDocument(
-      Function updateData, Map<String, dynamic> patientInfo) {
-    return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      child: BodyModal(updateData: updateData, patientInfo: patientInfo),
+      body: [
+        CustomNavPatientCard(
+            text: 'Dossier médical',
+            icon: BootstrapIcons.postcard_heart_fill,
+            setPages: setPages,
+            pageTo: 6,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Rendez-vous',
+            icon: BootstrapIcons.calendar2_week_fill,
+            setPages: setPages,
+            pageTo: 7,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Documents',
+            icon: BootstrapIcons.file_earmark_text_fill,
+            setPages: setPages,
+            pageTo: 8,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
+            text: 'Messagerie',
+            icon: BootstrapIcons.chat_dots_fill,
+            setPages: setPages,
+            pageTo: 9,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 12),
+        Container(height: 2, color: AppColors.blue200),
+      ],
+      footer: Buttons(
+          variant: Variant.primary,
+          size: SizeButton.sm,
+          msg: const Text(
+            'Revenir à la patientèle',
+            style: TextStyle(fontFamily: 'Poppins'),
+          ),
+          onPressed: () {
+            setPages(1);
+            Navigator.pop(context);
+          }),
     );
   }
 }
 
 // ignore: must_be_immutable
-class BodyModal extends StatefulWidget {
+class AddDocument extends StatefulWidget {
   Function updateData;
   Map<String, dynamic> patientInfo;
-  BodyModal({super.key, required this.updateData, required this.patientInfo});
+  AddDocument({super.key, required this.patientInfo, required this.updateData});
 
   @override
-  State<BodyModal> createState() => _BodyModalState();
+  State<AddDocument> createState() => _AddDocumentState();
 }
 
-class _BodyModalState extends State<BodyModal> {
+class _AddDocumentState extends State<AddDocument> {
   String dropdownValue = 'Général';
   String dropdownValue2 = 'Ordonnance';
   File? fileSelected;
@@ -267,236 +281,205 @@ class _BodyModalState extends State<BodyModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
-                color: AppColors.green200,
-              ),
-              child: const Icon(
-                BootstrapIcons.file_check_fill,
-                color: AppColors.green700,
-                size: 24,
-              )),
-          const SizedBox(
-            height: 8,
+    return ModalContainer(
+      title: "Ajoutez un document au patient",
+      subtitle: "Séléctionner un document",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.file_check_fill,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
+      body: [
+        const Text(
+          "Votre document",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width - 48,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
           ),
-          const Text(
-            "Ajoutez un document au patient",
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 16,
-                fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              "Votre document",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 48,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.blue500, width: 2),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.grey100,
-                      border: Border.all(color: AppColors.grey700, width: 1),
-                    ),
-                    child: TextFieldTapRegion(
-                      debugLabel: 'Choisir un fichier',
-                      child: const Text(
-                        'Choisir un fichier',
-                        style: TextStyle(
-                          color: AppColors.grey700,
-                          fontFamily: 'Poppins',
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
-                          textBaseline: TextBaseline.alphabetic,
-                          decorationColor: AppColors.grey400,
-                        ),
-                      ),
-                      onTapInside: (event) {
-                        openFileExplorer();
-                      },
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.grey100,
+                  border: Border.all(color: AppColors.grey700, width: 1),
+                ),
+                child: TextFieldTapRegion(
+                  debugLabel: 'Choisir un fichier',
+                  child: const Text(
+                    'Choisir un fichier',
+                    style: TextStyle(
+                      color: AppColors.grey700,
+                      fontFamily: 'Poppins',
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      textBaseline: TextBaseline.alphabetic,
+                      decorationColor: AppColors.grey400,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      fileSelected == null
-                          ? 'Aucun fichier sélectionné'
-                          : getFileName(fileSelected!.path),
-                      style: const TextStyle(
-                        color: AppColors.grey700,
-                        fontFamily: 'Poppins',
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                        textBaseline: TextBaseline.alphabetic,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  onTapInside: (event) {
+                    openFileExplorer();
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  fileSelected == null
+                      ? 'Aucun fichier sélectionné'
+                      : getFileName(fileSelected!.path),
+                  style: const TextStyle(
+                    color: AppColors.grey700,
+                    fontFamily: 'Poppins',
+                    fontSize: 8,
+                    fontWeight: FontWeight.w500,
+                    textBaseline: TextBaseline.alphabetic,
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            const Text(
-              "Le type de votre document",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 48,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.blue500, width: 2),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              child: DropdownButton<String>(
-                value: dropdownValue2,
-                icon: const Icon(BootstrapIcons.chevron_down),
-                iconSize: 16,
-                style: const TextStyle(color: AppColors.black),
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(12),
-                underline: Container(
-                  height: 0,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue2 = newValue!;
-                  });
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          "Le type de votre document",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width - 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+          child: DropdownButton<String>(
+            value: dropdownValue2,
+            icon: const Icon(BootstrapIcons.chevron_down),
+            iconSize: 16,
+            style: const TextStyle(color: AppColors.black),
+            isExpanded: true,
+            borderRadius: BorderRadius.circular(12),
+            underline: Container(
+              height: 0,
+            ),
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue2 = newValue!;
+              });
+            },
+            items: <String>['Certificat', 'Ordonnance', 'Radio', 'Autre']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value,
+                    style: const TextStyle(
+                        color: AppColors
+                            .black)), // Added style to change display value color
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          "Le type de médecine",
+          style: TextStyle(
+              fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width - 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.blue500, width: 2),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: DropdownButton<String>(
+            value: dropdownValue,
+            icon: const Icon(BootstrapIcons.chevron_down),
+            iconSize: 16,
+            isExpanded: true,
+            borderRadius: BorderRadius.circular(12),
+            underline: Container(
+              height: 0,
+            ),
+            style: const TextStyle(color: AppColors.black),
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+              });
+            },
+            items: <String>[
+              'Général',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+      footer: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Buttons(
+                variant: Variant.secondary,
+                size: SizeButton.sm,
+                msg: const Text('Annuler'),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-                items: <String>['Certificat', 'Ordonnance', 'Radio', 'Autre']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
-                        style: const TextStyle(
-                            color: AppColors
-                                .black)), // Added style to change display value color
-                  );
-                }).toList(),
               ),
             ),
             const SizedBox(
-              height: 16,
+              width: 12,
             ),
-            const Text(
-              "Le type de médecine",
-              style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 48,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.blue500, width: 2),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: DropdownButton<String>(
-                value: dropdownValue,
-                icon: const Icon(BootstrapIcons.chevron_down),
-                iconSize: 16,
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(12),
-                underline: Container(
-                  height: 0,
-                ),
-                style: const TextStyle(color: AppColors.black),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
+            Flexible(
+              child: Buttons(
+                variant: Variant.validate,
+                size: SizeButton.sm,
+                msg: const Text('Ajouter'),
+                onPressed: () {
+                  if (fileSelected != null) {
+                    postDocument(
+                      dropdownValue,
+                      dropdownValue2,
+                      widget.patientInfo["id"],
+                      fileSelected!,
+                    ).then((value) => widget.updateData());
+                  }
+                  Navigator.pop(context);
                 },
-                items: <String>[
-                  'Général',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
               ),
             ),
           ]),
-          const SizedBox(
-            height: 16,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.42,
-                  child: Buttons(
-                    variant: Variante.secondary,
-                    size: SizeButton.sm,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.42,
-                  child: Buttons(
-                    variant: Variante.validate,
-                    size: SizeButton.sm,
-                    msg: const Text('Ajouter'),
-                    onPressed: () {
-                      if (fileSelected != null) {
-                        postDocument(
-                          dropdownValue,
-                          dropdownValue2,
-                          widget.patientInfo["id"],
-                          fileSelected!,
-                        ).then((value) => widget.updateData());
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              ]),
-        ],
-      ),
     );
   }
 }

@@ -1,9 +1,9 @@
-import 'package:edgar/services/websocket.dart';
-import 'package:edgar/utils/chat_utils.dart';
-import 'package:edgar/widget/navbarplus.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:edgar/colors.dart';
 
 // ignore: must_be_immutable
 class CustomBottomBar extends StatefulWidget {

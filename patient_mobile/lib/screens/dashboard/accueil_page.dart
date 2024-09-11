@@ -1,12 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:edgar_app/services/get_appointement.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/widget/appoitement_card.dart';
+import 'package:edgar_app/widget/medicament_day_card.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/plain_button.dart';
-import 'package:edgar/widget/pdf_card.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
+
+import '../../services/doctor.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,19 +23,60 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Map<String, dynamic> infoMedical = {};
-
-  final List<Map<String, String>> rdv = [];
+  List<Map<String, dynamic>> rdv = [];
+  List<dynamic> allDoctor = [];
 
   Future<void> fetchData() async {
+
+    await getAllDoctor().then((value) {
+      if (value.isNotEmpty) {
+        allDoctor = value;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+            message: "Error on fetching doctors", context: context));
+      }
+    });
+
     await getMedicalFolder().then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
+
+    await getAppointement(context).then((value) {
+      if (value!.isNotEmpty) {
+        rdv = List<Map<String, dynamic>>.from(value['rdv']);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+            message: "Error on fetching appointement", context: context));
+      }
+    });
+    Logger().i(rdv);
     return;
+  }
+
+  DateTime now = DateTime.now();
+
+  Map<String, dynamic>? getNextAppointment() {
+    DateTime now = DateTime.now();
+    List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
+      return appointment['appointment_status'] == 'ACCEPTED_DUE_TO_REVIEW' &&
+          DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000)
+              .isAfter(now);
+    }).toList();
+
+    acceptedAppointments.sort((a, b) {
+      DateTime dateA =
+          DateTime.fromMillisecondsSinceEpoch(a['start_date'] * 1000);
+      DateTime dateB =
+          DateTime.fromMillisecondsSinceEpoch(b['start_date'] * 1000);
+      return dateA.compareTo(dateB);
+    });
+
+    return acceptedAppointments.isNotEmpty ? acceptedAppointments.first : null;
   }
 
   @override
@@ -43,147 +90,133 @@ class _HomePageState extends State<HomePage> {
               color: AppColors.blue700,
             ),
           );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text('Erreur lors du chargement des données'),
-          );
         } else {
+          Map<String, dynamic>? nextAppointment = getNextAppointment();
+
           return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Text(
-                    'Bonjour ${infoMedical['name']}',
-                    style: const TextStyle(
-                      color: AppColors.blue700,
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/images/logo/edgar-high-five.png',
-                    width: 40,
-                  ),
+                  SvgPicture.asset("assets/images/logo/Group-1.svg"),
+                  const SizedBox(width: 4),
+                  SvgPicture.asset("assets/images/logo/Group.svg"),
                   const Spacer(),
-                  IconButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all<Color>(AppColors.grey200),
-                    ),
-                    icon: const Icon(
-                      BootstrapIcons.bell,
-                      color: AppColors.blue950,
-                    ),
-                    onPressed: () {},
-                  ),
+                  Container(
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                      child: BoringAvatars(
+                        name:
+                            "${infoMedical['firstname'] ?? 'Ne fonctionne'} ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'Pas'}",
+                        colors: const [
+                          AppColors.blue700,
+                          AppColors.blue200,
+                          AppColors.blue500
+                        ],
+                        type: BoringAvatarsType.beam,
+                      )),
                 ],
               ),
-              SizedBox(
-                height: 100,
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.blue700,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Prochain rendez-vous le',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Jeudi 12 Août',
-                                style: TextStyle(
-                                  color: AppColors.green400,
-                                  fontSize: 24,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '  à  ',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '14 h 30',
-                                style: TextStyle(
-                                  color: AppColors.green400,
-                                  fontSize: 20,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.justify,
-                        )
-                      ],
-                    ),
-                  ),
+              const SizedBox(
+                height: 32,
+              ),
+              Text(
+                DateTime.now().hour > 18
+                    ? 'Bonsoir, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !'
+                    : 'Bonjour, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
               ),
+              const SizedBox(height: 24),
               const Text(
-                'Vous voulez prendre un nouveau\nrendez-vous ?',
+                "Votre prochain rendez-vous",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 2,
+                decoration: const BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
+              ),
+              const SizedBox(height: 8),
+              nextAppointment != null
+                  ? AppoitementCard(
+                      startDate: DateTime.fromMillisecondsSinceEpoch(
+                          nextAppointment['start_date'] * 1000),
+                      endDate: DateTime.fromMillisecondsSinceEpoch(
+                          nextAppointment['end_date'] * 1000),
+                      doctor: findDoctorById(
+                                  allDoctor, nextAppointment['doctor_id'])
+                              ?.name ??
+                          'Docteur inconnu',
+                      onTap: () {},
+                    )
+                  : const Text(
+                      'Pas de prochain rendez-vous',
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+              const SizedBox(height: 24),
+              const Text(
+                'Besoin d’un nouveau rendez-vous ?',
                 style: TextStyle(
                   color: AppColors.black,
                   fontSize: 16,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.1,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
               ),
-              GreenPlainButton(
-                text: 'Prendre un rendez-vous',
+              const SizedBox(height: 12),
+              Buttons(
+                msg: const Text("Prendre un rendez-vous"),
+                size: SizeButton.md,
+                variant: Variant.primary,
                 onPressed: () {
                   Navigator.pushNamed(context, '/simulation/intro');
                 },
               ),
+              const SizedBox(
+                height: 24,
+              ),
               const Text(
-                'Vos dernier documents reçus',
+                "Mes médicaments à prendre aujourd'hui",
                 style: TextStyle(
-                  color: AppColors.black,
                   fontSize: 16,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                 ),
-                textAlign: TextAlign.center,
               ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  PDFCard(
-                    text: 'Document 1',
-                    pdfUrl:
-                        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-                  ),
-                  SizedBox(width: 10),
-                  PDFCard(
-                    text: 'Document 2',
-                    pdfUrl:
-                        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-                  ),
-                ],
+              const SizedBox(height: 8),
+              Container(
+                height: 2,
+                decoration: const BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
               ),
+              const SizedBox(height: 8),
+              const Expanded(
+                child: DailyMedicamentCard(),
+              ),
+              const SizedBox(height: 12),
             ],
           );
         }

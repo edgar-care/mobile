@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar/widget.dart';
 
 class Register extends StatelessWidget {
   final Function(int) callback;
@@ -17,7 +17,7 @@ class Register extends StatelessWidget {
                 width: 200),
             const SizedBox(height: 128),
             Buttons(
-              variant: Variante.secondary,
+              variant: Variant.secondary,
               size: SizeButton.md,
               msg: const Text("Change to Login page!"),
               onPressed: () {

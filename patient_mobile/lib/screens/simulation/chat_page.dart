@@ -1,12 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/diagnotic.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:edgar/widget/field_custom.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:edgar_app/services/diagnotic.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
@@ -48,7 +46,7 @@ class _ChatPageState extends State<ChatPage> {
     });
     await getDiagnostic(sessionId, message).then((value) {
       if (value.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
             message: "Erreur lors de l'envoie", context: context));
         return;
       }
@@ -58,7 +56,7 @@ class _ChatPageState extends State<ChatPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Buttons(
-                variant: Variante.primary,
+                variant: Variant.primary,
                 size: SizeButton.md,
                 msg: const Text('Continuer la simulation'),
                 onPressed: () async {

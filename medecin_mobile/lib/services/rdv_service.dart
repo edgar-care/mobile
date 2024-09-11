@@ -2,10 +2,10 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edgar/widget.dart';
 
 Future<List<Map<String, dynamic>>> getDiagnostics(String status) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -79,12 +79,12 @@ Future cancelAppointments(
       headers: {'Authorization': 'Bearer $token'},
       body: jsonEncode({'reason': reason}));
   if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
       message: 'Votre rendez-vous a bien été annulé',
       context: context,
     ));
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
       message: 'Une erreur est survenue, veuillez réessayer',
       context: context,
     ));

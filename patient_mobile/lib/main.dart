@@ -1,32 +1,34 @@
-import 'package:edgar/models/onboarding.dart';
-import 'package:edgar/models/simulation_intro.dart';
-import 'package:edgar/screens/simulation/appointement_page.dart';
-import 'package:edgar/screens/simulation/confirmation_page.dart';
-import 'package:edgar/services/websocket.dart';
+import 'package:edgar_app/models/onboarding.dart';
+import 'package:edgar_app/models/simulation_intro.dart';
+import 'package:edgar_app/screens/landingPage/connexion_page';
+import 'package:edgar_app/screens/simulation/appointement_page.dart';
+import 'package:edgar_app/screens/simulation/confirmation_page.dart';
+import 'package:edgar/widget.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:edgar/screens/auth.dart';
-import 'package:edgar/screens/landingPage/help.dart';
-import 'package:edgar/screens/login.dart';
-import 'package:edgar/screens/register.dart';
-import 'package:edgar/screens/simulation/warning_page.dart';
-import 'package:edgar/screens/simulation/chat_page.dart';
-import 'package:edgar/models/dashboard.dart';
+import 'package:edgar_app/screens/simulation/warning_page.dart';
+import 'package:edgar_app/screens/simulation/chat_page.dart';
+import 'package:edgar_app/models/dashboard.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:push/push.dart';
-import 'package:edgar/utils/chat_utils.dart';
-
-import 'screens/landingPage/annuaire_medecin.dart';
-import 'screens/landingPage/landing_page.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
-  runApp(const MyApp());
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => BottomSheetModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 Future<void> initializePushNotifications() async {
@@ -253,12 +255,7 @@ class _MyAppState extends State<MyApp> {
           fontFamily: 'Raleway'),
       initialRoute: "/",
       routes: {
-        '/': (context) => const LandingPage(),
-        '/login': (context) => const Login(),
-        '/auth': (context) => const AuthScreen(),
-        '/register': (context) => const Register(),
-        '/help': (context) => const HelpScreen(),
-        '/annuaire-medecin': (context) => const AnnuaireMedecin(),
+        '/': (context) => const ConnexionPage(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
         '/dashboard': (context) => DashBoardPage(

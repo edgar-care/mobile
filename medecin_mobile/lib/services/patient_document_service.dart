@@ -43,8 +43,6 @@ Future<Map<String, dynamic>> getDocumentsbyId(String id) async {
       'Authorization': 'Bearer $token',
     },
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     return jsonDecode(response.body)['download'];
   } else {
@@ -77,9 +75,6 @@ Future<Object?> postDocument(
   request.files.add(await http.MultipartFile.fromPath('document', file.path));
   request.fields['isFavorite'] = 'false';
   request.fields['patient_id'] = id;
-
-  Logger().d(request.fields);
-  Logger().d(request.files);
 
   final response = await request.send();
 

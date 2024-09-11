@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_list.dart';
 import 'package:edgar_pro/widgets/Chat/chat_page.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';

@@ -1,5 +1,5 @@
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_old.dart';
 import 'package:edgar_pro/widgets/rdv/custom_list_rdv.dart';
 import 'package:flutter/material.dart';
@@ -63,12 +63,11 @@ class _RdvState extends State<Rdv> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.445,
+                  Flexible(
                     child: Buttons(
                       variant: selected.value == 0
-                          ? Variante.primary
-                          : Variante.secondary,
+                          ? Variant.primary
+                          : Variant.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Prochain rendez-vous'),
                       onPressed: () {
@@ -79,12 +78,11 @@ class _RdvState extends State<Rdv> {
                   const SizedBox(
                     width: 12,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.445,
+                  Flexible(
                     child: Buttons(
                       variant: selected.value == 1
-                          ? Variante.primary
-                          : Variante.secondary,
+                          ? Variant.primary
+                          : Variant.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Rendez-vous passés'),
                       onPressed: () {
