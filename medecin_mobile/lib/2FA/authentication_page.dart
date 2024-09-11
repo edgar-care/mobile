@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, must_be_immutable
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/devices_services.dart';
@@ -324,7 +324,7 @@ Widget modal2FAEmail(
                     return Consumer<BottomSheetModel>(
                       builder: (context, model, child) {
                         return ListModal(
-                            model: model, children: const [ModalBackupEmail()]);
+                            model: model, children: [ModalBackupEmail(load2fa: load2fa,)]);
                       },
                     );
                   },
@@ -521,8 +521,8 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                       builder: (context) {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
-                            return ListModal(model: model, children: const [
-                              ModalEdgarApp2(),
+                            return ListModal(model: model, children: [
+                              ModalEdgarApp2(load2fa: widget.load2fa,),
                             ]);
                           },
                         );
@@ -551,7 +551,8 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
 }
 
 class ModalBackupEmail extends StatefulWidget {
-  const ModalBackupEmail({super.key});
+  final Function load2fa;
+  const ModalBackupEmail({super.key, required this.load2fa});
 
   @override
   State<ModalBackupEmail> createState() => _ModalBackupEmailState();
@@ -562,6 +563,7 @@ class _ModalBackupEmailState extends State<ModalBackupEmail> {
 
   Future<bool> getbackup() async {
     backupCodes = await generateBackupCode();
+    widget.load2fa();
     return true;
   }
 
@@ -705,7 +707,8 @@ class _ModalBackupEmailState extends State<ModalBackupEmail> {
 }
 
 class ModalEdgarApp2 extends StatefulWidget {
-  const ModalEdgarApp2({super.key});
+  final Function load2fa;
+  const ModalEdgarApp2({super.key, required this.load2fa});
 
   @override
   State<ModalEdgarApp2> createState() => _ModalEdgarApp2State();
@@ -716,6 +719,7 @@ class _ModalEdgarApp2State extends State<ModalEdgarApp2> {
 
   Future<bool> getbackup() async {
     backupCodes = await generateBackupCode();
+    widget.load2fa();
     return true;
   }
 
@@ -858,7 +862,6 @@ class _ModalEdgarApp2State extends State<ModalEdgarApp2> {
   }
 }
 
-// ignore: must_be_immutable
 class ModalTrustDevices extends StatefulWidget {
   Function load2fa;
   ModalTrustDevices({super.key, required this.load2fa});
@@ -948,7 +951,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                                       DateFormat('dd/MM/yyyy').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               devices[index]['date'] * 1000)),
-                                      "${devices[index]['city']}, ${devices[index]['country']}",
+                                      devicesFormatTime(devices[index]['date'] * 1000),
                                       devices[index]['id'],
                                       devices[index]['type'] == 'iPhone' ||
                                               devices[index]['type'] ==
@@ -1101,9 +1104,13 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
 
   Future<void> getDevices() async {
     List<dynamic> temp = await getAllDevices();
-    setState(() {
-      devices = temp;
-    });
+    for (int i = 0; i < temp.length; i++) {
+      if (temp[i]['trusted'] == true) {
+        setState(() {
+          devices.add(temp[i]);
+        });
+      }
+    }
     Logger().d(devices);
   }
 
@@ -1414,8 +1421,8 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                         builder: (context) {
                           return Consumer<BottomSheetModel>(
                             builder: (context, model, child) {
-                              return ListModal(model: model, children: const [
-                                ModalBackupTierApp(),
+                              return ListModal(model: model, children: [
+                                ModalBackupTierApp(load2fa: widget.load2fa,),
                               ]);
                             },
                           );
@@ -1452,7 +1459,8 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
 }
 
 class ModalBackupTierApp extends StatefulWidget {
-  const ModalBackupTierApp({super.key});
+  final Function load2fa;
+  const ModalBackupTierApp({super.key, required this.load2fa});
 
   @override
   State<ModalBackupTierApp> createState() => _ModalBackupTierAppState();
@@ -1463,6 +1471,7 @@ class _ModalBackupTierAppState extends State<ModalBackupTierApp> {
 
   Future<bool> getbackup() async {
     backupCodes = await generateBackupCode();
+    widget.load2fa();
     return true;
   }
 
