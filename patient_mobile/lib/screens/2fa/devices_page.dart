@@ -1,4 +1,5 @@
-import 'package:edgar_app/screens/2fa/authentication_page.dart';
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:edgar_app/services/devices.dart';
 import 'package:edgar_app/widget/devices_tab.dart';
 import 'package:edgar/widget.dart';
@@ -79,7 +80,6 @@ class _DevicesPageState extends State<DevicesPage> {
                         children: [
                           SvgPicture.asset(
                             'assets/images/utils/arrowChat.svg',
-                            // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
                           ),
@@ -152,7 +152,7 @@ class _DevicesPageState extends State<DevicesPage> {
                                                                   'Android'
                                                           ? 'PHONE'
                                                           : 'PC',
-                                                      context)
+                                                      context, getDevices)
                                                 ]);
                                           },
                                         );
@@ -177,4 +177,78 @@ class _DevicesPageState extends State<DevicesPage> {
       ),
     );
   }
+}
+
+
+Widget modalInfoDevices(String name, String date, String location, String id,
+    String type, BuildContext context, Function load2fa) {
+  return ModalContainer(
+      title: name,
+      subtitle: 'Connecté à votre compte edgar.',
+      icon: IconModal(
+        icon: type == 'Phone'
+            ? SvgPicture.asset(
+                'assets/images/utils/phone-fill.svg',
+                color: AppColors.blue700,
+              )
+            : SvgPicture.asset(
+                'assets/images/utils/laptop-fill.svg',
+                color: AppColors.blue700,
+              ),
+        type: ModalType.info,
+      ),
+      body: [
+        Column(
+          children: [
+            Row(
+              children: [
+                const Text(
+                  'Dernière connexion: ',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  date,
+                  style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Text(
+                  'Localisation: ',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  location,
+                  style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ],
+        )
+      ],
+      footer: Buttons(
+        variant: Variant.deleteBordered,
+        size: SizeButton.md,
+        msg: const Text('Déconnecter l\'appareil'),
+        onPressed: () {
+          removeDevice(id).then((name) {
+            load2fa();
+            Navigator.pop(context);
+          });
+        },
+      ));
 }

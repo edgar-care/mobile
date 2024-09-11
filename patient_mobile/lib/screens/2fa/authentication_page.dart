@@ -7,9 +7,9 @@ import 'package:edgar_app/services/devices.dart';
 import 'package:edgar_app/services/multiplefa.dart';
 import 'package:edgar_app/widget/devices_tab.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
+import 'package:edgar_app/widget/number_list_2fa.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_app/widget/number_list_2fa.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,12 +27,13 @@ class DoubleAuthentication extends StatefulWidget {
 }
 
 class _DoubleAuthenticationState extends State<DoubleAuthentication> {
-  String email = '';
+  Map<String, dynamic> infoMedical = {};
   bool emailActive = false;
   bool thirdActive = false;
   bool mobileActive = false;
   bool secret = false;
   String trustDevice = '';
+  String email = '';
 
   @override
   void initState() {
@@ -73,7 +74,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   }
 
   void loadInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String encodedPayload = token!.split('.')[1];
         String decodedPayload =
@@ -503,11 +504,10 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               onPressed: () {
                 Logger().d(selected);
                 Logger().d(devices[selected]['id']);
-                addTrustDevices(devices[selected]['id']);
                 enable2FAMobile(devices[selected]['id']).then((value) {
+                widget.load2fa();
                   if (widget.secret != true) {
                     Navigator.pop(context);
-                    widget.load2fa();
                     final model =
                         Provider.of<BottomSheetModel>(context, listen: false);
                     model.resetCurrentIndex();
@@ -935,6 +935,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                       title:
                           "${devices[index]['device_type']} - ${devices[index]['browser']}",
                       onTap: () {
+                        Navigator.pop(context);
                         showModalBottomSheet(
                           context: context,
                           backgroundColor: Colors.transparent,
@@ -943,7 +944,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                             return Consumer<BottomSheetModel>(
                               builder: (context, model, child) {
                                 return ListModal(model: model, children: [
-                                  modalInfoDevices(
+                                  modalInfoTrustDevices(
                                       "${devices[index]['device_type']} - ${devices[index]['browser']}",
                                       DateFormat('dd/MM/yyyy').format(
                                           DateTime.fromMillisecondsSinceEpoch(
@@ -955,7 +956,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                                                   'Android'
                                           ? 'PHONE'
                                           : 'PC',
-                                      context)
+                                      context, widget.load2fa)
                                 ]);
                               },
                             );
@@ -1102,7 +1103,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
   Future<void> getDevices() async {
     List<dynamic> temp = await getAllDevices();
     for (int i = 0; i < temp.length; i++) {
-      if (temp[i]['trusted'] == false) {
+      if (temp[i]['trust_device'] == false) {
         setState(() {
           devices.add(temp[i]);
         });
@@ -1192,6 +1193,8 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
+                Logger().d(selected);
+                Logger().d(devices[selected]['id']);
                 addTrustDevices(devices[selected]['id']).then((value) {
                   Navigator.pop(context);
                 });
@@ -1656,8 +1659,8 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   );
 }
 
-Widget modalInfoDevices(String name, String date, String location, String id,
-    String type, BuildContext context) {
+Widget modalInfoTrustDevices(String name, String date, String location, String id,
+    String type, BuildContext context, Function load2fa) {
   return ModalContainer(
       title: name,
       subtitle: 'Connecté à votre compte edgar.',
@@ -1721,7 +1724,8 @@ Widget modalInfoDevices(String name, String date, String location, String id,
         size: SizeButton.md,
         msg: const Text('Déconnecter l\'appareil'),
         onPressed: () {
-          removeDevice(id).then((name) {
+          removeTrustDevice(id).then((name) {
+            load2fa();
             Navigator.pop(context);
           });
         },
