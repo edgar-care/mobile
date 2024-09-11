@@ -3,9 +3,8 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/2FA/authentication_page.dart';
 import 'package:edgar_pro/services/multiplefa_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_modal.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
@@ -66,16 +65,18 @@ class _AccountPageState extends State<AccountPage> {
                             // ignore: deprecated_member_use
                             color: AppColors.black,
                             height: 16,
-                          ), 
-                            const Text('Compte',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),),
-                              const SizedBox(width: 18),
-                            ],
+                          ),
+                          const Text(
+                            'Compte',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(width: 18),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -149,21 +150,29 @@ class _AccountPageState extends State<AccountPage> {
                                 child: Column(
                                   children: [
                                     NavbarPLusTab(
-                                      title: 'Email',
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return const SizedBox();
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      type: 'Only',
-                                      outlineIcon: Text(widget.infoMedical["email"], style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w400,color: AppColors.grey500),)
-                                    ),
+                                        title: 'Email',
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder<void>(
+                                              opaque: false,
+                                              pageBuilder:
+                                                  (BuildContext context, _,
+                                                      __) {
+                                                return const SizedBox();
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        type: 'Only',
+                                        outlineIcon: Text(
+                                          widget.infoMedical["email"],
+                                          style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.grey500),
+                                        )),
                                     Container(
                                       height: 1,
                                       color: AppColors.blue100,
@@ -293,7 +302,7 @@ Widget modalReNewBackup(BuildContext context) {
       type: ModalType.info,
     ),
     footer: Buttons(
-      variant: Variante.primary,
+      variant: Variant.primary,
       size: SizeButton.md,
       msg: const Text('Générer de nouveaux codes'),
       onPressed: () {
@@ -461,7 +470,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
               footer: Column(
                 children: [
                   Buttons(
-                    variant: Variante.primary,
+                    variant: Variant.primary,
                     size: SizeButton.md,
                     msg: const Text('Activer l\'authentification'),
                     onPressed: () {
@@ -472,7 +481,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                     height: 8,
                   ),
                   Buttons(
-                    variant: Variante.secondary,
+                    variant: Variant.secondary,
                     size: SizeButton.md,
                     msg: const Text('Annuler'),
                     onPressed: () {
@@ -503,7 +512,7 @@ Widget modalRedirect2FA(BuildContext context) {
       type: ModalType.info,
     ),
     footer: Buttons(
-      variant: Variante.primary,
+      variant: Variant.primary,
       size: SizeButton.md,
       msg: const Text('Activer l\'authentification'),
       onPressed: () {

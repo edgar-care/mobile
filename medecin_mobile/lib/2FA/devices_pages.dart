@@ -1,7 +1,7 @@
 import 'package:edgar_pro/2FA/authentication_page.dart';
 import 'package:edgar_pro/services/devices_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/custom_modal.dart';
+import 'package:edgar/widget.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/devices_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

@@ -4,11 +4,9 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/devices_services.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/multiplefa_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
-import 'package:edgar_pro/widgets/custom_modal.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/devices_tab.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:edgar_pro/widgets/number_list_2fa.dart';
 import 'package:flutter/material.dart';
@@ -305,7 +303,7 @@ Widget modal2FAEmail(
     footer: Column(
       children: [
         Buttons(
-          variant: Variante.primary,
+          variant: Variant.primary,
           size: SizeButton.md,
           msg: const Text('Activer l\'authentification'),
           onPressed: () {
@@ -339,7 +337,7 @@ Widget modal2FAEmail(
           height: 8,
         ),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Annuler'),
           onPressed: () {
@@ -368,7 +366,7 @@ Widget modal2FAEmailDesactivate(
     footer: Column(
       children: [
         Buttons(
-          variant: Variante.delete,
+          variant: Variant.delete,
           size: SizeButton.md,
           msg: const Text('Désactiver l\'authentification'),
           onPressed: () {
@@ -384,7 +382,7 @@ Widget modal2FAEmailDesactivate(
           height: 8,
         ),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Annuler'),
           onPressed: () {
@@ -500,7 +498,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
         footer: Column(
           children: [
             Buttons(
-              variant: Variante.primary,
+              variant: Variant.primary,
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
@@ -538,7 +536,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               height: 8,
             ),
             Buttons(
-              variant: Variante.secondary,
+              variant: Variant.secondary,
               size: SizeButton.md,
               msg: const Text('Annuler'),
               onPressed: () {
@@ -689,7 +687,7 @@ class _ModalBackupEmailState extends State<ModalBackupEmail> {
                   type: ModalType.info,
                 ),
                 footer: Buttons(
-                  variant: Variante.primary,
+                  variant: Variant.primary,
                   size: SizeButton.md,
                   msg: const Text('Confirmer'),
                   onPressed: () {
@@ -845,7 +843,7 @@ class _ModalEdgarApp2State extends State<ModalEdgarApp2> {
                   type: ModalType.info,
                 ),
                 footer: Buttons(
-                  variant: Variante.primary,
+                  variant: Variant.primary,
                   size: SizeButton.md,
                   msg: const Text('Confirmer'),
                   onPressed: () {
@@ -985,7 +983,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
       footer: Column(
         children: [
           Buttons(
-            variant: Variante.primary,
+            variant: Variant.primary,
             size: SizeButton.md,
             msg: const Text('Ajouter un appareil de confiance'),
             onPressed: () {
@@ -1013,7 +1011,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
             height: 8,
           ),
           Buttons(
-            variant: Variante.deleteBordered,
+            variant: Variant.deleteBordered,
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
             onPressed: () {
@@ -1059,7 +1057,7 @@ Widget modalEdgarAppDesactivate(Function load2fa, BuildContext context) {
       footer: Column(
         children: [
           Buttons(
-            variant: Variante.delete,
+            variant: Variant.delete,
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
             onPressed: () {
@@ -1075,7 +1073,7 @@ Widget modalEdgarAppDesactivate(Function load2fa, BuildContext context) {
             height: 8,
           ),
           Buttons(
-            variant: Variante.secondary,
+            variant: Variant.secondary,
             size: SizeButton.md,
             msg: const Text('Annuler'),
             onPressed: () {
@@ -1191,7 +1189,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
         footer: Column(
           children: [
             Buttons(
-              variant: Variante.primary,
+              variant: Variant.primary,
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
@@ -1204,7 +1202,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
               height: 8,
             ),
             Buttons(
-              variant: Variante.secondary,
+              variant: Variant.secondary,
               size: SizeButton.md,
               msg: const Text('Annuler'),
               onPressed: () {
@@ -1305,7 +1303,7 @@ class _ModalTierAppState extends State<ModalTierApp> {
                 footer: Column(
                   children: [
                     Buttons(
-                      variant: Variante.primary,
+                      variant: Variant.primary,
                       size: SizeButton.md,
                       msg: const Text('Continuer'),
                       onPressed: () {
@@ -1335,7 +1333,7 @@ class _ModalTierAppState extends State<ModalTierApp> {
                       height: 8,
                     ),
                     Buttons(
-                      variant: Variante.secondary,
+                      variant: Variant.secondary,
                       size: SizeButton.md,
                       msg: const Text('Annuler'),
                       onPressed: () {
@@ -1402,7 +1400,7 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
         footer: Column(
           children: [
             Buttons(
-              variant: Variante.primary,
+              variant: Variant.primary,
               size: SizeButton.md,
               msg: const Text('Continuer'),
               onPressed: () {
@@ -1433,7 +1431,7 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorLoginSnackBar(
+                      ErrorSnackBar(
                         message: 'Le code est incorrect',
                         context: context,
                       ),
@@ -1446,7 +1444,7 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
               height: 8,
             ),
             Buttons(
-              variant: Variante.secondary,
+              variant: Variant.secondary,
               size: SizeButton.md,
               msg: const Text('Annuler'),
               onPressed: () {
@@ -1598,7 +1596,7 @@ class _ModalBackupTierAppState extends State<ModalBackupTierApp> {
                   ),
                 ],
                 footer: Buttons(
-                  variant: Variante.primary,
+                  variant: Variant.primary,
                   size: SizeButton.md,
                   msg: const Text('Confirmer'),
                   onPressed: () {
@@ -1632,7 +1630,7 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
     footer: Column(
       children: [
         Buttons(
-            variant: Variante.delete,
+            variant: Variant.delete,
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
             onPressed: () {
@@ -1647,7 +1645,7 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
           height: 8,
         ),
         Buttons(
-          variant: Variante.secondary,
+          variant: Variant.secondary,
           size: SizeButton.md,
           msg: const Text('Annuler'),
           onPressed: () {
@@ -1720,7 +1718,7 @@ Widget modalInfoDevices(String name, String date, String location, String id,
         )
       ],
       footer: Buttons(
-        variant: Variante.deleteBordered,
+        variant: Variant.deleteBordered,
         size: SizeButton.md,
         msg: const Text('Déconnecter l\'appareil'),
         onPressed: () {

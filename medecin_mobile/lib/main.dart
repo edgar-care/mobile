@@ -1,4 +1,4 @@
-import 'package:edgar_pro/widgets/custom_modal.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'models/auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() async {
+Future main() async {
   await dotenv.load(fileName: ".env");
   initializeDateFormatting();
   runApp(

@@ -2,11 +2,11 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edgar/widget.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -171,11 +171,11 @@ Future addPatientService(
     body: jsonEncode(traitement),
   );
   if (response.statusCode == 201) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
         message: 'Patient ajouté avec succès', context: context));
     return true;
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
         message: 'Erreur lors de l\'ajout du patient', context: context));
     return false;
   }
@@ -193,10 +193,10 @@ Future deletePatientService(String id, BuildContext context) async {
     },
   );
   if (response.statusCode == 201) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
         message: 'Patient supprimé avec succès', context: context));
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
         message: 'Erreur lors de la suppression du patient', context: context));
   }
 }

@@ -1,18 +1,23 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class CustomNavPatientCard extends StatelessWidget {
+  Function setPages;
   String text;
   IconData? icon;
-  Widget page;
-  CustomNavPatientCard({
-    super.key,
-    required this.text,
-    required this.icon,
-    required this.page,
-  });
+  int pageTo;
+  String id;
+  Function setId;
+  CustomNavPatientCard(
+      {super.key,
+      required this.setPages,
+      required this.text,
+      required this.icon,
+      required this.pageTo,
+      required this.id,
+      required this.setId});
 
   @override
   Widget build(BuildContext context) {
@@ -24,25 +29,9 @@ class CustomNavPatientCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
+          setId(id);
+          setPages(pageTo);
           Navigator.pop(context);
-          Navigator.push(
-            context,
-            PageRouteBuilder<void>(
-              opaque: false,
-              pageBuilder: (BuildContext context, _, __) {
-                return page;
-              },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const curve = Curves.easeInOut;
-                return FadeTransition(
-                  opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(parent: animation, curve: curve)),
-                  child: child,
-                );
-              },
-            ),
-          );
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),

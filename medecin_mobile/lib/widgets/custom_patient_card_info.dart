@@ -1,7 +1,8 @@
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:flutter/material.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
 
 class PatientInfoCard extends StatefulWidget {
   final BuildContext context;
@@ -33,15 +34,22 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
                 if (widget.tmpTraitments[i]['treatments'].isEmpty) {
                   return;
                 }
-                WoltModalSheet.show<void>(
+                final model =
+                    Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+
+                showModalBottomSheet(
                   context: context,
-                  pageListBuilder: (modalSheetContext) {
-                    return [
-                      infoTraitement(
-                        context,
-                        widget.tmpTraitments[i],
-                      ),
-                    ];
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(model: model, children: [
+                          InfoTreatment(traitement: widget.tmpTraitments[i])
+                        ]);
+                      },
+                    );
                   },
                 );
               },

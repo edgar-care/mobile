@@ -1,7 +1,7 @@
-import 'package:edgar/widget/navbarplus.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:edgar/colors.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final void Function(int) onItemTapped;

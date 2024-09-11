@@ -6,13 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:edgar_pro/widgets/login_snackbar.dart';
+import 'package:edgar/widget.dart';
 
 Future login(String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/d/login';
-  ScaffoldMessenger.of(context).showSnackBar(InfoLoginSnackBar(
-      message: "Connexion à l'application ...", context: context));
+  ScaffoldMessenger.of(context).showSnackBar(
+      InfoSnackBar(message: "Connexion à l'application ...", context: context));
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -25,10 +25,10 @@ Future login(String email, String password, BuildContext context) async {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-    String decodedPayload =
-        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+        String decodedPayload =
+            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-    ScaffoldMessenger.of(context).showSnackBar(SuccessLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
       message: 'Connecté à l\'application',
       context: context,
     ));
@@ -36,7 +36,7 @@ Future login(String email, String password, BuildContext context) async {
     Navigator.pushNamed(context, '/dashboard');
   } else {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
       message: 'Les identifiants ne correspondent pas !',
       context: context,
     ));

@@ -1,5 +1,5 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';

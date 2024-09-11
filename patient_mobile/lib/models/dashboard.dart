@@ -1,12 +1,12 @@
 import 'package:animations/animations.dart';
-import 'package:edgar/screens/dashboard/traitement_page.dart';
-import 'package:edgar/widget/bottom_navbar.dart';
+import 'package:edgar_app/screens/dashboard/traitement_page.dart';
+import 'package:edgar_app/widget/bottom_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/screens/dashboard/accueil_page.dart';
-import 'package:edgar/screens/dashboard/information_personnel.dart';
-import 'package:edgar/screens/dashboard/gestion_rendez_vous.dart';
-import 'package:edgar/screens/dashboard/file_page.dart';
-import 'package:edgar/screens/dashboard/chat_page.dart';
+import 'package:edgar_app/screens/dashboard/accueil_page.dart';
+import 'package:edgar_app/screens/dashboard/information_personnel.dart';
+import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
+import 'package:edgar_app/screens/dashboard/file_page.dart';
+import 'package:edgar_app/screens/dashboard/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoardPage extends StatefulWidget {
@@ -43,7 +43,7 @@ class DashBoardPageState extends State<DashBoardPage>
     final String? token = prefs.getString('token');
     if (token == null) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/login');
+      Navigator.pushNamed(context, '/');
     }
   }
 

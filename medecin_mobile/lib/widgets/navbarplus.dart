@@ -2,8 +2,8 @@
 import 'package:edgar_pro/2FA/account_page.dart';
 import 'package:edgar_pro/2FA/devices_pages.dart';
 import 'package:edgar_pro/services/doctor_services.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/services/logout_service.dart';
-import 'package:edgar_pro/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,9 +92,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.blue700,
-                                  borderRadius: BorderRadius.all(Radius.circular(16))
-                                ),
+                                    color: AppColors.blue700,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(16))),
                                 child: FutureBuilder(
                                   future: fetchData(),
                                   builder: (context, snapshot) {
@@ -158,8 +158,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child:
-                                                BoringAvatars(
+                                              child: BoringAvatars(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
