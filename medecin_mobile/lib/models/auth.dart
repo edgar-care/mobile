@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/screens/auth/login_page.dart';
 import 'package:edgar_pro/screens/auth/register_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth extends StatefulWidget {
@@ -33,6 +34,7 @@ class _AuthState extends State<Auth> {
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/dashboard');
     }
+    FlutterNativeSplash.remove();
   }
 
   @override
