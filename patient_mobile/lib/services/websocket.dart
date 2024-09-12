@@ -24,8 +24,8 @@ class WebSocketService {
     this.onCreateChat,
     this.onGetMessages,
     this.onReadMessage,
-    this.onAskMobileConnection,
     this.onResponseMobileConnection,
+    this.onAskMobileConnection,
   });
 
   // Connect to WebSocket
@@ -131,21 +131,11 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
-  void askMobileConnection(String uuid, String email, String password) {
-    final askMobileConnection = jsonEncode({
-      'action': 'askMobileConnection',
-      'uuid': uuid,
-      'type': 0,
-      'email': email,
-      'password': password,
-    });
-    _channel?.sink.add(askMobileConnection);
-  }
-
   void responseMobileConnection(String patientAuthTokenWS, String uuid) {
+    Logger().i('ResponseMobileConnection: $patientAuthTokenWS, $uuid');
     final responseMobileConnection = jsonEncode({
-      'action': 'responseMobileConnection',
-      'patientAuthTokenWS': patientAuthTokenWS,
+      'action': 'responseMobileConnection ',
+      'authToken': patientAuthTokenWS,
       'uuid': uuid,
       "response": true,
     });
@@ -169,10 +159,10 @@ class WebSocketService {
       case 'receive_message':
         onReceiveMessage?.call(decodedMessage);
         break;
-      case 'askMobileConnection':
+      case 'ask_mobile_connection':
         onAskMobileConnection?.call(decodedMessage);
         break;
-      case 'responseMobileConnection':
+      case 'response_mobile_connection':
         onResponseMobileConnection?.call(decodedMessage);
         break;
       case 'read_message':

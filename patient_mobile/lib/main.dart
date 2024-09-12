@@ -230,7 +230,7 @@ class _MyAppState extends State<MyApp> {
       },
 
       onResponseMobileConnection: (data) {
-        Logger().i('ResponseMobileConnection: $data');
+        Logger().i('ResponseMobileConnection response: $data');
       },
     );
     await _webSocketService?.connect();
@@ -242,7 +242,6 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     _webSocketService?.disconnect();
     super.dispose();
-    // ignore: library_private_types_in_public_api
   }
 
   Future<void> fetchData() async {
