@@ -378,7 +378,7 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
                             return ListModal(model: model, children: [
-                              modalCheckBackupCode(widget.email, widget.password, context),
+                              ModalCheckBackupCode(email: widget.email, password : widget.password),
                             ]);
                           },
                         );
@@ -554,8 +554,19 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
   }
 }
 
-Widget modalCheckBackupCode(String email, String password, BuildContext context){
+class ModalCheckBackupCode extends StatefulWidget {
+  final String email;
+  final String password;
+  const ModalCheckBackupCode({super.key, required this.email, required this.password});
+
+  @override
+  State<ModalCheckBackupCode> createState() => _ModalCheckBackupCodeState();
+}
+
+class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
   String code = '';
+  @override
+  Widget build(BuildContext context) {
   return ModalContainer(
     title: 'Vérifier votre identité',
     subtitle: 'Renseigner l\'un de vos codes de sauvegarde. Le code utilisé ne pourra plus être utilisé dans le futur.',
@@ -567,7 +578,9 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
         label: "XXXXXXXX",
         keyboardType: TextInputType.text,
         onChanged: (value) {
+          setState(() {
           code = value.trim();
+          });
         },
         action: TextInputAction.none,
       ),
@@ -587,7 +600,8 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            checkBackUpCode(email, password, code, context).then((value) {
+            Logger().d(code);
+            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
             });
           }
         ),
@@ -603,4 +617,5 @@ Widget modalCheckBackupCode(String email, String password, BuildContext context)
       ],
     ),
   );
+  }
 }
