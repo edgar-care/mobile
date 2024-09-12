@@ -116,7 +116,7 @@ Future checkEmailCode(String email, String password, String code, BuildContext c
 
 Future checkBackUpCode(String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/backup_2fa';
+  String url = '${dotenv.env['URL']}/auth/backup_code_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -140,7 +140,7 @@ Future checkBackUpCode(String email, String password, String code, BuildContext 
 
 Future checkThirdPartyCode(String email, String password, String code, BuildContext context)async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/backup_2fa';
+  String url = '${dotenv.env['URL']}/auth/third_party_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},

@@ -349,9 +349,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
 
   Future<bool> getbackupcode() async {
     var tmp = await generateBackupCode();
-    setState(() {
       backupCodes = tmp;
-    });
     return true;
   }
 

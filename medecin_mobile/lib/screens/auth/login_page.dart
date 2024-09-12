@@ -8,6 +8,7 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
@@ -303,7 +304,7 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                 if(widget.methods[i] == 'EMAIL')
                   NavbarPLusTab(
                     title: 'Code envoyé par email',
-                    onTap: (index) {
+                    onTap: () {
                       sendEmailCode(widget.email).then((value) {
                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                         model.resetCurrentIndex();
@@ -336,7 +337,7 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                 if(widget.methods[i] == 'AUTHENTIFICATOR')
               NavbarPLusTab(
                 title: 'Application d\'authentification',
-                onTap: (index) {
+                onTap: () {
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
                   showModalBottomSheet(
@@ -366,7 +367,7 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
               ),
               NavbarPLusTab(
                 title: 'Code de sauvegarde',
-                onTap: (index) {
+                onTap: () {
                   final model = Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
                   showModalBottomSheet(
@@ -425,8 +426,6 @@ class ModalEmailLogin extends StatefulWidget {
 }
 
 class _ModalEmailLoginState extends State<ModalEmailLogin> {
-  @override
-  Widget build(BuildContext context) {
   String code = '';
 
   void setCode(String action, String code) {
@@ -441,6 +440,9 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     });
   }
   }
+
+  @override
+  Widget build(BuildContext context) {
 
   return ModalContainer(
     title: "Vérifier votre identité",
@@ -463,6 +465,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
+            Logger().d(code);
             checkEmailCode(widget.email, widget.password, code, context).then((value) {
             });
           }
@@ -492,26 +495,27 @@ class ModalThirdPartyLogin extends StatefulWidget {
 }
 
 class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
-  @override
-  Widget build(BuildContext context) {
-  String code = '';
+  String sendcode = '';
 
   void setCode(String action, String code) {
     if (action == 'ADD') {
       setState(() {
-        code += code;
+        sendcode += code;
       });
   }
   else if (action == 'DELETE') {
     setState(() {
-      code = code.substring(0, code.length - 1);
+      sendcode = sendcode.substring(0, code.length - 1);
     });
   }
   }
 
+  @override
+  Widget build(BuildContext context) {
+
   return ModalContainer(
     title: "Vérifier votre identité",
-    subtitle: 'ROuvrer votre application d\'authentification et renseigner le code à 6 chiffres fournis.',
+    subtitle: 'Rouvrer votre application d\'authentification et renseigner le code à 6 chiffres fournis.',
     body: [
         FieldNumberList2FA(addCode: setCode,)
     ],
@@ -530,7 +534,8 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            checkThirdPartyCode(widget.email, widget.password, code, context).then((value) {
+            Logger().d(sendcode);
+            checkThirdPartyCode(widget.email, widget.password, sendcode, context).then((value) {
             });
           }
         ),
