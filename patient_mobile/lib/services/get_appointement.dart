@@ -15,7 +15,7 @@ Future<Map<String, dynamic>> getAppointement(BuildContext context) async {
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
   );
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     final body = response.body;
     return jsonDecode(body);
   } else {
