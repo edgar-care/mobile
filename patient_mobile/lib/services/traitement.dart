@@ -121,7 +121,6 @@ Future<bool> deleteFollowUpRequest(String id) async {
     headers: {'Authorization': 'Bearer $token'},
   );
 
-
   if (response.statusCode == 200) {
     return true;
   } else {

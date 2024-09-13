@@ -31,11 +31,12 @@ Future<bool> RegisterUser(String email, String password) async {
   }
 }
 
-Future<List<dynamic>> login(String email, String password, BuildContext context) async {
+Future<List<dynamic>> login(
+    String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/p/login';
-  ScaffoldMessenger.of(context).showSnackBar(InfoSnackBar(
-      message: "Connexion à l'application ...", context: context));
+  ScaffoldMessenger.of(context).showSnackBar(
+      InfoSnackBar(message: "Connexion à l'application ...", context: context));
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -44,20 +45,20 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
   Logger().d(response.body);
   Logger().d(response.statusCode);
   if (response.statusCode == 200) {
-    if ( jsonDecode(response.body)['token'] != null) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    prefs.setString('token', jsonDecode(response.body)['token']);
-    String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-    prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-      message: 'Connecté à l\'application',
-      context: context,
-    ));
-    await Future.delayed(const Duration(seconds: 2));
-    Navigator.pushNamed(context, '/dashboard');
-    return [];
+    if (jsonDecode(response.body)['token'] != null) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      prefs.setString('token', jsonDecode(response.body)['token']);
+      String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
+      String decodedPayload =
+          utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+      prefs.setString('id', jsonDecode(decodedPayload)["id"]);
+      ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+        message: 'Connecté à l\'application',
+        context: context,
+      ));
+      await Future.delayed(const Duration(seconds: 2));
+      Navigator.pushNamed(context, '/dashboard');
+      return [];
     } else {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       return jsonDecode(response.body)['2fa_methods'];
@@ -89,7 +90,7 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
 }
 
 Future sendEmailCode(String email) async {
-String url = '${dotenv.env['URL']}/auth/sending_email';
+  String url = '${dotenv.env['URL']}/auth/sending_email';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -99,65 +100,57 @@ String url = '${dotenv.env['URL']}/auth/sending_email';
   Logger().d(response.statusCode);
 }
 
-Future checkEmailCode(String email, String password, String code, BuildContext context) async {
+Future checkEmailCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/email_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'token_2fa': code
-    }),
+    body: jsonEncode({'email': email, 'password': password, 'token_2fa': code}),
   );
   Logger().d(response.body);
   Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }
 }
 
-Future checkBackUpCode(String email, String password, String code, BuildContext context) async {
+Future checkBackUpCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/backup_code_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'backup_code': code
-    }),
+    body:
+        jsonEncode({'email': email, 'password': password, 'backup_code': code}),
   );
   Logger().d(response.body);
   Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }
 }
 
-Future checkThirdPartyCode(String email, String password, String code, BuildContext context)async {
+Future checkThirdPartyCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/third_party_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'token_2fa': code
-    }),
+    body: jsonEncode({'email': email, 'password': password, 'token_2fa': code}),
   );
   Logger().d(code);
   Logger().d(response.body);
@@ -165,8 +158,8 @@ Future checkThirdPartyCode(String email, String password, String code, BuildCont
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }

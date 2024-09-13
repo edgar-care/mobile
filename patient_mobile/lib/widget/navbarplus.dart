@@ -296,7 +296,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   ],
                                 ),
                               ),
-                               const SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               const Text(
                                 "Paramètres du compte",
                                 style: TextStyle(
@@ -477,7 +477,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         ),
         child: Row(
           children: [
-             widget.icon ?? const SizedBox.shrink(),
+            widget.icon ?? const SizedBox.shrink(),
             const SizedBox(width: 16),
             Text(widget.title,
                 style: TextStyle(

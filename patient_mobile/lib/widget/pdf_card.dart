@@ -43,8 +43,7 @@ class PDFCard extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(BootstrapIcons.download),
-                    onPressed: () async {
-                    },
+                    onPressed: () async {},
                   ),
                   IconButton(
                     icon: const Icon(BootstrapIcons.eye),

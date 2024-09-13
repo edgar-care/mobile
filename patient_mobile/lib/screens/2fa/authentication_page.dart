@@ -74,11 +74,11 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   }
 
   void loadInfo() async {
-     SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String encodedPayload = token!.split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     email = jsonDecode(decodedPayload)["patient"];
   }
 
@@ -180,9 +180,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
                                               children: [
                                                 emailActive
                                                     ? modal2FAEmailDesactivate(
-                                                        email,
-                                                        context,
-                                                        load2fa)
+                                                        email, context, load2fa)
                                                     : modal2FAEmail(
                                                         email,
                                                         context,
@@ -321,8 +319,11 @@ Widget modal2FAEmail(
                   builder: (context) {
                     return Consumer<BottomSheetModel>(
                       builder: (context, model, child) {
-                        return ListModal(
-                            model: model, children: [ModalBackupEmail(load2fa: load2fa,)]);
+                        return ListModal(model: model, children: [
+                          ModalBackupEmail(
+                            load2fa: load2fa,
+                          )
+                        ]);
                       },
                     );
                   },
@@ -505,7 +506,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                 Logger().d(selected);
                 Logger().d(devices[selected]['id']);
                 enable2FAMobile(devices[selected]['id']).then((value) {
-                widget.load2fa();
+                  widget.load2fa();
                   if (widget.secret != true) {
                     Navigator.pop(context);
                     final model =
@@ -519,7 +520,9 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
                             return ListModal(model: model, children: [
-                              ModalEdgarApp2(load2fa: widget.load2fa,),
+                              ModalEdgarApp2(
+                                load2fa: widget.load2fa,
+                              ),
                             ]);
                           },
                         );
@@ -949,14 +952,16 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                                       DateFormat('dd/MM/yyyy').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               devices[index]['date'] * 1000)),
-                                      devicesFormatTime(devices[index]['date'] * 1000),
+                                      devicesFormatTime(
+                                          devices[index]['date'] * 1000),
                                       devices[index]['id'],
                                       devices[index]['type'] == 'iPhone' ||
                                               devices[index]['type'] ==
                                                   'Android'
                                           ? 'PHONE'
                                           : 'PC',
-                                      context, widget.load2fa)
+                                      context,
+                                      widget.load2fa)
                                 ]);
                               },
                             );
@@ -1422,7 +1427,9 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                           return Consumer<BottomSheetModel>(
                             builder: (context, model, child) {
                               return ListModal(model: model, children: [
-                                ModalBackupTierApp(load2fa: widget.load2fa,),
+                                ModalBackupTierApp(
+                                  load2fa: widget.load2fa,
+                                ),
                               ]);
                             },
                           );
@@ -1659,8 +1666,8 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   );
 }
 
-Widget modalInfoTrustDevices(String name, String date, String location, String id,
-    String type, BuildContext context, Function load2fa) {
+Widget modalInfoTrustDevices(String name, String date, String location,
+    String id, String type, BuildContext context, Function load2fa) {
   return ModalContainer(
       title: name,
       subtitle: 'Connecté à votre compte edgar.',
