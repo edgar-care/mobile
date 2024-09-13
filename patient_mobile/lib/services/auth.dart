@@ -164,3 +164,14 @@ Future checkThirdPartyCode(
     Navigator.pushNamed(context, '/dashboard');
   }
 }
+
+Future missingPassword(String email) async {
+  String url = '${dotenv.env['URL']}/auth/missing-password';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'email': email}),
+  );
+  Logger().d(response.body);
+  Logger().d(response.statusCode);
+}

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/screens/2fa/authentication_page.dart';
+import 'package:edgar_app/screens/2fa/reset_password_pages.dart';
 import 'package:edgar_app/services/account.dart';
 import 'package:edgar_app/services/multiplefa.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
@@ -276,7 +277,15 @@ class _AccountPageState extends State<AccountPage> {
                                   NavbarPLusTab(
                                     title: 'Mot de passe',
                                     onTap: () {
-                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const ResetPasswordPage();
+                                            },
+                                          ),
+                                        );
                                     },
                                     type: 'Only',
                                     outlineIcon: SvgPicture.asset(

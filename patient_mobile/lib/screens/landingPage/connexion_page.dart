@@ -385,6 +385,24 @@ class _ModalLoginState extends State<ModalLogin> {
         ),
         const SizedBox(height: 8),
         GestureDetector(
+          onTap: () {
+            final model =
+            Provider.of<BottomSheetModel>(context, listen: false);
+        model.resetCurrentIndex();
+        showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (context) {
+              return Consumer<BottomSheetModel>(
+                builder: (context, model, child) {
+                  return ListModal(model: model, children: [
+                    modalForgotPassword(context),
+                  ]);
+                },
+              );
+            });
+          },
           child: const Text(
             "Mot de passe oublié ?",
             style: TextStyle(
@@ -773,6 +791,51 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
       ),
     );
   }
+}
+
+Widget modalForgotPassword(BuildContext context) {
+  String email = "";
+  return ModalContainer(
+    title: "Mot de passe oublié ?",
+    subtitle:
+        "Renseigner votre adresse mail pour réinitialiser votre mot de passe.",
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+      type: ModalType.info,
+    ),
+    body: [
+      const Text('Adresse mail du compte perdu',
+          style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500)),
+      const SizedBox(height: 4),
+      CustomField(
+        action: TextInputAction.none,
+        isNotCapitalize: true,
+        value: email,
+        label: "prenom.nom@gmail.com",
+        keyboardType: TextInputType.emailAddress,
+        onChanged: (value) {
+          email = value.trim();
+        },
+      ),
+    ],
+    footer: Buttons(
+            variant: Variant.primary,
+            size: SizeButton.md,
+            msg: const Text('Réinitialiser le mot de passe'),
+            onPressed: () {
+              missingPassword(email).then((value) {
+                Navigator.pop(context);
+              });
+            },
+          ),
+    );
 }
 
 class ModalEmailLogin extends StatefulWidget {
