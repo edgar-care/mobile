@@ -1,6 +1,4 @@
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
@@ -11,7 +9,6 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:push/push.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'models/auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -116,11 +113,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  WebSocketService? _webSocketService;
-  List<Chat> chats = [];
-  bool isChatting = false;
-  final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -133,95 +125,12 @@ class _MainAppState extends State<MainApp> {
       await initializePushNotifications();
 
       // Initialize WebSocket service
-      await _initializeWebSocketService(flutterLocalNotificationsPlugin);
 
       // Show a test notification (optional, remove in production)
       await Future.delayed(const Duration(seconds: 5));
       await showNotification(flutterLocalNotificationsPlugin, "Test",
           "This is a test notification");
     });
-  }
-
-  void updateIsChatting(bool value) {
-    setState(() {
-      isChatting = value;
-    });
-  }
-
-  Future<void> _initializeWebSocketService(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    _webSocketService = WebSocketService(
-      onReceiveMessage: (data) {
-        setState(() {
-          Chat? chatToUpdate = chats.firstWhere(
-            (chat) => chat.id == data['chat_id'],
-          );
-          chatToUpdate.messages.add(
-            Sms(
-              message: data['message'],
-              ownerId: data['owner_id'],
-              time: data['sended_time'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
-                  : DateTime.now(),
-            ),
-          );
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReady: (data) {},
-      onGetMessages: (data) {
-        setState(() {
-          chats = transformChats(data);
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReadMessage: (data) {},
-      // Handle the askMobileConnection action
-      onAskMobileConnection: (data) async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString("token");
-        Logger().i('AskMobileConnection: $data');
-        _webSocketService?.responseMobileConnection(
-          token!,
-          data['uuid'],
-        );
-      },
-
-      onResponseMobileConnection: (data) {
-        Logger().i('ResponseMobileConnection: $data');
-      },
-    );
-    await _webSocketService?.connect();
-    _webSocketService?.sendReadyAction();
-    _webSocketService?.getMessages();
-    // _webSocketService?.askMobileConnection(
-    //   'uuid',
-    //   'email',
-    //   'password',
-    // );
-    // Ce que tu devras faire nico c'est de remplacer les valeurs de 'uuid', 'email', 'password' par les valeurs que tu veux
-  }
-
-  @override
-  void dispose() {
-    _webSocketService?.disconnect();
-    super.dispose();
   }
 
   @override
@@ -241,10 +150,7 @@ class _MainAppState extends State<MainApp> {
       initialRoute: "/",
       routes: {
         "/": (context) => const Auth(),
-        "/dashboard": (context) => DashBoard(
-            chats: chats,
-            webSocketService: _webSocketService,
-            scrollController: _scrollController),
+        "/dashboard": (context) => const DashBoard(),
       },
     );
   }
