@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:edgar_app/main.dart';
 import 'package:edgar_app/screens/dashboard/traitement_page.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
@@ -9,23 +10,13 @@ import 'package:edgar_app/screens/dashboard/information_personnel.dart';
 import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar_app/screens/dashboard/file_page.dart';
 import 'package:edgar_app/screens/dashboard/chat_page.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class DashBoardPage extends StatefulWidget {
-  WebSocketService? webSocketService;
-  // ignore: prefer_final_fields
-  ScrollController scrollController;
-  bool isChatting;
-  final List<Chat> chats;
-  void Function(bool) updateIsChatting;
-  DashBoardPage(
-      {super.key,
-      required this.chats,
-      required this.webSocketService,
-      required this.isChatting,
-      required this.scrollController,
-      required this.updateIsChatting});
+  const DashBoardPage({super.key});
 
   @override
   DashBoardPageState createState() => DashBoardPageState();
@@ -36,10 +27,121 @@ class DashBoardPageState extends State<DashBoardPage>
   int _selectedIndex = 0;
   int _previousIndex = 0;
 
+  WebSocketService? _webSocketService;
+  List<Chat> chats = [];
+  bool isChatting = false;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    checkSession(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Initialize notifications
+      checkSession(context);
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          await initializeFlutterLocalNotifications();
+
+      // Initialize push notifications and request permissions
+
+      // Initialize WebSocket service
+      await _initializeWebSocketService(flutterLocalNotificationsPlugin);
+    });
+  }
+
+  @override
+  void dispose() {
+    _webSocketService?.disconnect();
+    super.dispose();
+  }
+
+  void updateIsChatting(bool value) {
+    setState(() {
+      isChatting = value;
+    });
+  }
+
+  Future<void> _initializeWebSocketService(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    _webSocketService = WebSocketService(
+      onReceiveMessage: (data) {
+        setState(() {
+          Chat? chatToUpdate = chats.firstWhere(
+            (chat) => chat.id == data['chat_id'],
+          );
+          chatToUpdate.messages.add(
+            Sms(
+              message: data['message'],
+              ownerId: data['owner_id'],
+              time: data['sended_time'] != null
+                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
+                  : DateTime.now(),
+            ),
+          );
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReady: (data) {},
+      onCreateChat: (data) {
+        setState(() {
+          chats.add(
+            Chat(
+              id: data['chat_id'],
+              messages: [],
+              recipientIds: [
+                Participant(
+                  id: data['recipient_ids'][0],
+                  lastSeen: DateTime.now(),
+                ),
+                Participant(
+                  id: data['recipient_ids'][1],
+                  lastSeen: DateTime.now(),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+      onGetMessages: (data) {
+        setState(() {
+          chats = transformChats(data);
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReadMessage: (data) {},
+      // Handle the askMobileConnection action
+      onAskMobileConnection: (data) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+        Logger().i('AskMobileConnection: $data');
+        _webSocketService?.responseMobileConnection(
+          token!,
+          data['uuid'],
+        );
+      },
+
+      onResponseMobileConnection: (data) {
+        Logger().i('ResponseMobileConnection response: $data');
+      },
+    );
+    await _webSocketService?.connect();
+    _webSocketService?.sendReadyAction();
+    _webSocketService?.getMessages();
   }
 
   final List<int> _navigationStack = [0];
@@ -87,11 +189,12 @@ class DashBoardPageState extends State<DashBoardPage>
       const FilePage(),
       const InformationPersonnel(),
       ChatPage(
-          chats: widget.chats,
-          webSocketService: widget.webSocketService,
-          isChatting: widget.isChatting,
-          scrollController: widget.scrollController,
-          updateIsChatting: widget.updateIsChatting),
+        chats: chats,
+        webSocketService: _webSocketService,
+        isChatting: isChatting,
+        scrollController: _scrollController,
+        updateIsChatting: updateIsChatting,
+      ),
     ];
     // ignore: deprecated_member_use
     return WillPopScope(
@@ -123,11 +226,11 @@ class DashBoardPageState extends State<DashBoardPage>
             CustomBottomBar(
               selectedIndex: _selectedIndex,
               onItemTapped: _onItemTapped,
-              chats: widget.chats,
-              webSocketService: widget.webSocketService,
-              isChatting: widget.isChatting,
-              scrollController: widget.scrollController,
-              updateIsChatting: widget.updateIsChatting,
+              chats: chats,
+              webSocketService: _webSocketService,
+              isChatting: isChatting,
+              scrollController: _scrollController,
+              updateIsChatting: updateIsChatting,
             ),
           ],
         ),

@@ -90,12 +90,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                           PageRouteBuilder<void>(
                             opaque: false,
                             pageBuilder: (BuildContext context, _, __) {
-                              return DashBoardPage(
-                                  chats: widget.chats,
-                                  webSocketService: widget.webSocketService,
-                                  isChatting: widget.isChatting,
-                                  scrollController: widget.scrollController,
-                                  updateIsChatting: widget.updateIsChatting);
+                              return const DashBoardPage();
                             },
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {

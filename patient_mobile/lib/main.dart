@@ -4,8 +4,6 @@ import 'package:edgar_app/screens/landingPage/connexion_page.dart';
 import 'package:edgar_app/screens/simulation/appointement_page.dart';
 import 'package:edgar_app/screens/simulation/confirmation_page.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_app/services/websocket.dart';
-import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_app/screens/simulation/warning_page.dart';
@@ -19,7 +17,6 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:push/push.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -120,11 +117,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  WebSocketService? _webSocketService;
-  List<Chat> chats = [];
-  bool isChatting = false;
-  final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -138,110 +130,11 @@ class _MyAppState extends State<MyApp> {
 
       fetchData();
 
-      // Initialize WebSocket service
-      await _initializeWebSocketService(flutterLocalNotificationsPlugin);
-
       // Show a test notification (optional, remove in production)
       await Future.delayed(const Duration(seconds: 5));
       await showNotification(flutterLocalNotificationsPlugin, "Test",
           "This is a test notification");
     });
-  }
-
-  void updateIsChatting(bool value) {
-    setState(() {
-      isChatting = value;
-    });
-  }
-
-  Future<void> _initializeWebSocketService(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    _webSocketService = WebSocketService(
-      onReceiveMessage: (data) {
-        setState(() {
-          Chat? chatToUpdate = chats.firstWhere(
-            (chat) => chat.id == data['chat_id'],
-          );
-          chatToUpdate.messages.add(
-            Sms(
-              message: data['message'],
-              ownerId: data['owner_id'],
-              time: data['sended_time'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
-                  : DateTime.now(),
-            ),
-          );
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReady: (data) {},
-      onCreateChat: (data) {
-        setState(() {
-          chats.add(
-            Chat(
-              id: data['chat_id'],
-              messages: [],
-              recipientIds: [
-                Participant(
-                  id: data['recipient_ids'][0],
-                  lastSeen: DateTime.now(),
-                ),
-                Participant(
-                  id: data['recipient_ids'][1],
-                  lastSeen: DateTime.now(),
-                ),
-              ],
-            ),
-          );
-        });
-      },
-      onGetMessages: (data) {
-        setState(() {
-          chats = transformChats(data);
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReadMessage: (data) {},
-      // Handle the askMobileConnection action
-      onAskMobileConnection: (data) async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString("token");
-        Logger().i('AskMobileConnection: $data');
-        _webSocketService?.responseMobileConnection(
-          token!,
-          data['uuid'],
-        );
-      },
-
-      onResponseMobileConnection: (data) {
-        Logger().i('ResponseMobileConnection response: $data');
-      },
-    );
-    await _webSocketService?.connect();
-    _webSocketService?.sendReadyAction();
-    _webSocketService?.getMessages();
-  }
-
-  @override
-  void dispose() {
-    _webSocketService?.disconnect();
-    super.dispose();
   }
 
   Future<void> fetchData() async {
@@ -268,12 +161,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const ConnexionPage(),
         '/warning': (context) => const WarningPage(),
         '/chat': (context) => const ChatPage(),
-        '/dashboard': (context) => DashBoardPage(
-            chats: chats,
-            webSocketService: _webSocketService,
-            isChatting: isChatting,
-            scrollController: _scrollController,
-            updateIsChatting: updateIsChatting),
+        '/dashboard': (context) => const DashBoardPage(),
         '/simulation/confirmation': (context) => const ConfirmationPage(),
         '/simulation/intro': (context) => const IntroSimulation(),
         '/simulation/appointement': (context) => const AppointmentPage(),
