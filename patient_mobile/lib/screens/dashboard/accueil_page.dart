@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     await getMedicalFolder().then((value) {
+      
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {

@@ -1,17 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar_pro/2FA/authentication_page.dart';
-import 'package:edgar_pro/2FA/reset_password_pasges.dart';
-import 'package:edgar_pro/services/multiplefa_services.dart';
+import 'package:edgar_app/screens/2fa/authentication_page.dart';
+import 'package:edgar_app/services/account.dart';
+import 'package:edgar_app/services/multiplefa.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class AccountPage extends StatefulWidget {
@@ -24,17 +28,33 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   Map<String, dynamic> enable2fa = {};
+  String birthdate = '';
+  String email = 'Email non renseigné';
 
   @override
   void initState() {
     super.initState();
+    getEmail();
     getInfo();
   }
 
-  void getInfo() async {
+  Future<bool> getInfo() async {
     var tmp = await getEnable2fa();
+    enable2fa = tmp;
+      birthdate = DateFormat('dd/MM/yyyy').format(
+            DateTime.fromMillisecondsSinceEpoch(
+                widget.infoMedical['birthdate'] * 1000));
+    return true;
+  }
+
+  void getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String encodedPayload = token!.split('.')[1];
+        String decodedPayload =
+            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     setState(() {
-      enable2fa = tmp;
+    email = jsonDecode(decodedPayload)["patient"];
     });
   }
 
@@ -53,8 +73,8 @@ class _AccountPageState extends State<AccountPage> {
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Column(
-                  children: [
-                    GestureDetector(
+                        children: [
+                            GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
@@ -81,59 +101,137 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.blue700,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(16),
-                                      topRight: Radius.circular(16),
-                                    ),
+                                padding: const EdgeInsets.all(12),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.blue700,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                          width: 48,
-                                          height: 48,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(50)),
-                                          ),
-                                          child: BoringAvatars(
-                                            name:
-                                                "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
-                                            colors: const [
-                                              AppColors.blue700,
-                                              AppColors.blue200,
-                                              AppColors.blue500
-                                            ],
-                                            type: BoringAvatarsType.beam,
-                                          )),
-                                      const SizedBox(width: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                                ),
+                                child: FutureBuilder(
+                                  future: getInfo(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox(
+                                        height: 48,
+                                        child: Row(
+                                          children: [
+                                            CircularProgressIndicator(
                                               color: AppColors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "Poppins",
+                                              semanticsValue: 'Loading...',
                                             ),
+                                            SizedBox(width: 16),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 80,
+                                                  height: 4,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    backgroundColor:
+                                                        AppColors.blue700,
+                                                    minHeight: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            AppColors.white),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                SizedBox(
+                                                  width: 120,
+                                                  height: 4,
+                                                  child:
+                                                      LinearProgressIndicator(
+                                                    backgroundColor:
+                                                        AppColors.blue700,
+                                                    minHeight: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            AppColors.white),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      return Row(
+                                        children: [
+                                          Container(
+                                              width: 48,
+                                              height: 48,
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.white,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(50)),
+                                              ),
+                                              child: BoringAvatars(
+                                                name:
+                                                    "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
+                                                colors: const [
+                                                  AppColors.blue700,
+                                                  AppColors.blue200,
+                                                  AppColors.blue500
+                                                ],
+                                                type: BoringAvatarsType.beam,
+                                              )),
+                                          const SizedBox(width: 16),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: "Poppins",
+                                                ),
+                                              ),
+                                              if (widget.infoMedical['sex'] ==
+                                                      "MALE" ||
+                                                  widget.infoMedical['sex'] ==
+                                                      'OTHER') ...[
+                                                Text(
+                                                  'Né le $birthdate',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.white,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                )
+                                              ] else ...[
+                                                Text(
+                                                  'Née le $birthdate',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.white,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                )
+                                              ]
+                                            ],
                                           ),
                                         ],
-                                      ),
-                                    ],
-                                  )),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                               Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
@@ -167,7 +265,7 @@ class _AccountPageState extends State<AccountPage> {
                                         },
                                         type: 'Only',
                                         outlineIcon: Text(
-                                          widget.infoMedical["email"],
+                                          email,
                                           style: const TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 12,
@@ -181,15 +279,7 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
                                       onTap: () {
-                                         Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return const ResetPasswordPage();
-                                            },
-                                          ),
-                                        );
+                                        Navigator.pop(context);
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -283,18 +373,120 @@ class _AccountPageState extends State<AccountPage> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Gestion du Compte',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue100,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    NavbarPLusTab(
+                                      title: 'Désactiver le compte',
+                                      onTap: () {
+                                        Logger().d(enable2fa['secret']);
+                                        final model =
+                                            Provider.of<BottomSheetModel>(
+                                                context,
+                                                listen: false);
+                                        model.resetCurrentIndex();
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Consumer<BottomSheetModel>(
+                                              builder: (context, model, child) {
+                                                return ListModal(
+                                                    model: model,
+                                                    children: [
+                                                      modalDisableAccount(
+                                                          context),
+                                                    ]);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                      type: 'Only',
+                                    ),
+                                    Container(
+                                      color: AppColors.blue100,
+                                      height: 1,
+                                    ),
+                                    NavbarPLusTab(
+                                      title: 'Supprimer le compte',
+                                      color: AppColors.grey300,
+                                      onTap: () {
+                                      },
+                                      type: 'Only',
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ],
                       ),
                     )
-                  ],
                 ),
-              )),
-        ),
-      ),
-    );
+              )));
   }
+}
+
+Widget modalDisableAccount(BuildContext context) {
+  return ModalContainer(
+    title: 'Désactiver le compte',
+    subtitle:
+        'Vous êtes sur le point de désactiver votre compte. Vous ne pourrez plus accéder à votre compte.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.person_x_fill,
+        color: AppColors.red600,
+        size: 17,
+      ),
+      type: ModalType.error,
+    ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Désactiver le compte'),
+          onPressed: () {
+              disableAccount().then((value) {
+                Navigator.pop(context);
+              });
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+    );
 }
 
 Widget modalReNewBackup(BuildContext context) {
@@ -349,7 +541,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
 
   Future<bool> getbackupcode() async {
     var tmp = await generateBackupCode();
-      backupCodes = tmp;
+     backupCodes = tmp;
     return true;
   }
 
