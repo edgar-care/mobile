@@ -1,14 +1,28 @@
+import 'package:edgar/colors.dart';
+import 'package:edgar_pro/main.dart';
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:animations/animations.dart';
 import 'package:edgar_pro/screens/dashboard/chat_page.dart';
+import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
+import 'package:edgar_pro/screens/dashboard/document_page.dart';
+import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
+import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
+import 'package:edgar_pro/services/web_socket_services.dart';
+import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class DashBoard extends StatefulWidget {
-  const DashBoard({super.key});
+  const DashBoard({
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,6 +34,10 @@ class _DashBoardState extends State<DashBoard> {
   int _previousIndex = 0;
   String _id = "";
   final List<int> _navigationStack = [0];
+  WebSocketService? _webSocketService;
+  List<Chat> chats = [];
+  bool isChatting = false;
+  final ScrollController _scrollController = ScrollController();
 
   void updateSelectedIndex(int index) {
     setState(() {
@@ -44,6 +62,92 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Initialize notifications
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          await initializeFlutterLocalNotifications();
+
+      // Initialize push notifications and request permissions
+
+      // Initialize WebSocket service
+      await _initializeWebSocketService(flutterLocalNotificationsPlugin);
+    });
+  }
+
+  void updateIsChatting(bool value) {
+    setState(() {
+      isChatting = value;
+    });
+  }
+
+  Future<void> _initializeWebSocketService(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    _webSocketService = WebSocketService(
+      onReceiveMessage: (data) {
+        setState(() {
+          Chat? chatToUpdate = chats.firstWhere(
+            (chat) => chat.id == data['chat_id'],
+          );
+          chatToUpdate.messages.add(
+            Sms(
+              message: data['message'],
+              ownerId: data['owner_id'],
+              time: data['sended_time'] != null
+                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
+                  : DateTime.now(),
+            ),
+          );
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReady: (data) {},
+      onGetMessages: (data) {
+        setState(() {
+          chats = transformChats(data);
+        });
+        if (isChatting) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          });
+        }
+      },
+      onReadMessage: (data) {},
+      // Handle the askMobileConnection action
+      onAskMobileConnection: (data) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+        Logger().i('AskMobileConnection: $data');
+        _webSocketService?.responseMobileConnection(
+          token!,
+          data['uuid'],
+        );
+      },
+
+      onResponseMobileConnection: (data) {
+        Logger().i('ResponseMobileConnection response: $data');
+      },
+    );
+    await _webSocketService?.connect();
+    _webSocketService?.sendReadyAction();
+    _webSocketService?.getMessages();
+  }
+
+  @override
+  void dispose() {
+    _webSocketService?.disconnect();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -80,7 +184,33 @@ class _DashBoardState extends State<DashBoard> {
         tapped: _onItemTapped,
       ),
       const Diagnostic(),
-      const ChatPageDashBoard(),
+      ChatPageDashBoard(
+          chats: chats,
+          webSocketService: _webSocketService,
+          scrollController: _scrollController),
+      const Text('Aide',
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.blue950)),
+      PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
+      PatientPageRdv(
+        id: getId(),
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      DocumentPage(
+        id: _id,
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
+      ChatPatient(
+          id: getId(),
+          setPages: updateSelectedIndex,
+          setId: updateId,
+          chats: chats,
+          webSocketService: _webSocketService,
+          scrollController: _scrollController),
     ];
 
     // ignore: deprecated_member_use

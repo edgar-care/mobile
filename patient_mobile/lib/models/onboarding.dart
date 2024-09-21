@@ -838,8 +838,6 @@ class _Onboarding3State extends State<Onboarding3> {
                       return const Center(
                         child: Expanded(
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(AppColors.blue700),
                             strokeWidth: 2,
                             backgroundColor: AppColors.white,
                           ),
