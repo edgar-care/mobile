@@ -1,13 +1,29 @@
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:edgar/colors.dart';
 
+// ignore: must_be_immutable
 class CustomBottomBar extends StatefulWidget {
   final void Function(int) onItemTapped;
   final int selectedIndex;
-  const CustomBottomBar(
-      {super.key, required this.onItemTapped, required this.selectedIndex});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  bool isChatting;
+  final List<Chat> chats;
+  void Function(bool) updateIsChatting;
+  CustomBottomBar(
+      {super.key,
+      required this.onItemTapped,
+      required this.selectedIndex,
+      required this.chats,
+      required this.webSocketService,
+      required this.isChatting,
+      required this.scrollController,
+      required this.updateIsChatting});
 
   @override
   State<CustomBottomBar> createState() => _CustomBottomBarState();
@@ -82,6 +98,11 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                       return NavbarPLus(
                         onItemTapped: widget.onItemTapped,
                         context: context,
+                        webSocketService: widget.webSocketService,
+                        isChatting: widget.isChatting,
+                        chats: widget.chats,
+                        scrollController: widget.scrollController,
+                        updateIsChatting: widget.updateIsChatting,
                       );
                     },
                     transitionsBuilder:

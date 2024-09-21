@@ -81,6 +81,7 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
     headers: {'Authorization': 'Bearer $token'},
     body: jsonEncode(traitement),
   );
+  Logger().i(response.statusCode);
   if (response.statusCode == 201) {
     return true;
   } else {

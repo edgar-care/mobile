@@ -59,15 +59,13 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching name",
-            context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
         return 'test';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-          message: "Error on fetching name",
-          context: context));
+      ScaffoldMessenger.of(context).showSnackBar(
+          ErrorSnackBar(message: "Error on fetching name", context: context));
       return 'test';
     }
     return 'Dr.Edgar'; // default return value if no doctor matches
