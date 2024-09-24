@@ -71,7 +71,11 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
               text: 'Agenda',
             ),
             NavBarItem(
-              color: widget.selectedIndex == 2
+              color: widget.selectedIndex == 2 ||
+                      widget.selectedIndex == 5 ||
+                      widget.selectedIndex == 6 ||
+                      widget.selectedIndex == 3 ||
+                      widget.selectedIndex == 4
                   ? AppColors.blue800
                   : AppColors.grey500,
               icon: "assets/images/utils/sante.svg",
