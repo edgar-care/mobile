@@ -634,6 +634,7 @@ class _onboarding2State extends State<Onboarding2> {
                         "weight": int.parse(weight) * 100,
                         "height": int.parse(height),
                         "primary_doctor_id": primaryDoctorId,
+                        "family_members_med_info_id": [],
                         "medical_antecedents": [],
                       };
 
@@ -942,6 +943,7 @@ class _Onboarding3State extends State<Onboarding3> {
                     "weight": int.parse(weight) * 100,
                     "height": int.parse(height),
                     "primary_doctor_id": primaryDoctorId,
+                    "family_members_med_info_id": [],
                     "medical_antecedents": traitments,
                   };
 
