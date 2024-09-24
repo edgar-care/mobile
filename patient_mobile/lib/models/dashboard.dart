@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:edgar_app/main.dart';
+import 'package:edgar_app/screens/dashboard/sante_page.dart';
 import 'package:edgar_app/screens/dashboard/traitement_page.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
@@ -185,6 +186,9 @@ class DashBoardPageState extends State<DashBoardPage>
     final List<Widget> widgetOptions = <Widget>[
       const HomePage(),
       const GestionRendezVous(),
+      SantePage(
+        onItemTapped: _onItemTapped,
+      ),
       const TraitmentPage(),
       const FilePage(),
       const InformationPersonnel(),
