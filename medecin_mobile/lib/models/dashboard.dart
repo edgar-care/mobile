@@ -145,7 +145,7 @@ class _DashBoardState extends State<DashBoard> {
           return Consumer<BottomSheetModel>(
             builder: (context, model, child) {
               return ListModal(model: model, children: [
-                faWSModal(_webSocketService!, token!, data),
+                faWSModal(_webSocketService!, token!, data, context),
               ]);
             },
           );
@@ -265,7 +265,7 @@ class _DashBoardState extends State<DashBoard> {
   }
 }
 
-Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data) {
+Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, BuildContext context) {
   return ModalContainer(
     title: 'Tentative de connexion',
     subtitle: 'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
@@ -287,6 +287,7 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data) {
               data['uuid'],
               true
             );
+            Navigator.pop(context);
           },
         ),
         const SizedBox(height: 8),
@@ -301,6 +302,7 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data) {
               data['uuid'],
               false
             );
+            Navigator.pop(context);
           },
         ),
       ],
