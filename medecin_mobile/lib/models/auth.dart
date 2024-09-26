@@ -24,18 +24,18 @@ class _AuthState extends State<Auth> {
   @override
   void initState() {
     super.initState();
-    //checkConnectivity();
+    checkConnectivity();
   }
 
-  // Future<void> checkConnectivity() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('token');
-  //   if (token != null) {
-  //     // ignore: use_build_context_synchronously
-  //     Navigator.pushNamed(context, '/dashboard');
-  //   }
-  //   FlutterNativeSplash.remove();
-  // }
+  Future<void> checkConnectivity() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/dashboard');
+    }
+    FlutterNativeSplash.remove();
+  }
 
   @override
   Widget build(BuildContext context) {

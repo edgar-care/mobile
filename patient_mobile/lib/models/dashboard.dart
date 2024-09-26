@@ -128,11 +128,23 @@ class DashBoardPageState extends State<DashBoardPage>
       onAskMobileConnection: (data) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
-        Logger().i('AskMobileConnection: $data');
-        _webSocketService?.responseMobileConnection(
-          token!,
-          data['uuid'],
-        );
+        final model =
+          Provider.of<BottomSheetModel>(context, listen: false);
+      model.resetCurrentIndex();
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) {
+          return Consumer<BottomSheetModel>(
+            builder: (context, model, child) {
+              return ListModal(model: model, children: [
+                faWSModal(_webSocketService!, token!, data),
+              ]);
+            },
+          );
+        },
+      );
       },
 
       onResponseMobileConnection: (data) {
@@ -240,3 +252,45 @@ class DashBoardPageState extends State<DashBoardPage>
 }
 
 // ignore: must_be_immutable
+Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data) {
+  return ModalContainer(
+    title: 'Tentative de connexion',
+    subtitle: 'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
+    icon: const Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text('Autoriser'),
+          onPressed: () {
+            Logger().i('AskMobileConnection: $data');
+            ws.responseMobileConnection(
+              token,
+              data['uuid'],
+              true
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Refuser'),
+          onPressed: () {
+            Logger().i('AskMobileConnection: $data');
+            ws.responseMobileConnection(
+              token,
+              data['uuid'],
+              false
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
