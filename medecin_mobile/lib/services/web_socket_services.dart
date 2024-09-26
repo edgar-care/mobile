@@ -50,6 +50,7 @@ class WebSocketService {
       Logger().e('WebSocket Error: $error');
     }, onDone: () {
       Logger().i('WebSocket connection closed');
+      connect();
     });
 
     sendReadyAction();
@@ -129,10 +130,10 @@ class WebSocketService {
   void responseMobileConnection(String patientAuthTokenWS, String uuid) {
     Logger().i('ResponseMobileConnection: $patientAuthTokenWS, $uuid');
     final responseMobileConnection = jsonEncode({
-      'action': 'responseMobileConnection ',
+      'action': 'responseMobileConnection',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
-      "response": true,
+      "response": false,
     });
     _channel?.sink.add(responseMobileConnection);
   }
@@ -159,6 +160,8 @@ class WebSocketService {
       case 'read_message':
         onReadMessage?.call(decodedMessage);
         break;
+      default:
+        Logger().i('Unknown action: $decodedMessage');
     }
   }
 }

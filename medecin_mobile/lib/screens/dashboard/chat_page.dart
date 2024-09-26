@@ -32,6 +32,13 @@ class ChatState extends State<ChatPageDashBoard> {
   String id = "";
   String patientName = "";
 
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -41,9 +48,9 @@ class ChatState extends State<ChatPageDashBoard> {
         String encodedPayload = token.split('.')[1];
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+        prefs.setString('id', jsonDecode(decodedPayload)["id"]);
         setState(() {
-          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+          idDoctor = jsonDecode(decodedPayload)["id"];
         });
       } catch (e) {
         Logger().e('Error decoding token: $e');
@@ -68,12 +75,6 @@ class ChatState extends State<ChatPageDashBoard> {
       chatSelected = chat;
       patientName = patientname!;
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.webSocketService?.disconnect();
   }
 
   @override

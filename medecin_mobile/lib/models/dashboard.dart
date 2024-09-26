@@ -7,6 +7,7 @@ import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
@@ -144,12 +145,6 @@ class _DashBoardState extends State<DashBoard> {
     _webSocketService?.getMessages();
   }
 
-  @override
-  void dispose() {
-    _webSocketService?.disconnect();
-    super.dispose();
-  }
-
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
       setState(() {
@@ -183,6 +178,8 @@ class _DashBoardState extends State<DashBoard> {
       Services(
         tapped: _onItemTapped,
       ),
+      Patient(setPages: updateSelectedIndex,
+        setId: updateId,),
       const Diagnostic(),
       ChatPageDashBoard(
           chats: chats,
