@@ -37,7 +37,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       left: 16,
       right: 16,
       child: Container(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 8),
+        padding: const EdgeInsets.only(left: 26, right: 26, top: 16, bottom: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),

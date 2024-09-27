@@ -1,5 +1,4 @@
 import 'package:edgar/colors.dart';
-import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -46,6 +45,7 @@ class _SantePageState extends State<SantePage> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
+            color: AppColors.white,
             border: Border.all(
               color: AppColors.blue200,
               style: BorderStyle.solid,
@@ -54,7 +54,6 @@ class _SantePageState extends State<SantePage> {
           ),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
                   widget.onItemTapped(5);
@@ -77,16 +76,27 @@ class _SantePageState extends State<SantePage> {
                                 height: 16,
                               ),
                               const SizedBox(width: 12),
-                              const CustomText(
-                                txt: 'Mon dossier médical',
-                                txtStyles: TxtStyles.md,
-                              ),
+                              const Text(
+                                "Mon dossier médical",
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
                             ],
                           ),
                           const SizedBox(height: 4),
-                          const CustomText(
-                              txt: "Informations personnelles et médicales",
-                              txtStyles: TxtStyles.sm)
+                          const Text(
+                            "Informations personnelles et médicales",
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                         ],
                       ),
                       SvgPicture.asset(
@@ -126,16 +136,27 @@ class _SantePageState extends State<SantePage> {
                                 height: 16,
                               ),
                               const SizedBox(width: 12),
-                              const CustomText(
-                                txt: 'Mes traitements',
-                                txtStyles: TxtStyles.md,
-                              ),
+                              const Text(
+                                "Mes traitements",
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
                             ],
                           ),
                           const SizedBox(height: 4),
-                          const CustomText(
-                              txt: "Traitements en cours et passés",
-                              txtStyles: TxtStyles.sm)
+                          const Text(
+                            "Traitements en cours et passés",
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                         ],
                       ),
                       SvgPicture.asset(
@@ -175,16 +196,27 @@ class _SantePageState extends State<SantePage> {
                                 height: 16,
                               ),
                               const SizedBox(width: 12),
-                              const CustomText(
-                                txt: 'Mes documents',
-                                txtStyles: TxtStyles.md,
-                              ),
+                              const Text(
+                                "Mes documents",
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
                             ],
                           ),
                           const SizedBox(height: 4),
-                          const CustomText(
-                              txt: "Documents personnels et médicaux",
-                              txtStyles: TxtStyles.sm)
+                          const Text(
+                            "Documents personnels et médicaux",
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                         ],
                       ),
                       SvgPicture.asset(
@@ -224,16 +256,27 @@ class _SantePageState extends State<SantePage> {
                                 height: 16,
                               ),
                               const SizedBox(width: 12),
-                              const CustomText(
-                                txt: 'Ma messagerie',
-                                txtStyles: TxtStyles.md,
-                              ),
+                              const Text(
+                                "Ma messagerie",
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
                             ],
                           ),
                           const SizedBox(height: 4),
-                          const CustomText(
-                              txt: "Echangez avec les personnels de santé",
-                              txtStyles: TxtStyles.sm)
+                          const Text(
+                            "Echangez avec les personnels de santé",
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                         ],
                       ),
                       SvgPicture.asset(
