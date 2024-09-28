@@ -479,7 +479,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   Buttons(
                     variant: Variant.primary,
                     size: SizeButton.md,
-                    msg: const Text('Activer l\'authentification'),
+                    msg: const Text('Confirmer'),
                     onPressed: () {
                       Navigator.pop(context);
                     },
