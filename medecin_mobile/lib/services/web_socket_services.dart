@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -31,13 +30,11 @@ class WebSocketService {
     await _retrieveToken();
 
     if (authToken == null) {
-      Logger().e('Auth token is null');
       return;
     }
 
     final url = dotenv.env['WEBSOCKET_URL'];
     if (url == null) {
-      Logger().e('WebSocket URL not found in environment variables');
       return;
     }
 
@@ -47,9 +44,7 @@ class WebSocketService {
     _channel?.stream.listen((message) {
       _handleMessage(message);
     }, onError: (error) {
-      Logger().e('WebSocket Error: $error');
     }, onDone: () {
-      Logger().i('WebSocket connection closed');
     });
 
     sendReadyAction();
@@ -127,7 +122,6 @@ class WebSocketService {
   }
 
   void responseMobileConnection(String patientAuthTokenWS, String uuid) {
-    Logger().i('ResponseMobileConnection: $patientAuthTokenWS, $uuid');
     final responseMobileConnection = jsonEncode({
       'action': 'responseMobileConnection ',
       'authToken': patientAuthTokenWS,

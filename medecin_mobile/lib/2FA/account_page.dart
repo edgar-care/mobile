@@ -10,7 +10,6 @@ import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -247,7 +246,6 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
                                       onTap: () {
-                                        Logger().d(enable2fa['secret']);
                                         final model =
                                             Provider.of<BottomSheetModel>(
                                                 context,

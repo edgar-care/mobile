@@ -5,7 +5,6 @@ import 'package:download_file/download_file.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:logger/logger.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar_app/services/get_files.dart';
 import 'package:provider/provider.dart';
@@ -248,7 +247,6 @@ class _OpenPatientState extends State<OpenPatient> {
                 ),
               ),
             );
-            Logger().i('Downloaded');
           },
         ),
         const SizedBox(

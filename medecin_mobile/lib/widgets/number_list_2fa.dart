@@ -1,6 +1,5 @@
 import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class FieldNumberList2FA extends StatefulWidget {
@@ -36,7 +35,6 @@ class _FieldNumberList2FAState extends State<FieldNumberList2FA> {
                   focusNodes[index + 1].requestFocus();
                   widget.addCode('ADD', value);
                 } else if (value.isEmpty && index > 0) {
-                  Logger().i('Backspace on index ${index - 1}');
                   focusNodes[index].unfocus();
                   focusNodes[index - 1].requestFocus();
                   widget.addCode('DELETE', '');

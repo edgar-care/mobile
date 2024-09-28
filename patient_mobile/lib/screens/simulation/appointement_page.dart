@@ -9,7 +9,6 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppointmentPage extends StatefulWidget {
@@ -49,7 +48,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         await fetchAppointments(currentPage); // Start fetching from page 1
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      // catch clauses
     } finally {
       setState(() {
         isLoading = false;
@@ -104,13 +103,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
         addAppointmentFromResponse(id, value);
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      // catch clauses
     }
   }
 
   void addEmptyAppointment(String id) {
     Doctor? doctor = findDoctorById(doctorsTemp, id);
-    Logger().i("Doctor: ${doctor?.address.city}");
     Appointment appointment = Appointment(
       doctor:
           (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
@@ -140,7 +138,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
   void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
     Appointment? appointment = transformAppointments(doctorsTemp, value);
 
-    Logger().i("Appointment: $appointment");
     if (appointment != null) {
       setState(() {
         appointments.add(appointment);
@@ -154,7 +151,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
     setState(() {
       selectedId = (selectedId == id) ? '' : id;
     });
-    Logger().i("Selected id: $selectedId");
   }
 
   void filterDoctors(String name) {
@@ -245,7 +241,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       String? sessionId = prefs.getString('sessionId');
-                      Logger().i("session_id: $sessionId");
 
                       await postAppointementId(selectedId, sessionId!).then(
                         (value) {

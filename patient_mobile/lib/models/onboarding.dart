@@ -10,7 +10,6 @@ import 'package:edgar_app/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:provider/provider.dart';
@@ -1112,7 +1111,6 @@ class _InfoTreatmentState extends State<InfoTreatment> {
       }
       return true;
     } catch (e) {
-      Logger().e("Error fetching data: $e");
       return false;
     }
   }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -16,7 +15,6 @@ Future<bool> postAppointementId(String id, String sessionId) async {
     body: body,
   );
   if (response.statusCode == 201) {
-    Logger().i('response: ${response.body}');
     var body = jsonDecode(response.body);
     prefs.setString('appointment_doctor_id', body['rdv']['doctor_id']);
     prefs.setString(
@@ -24,7 +22,6 @@ Future<bool> postAppointementId(String id, String sessionId) async {
     prefs.setString('appointment_end_date', body['rdv']['end_date'].toString());
     return true;
   } else {
-    Logger().e('error: ${response.body}');
     return false;
   }
 }
@@ -41,11 +38,9 @@ Future<Map<String, dynamic>> getAppoitementDoctorById(String id) async {
   );
 
   if (response.statusCode == 201) {
-    Logger().i('response: ${response.body}');
     final body = jsonDecode(response.body);
     return body;
   } else {
-    Logger().e('error: ${response.body}');
     return {};
   }
 }

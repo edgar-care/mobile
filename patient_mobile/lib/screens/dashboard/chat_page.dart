@@ -9,7 +9,6 @@ import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:edgar_app/widget/card_conversation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -72,7 +71,6 @@ class _ChatPageState extends State<ChatPage> {
           idPatient = jsonDecode(decodedPayload)['patient']["id"];
         });
       } catch (e) {
-        Logger().e('Error: $e');
       }
     } else {}
   }
@@ -85,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
         doctorname = getDoctorName(chat);
       });
     } else {
-      Logger().e('Error: Chat is null');
     }
   }
 

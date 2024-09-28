@@ -5,7 +5,6 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/widget/card_filter_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:edgar_app/services/get_files.dart';
 import 'package:edgar_app/widget/card_document.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,7 +51,6 @@ class _FilePageState extends State<FilePage> {
   }
 
   void updateData() async {
-    Logger().i('Updating data');
     var tmp = await getAllDocument();
     setState(() {
       files = tmp;
@@ -610,7 +608,6 @@ class AddDocument extends StatefulWidget {
 }
 
 class _AddDocumentState extends State<AddDocument> {
-  final Logger _logger = Logger();
   String dropdownValue = 'Général';
   String dropdownValue2 = 'Ordonnance';
   File? fileSelected;
@@ -628,10 +625,8 @@ class _AddDocumentState extends State<AddDocument> {
     if (file != null) {
       setState(() {
         fileSelected = File(file.files.single.path!);
-        _logger.d('File selected: ${fileSelected!.path}');
       });
     } else {
-      _logger.d('No file selected.');
     }
   }
 
@@ -760,7 +755,6 @@ class _AddDocumentState extends State<AddDocument> {
                       onChanged: (String? newValue) {
                         setState(() {
                           dropdownValue = newValue!;
-                          _logger.d('Dropdown 1: $dropdownValue');
                         });
                       },
                       items: <String>[
@@ -814,7 +808,6 @@ class _AddDocumentState extends State<AddDocument> {
                       onChanged: (String? newValue) {
                         setState(() {
                           dropdownValue2 = newValue!;
-                          _logger.d('Dropdown 2: $dropdownValue2');
                         });
                       },
                       items: <String>[
@@ -859,7 +852,6 @@ class _AddDocumentState extends State<AddDocument> {
               msg: const Text('Ajouter'),
               onPressed: () {
                 if (fileSelected != null) {
-                  _logger.d('Add button pressed with file selected.');
                   postDocument(
                     dropdownValue,
                     dropdownValue2,

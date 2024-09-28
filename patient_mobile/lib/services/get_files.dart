@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllDocument() async {
@@ -15,13 +14,11 @@ Future<List<Map<String, dynamic>>> getAllDocument() async {
       .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
   if (response.statusCode == 200) {
     final body = response.body;
-    Logger().i('Documents fetched');
     if (jsonDecode(body)["document"] == null) {
       return [];
     }
     return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
   } else {
-    Logger().e(response.statusCode);
     return [];
   }
 }
@@ -40,7 +37,6 @@ Future<Object?> changeFavorite(String id) async {
     final body = response.body;
     return jsonDecode(body);
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -58,7 +54,6 @@ Future<Object?> deleteFavory(String id) async {
     final body = response.body;
     return jsonDecode(body);
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -91,14 +86,10 @@ Future<bool> postDocument(
 
   final response = await request.send();
   if (response.statusCode == 200) {
-    Logger().i('Document uploaded');
-    final body = await response.stream.bytesToString();
-    Logger().i(body);
+    await response.stream.bytesToString();
     return true;
   } else {
-    final body = await response.stream.bytesToString();
-    Logger().e(body);
-    Logger().e(response.statusCode);
+    await response.stream.bytesToString();
     return false;
   }
 }
@@ -117,7 +108,6 @@ Future<Object?> deleteDocument(String id) async {
     final body = response.body;
     return jsonDecode(body);
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -137,7 +127,6 @@ Future<Object?> modifyDocument(String id, String name) async {
     final body = response.body;
     return jsonDecode(body);
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
