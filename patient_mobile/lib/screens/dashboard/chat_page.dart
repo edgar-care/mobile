@@ -71,6 +71,7 @@ class _ChatPageState extends State<ChatPage> {
           idPatient = jsonDecode(decodedPayload)['patient']["id"];
         });
       } catch (e) {
+        // catch clauses
       }
     } else {}
   }
