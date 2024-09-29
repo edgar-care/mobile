@@ -348,7 +348,6 @@ class _AccountPageState extends State<AccountPage> {
                                   NavbarPLusTab(
                                     title: 'Codes de sauvegarde',
                                     onTap: () {
-                                      Logger().d(enable2fa['secret']);
                                       final model =
                                           Provider.of<BottomSheetModel>(context,
                                               listen: false);
@@ -407,7 +406,6 @@ class _AccountPageState extends State<AccountPage> {
                                   NavbarPLusTab(
                                     title: 'Désactiver le compte',
                                     onTap: () {
-                                      Logger().d(enable2fa['secret']);
                                       final model =
                                           Provider.of<BottomSheetModel>(context,
                                               listen: false);
