@@ -19,7 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class DoubleAuthentication extends StatefulWidget {
-  const DoubleAuthentication({super.key});
+  Function refreshAccount;
+  DoubleAuthentication({super.key, required this.refreshAccount});
 
   @override
   State<DoubleAuthentication> createState() => _DoubleAuthenticationState();
@@ -38,6 +39,12 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
     super.initState();
     loadInfo();
     load2fa();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.refreshAccount();
   }
 
   void load2fa() async {
