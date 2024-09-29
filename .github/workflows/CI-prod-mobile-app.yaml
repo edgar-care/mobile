@@ -1,6 +1,7 @@
 name: Mobile CI Prod App Edgar
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
