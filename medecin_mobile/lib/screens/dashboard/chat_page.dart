@@ -1,16 +1,25 @@
 import 'dart:convert';
 import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Chat/chat_list.dart';
 import 'package:edgar_pro/widgets/Chat/chat_page.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class ChatPageDashBoard extends StatefulWidget {
-  const ChatPageDashBoard({super.key});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  final List<Chat> chats;
+  
+  ChatPageDashBoard({
+    super.key,
+    required this.chats,
+    required this.webSocketService,
+    required this.scrollController,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -18,68 +27,9 @@ class ChatPageDashBoard extends StatefulWidget {
 }
 
 class ChatState extends State<ChatPageDashBoard> {
-  WebSocketService? _webSocketService;
   String idDoctor = '';
-  List<Chat> chats = [];
   String id = "";
   String patientName = "";
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeWebSocketService();
-    fetchData();
-  }
-
-  Future<void> _initializeWebSocketService() async {
-    _webSocketService = WebSocketService(
-      onReceiveMessage: (data) {
-        setState(() {
-          Chat? chatToUpdate = chats.firstWhere(
-            (chat) => chat.id == data['chat_id'],
-          );
-          chatToUpdate.messages.add(
-            Message(
-              message: data['message'],
-              ownerId: data['owner_id'],
-              time: data['sended_time'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(data['sended_time'])
-                  : DateTime.now(),
-            ),
-          );
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReady: (data) {},
-      onGetMessages: (data) {
-        setState(() {
-          chats = transformChats(data);
-        });
-        if (isChatting) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          });
-        }
-      },
-      onReadMessage: (data) {},
-    );
-    await _webSocketService?.connect();
-    _webSocketService?.sendReadyAction();
-    _webSocketService?.getMessages();
-  }
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -95,10 +45,9 @@ class ChatState extends State<ChatPageDashBoard> {
           idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
         });
       } catch (e) {
-        Logger().e('Error decoding token: $e');
+        // catch clauses
       }
     } else {
-      Logger().w('Token is null or empty');
     }
   }
 
@@ -122,7 +71,7 @@ class ChatState extends State<ChatPageDashBoard> {
   @override
   void dispose() {
     super.dispose();
-    _webSocketService?.disconnect();
+    widget.webSocketService?.disconnect();
   }
 
   @override
@@ -135,13 +84,13 @@ class ChatState extends State<ChatPageDashBoard> {
               Expanded(
                 child: ChatPage(
                   onClick: setChatting,
-                  webSocketService: _webSocketService,
-                  chat: chats.firstWhere(
+                  webSocketService: widget.webSocketService,
+                  chat: widget.chats.firstWhere(
                     (chat) => chat.id == chatSelected!.id,
                   ),
                   patientName: patientName,
                   doctorId: idDoctor,
-                  controller: _scrollController,
+                  controller: widget.scrollController,
                 ),
               ),
             ],
@@ -180,8 +129,8 @@ class ChatState extends State<ChatPageDashBoard> {
               ),
               ChatList(
                 onClick: setChatting,
-                webSocketService: _webSocketService!,
-                chats: chats,
+                webSocketService: widget.webSocketService!,
+                chats: widget.chats,
               ),
             ],
           ],

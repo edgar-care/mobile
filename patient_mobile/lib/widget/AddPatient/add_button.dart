@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
+import 'package:edgar/colors.dart';
 
 class AddButton extends StatefulWidget {
   final Function()? onTap;

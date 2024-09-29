@@ -1,18 +1,38 @@
-import 'package:edgar/models/dashboard.dart';
-import 'package:edgar/services/get_information_patient.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/snackbar.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:edgar_app/models/dashboard.dart';
+import 'package:edgar_app/screens/2fa/account_page.dart';
+import 'package:edgar_app/screens/2fa/devices_page.dart';
+import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
+import 'package:edgar_app/services/websocket.dart';
+import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 
+// ignore: must_be_immutable
 class NavbarPLus extends StatefulWidget {
   final void Function(int) onItemTapped;
   final BuildContext context;
-  const NavbarPLus(
-      {super.key, required this.onItemTapped, required this.context});
+  WebSocketService? webSocketService;
+  // ignore: prefer_final_fields
+  ScrollController scrollController;
+  bool isChatting;
+  final List<Chat> chats;
+  void Function(bool) updateIsChatting;
+  NavbarPLus(
+      {super.key,
+      required this.onItemTapped,
+      required this.context,
+      required this.chats,
+      required this.webSocketService,
+      required this.isChatting,
+      required this.scrollController,
+      required this.updateIsChatting});
 
   @override
   State<NavbarPLus> createState() => _NavbarPLusState();
@@ -32,7 +52,6 @@ class _NavbarPLusState extends State<NavbarPLus> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token == null) {
-      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/login');
     }
   }
@@ -45,8 +64,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorLoginSnackBar(
-            message: "Error on fetching name", context: context));
+        ScaffoldMessenger.of(context).showSnackBar(
+            ErrorSnackBar(message: "Error on fetching name", context: context));
       }
     });
   }
@@ -293,6 +312,83 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   ],
                                 ),
                               ),
+                               const SizedBox(height: 16),
+                              const Text(
+                                "Paramètres du compte",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue200,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    NavbarPLusTab(
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/person-fill.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 18,
+                                      ),
+                                      title: 'Compte',
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return AccountPage(
+                                                infoMedical: infoMedical,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      type: 'Top',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
+                                    ),
+                                    NavbarPLusTab(
+                                      icon: SvgPicture.asset(
+                                        'assets/images/utils/laptop-fill.svg',
+                                        // ignore: deprecated_member_use
+                                        color: AppColors.black,
+                                        height: 18,
+                                      ),
+                                      title: 'Appareils',
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
+                                              return const DevicesPage();
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      type: 'Bottom',
+                                      outlineIcon: SvgPicture.asset(
+                                        'assets/images/utils/chevron-right.svg',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 16),
                               Container(
                                 padding:
@@ -321,8 +417,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                             await SharedPreferences
                                                 .getInstance();
                                         prefs.remove('token');
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pushNamed(context, '/login');
+
+                                        Navigator.pushNamed(context, '/');
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
@@ -345,16 +441,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
 }
 
 class NavbarPLusTab extends StatefulWidget {
-  final Widget icon;
+  final Widget? icon;
   final String title;
   final Function onTap;
   final String type; // Ajout de la propriété type
   final Widget? outlineIcon;
   final Color? color;
+  final bool? isActive;
 
   const NavbarPLusTab(
       {super.key,
-      required this.icon,
+      this.icon,
+      this.isActive,
       required this.title,
       required this.onTap,
       required this.type,
@@ -395,7 +493,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         ),
         child: Row(
           children: [
-            widget.icon,
+             widget.icon ?? const SizedBox.shrink(),
             const SizedBox(width: 16),
             Text(widget.title,
                 style: TextStyle(
@@ -405,6 +503,42 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
                   fontFamily: "Poppins",
                 )),
             const Spacer(),
+            if (widget.isActive != null) ...[
+              widget.isActive!
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.green100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Activée",
+                        style: TextStyle(
+                            color: AppColors.green700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.red100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Désactivée",
+                        style: TextStyle(
+                            color: AppColors.red700,
+                            fontFamily: 'Poppins',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+              const SizedBox(width: 16),
+            ],
             widget.outlineIcon ?? const SizedBox.shrink(),
           ],
         ),

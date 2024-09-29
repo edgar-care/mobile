@@ -1,21 +1,17 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar/services/appointement.dart';
-import 'package:edgar/services/doctor.dart';
-import 'package:edgar/utils/appoitement_utils.dart';
-import 'package:edgar/widget/card_doctor_appoitement.dart';
-import 'package:edgar/widget/field_custom.dart';
-import 'package:edgar/widget/pagination.dart';
-import 'package:edgar/widget/snackbar.dart';
+import 'package:edgar_app/services/appointement.dart';
+import 'package:edgar_app/services/doctor.dart';
+import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
-
-import 'package:edgar/services/get_appointement.dart';
-import 'package:edgar/styles/colors.dart';
-import 'package:edgar/widget/buttons.dart';
+import 'package:provider/provider.dart';
+import 'package:edgar_app/services/get_appointement.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 
 enum RdvFilter {
   aVenir,
@@ -498,30 +494,37 @@ class _CardRdvState extends State<CardRdv> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          WoltModalSheet.show<void>(
-                              context: context,
-                              pageIndexNotifier: pageIndexRDV,
-                              pageListBuilder: (modalSheetContext) {
-                                return [
-                                  openRDV(
-                                    context,
-                                    pageIndexRDV,
-                                    widget.updataData,
-                                  ),
-                                  deleteRDV(
-                                    context,
-                                    pageIndexRDV,
-                                    widget.rdv['id']!,
-                                    widget.updataData,
-                                  ),
-                                  modifyRdv(
-                                    context,
-                                    pageIndexRDV,
-                                    widget.rdv['id']!,
-                                    widget.updataData,
-                                  ),
-                                ];
-                              });
+                          final model = Provider.of<BottomSheetModel>(context,
+                              listen: false);
+                          model.resetCurrentIndex();
+
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return Consumer<BottomSheetModel>(
+                                builder: (context, model, child) {
+                                  return ListModal(
+                                    model: model,
+                                    children: [
+                                      OpenRdv(model: model),
+                                      DeleteRdv(
+                                        updataData: widget.updataData,
+                                        model: model,
+                                        id: widget.rdv['id']!,
+                                      ),
+                                      ModifyRdv(
+                                        id: widget.rdv['id']!,
+                                        updataData: widget.updataData,
+                                        model: model,
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          );
                         },
                         child: const Icon(
                           BootstrapIcons.three_dots_vertical,
@@ -576,171 +579,135 @@ class _CardRdvState extends State<CardRdv> {
   }
 }
 
-final pageIndexRDV = ValueNotifier(0);
-
-WoltModalSheetPage openRDV(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  Function updataData,
-) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          Buttons(
-              variant: Variante.primary,
-              size: SizeButton.sm,
-              msg: const Text('Modifier'),
-              onPressed: () async {
-                pageIndexRDV.value = 2;
-              }),
-          Buttons(
-              variant: Variante.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () {
-                pageIndexRDV.value = 1;
-              }),
-        ],
-      ),
-    ),
-  );
-}
-
-WoltModalSheetPage deleteRDV(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  String id,
-  Function updataData,
-) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.red200,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Icon(
-              BootstrapIcons.x,
-              color: AppColors.red700,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Êtes-vous sûr ?',
-            style: TextStyle(
-              color: AppColors.grey950,
-              fontFamily: 'Poppins',
-              fontSize: 20,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w600,
-              height: null,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Si vous supprimez ce document, ni vous ni votre médecin ne pourrez le consulter.',
-            style: TextStyle(
-              color: AppColors.grey500,
-              fontFamily: 'Poppins',
-              fontSize: 14,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,
-              height: null,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Buttons(
-                  variant: Variante.secondary,
-                  size: SizeButton.sm,
-                  msg: const Text('Annuler'),
-                  onPressed: () {
-                    pageIndexRDV.value = 0;
-                  },
-                  widthBtn: 140),
-              Buttons(
-                variant: Variante.delete,
-                size: SizeButton.sm,
-                msg: const Text('Supprimer'),
-                onPressed: () async {
-                  await deleteAppointementId(id);
-                  // ignore: use_build_context_synchronously
-                  updataData(context);
-                  pageIndexRDV.value = 0;
-                },
-                widthBtn: 140,
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-WoltModalSheetPage modifyRdv(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  String id,
-  Function updataData,
-) {
-  return WoltModalSheetPage(
-      hasTopBarLayer: false,
-      backgroundColor: AppColors.white,
-      hasSabGradient: true,
-      enableDrag: true,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: AppointmentPage(
-            pageIndex: pageIndex,
-            id: id,
-            updataData: updataData,
-          ),
-        ),
-      ));
-}
-
-// ignore: must_be_immutable
-class AppointmentPage extends StatefulWidget {
-  ValueNotifier<int> pageIndex;
-  String id;
-  Function updataData;
-  AppointmentPage(
-      {super.key,
-      required this.pageIndex,
-      required this.id,
-      required this.updataData});
+class OpenRdv extends StatefulWidget {
+  final BottomSheetModel model;
+  const OpenRdv({
+    super.key,
+    required this.model,
+  });
 
   @override
-  State<AppointmentPage> createState() => _AppointmentPageState();
+  State<OpenRdv> createState() => _OpenRdvState();
 }
 
-class _AppointmentPageState extends State<AppointmentPage> {
+class _OpenRdvState extends State<OpenRdv> {
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Mettre à jour les donnée du rendez-vous?",
+      subtitle: "Voulez modifier ou supprimer le rendez-vous",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.$0_circle_fill,
+          color: AppColors.blue700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.sm,
+          msg: const Text('Modifier'),
+          onPressed: () async {
+            widget.model.changePage(2);
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.sm,
+          msg: const Text('Supprimer'),
+          onPressed: () {
+            widget.model.changePage(1);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class DeleteRdv extends StatefulWidget {
+  final Function updataData;
+  final BottomSheetModel model;
+  final String id;
+  const DeleteRdv({
+    super.key,
+    required this.updataData,
+    required this.model,
+    required this.id,
+  });
+
+  @override
+  State<DeleteRdv> createState() => _DeleteRdvState();
+}
+
+class _DeleteRdvState extends State<DeleteRdv> {
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: 'Êtes-vous sûr ?',
+      subtitle:
+          'Si vous supprimez ce document, ni vous ni votre médecin ne pourrez le consulter.',
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
+        ),
+        type: ModalType.error,
+      ),
+      footer: Row(
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                widget.model.changePage(0);
+              },
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variant.delete,
+              size: SizeButton.sm,
+              msg: const Text('Supprimer'),
+              onPressed: () async {
+                await deleteAppointementId(widget.id);
+                widget.updataData(context);
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ModifyRdv extends StatefulWidget {
+  final String id;
+  final Function updataData;
+  final BottomSheetModel model;
+  const ModifyRdv({
+    super.key,
+    required this.id,
+    required this.updataData,
+    required this.model,
+  });
+
+  @override
+  State<ModifyRdv> createState() => _ModifyRdvState();
+}
+
+class _ModifyRdvState extends State<ModifyRdv> {
   List<Appointment> appointments = [];
   List<Map<Doctor, String>> allDoctors = [];
   List<Map<Doctor, String>> filteredDoctors = [];
@@ -770,7 +737,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
         await fetchAppointments(currentPage); // Start fetching from page 1
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     } finally {
       isLoading = false;
     }
@@ -823,13 +790,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
         addAppointmentFromResponse(id, value);
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     }
   }
 
   void addEmptyAppointment(String id) {
     Doctor? doctor = findDoctorById(doctorsTemp, id);
-    Logger().i("Doctor: ${doctor?.address.city}");
     Appointment appointment = Appointment(
       doctor:
           (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
@@ -859,7 +825,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
   void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
     Appointment? appointment = transformAppointments(doctorsTemp, value);
 
-    Logger().i("Appointment: $appointment");
     if (appointment != null) {
       setState(() {
         appointments.add(appointment);
@@ -873,7 +838,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
     setState(() {
       selectedId = (selectedId == id) ? '' : id;
     });
-    Logger().i("Selected id: $selectedId");
   }
 
   void filterDoctors(String name) {
@@ -897,111 +861,109 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          const Text(
-            "Vous pouvez maintenant sélectionner un rendez-vous chez un médecin.",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Poppins',
-              color: AppColors.black,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          const SizedBox(height: 16),
-          CustomFieldSearch(
-            label: "Rechercher par le nom du médecin",
-            icon: SvgPicture.asset("assets/images/utils/search.svg"),
-            keyboardType: TextInputType.text,
-            onValidate: (value) {
-              filterDoctors(value);
-            },
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                    color: AppColors.blue700,
-                    strokeWidth: 2,
-                  )) // Afficher l'indicateur de chargement
-                : ListView.builder(
-                    itemCount: appointments.length,
-                    itemBuilder: (context, index) {
-                      return CardAppointementDoctorHour(
-                        appointements: appointments[index],
-                        updateId: updateSelectedAppointment,
-                        idSelected: selectedId,
-                      );
-                    },
-                  ),
-          ),
-          Pagination(
-            currentPage: currentPage,
-            totalPages: totalPages,
-            onPageChanged: onPageChanged,
-          ),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () async {
-              if (selectedId.isEmpty) {
+    return ModalContainer(
+      title:
+          "Vous pouvez maintenant sélectionner un rendez-vous chez un médecin.",
+      subtitle: "Séléctionner un autre rendez-vous",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.pen_fill,
+          size: 18,
+          color: AppColors.green700,
+        ),
+        type: ModalType.success,
+      ),
+      body: [
+        CustomFieldSearch(
+          label: "Rechercher par le nom du médecin",
+          icon: SvgPicture.asset("assets/images/utils/search.svg"),
+          keyboardType: TextInputType.text,
+          onValidate: (value) {
+            filterDoctors(value);
+          },
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: AppColors.blue700,
+                  strokeWidth: 2,
+                )) // Afficher l'indicateur de chargement
+              : ListView.builder(
+                  itemCount: appointments.length,
+                  itemBuilder: (context, index) {
+                    return CardAppointementDoctorHour(
+                      appointements: appointments[index],
+                      updateId: updateSelectedAppointment,
+                      idSelected: selectedId,
+                    );
+                  },
+                ),
+        ),
+        Pagination(
+          currentPage: currentPage,
+          totalPages: totalPages,
+          onPageChanged: onPageChanged,
+        ),
+      ],
+      footer: GestureDetector(
+        onTap: () async {
+          if (selectedId.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              ErrorSnackBar(
+                message:
+                    "Veuillez sélectionner un rendez-vous avant de continuer.",
+                context: context,
+              ),
+            );
+          } else {
+
+            await putAppoitement(widget.id, selectedId).whenComplete(
+              () {
+                // ignore: use_build_context_synchronously
+                widget.updataData(context);
+                // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
-                  ErrorLoginSnackBar(
-                    message:
-                        "Veuillez sélectionner un rendez-vous avant de continuer.",
+                  SuccessSnackBar(
+                    message: "Rendez-vous validé avec succès.",
+                    // ignore: use_build_context_synchronously
                     context: context,
                   ),
                 );
-              } else {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? sessionId = prefs.getString('sessionId');
-                Logger().i("session_id: $sessionId");
-
-                await putAppoitement(widget.id, selectedId).whenComplete(
-                  () {
-                    widget.updataData(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SuccessLoginSnackBar(
-                        message: "Rendez-vous validé avec succès.",
-                        context: context,
-                      ),
-                    );
-                    widget.pageIndex.value = 0;
-                    Navigator.pop(context);
-                  },
-                );
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.blue700,
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Valider le rendez-vous',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.white,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Icon(
-                    BootstrapIcons.arrow_right_circle_fill,
-                    color: AppColors.white,
-                    size: 24,
-                  ),
-                ],
-              ),
-            ),
+                widget.model.changePage(0);
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              },
+            );
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          decoration: BoxDecoration(
+            color: AppColors.blue700,
+            borderRadius: BorderRadius.circular(32),
           ),
-        ],
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Valider le rendez-vous',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
+              ),
+              SizedBox(width: 16),
+              Icon(
+                BootstrapIcons.arrow_right_circle_fill,
+                color: AppColors.white,
+                size: 24,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

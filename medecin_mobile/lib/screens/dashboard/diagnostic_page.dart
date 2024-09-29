@@ -1,6 +1,6 @@
-import 'package:edgar_pro/styles/colors.dart';
+import 'package:edgar/colors.dart';
 import 'package:edgar_pro/widgets/Diagnostic/card_list.dart';
-import 'package:edgar_pro/widgets/buttons.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 
 class Diagnostic extends StatefulWidget {
@@ -62,12 +62,11 @@ class _DiagnosticState extends State<Diagnostic> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.285,
+                  Flexible(
                     child: Buttons(
                       variant: selected.value == 0
-                          ? Variante.primary
-                          : Variante.secondary,
+                          ? Variant.primary
+                          : Variant.secondary,
                       size: SizeButton.sm,
                       msg: const Text('En attente'),
                       onPressed: () {
@@ -78,12 +77,11 @@ class _DiagnosticState extends State<Diagnostic> {
                   const SizedBox(
                     width: 12,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.285,
+                  Flexible(
                     child: Buttons(
                       variant: selected.value == 1
-                          ? Variante.primary
-                          : Variante.secondary,
+                          ? Variant.primary
+                          : Variant.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Validés'),
                       onPressed: () {
@@ -94,12 +92,11 @@ class _DiagnosticState extends State<Diagnostic> {
                   const SizedBox(
                     width: 12,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.285,
+                  Flexible(
                     child: Buttons(
                       variant: selected.value == 2
-                          ? Variante.primary
-                          : Variante.secondary,
+                          ? Variant.primary
+                          : Variant.secondary,
                       size: SizeButton.sm,
                       msg: const Text('Refusés'),
                       onPressed: () {

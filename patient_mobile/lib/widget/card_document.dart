@@ -1,15 +1,13 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, use_build_context_synchronously
 
 import 'package:download_file/data/models/download_file_options.dart';
 import 'package:download_file/download_file.dart';
-import 'package:edgar/widget/field_custom.dart';
+import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
-import 'package:edgar/styles/colors.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:logger/logger.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
-import 'package:edgar/widget/buttons.dart';
-import 'package:edgar/services/get_files.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar_app/services/get_files.dart';
+import 'package:provider/provider.dart';
 
 enum TypeDeDocument {
   PRESCRIPTION,
@@ -132,33 +130,41 @@ class _CardDocumentState extends State<CardDocument> {
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
-              WoltModalSheet.show<void>(
+              final model =
+                  Provider.of<BottomSheetModel>(context, listen: false);
+              model.resetCurrentIndex();
+
+              showModalBottomSheet(
                 context: context,
-                pageIndexNotifier: pageIndex,
-                pageListBuilder: (modalSheetContext) {
-                  return [
-                    openPatient(
-                      context,
-                      pageIndex,
-                      widget.url,
-                      widget.id,
-                      widget.isfavorite,
-                      widget.nomDocument,
-                    ),
-                    modifierPatient(
-                      context,
-                      pageIndex,
-                      widget.nomDocument,
-                      widget.id,
-                      widget.updatedata,
-                    ),
-                    deletePatient(
-                      context,
-                      pageIndex,
-                      widget.id,
-                      widget.updatedata,
-                    ),
-                  ];
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                        model: model,
+                        children: [
+                          OpenPatient(
+                            id: widget.id,
+                            isfavorite: widget.isfavorite,
+                            model: model,
+                            name: widget.nomDocument,
+                            url: widget.url,
+                          ),
+                          ModifyPatient(
+                            id: widget.id,
+                            model: model,
+                            name: widget.nomDocument,
+                            updatedata: widget.updatedata,
+                          ),
+                          DeletePatient(
+                            id: widget.id,
+                            updatedata: widget.updatedata,
+                          )
+                        ],
+                      );
+                    },
+                  );
                 },
               );
             },
@@ -174,264 +180,229 @@ class _CardDocumentState extends State<CardDocument> {
   }
 }
 
-final pageIndex = ValueNotifier(0);
+// ignore: must_be_immutable
+class OpenPatient extends StatefulWidget {
+  String url;
+  String id;
+  bool isfavorite;
+  String name;
+  BottomSheetModel model;
+  OpenPatient({
+    super.key,
+    required this.id,
+    required this.isfavorite,
+    required this.model,
+    required this.name,
+    required this.url,
+  });
 
-WoltModalSheetPage openPatient(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  String url,
-  String id,
-  bool isfavorite,
-  String name,
-) {
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+  @override
+  State<OpenPatient> createState() => _OpenPatientState();
+}
+
+class _OpenPatientState extends State<OpenPatient> {
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Séléctionner une catégorie",
+      subtitle: "Voulez vous télécharger, modifier, ou supprimer le document",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.download,
+          size: 18,
+          color: AppColors.blue700,
+        ),
+        type: ModalType.info,
+      ),
+      body: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text('Télécharger'),
+          onPressed: () async {
+            DownloadFile.downloadAndSafeFile(
+              downloadFileOptions: DownloadFileOptions(
+                downloadUrl: widget.url,
+                fileName: widget.name,
+              ),
+              context: context,
+              loadingWidget: const Center(
+                child: Column(
+                  children: [
+                    Text(
+                      'Téléchargement en cours...',
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    CircularProgressIndicator(
+                      color: AppColors.blue700,
+                      strokeWidth: 2,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Modifier'),
+          onPressed: () {
+            widget.model.changePage(1);
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Supprimer'),
+          onPressed: () {
+            widget.model.changePage(2);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class ModifyPatient extends StatefulWidget {
+  String name;
+  String id;
+  Function updatedata;
+  BottomSheetModel model;
+  ModifyPatient({
+    super.key,
+    required this.id,
+    required this.model,
+    required this.name,
+    required this.updatedata,
+  });
+
+  @override
+  State<ModifyPatient> createState() => _ModifyPatientState();
+}
+
+class _ModifyPatientState extends State<ModifyPatient> {
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Modifier votre document",
+      subtitle: "Changer le nom de votre document",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.pen_fill,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
+      body: [
+        const Text('Le nouveau nom de votre document'),
+        const SizedBox(
+          width: 8,
+        ),
+        CustomField(
+          label: 'Nom du document',
+          value: widget.name,
+          onChanged: (value) {
+            widget.name = value;
+          },
+          action: TextInputAction.done,
+        ),
+      ],
+      footer: Wrap(
+        spacing: 12,
         children: [
-          Buttons(
-            variant: Variante.primary,
-            size: SizeButton.md,
-            msg: const Text('Télécharger'),
-            onPressed: () async {
-              DownloadFile.downloadAndSafeFile(
-                downloadFileOptions: DownloadFileOptions(
-                  downloadUrl: url,
-                  fileName: name,
-                ),
-                context: context,
-                loadingWidget: const Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Téléchargement en cours...',
-                        style: TextStyle(
-                          color: AppColors.black,
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      CircularProgressIndicator(
-                        color: AppColors.blue700,
-                        strokeWidth: 2,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-              Logger().i('Downloaded');
-            },
-          ),
-          Buttons(
-              variant: Variante.secondary,
-              size: SizeButton.md,
-              msg: const Text('Modifier'),
+          Flexible(
+            child: Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
               onPressed: () {
-                pageIndex.value = 1;
-              }),
-          Buttons(
-              variant: Variante.delete,
-              size: SizeButton.md,
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variant.validate,
+              size: SizeButton.sm,
+              msg: const Text('Valider'),
+              onPressed: () async {
+                modifyDocument(widget.id, widget.name).then((value) {
+                  widget.updatedata();
+                  Navigator.pop(context);
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class DeletePatient extends StatelessWidget {
+  String id;
+  Function updatedata;
+  DeletePatient({super.key, required this.id, required this.updatedata});
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Supprimer votre document",
+      subtitle: 'Êtes-vous sûr de vouloir supprimer ce document ?',
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
+        ),
+        type: ModalType.error,
+      ),
+      footer: Wrap(
+        spacing: 12,
+        children: [
+          Flexible(
+            child: Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Flexible(
+            child: Buttons(
+              variant: Variant.delete,
+              size: SizeButton.sm,
               msg: const Text('Supprimer'),
-              onPressed: () {
-                pageIndex.value = 2;
-              }),
-        ],
-      ),
-    ),
-  );
-}
-
-WoltModalSheetPage modifierPatient(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  String name,
-  String id,
-  Function updatedata,
-) {
-  int widthBtn = (screenSize.width / 2 - 32).toInt();
-  int maxSize = (screenSize.width - 48).toInt();
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Wrap(
-        spacing: 32,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        direction: Axis.vertical,
-        children: [
-          Wrap(
-            spacing: 8,
-            direction: Axis.vertical,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.grey200,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: const Icon(
-                  BootstrapIcons.pen_fill,
-                  color: AppColors.grey700,
-                  size: 16,
-                ),
-              ),
-              const Text(
-                'Modifiez votre document',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          Wrap(
-            spacing: 8,
-            direction: Axis.vertical,
-            children: [
-              const Text('Le nouveau nom de votre document'),
-              CustomField(
-                label: 'Nom du document',
-                value: name,
-                onChanged: (value) {
-                  name = value;
-                },
-                maxSize: maxSize,
-                action: TextInputAction.done,
-              ),
-            ],
-          ),
-          Wrap(
-            spacing: 12,
-            children: [
-              Buttons(
-                  variant: Variante.secondary,
-                  size: SizeButton.sm,
-                  msg: const Text('Annuler'),
-                  widthBtn: widthBtn,
-                  onPressed: () {
-                    pageIndex.value = 0;
-                  }),
-              Buttons(
-                  variant: Variante.validate,
-                  size: SizeButton.sm,
-                  msg: const Text('Valider'),
-                  widthBtn: widthBtn,
-                  onPressed: () async {
-                    modifyDocument(id, name).then((value) {
-                      updatedata();
-                      pageIndex.value = 0;
-                      Navigator.pop(context);
-                    });
-                  }),
-            ],
+              onPressed: () async {
+                deleteDocument(id).then(
+                  (value) {
+                    updatedata();
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
-    ),
-  );
-}
-
-WoltModalSheetPage deletePatient(
-  BuildContext context,
-  ValueNotifier<int> pageIndex,
-  String id,
-  Function updatedata,
-) {
-  int widthBtn = (screenSize.width / 2 - 32).toInt();
-  return WoltModalSheetPage(
-    hasTopBarLayer: false,
-    backgroundColor: AppColors.white,
-    hasSabGradient: true,
-    enableDrag: true,
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Wrap(
-        spacing: 32,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        direction: Axis.vertical,
-        children: [
-          Wrap(
-            spacing: 8,
-            direction: Axis.vertical,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.red200,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: const Icon(
-                  BootstrapIcons.x,
-                  color: AppColors.red700,
-                  size: 32,
-                ),
-              ),
-              const Text(
-                'Supprimer votre document',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: 'Poppins',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Text('Êtes-vous sûr de vouloir supprimer ce document ?',
-                  style: TextStyle(
-                    color: AppColors.grey400,
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center),
-            ],
-          ),
-          Wrap(
-            spacing: 12,
-            children: [
-              Buttons(
-                  variant: Variante.secondary,
-                  size: SizeButton.sm,
-                  msg: const Text('Annuler'),
-                  widthBtn: widthBtn,
-                  onPressed: () {
-                    pageIndex.value = 0;
-                  }),
-              Buttons(
-                  variant: Variante.delete,
-                  size: SizeButton.sm,
-                  msg: const Text('Supprimer'),
-                  widthBtn: widthBtn,
-                  onPressed: () async {
-                    deleteDocument(id).then((value) {
-                      updatedata();
-                      pageIndex.value = 0;
-                      Navigator.pop(context);
-                    });
-                  }),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 }

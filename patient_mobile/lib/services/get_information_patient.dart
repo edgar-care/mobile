@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -41,7 +40,6 @@ Future<Map<String, Object>?> getInformationPersonnel(
     final body = response.body;
     return populateInfoMedical(jsonDecode(body));
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -100,7 +98,6 @@ Future<Map<String, Object>?> putInformationPatient(
     final body = response.body;
     return populateInfoMedical(jsonDecode(body));
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
