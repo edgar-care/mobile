@@ -54,6 +54,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
       emailActive = false;
       thirdActive = false;
       mobileActive = false;
+      secret = false;
     });
     getEnable2fa().then((value) {
       Logger().d(value);
