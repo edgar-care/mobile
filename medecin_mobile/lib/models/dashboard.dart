@@ -279,7 +279,6 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, B
           size: SizeButton.md,
           msg: const Text('Autoriser'),
           onPressed: () {
-            Logger().i('AskMobileConnection: $data');
             ws.responseMobileConnection(
               token,
               data['uuid'],
@@ -294,7 +293,6 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, B
           size: SizeButton.md,
           msg: const Text('Refuser'),
           onPressed: () {
-            Logger().i('AskMobileConnection: $data');
             ws.responseMobileConnection(
               token,
               data['uuid'],

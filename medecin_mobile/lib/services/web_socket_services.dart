@@ -45,7 +45,6 @@ class WebSocketService {
       _handleMessage(message);
     }, onError: (error) {
     }, onDone: () {
-      Logger().i('WebSocket connection closed');
       connect();
     });
 
@@ -156,7 +155,6 @@ class WebSocketService {
         onReadMessage?.call(decodedMessage);
         break;
       default:
-        Logger().i('Unknown action: $decodedMessage');
     }
   }
 }
