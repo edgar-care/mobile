@@ -1,6 +1,7 @@
 name: Mobile CI Prod Doctor App Edgar
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
