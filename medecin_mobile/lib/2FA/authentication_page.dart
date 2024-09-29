@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -55,7 +54,6 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
       secret = false;
     });
     getEnable2fa().then((value) {
-      Logger().d(value);
       if (value['secret'].isNotEmpty) {
         setState(() {
           secret = true;
@@ -426,7 +424,6 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
     setState(() {
       devices = temp;
     });
-    Logger().d(devices);
   }
 
   String devicesFormatTime(int time) {
@@ -510,8 +507,6 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
-                Logger().d(selected);
-                Logger().d(devices[selected]['id']);
                 enable2FAMobile(devices[selected]['id']).then((value) {
                 widget.load2fa();
                   if (widget.secret != true) {
@@ -1117,7 +1112,6 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
         });
       }
     }
-    Logger().d(devices);
   }
 
   String devicesFormatTime(int time) {
@@ -1201,8 +1195,6 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
-                Logger().d(selected);
-                Logger().d(devices[selected]['id']);
                 addTrustDevices(devices[selected]['id']).then((value) {
                   Navigator.pop(context);
                 });

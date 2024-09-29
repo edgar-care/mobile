@@ -5,7 +5,6 @@ import 'package:edgar_pro/models/dashboard.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:push/push.dart';
@@ -37,12 +36,10 @@ Future<void> initializePushNotifications() async {
   await Push.instance.requestPermission();
 
   Push.instance.onNewToken.listen((message) {
-    Logger().i("Received a push notification: $message");
     // Handle the message or show a local notification
   });
 
   Push.instance.onNotificationTap.listen((message) {
-    Logger().i("Notification tapped: $message");
     // Handle the notification tap event
   });
 }
@@ -98,9 +95,8 @@ Future<void> showNotification(
       payload: 'Notification Payload', // Optional payload
     );
 
-    Logger().d("Notification with custom icon displayed successfully");
   } catch (e) {
-    Logger().e("Error displaying notification with custom icon: $e");
+    // catch clauses
   }
 }
 

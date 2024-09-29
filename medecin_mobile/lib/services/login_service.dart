@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
 
@@ -18,8 +17,6 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email, 'password': password}),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
     if ( jsonDecode(response.body)['token'] != null) {
@@ -52,13 +49,11 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
 
 Future missingPassword(String email) async {
   String url = '${dotenv.env['URL']}/auth/missing-password';
-  final response = await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email}),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
 }
 
 Future resetPassword(String password) async {
@@ -81,13 +76,11 @@ Future resetPassword(String password) async {
 
 Future sendEmailCode(String email) async {
 String url = '${dotenv.env['URL']}/auth/sending_email';
-  final response = await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email}),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
 }
 
 Future checkEmailCode(String email, String password, String code, BuildContext context) async {
@@ -102,8 +95,6 @@ Future checkEmailCode(String email, String password, String code, BuildContext c
       'token_2fa': code
     }),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
@@ -126,8 +117,6 @@ Future checkBackUpCode(String email, String password, String code, BuildContext 
       'backup_code': code
     }),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
@@ -150,8 +139,6 @@ Future checkThirdPartyCode(String email, String password, String code, BuildCont
       'token_2fa': code
     }),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];

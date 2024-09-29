@@ -12,7 +12,6 @@ import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_patient_list.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 String email = "";
@@ -256,7 +255,6 @@ class _PatientState extends State<Patient> {
                   }
                   model.changePage(1);
                 } else {
-                  Logger().i("Erreur");
                   ScaffoldMessenger.of(context).showSnackBar(
                     ErrorSnackBar(
                       message: "Veuillez remplir tous les champs",
@@ -1169,7 +1167,6 @@ class _InfoTreatmentState extends State<InfoTreatment> {
       }
       return true;
     } catch (e) {
-      Logger().e("Error fetching data: $e");
       return false;
     }
   }

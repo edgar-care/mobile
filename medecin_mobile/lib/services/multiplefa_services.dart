@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Map<String, dynamic>> getEnable2fa() async {
@@ -46,8 +45,6 @@ Future<List<dynamic>> generateBackupCode() async {
       'Authorization': 'Bearer $token'
     },
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   if (response.statusCode == 201) {
     return jsonDecode(response.body)['double_auth'];
   }
@@ -58,7 +55,7 @@ Future enable2FAEmail() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/2fa/method/email';
-  final response = await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
@@ -66,15 +63,13 @@ Future enable2FAEmail() async {
     },
     body: jsonEncode({'method_2fa': 'EMAIL'}),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
 }
 
 Future enable2FAMobile(String id) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String token = prefs.getString('token') ?? '';
   String url = '${dotenv.env['URL']}/2fa/method/mobile';
-  final response = await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
@@ -82,9 +77,6 @@ Future enable2FAMobile(String id) async {
     },
     body: jsonEncode({'method_2fa': 'MOBILE', "trusted_device_id": id}),
   );
-  Logger().d(id);
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
 }
 
 Future<Map<String, dynamic>> enable2FA3party() async {
@@ -98,8 +90,6 @@ Future<Map<String, dynamic>> enable2FA3party() async {
       'Authorization': 'Bearer $token'
     },
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   return jsonDecode(response.body);
 }
 
@@ -115,7 +105,5 @@ Future<Map<String, dynamic>> checkTierAppCode(String code) async {
     },
     body: jsonEncode({'token': code}),
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
   return jsonDecode(response.body);
 }

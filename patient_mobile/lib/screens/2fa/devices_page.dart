@@ -7,7 +7,6 @@ import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class DevicesPage extends StatefulWidget {
@@ -30,7 +29,6 @@ class _DevicesPageState extends State<DevicesPage> {
     setState(() {
       devices = temp;
     });
-    Logger().d(devices);
   }
 
   String devicesFormatTime(int time) {

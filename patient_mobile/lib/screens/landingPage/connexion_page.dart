@@ -8,7 +8,6 @@ import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:edgar_app/widget/number_list_2fa.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -1011,7 +1010,6 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
               size: SizeButton.md,
               msg: const Text('Valider le code'),
               onPressed: () {
-                Logger().d(_code);
                 checkThirdPartyCode(
                     widget.email, widget.password, _code, context);
               }),
@@ -1077,30 +1075,28 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
         ),
         type: ModalType.info,
       ),
-      footer: Column(
-        children: [
-          Buttons(
-              variant: Variant.primary,
-              size: SizeButton.md,
-              msg: const Text('Valider le code'),
-              onPressed: () {
-                Logger().d(code);
-                checkBackUpCode(widget.email, widget.password, code, context)
-                    .then((value) {});
-              }),
-          const SizedBox(
-            height: 8,
-          ),
-          Buttons(
-            variant: Variant.secondary,
-            size: SizeButton.md,
-            msg: const Text('Revenir en arrière'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+    footer:Column(
+      children: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text('Valider le code'),
+          onPressed: () {
+            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
+            });
+          }
+        ),
+        const SizedBox(height: 8,),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Revenir en arrière'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
   }
 }

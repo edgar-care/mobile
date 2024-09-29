@@ -10,6 +10,7 @@ class Treatment {
   final List<Day> days;
   final int quantity;
   final String medicineId;
+  final List<String> famillyId;
 
   Treatment({
     required this.id,
@@ -17,6 +18,7 @@ class Treatment {
     required this.days,
     required this.quantity,
     required this.medicineId,
+    required this.famillyId,
   });
 
   factory Treatment.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class Treatment {
               Day.values.firstWhere((e) => e.toString().split('.').last == day))
           .toList(),
       quantity: json['quantity'],
+      famillyId: [],
       medicineId: json['medicine_id'],
     );
   }

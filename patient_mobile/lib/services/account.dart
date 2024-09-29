@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -10,12 +9,10 @@ Future disableAccount() async {
   await dotenv.load();
   final token = prefs.getString("token");
   final url = '${dotenv.env['URL']}/auth/disable_account';
-  final response = await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
   );
-  Logger().d(response.body);
-  Logger().d(response.statusCode);
 }
 
 Future resetPassword(String password) async {

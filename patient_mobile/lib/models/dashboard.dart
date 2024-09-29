@@ -16,7 +16,7 @@ import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar_app/screens/dashboard/file_page.dart';
 import 'package:edgar_app/screens/dashboard/chat_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logger/logger.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -154,7 +154,6 @@ class DashBoardPageState extends State<DashBoardPage>
       },
 
       onResponseMobileConnection: (data) {
-        Logger().i('ResponseMobileConnection response: $data');
       },
     );
     await _webSocketService?.connect();

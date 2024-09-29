@@ -5,7 +5,6 @@ import 'package:edgar_pro/widgets/Chat/chat_list.dart';
 import 'package:edgar_pro/widgets/Chat/chat_page.dart';
 import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -53,10 +52,9 @@ class ChatState extends State<ChatPageDashBoard> {
           idDoctor = jsonDecode(decodedPayload)["id"];
         });
       } catch (e) {
-        Logger().e('Error decoding token: $e');
+        // catch clauses
       }
     } else {
-      Logger().w('Token is null or empty');
     }
   }
 
