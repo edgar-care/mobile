@@ -12,7 +12,6 @@ import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar_app/screens/dashboard/file_page.dart';
 import 'package:edgar_app/screens/dashboard/chat_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -129,7 +128,6 @@ class DashBoardPageState extends State<DashBoardPage>
       onAskMobileConnection: (data) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
-        Logger().i('AskMobileConnection: $data');
         _webSocketService?.responseMobileConnection(
           token!,
           data['uuid'],
@@ -137,7 +135,6 @@ class DashBoardPageState extends State<DashBoardPage>
       },
 
       onResponseMobileConnection: (data) {
-        Logger().i('ResponseMobileConnection response: $data');
       },
     );
     await _webSocketService?.connect();

@@ -3,6 +3,10 @@
 Please provide a detailed description of what was done in this PR.
 Precise the issue that you are resolving.
 
+### Click Up reference
+
+[CU-XXXX](https://app.clickup.com/t/XXXX)
+
 # Changes include
 
 - [ ] Bugfix (non-breaking change that solves an issue)

@@ -9,7 +9,6 @@ import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -64,10 +63,9 @@ class ChatPatientState extends State<ChatPatient> {
           idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
         });
       } catch (e) {
-        Logger().e('Error decoding token: $e');
+        // catch clauses
       }
     } else {
-      Logger().w('Token is null or empty');
     }
   }
 

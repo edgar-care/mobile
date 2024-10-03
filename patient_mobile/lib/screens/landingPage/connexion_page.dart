@@ -8,7 +8,6 @@ import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:edgar_app/widget/number_list_2fa.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -879,7 +878,6 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            Logger().d(_code);
             checkThirdPartyCode(widget.email, widget.password, _code, context);
           }
         ),
@@ -944,7 +942,6 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            Logger().d(code);
             checkBackUpCode(widget.email, widget.password, code, context).then((value) {
             });
           }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
@@ -82,10 +81,7 @@ Future<Object?> postDocument(
     final body = await response.stream.bytesToString();
     return jsonDecode(body);
   } else {
-    Logger().d(response.statusCode);
-    Logger().d(file.path);
-    final body = await response.stream.bytesToString();
-    Logger().d(jsonDecode(body));
+    await response.stream.bytesToString();
     return null;
   }
 }

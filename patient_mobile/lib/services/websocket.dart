@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -33,26 +32,21 @@ class WebSocketService {
     await _retrieveToken();
 
     if (authToken == null) {
-      Logger().e('Auth token is null');
       return;
     }
 
     final url = dotenv.env['WEBSOCKET_URL'];
     if (url == null) {
-      Logger().e('WebSocket URL not found in environment variables');
       return;
     }
 
     _channel = WebSocketChannel.connect(Uri.parse(url));
-    Logger().i('Connected to $url');
 
     // Listen for incoming messages
     _channel?.stream.listen((message) {
       _handleMessage(message);
     }, onError: (error) {
-      Logger().e('WebSocket Error: $error');
     }, onDone: () {
-      Logger().i('WebSocket connection closed');
     });
 
     sendReadyAction();
@@ -91,7 +85,6 @@ class WebSocketService {
       'recipient_ids': recipientIds,
     });
     _channel?.sink.add(createChatMessage);
-    Logger().i('Creating chat with recipients: $recipientIds');
   }
 
   // Get messages
@@ -103,7 +96,6 @@ class WebSocketService {
       'authToken': authToken,
     });
     _channel?.sink.add(getMessagesMessage);
-    Logger().i('Requesting messages');
   }
 
   // Send a message to a chat
@@ -132,7 +124,6 @@ class WebSocketService {
   }
 
   void responseMobileConnection(String patientAuthTokenWS, String uuid) {
-    Logger().i('ResponseMobileConnection: $patientAuthTokenWS, $uuid');
     final responseMobileConnection = jsonEncode({
       'action': 'responseMobileConnection ',
       'authToken': patientAuthTokenWS,
@@ -147,7 +138,6 @@ class WebSocketService {
     final decodedMessage = jsonDecode(message);
     switch (decodedMessage['action']) {
       case 'ready':
-        Logger().i('Ready: $decodedMessage');
         onReady?.call(decodedMessage);
         break;
       case 'create_chat':

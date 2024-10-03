@@ -8,7 +8,6 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/login_service.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
@@ -465,7 +464,6 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            Logger().d(code);
             checkEmailCode(widget.email, widget.password, code, context).then((value) {
             });
           }
@@ -534,7 +532,6 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            Logger().d(sendcode);
             checkThirdPartyCode(widget.email, widget.password, sendcode, context).then((value) {
             });
           }
@@ -600,7 +597,6 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
           size: SizeButton.md,
           msg: const Text('Valider le code'),
           onPressed: () {
-            Logger().d(code);
             checkBackUpCode(widget.email, widget.password, code, context).then((value) {
             });
           }
