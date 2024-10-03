@@ -34,7 +34,7 @@ class _SantePageState extends State<SantePage> {
                   color: AppColors.white,
                   fontSize: 20,
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -82,7 +82,7 @@ class _SantePageState extends State<SantePage> {
                                   color: AppColors.black,
                                   fontSize: 14,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               )
                             ],
@@ -94,7 +94,7 @@ class _SantePageState extends State<SantePage> {
                               color: AppColors.black,
                               fontSize: 12,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           )
                         ],
@@ -142,7 +142,7 @@ class _SantePageState extends State<SantePage> {
                                   color: AppColors.black,
                                   fontSize: 14,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               )
                             ],
@@ -154,7 +154,7 @@ class _SantePageState extends State<SantePage> {
                               color: AppColors.black,
                               fontSize: 12,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           )
                         ],
@@ -202,7 +202,7 @@ class _SantePageState extends State<SantePage> {
                                   color: AppColors.black,
                                   fontSize: 14,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               )
                             ],
@@ -214,7 +214,7 @@ class _SantePageState extends State<SantePage> {
                               color: AppColors.black,
                               fontSize: 12,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           )
                         ],
@@ -262,7 +262,7 @@ class _SantePageState extends State<SantePage> {
                                   color: AppColors.black,
                                   fontSize: 14,
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               )
                             ],
@@ -274,7 +274,7 @@ class _SantePageState extends State<SantePage> {
                               color: AppColors.black,
                               fontSize: 12,
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           )
                         ],
