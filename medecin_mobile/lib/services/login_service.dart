@@ -148,3 +148,53 @@ Future checkThirdPartyCode(String email, String password, String code, BuildCont
     Navigator.pushNamed(context, '/dashboard');
   }
 }
+
+Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String url = '${dotenv.env['URL']}/auth/register';
+  ScaffoldMessenger.of(context).showSnackBar(
+      InfoSnackBar(message: "Connexion à l'application ...", context: context));
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      "email": dInfo["email"], 
+      "password": dInfo["password"],
+      "name": dInfo["name"],
+      "firstname": dInfo["firstname"],
+      "address": {
+        "street": dInfo["adress"], 
+        "zip_code": dInfo["postalCode"], 
+        "country": dInfo["country"],
+        "city": dInfo["city"]
+      }
+    }),
+  );
+
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  if (response.statusCode == 200) {
+    if ( jsonDecode(response.body)['token'] != null) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    prefs.setString('token', jsonDecode(response.body)['token']);
+    String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
+        String decodedPayload =
+            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    prefs.setString('id', jsonDecode(decodedPayload)["id"]);
+    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+      message: 'Connecté à l\'application',
+      context: context,
+    ));
+    await Future.delayed(const Duration(seconds: 2));
+    Navigator.pushNamed(context, '/dashboard');
+    } else {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      return jsonDecode(response.body)['2fa_methods'];
+    }
+  } else {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+      message: 'Les identifiants ne correspondent pas !',
+      context: context,
+    ));
+  }
+}

@@ -207,7 +207,7 @@ class _LoginState extends State<Login> {
                         msg: const Text("Créer un compte"),
                         size: SizeButton.md,
                         onPressed: () {
-                          //redirect page register
+                        widget.callback(1);
                         },
                       ),
                     ],
