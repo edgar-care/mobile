@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/screens/dashboard/conversation_patient.dart';
 import 'package:edgar_app/services/doctor.dart';
@@ -83,8 +82,7 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
-    } else {
-    }
+    } else {}
   }
 
   String getDoctorName(Chat chat) {
@@ -281,8 +279,9 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "'Démarrez une nouvelle conversation'",
-      subtitle: "Séléctionner un Docteur",
+      title: "Commencer une conversation",
+      subtitle:
+          "Commencer une nouvelle conversation en sélectionnant un médecin.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.chat_dots_fill,
@@ -292,30 +291,39 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
         type: ModalType.success,
       ),
       body: [
+        const Text(
+          'Le nom du médecin',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 4),
         CustomFieldSearch(
-          label: 'Docteur edgar_app',
+          label: 'Docteur Edgar',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
           onValidate: (value) {
             updateFilter(value);
           },
         ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: FutureBuilder(
-            future: fetchData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.blue700,
-                      strokeWidth: 2,
-                    ),
+        const SizedBox(height: 8),
+        FutureBuilder(
+          future: fetchData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.blue700,
+                    strokeWidth: 2,
                   ),
-                );
-              } else {
-                return ListView.separated(
+                ),
+              );
+            } else {
+              return Expanded(
+                child: ListView.separated(
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
                   itemCount: filtereddoctors.length,
@@ -324,17 +332,18 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        // ignore: unused_label
                         setState(() {
                           doctorIdSelected = filtereddoctors[index]['id'];
                         });
-                        widget.model.changePage(1);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color:
+                              doctorIdSelected == filtereddoctors[index]['id']
+                                  ? AppColors.blue700
+                                  : AppColors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: AppColors.blue200,
@@ -348,49 +357,78 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                               children: [
                                 Text(
                                   'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
+                                    color: doctorIdSelected ==
+                                            filtereddoctors[index]['id']
+                                        ? AppColors.white
+                                        : AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
-                                    color: AppColors.black,
+                                    color: doctorIdSelected ==
+                                            filtereddoctors[index]['id']
+                                        ? AppColors.white
+                                        : AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
                             const Spacer(),
-                            const Icon(
+                            Icon(
                               BootstrapIcons.chevron_right,
                               size: 16,
+                              color: doctorIdSelected ==
+                                      filtereddoctors[index]['id']
+                                  ? AppColors.white
+                                  : AppColors.black,
                             ),
                           ],
                         ),
                       ),
                     );
                   },
-                );
-              }
-            },
-          ),
+                ),
+              );
+            }
+          },
         ),
+        const SizedBox(height: 24),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Suivant'),
+              onPressed: () {
+                if (doctorIdSelected.isEmpty) {
+                  return;
+                }
+                widget.model.changePage(1);
+              },
+            ),
+            const SizedBox(height: 8),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.md,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        )
       ],
-      footer: Buttons(
-        variant: Variant.secondary,
-        size: SizeButton.md,
-        msg: const Text('Annuler'),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
     );
   }
 }
@@ -433,39 +471,58 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "Démarrez une nouvelle conversation",
-      subtitle: "Veuiller rentrer votre message",
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.chat_dots_fill,
-          color: AppColors.green700,
-          size: 18,
-        ),
-        type: ModalType.success,
-      ),
-      body: [
-        CustomFieldSearchMaxLines(
-          label: 'Votre message',
-          maxLines: 5,
-          keyboardType: TextInputType.name,
-          icon: const Icon(
-            BootstrapIcons.send_fill,
+        title: "Commencer une conversation",
+        subtitle:
+            "Ecriver votre message pour commencer la conversation avec ce médecin.",
+        icon: const IconModal(
+          icon: Icon(
+            BootstrapIcons.chat_dots_fill,
+            color: AppColors.green700,
             size: 18,
           ),
-          onlyOnValidate: true,
-          onValidate: (value) {
-            updateData(value);
-          },
+          type: ModalType.success,
         ),
-      ],
-      footer: Buttons(
-        variant: Variant.secondary,
-        size: SizeButton.md,
-        msg: const Text('Annuler'),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    );
+        body: [
+          const Text(
+            'Votre message',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(height: 4),
+          CustomField(
+            label: "Docteur Edgar",
+            onChanged: (value) {
+              setState(() {
+                message = value;
+              });
+            },
+            action: TextInputAction.done,
+            maxLines: 5,
+          ),
+        ],
+        footer: Column(
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Envoyer'),
+              onPressed: () {
+                updateData(message);
+              },
+            ),
+            const SizedBox(height: 8),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.md,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ));
   }
 }

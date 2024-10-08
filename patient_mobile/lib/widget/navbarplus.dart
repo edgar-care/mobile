@@ -205,15 +205,17 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child: BoringAvatar(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                colors: const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
-                                                ],
-                                                type: BoringAvatarsType.beam,
+                                                palette: BoringAvatarPalette(
+                                                  const [
+                                                    AppColors.blue700,
+                                                    AppColors.blue200,
+                                                    AppColors.blue500
+                                                  ],
+                                                ),
+                                                type: BoringAvatarType.beam,
                                               )),
                                           const SizedBox(width: 16),
                                           Column(
@@ -312,7 +314,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   ],
                                 ),
                               ),
-                               const SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               const Text(
                                 "Paramètres du compte",
                                 style: TextStyle(
@@ -493,7 +495,7 @@ class _NavbarPLusTabState extends State<NavbarPLusTab> {
         ),
         child: Row(
           children: [
-             widget.icon ?? const SizedBox.shrink(),
+            widget.icon ?? const SizedBox.shrink(),
             const SizedBox(width: 16),
             Text(widget.title,
                 style: TextStyle(
