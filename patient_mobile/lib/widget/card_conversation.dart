@@ -56,14 +56,17 @@ class ChatCard extends StatelessWidget {
                     SizedBox(
                         height: 28,
                         width: 28,
-                        child: BoringAvatars(
+                        child: BoringAvatar(
                           name: doctorName,
-                          colors: const [
-                            AppColors.green600,
-                            AppColors.green200,
-                            AppColors.green500,
-                          ],
-                          type: BoringAvatarsType.beam,
+                          palette: BoringAvatarPalette(
+                            const [
+                              AppColors.green600,
+                              AppColors.green200,
+                              AppColors.green500,
+                            ],
+                          ),
+                          
+                          type: BoringAvatarType.beam,
                         )),
                     const SizedBox(width: 8),
                     Column(

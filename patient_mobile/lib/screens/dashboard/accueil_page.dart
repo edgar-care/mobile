@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> allDoctor = [];
 
   Future<void> fetchData() async {
-
     await getAllDoctor().then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
@@ -37,7 +36,6 @@ class _HomePageState extends State<HomePage> {
     });
 
     await getMedicalFolder().then((value) {
-      
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
@@ -108,15 +106,17 @@ class _HomePageState extends State<HomePage> {
                         color: AppColors.white,
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
-                      child: BoringAvatars(
+                      child: BoringAvatar(
                         name:
                             "${infoMedical['firstname'] ?? 'Ne fonctionne'} ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'Pas'}",
-                        colors: const [
-                          AppColors.blue700,
-                          AppColors.blue200,
-                          AppColors.blue500
-                        ],
-                        type: BoringAvatarsType.beam,
+                        palette: BoringAvatarPalette(
+                          [
+                            AppColors.blue700,
+                            AppColors.blue200,
+                            AppColors.blue500
+                          ],
+                        ),
+                        type: BoringAvatarType.beam,
                       )),
                 ],
               ),
