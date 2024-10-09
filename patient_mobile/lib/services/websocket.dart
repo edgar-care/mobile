@@ -123,12 +123,12 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
-  void responseMobileConnection(String patientAuthTokenWS, String uuid) {
+  void responseMobileConnection(String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
       'action': 'responseMobileConnection ',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
-      "response": true,
+      "response": response,
     });
     _channel?.sink.add(responseMobileConnection);
   }

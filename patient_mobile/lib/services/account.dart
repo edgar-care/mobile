@@ -25,7 +25,9 @@ Future resetPassword(String password) async {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
-    body: jsonEncode({{"new_password": password}}),
+    body: jsonEncode({
+      {"new_password": password}
+    }),
   );
   if (response.statusCode == 200) {
     return jsonDecode(response.body)['devices'];

@@ -1,4 +1,3 @@
-
 import 'package:edgar/colors.dart';
 import 'package:flutter/material.dart';
 
