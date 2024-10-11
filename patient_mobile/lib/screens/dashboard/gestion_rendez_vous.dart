@@ -11,7 +11,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -532,7 +531,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
 
   void addEmptyAppointment(String id) {
     Doctor? doctor = findDoctorById(doctorsTemp, id);
-    Logger().i("Doctor: ${doctor?.address.city}");
     Appointment appointment = Appointment(
       doctor:
           (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
@@ -562,7 +560,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
   void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
     Appointment? appointment = transformAppointments(doctorsTemp, value);
 
-    Logger().i("Appointment: $appointment");
     if (appointment != null) {
       setState(() {
         appointments.add(appointment);
@@ -576,7 +573,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
     setState(() {
       selectedId = (selectedId == id) ? '' : id;
     });
-    Logger().i("Selected id: $selectedId");
   }
 
   void filterDoctors(String name) {
@@ -663,11 +659,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
                     ),
                   );
                 } else {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? sessionId = prefs.getString('sessionId');
-                  Logger().i("session_id: $sessionId");
-
                   await putAppoitement(widget.id, selectedId).whenComplete(
                     () async {
                       widget.updataData(context);
