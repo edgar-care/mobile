@@ -9,9 +9,7 @@ import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -473,7 +471,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
         await fetchAppointments(currentPage); // Start fetching from page 1
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     } finally {
       isLoading = false;
     }
@@ -526,13 +524,12 @@ class _ModifyRdvState extends State<ModifyRdv> {
         addAppointmentFromResponse(id, value);
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     }
   }
 
   void addEmptyAppointment(String id) {
     Doctor? doctor = findDoctorById(doctorsTemp, id);
-    Logger().i("Doctor: ${doctor?.address.city}");
     Appointment appointment = Appointment(
       doctor:
           (doctor?.name.isEmpty ?? true) || (doctor?.firstname.isEmpty ?? true)
@@ -562,7 +559,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
   void addAppointmentFromResponse(String id, Map<String, dynamic> value) {
     Appointment? appointment = transformAppointments(doctorsTemp, value);
 
-    Logger().i("Appointment: $appointment");
     if (appointment != null) {
       setState(() {
         appointments.add(appointment);
@@ -576,7 +572,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
     setState(() {
       selectedId = (selectedId == id) ? '' : id;
     });
-    Logger().i("Selected id: $selectedId");
   }
 
   void filterDoctors(String name) {
@@ -639,6 +634,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
                         idSelected: selectedId,
                       );
                     },
+
                   ),
           ),
           Pagination(

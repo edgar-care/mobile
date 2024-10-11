@@ -1,9 +1,16 @@
-import 'package:edgar_pro/services/patient_info_service.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar_pro/2FA/authentication_page.dart';
+import 'package:edgar_pro/2FA/reset_password_pasges.dart';
+import 'package:edgar_pro/services/multiplefa_services.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class AccountPage extends StatefulWidget {
@@ -15,6 +22,26 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  Map<String, dynamic> enable2fa = {};
+
+  @override
+  void initState() {
+    super.initState();
+    getInfo();
+  }
+
+  void refresh() {
+    getInfo();
+    setState(() {});
+  }
+
+  void getInfo() async {
+    var tmp = await getEnable2fa();
+    setState(() {
+      enable2fa = tmp;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -158,7 +185,15 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
                                       onTap: () {
-                                        Navigator.pop(context);
+                                         Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const ResetPasswordPage();
+                                            },
+                                          ),
+                                        );
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -199,9 +234,7 @@ class _AccountPageState extends State<AccountPage> {
                                             opaque: false,
                                             pageBuilder:
                                                 (BuildContext context, _, __) {
-                                              return AccountPage(
-                                                infoMedical: infoMedical,
-                                              );
+                                              return DoubleAuthentication(refreshAccount: refresh,);
                                             },
                                           ),
                                         );
@@ -218,7 +251,32 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Codes de sauvegarde',
                                       onTap: () {
-                                        Navigator.pop(context);
+                                        final model =
+                                            Provider.of<BottomSheetModel>(
+                                                context,
+                                                listen: false);
+                                        model.resetCurrentIndex();
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Consumer<BottomSheetModel>(
+                                              builder: (context, model, child) {
+                                                return ListModal(
+                                                    model: model,
+                                                    children: [
+                                                      enable2fa['methods']
+                                                              .isEmpty
+                                                          ? modalRedirect2FA(
+                                                              context, refresh)
+                                                          : modalReNewBackup(
+                                                              context),
+                                                    ]);
+                                              },
+                                            );
+                                          },
+                                        );
                                       },
                                       type: 'Only',
                                       outlineIcon: SvgPicture.asset(
@@ -240,4 +298,230 @@ class _AccountPageState extends State<AccountPage> {
       ),
     );
   }
+}
+
+Widget modalReNewBackup(BuildContext context) {
+  return ModalContainer(
+    title: 'Vos codes de sauvegarde',
+    subtitle:
+        'Vous avez déjà consulté vos codes de sauvegarde. Par sourcis de sécurité vous ne pouvez consulter vos code de sauvegarde qu\'une seule fois, lors de la génération de ceux-ci.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+      type: ModalType.info,
+    ),
+    footer: Buttons(
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Générer de nouveaux codes'),
+      onPressed: () {
+        Navigator.pop(context);
+        final model = Provider.of<BottomSheetModel>(context, listen: false);
+        model.resetCurrentIndex();
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) {
+            return Consumer<BottomSheetModel>(
+              builder: (context, model, child) {
+                return ListModal(model: model, children: const [
+                  ModalGenerateBackup(),
+                ]);
+              },
+            );
+          },
+        );
+      },
+    ),
+  );
+}
+
+class ModalGenerateBackup extends StatefulWidget {
+  const ModalGenerateBackup({super.key});
+
+  @override
+  State<ModalGenerateBackup> createState() => _ModalGenerateBackupState();
+}
+
+class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
+  List<dynamic> backupCodes = [];
+
+  Future<bool> getbackupcode() async {
+    var tmp = await generateBackupCode();
+      backupCodes = tmp;
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: getbackupcode(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == true) {
+            return ModalContainer(
+              title: 'Vos codes de sauvegarde',
+              subtitle:
+                  'Avec la double authentification activée, vous aurez besoin de ces codes de sauvegarde si vous n\'avez plus accès à votre appareil.',
+              icon: const IconModal(
+                icon: Icon(
+                  BootstrapIcons.shield_lock_fill,
+                  color: AppColors.blue700,
+                  size: 17,
+                ),
+                type: ModalType.info,
+              ),
+              body: [
+                const Text(
+                  'Ces codes sont très importants, vous ne pourrez les lire qu\'une seule fois. Nous vous recommandons de les stocker dans un lieu sûr:',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          backupCodes[0].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[1].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[2].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[3].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[4].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 24),
+                    Column(
+                      children: [
+                        Text(
+                          backupCodes[5].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[6].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[7].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[8].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          backupCodes[9].toString(),
+                          style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+              footer:
+                  Buttons(
+                    variant: Variant.primary,
+                    size: SizeButton.md,
+                    msg: const Text('Confirmer'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+}
+
+Widget modalRedirect2FA(BuildContext context, Function refresh2fa) {
+  return ModalContainer(
+    title: 'Vos codes de sauvegarde',
+    subtitle:
+        'Ajouter une méthode de double authentification pour générer vos codes de sauvegarde. Les codes de sauvegarde sont utilisés lorsque vous n\'avez plus accès à votre appareil de double authentification.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+      type: ModalType.info,
+    ),
+    footer: Buttons(
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Activer l\'authentification'),
+      onPressed: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder<void>(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) {
+              return DoubleAuthentication(refreshAccount: refresh2fa,);
+            },
+          ),
+        );
+      },
+    ),
+  );
 }

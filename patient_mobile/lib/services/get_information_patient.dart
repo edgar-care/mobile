@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -20,11 +19,8 @@ Future<Map<String, dynamic>> getMedicalFolder() async {
   );
   if (response.statusCode == 200) {
     final body = response.body;
-    Logger().i(jsonDecode(body)['medical_folder']);
-    Logger().i(token);
     return jsonDecode(body)['medical_folder'];
   } else {
-    Logger().e(response.statusCode);
     return {};
   }
 }
@@ -44,7 +40,6 @@ Future<Map<String, Object>?> getInformationPersonnel(
     final body = response.body;
     return populateInfoMedical(jsonDecode(body));
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }
@@ -103,7 +98,6 @@ Future<Map<String, Object>?> putInformationPatient(
     final body = response.body;
     return populateInfoMedical(jsonDecode(body));
   } else {
-    Logger().e(response.statusCode);
     return null;
   }
 }

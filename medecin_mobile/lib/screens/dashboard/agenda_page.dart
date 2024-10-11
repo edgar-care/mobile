@@ -205,7 +205,6 @@ class _AgendaState extends State<Agenda> {
                           final model = Provider.of<BottomSheetModel>(context,
                               listen: false);
                           model.resetCurrentIndex();
-
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
