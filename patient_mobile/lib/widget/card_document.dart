@@ -322,31 +322,27 @@ class _ModifyPatientState extends State<ModifyPatient> {
           action: TextInputAction.done,
         ),
       ],
-      footer: Wrap(
-        spacing: 12,
+      footer: Column(
         children: [
-          Flexible(
-            child: Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.sm,
-              msg: const Text('Annuler'),
-              onPressed: () {
+          Buttons(
+            variant: Variant.validate,
+            size: SizeButton.sm,
+            msg: const Text('Valider'),
+            onPressed: () async {
+              modifyDocument(widget.id, widget.name).then((value) {
+                widget.updatedata();
                 Navigator.pop(context);
-              },
-            ),
+              });
+            },
           ),
-          Flexible(
-            child: Buttons(
-              variant: Variant.validate,
-              size: SizeButton.sm,
-              msg: const Text('Valider'),
-              onPressed: () async {
-                modifyDocument(widget.id, widget.name).then((value) {
-                  widget.updatedata();
-                  Navigator.pop(context);
-                });
-              },
-            ),
+          const SizedBox(height: 8),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.sm,
+            msg: const Text('Annuler'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -376,18 +372,7 @@ class DeletePatient extends StatelessWidget {
       footer: Wrap(
         spacing: 12,
         children: [
-          Flexible(
-            child: Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.sm,
-              msg: const Text('Annuler'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Flexible(
-            child: Buttons(
+          Buttons(
               variant: Variant.delete,
               size: SizeButton.sm,
               msg: const Text('Supprimer'),
@@ -400,7 +385,15 @@ class DeletePatient extends StatelessWidget {
                 );
               },
             ),
-          ),
+          const SizedBox(height: 8),
+          Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
         ],
       ),
     );
