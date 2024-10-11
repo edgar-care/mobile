@@ -4,7 +4,6 @@ import 'package:edgar_app/services/medecine.dart';
 import 'package:edgar_app/services/traitement.dart';
 import 'package:edgar_app/utils/traitement_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 class DailyMedicamentCard extends StatefulWidget {
   const DailyMedicamentCard({super.key});
@@ -226,13 +225,10 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
         .toList();
 
     String getMedicineName(String medicineId) {
-      Logger().i(widget.medecines);
-      Logger().i(medicineId);
       var med = widget.medecines.firstWhere(
         (med) => med['id'] == medicineId,
         orElse: () => {'name': ''},
       );
-      Logger().i(med);
       return med['name'];
     }
 

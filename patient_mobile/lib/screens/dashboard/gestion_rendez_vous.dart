@@ -9,7 +9,6 @@ import 'package:edgar_app/widget/card_doctor_appoitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar/colors.dart';
@@ -472,7 +471,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
         await fetchAppointments(currentPage); // Start fetching from page 1
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     } finally {
       isLoading = false;
     }
@@ -525,7 +524,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
         addAppointmentFromResponse(id, value);
       }
     } catch (e) {
-      Logger().e("Error fetching data: $e");
+      //catch clauses
     }
   }
 
@@ -635,6 +634,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
                         idSelected: selectedId,
                       );
                     },
+
                   ),
           ),
           Pagination(

@@ -1,6 +1,6 @@
 class Chat {
   final String id;
-  final List<Message> messages;
+  final List<Sms> messages;
   final List<Participant> recipientIds;
 
   Chat({
@@ -10,12 +10,12 @@ class Chat {
   });
 }
 
-class Message {
+class Sms {
   final String message;
   final String ownerId;
   final DateTime time;
 
-  Message({
+  Sms({
     required this.message,
     required this.time,
     required this.ownerId,
@@ -36,10 +36,10 @@ List<Chat> transformChats(Map<String, dynamic> chats) {
   List<Chat> transformedChats = [];
 
   for (var chat in chats['chats']) {
-    List<Message> messages = [];
+    List<Sms> messages = [];
     List<Participant> participants = [];
     for (var message in chat['messages']) {
-      messages.add(Message(
+      messages.add(Sms(
         message: message['message'],
         ownerId: message['owner_id'],
         time:

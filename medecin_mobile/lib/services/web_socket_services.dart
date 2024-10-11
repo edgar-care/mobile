@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -14,12 +13,16 @@ class WebSocketService {
   Function(Map<String, dynamic>)? onReady;
   Function(Map<String, dynamic>)? onGetMessages;
   Function(Map<String, dynamic>)? onReadMessage;
+  Function(Map<String, dynamic>)? onAskMobileConnection;
+  Function(Map<String, dynamic>)? onResponseMobileConnection;
 
   WebSocketService({
     this.onReceiveMessage,
     this.onReady,
     this.onGetMessages,
     this.onReadMessage,
+    this.onAskMobileConnection,
+    this.onResponseMobileConnection,
   });
 
   // Connect to WebSocket
@@ -27,13 +30,11 @@ class WebSocketService {
     await _retrieveToken();
 
     if (authToken == null) {
-      Logger().e('Auth token is null');
       return;
     }
 
     final url = dotenv.env['WEBSOCKET_URL'];
     if (url == null) {
-      Logger().e('WebSocket URL not found in environment variables');
       return;
     }
 
@@ -43,9 +44,8 @@ class WebSocketService {
     _channel?.stream.listen((message) {
       _handleMessage(message);
     }, onError: (error) {
-      Logger().e('WebSocket Error: $error');
     }, onDone: () {
-      Logger().i('WebSocket connection closed');
+      connect();
     });
 
     sendReadyAction();
@@ -122,6 +122,16 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
+  void responseMobileConnection(String patientAuthTokenWS, String uuid, bool response) {
+    final responseMobileConnection = jsonEncode({
+      'action': 'responseMobileConnection',
+      'authToken': patientAuthTokenWS,
+      'uuid': uuid,
+      "response": response,
+    });
+    _channel?.sink.add(responseMobileConnection);
+  }
+
   // Handle incoming messages
   void _handleMessage(String message) {
     final decodedMessage = jsonDecode(message);
@@ -135,9 +145,16 @@ class WebSocketService {
       case 'receive_message':
         onReceiveMessage?.call(decodedMessage);
         break;
+      case 'ask_mobile_connection':
+        onAskMobileConnection?.call(decodedMessage);
+        break;
+      case 'response_mobile_connection':
+        onResponseMobileConnection?.call(decodedMessage);
+        break;
       case 'read_message':
         onReadMessage?.call(decodedMessage);
         break;
+      default:
     }
   }
 }

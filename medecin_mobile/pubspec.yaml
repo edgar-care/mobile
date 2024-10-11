@@ -28,11 +28,14 @@ dependencies:
   skeletonizer: ^1.1.2+1
   flutter_boring_avatars: ^1.1.0
   download_file: ^1.2.0
-
+  permission_handler: ^11.3.1
+  flutter_local_notifications: ^17.0.0
+  push: ^2.3.0
+  edgar: ^0.2.3
   flutter_native_splash: ^2.4.1
-  edgar: ^0.2.2
   provider: ^6.1.2
   animations: ^2.0.11
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

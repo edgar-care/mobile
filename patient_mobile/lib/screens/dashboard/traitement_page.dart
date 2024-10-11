@@ -10,7 +10,6 @@ import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -72,7 +71,6 @@ class _TraitmentPageState extends State<TraitmentPage> {
   }
 
   void updateTraitement() {
-    Logger().i('Traitement mis à jour');
     getFilterTraitement();
     setState(() {});
   }
@@ -2510,7 +2508,6 @@ class _CalendarTreatmentState extends State<CalendarTreatment> {
       (value) => {
         setState(() {
           followUp = value;
-          Logger().i(followUp);
         })
       },
     );

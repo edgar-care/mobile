@@ -10,7 +10,6 @@ import 'package:edgar_app/widget/card_docteur.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:provider/provider.dart';
@@ -634,6 +633,7 @@ class _onboarding2State extends State<Onboarding2> {
                         "weight": int.parse(weight) * 100,
                         "height": int.parse(height),
                         "primary_doctor_id": primaryDoctorId,
+                        "family_members_med_info_id": [],
                         "medical_antecedents": [],
                       };
 
@@ -838,8 +838,6 @@ class _Onboarding3State extends State<Onboarding3> {
                       return const Center(
                         child: Expanded(
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(AppColors.blue700),
                             strokeWidth: 2,
                             backgroundColor: AppColors.white,
                           ),
@@ -944,6 +942,7 @@ class _Onboarding3State extends State<Onboarding3> {
                     "weight": int.parse(weight) * 100,
                     "height": int.parse(height),
                     "primary_doctor_id": primaryDoctorId,
+                    "family_members_med_info_id": [],
                     "medical_antecedents": traitments,
                   };
 
@@ -1112,7 +1111,6 @@ class _InfoTreatmentState extends State<InfoTreatment> {
       }
       return true;
     } catch (e) {
-      Logger().e("Error fetching data: $e");
       return false;
     }
   }

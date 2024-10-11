@@ -10,7 +10,6 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 
 import '../../services/doctor.dart';
 
@@ -27,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> allDoctor = [];
 
   Future<void> fetchData() async {
-
     await getAllDoctor().then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
@@ -54,7 +52,6 @@ class _HomePageState extends State<HomePage> {
             message: "Error on fetching appointement", context: context));
       }
     });
-    Logger().i(rdv);
     return;
   }
 
