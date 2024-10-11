@@ -63,8 +63,9 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
     DateTime now = DateTime.now();
     return rdv.where((appointment) {
       return DateTime.fromMillisecondsSinceEpoch(
-              appointment['start_date'] * 1000)
-          .isBefore(now);
+                  appointment['start_date'] * 1000)
+              .isBefore(now) &&
+          appointment['appointment_status'] != 'CANCELED';
     }).toList();
   }
 
@@ -72,8 +73,9 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
     DateTime now = DateTime.now();
     return rdv.where((appointment) {
       return DateTime.fromMillisecondsSinceEpoch(
-              appointment['start_date'] * 1000)
-          .isAfter(now);
+                  appointment['start_date'] * 1000)
+              .isAfter(now) &&
+          appointment['appointment_status'] != 'CANCELED';
     }).toList();
   }
 
@@ -156,69 +158,70 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
                       ? getPastAppointments()
                       : getUpcomingAppointments();
                   return ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 4);
-                      },
-                      itemBuilder: (context, index) {
-                        final Doctor dct =
-                            findDoctorById(doctor, tmp[index]["doctor_id"]) ??
-                                Doctor(
-                                    id: '',
-                                    firstname: '',
-                                    name: '',
-                                    address: Address(
-                                        street: '',
-                                        zipCode: '',
-                                        country: '',
-                                        city: ''));
-                        return AppoitementCard(
-                            startDate: DateTime.fromMillisecondsSinceEpoch(
-                                tmp[index]["start_date"] * 1000),
-                            endDate: DateTime.fromMillisecondsSinceEpoch(
-                                tmp[index]["end_date"] * 1000),
-                            doctor: '${dct.name} ${dct.firstname}',
-                            onTap: () {
-                              final model = Provider.of<BottomSheetModel>(
-                                  context,
-                                  listen: false);
-                              model.resetCurrentIndex();
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) {
-                                  return Consumer<BottomSheetModel>(
-                                    builder: (context, model, child) {
-                                      return ListModal(
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(height: 4);
+                    },
+                    itemBuilder: (context, index) {
+                      final Doctor dct =
+                          findDoctorById(doctor, tmp[index]["doctor_id"]) ??
+                              Doctor(
+                                  id: '',
+                                  firstname: '',
+                                  name: '',
+                                  address: Address(
+                                      street: '',
+                                      zipCode: '',
+                                      country: '',
+                                      city: ''));
+                      return AppoitementCard(
+                        startDate: DateTime.fromMillisecondsSinceEpoch(
+                            tmp[index]["start_date"] * 1000),
+                        endDate: DateTime.fromMillisecondsSinceEpoch(
+                            tmp[index]["end_date"] * 1000),
+                        doctor: '${dct.name.toUpperCase()} ${dct.firstname}',
+                        onTap: () {
+                          final model = Provider.of<BottomSheetModel>(context,
+                              listen: false);
+                          model.resetCurrentIndex();
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return Consumer<BottomSheetModel>(
+                                builder: (context, model, child) {
+                                  return ListModal(
+                                    model: model,
+                                    children: [
+                                      OpenRdv(
                                         model: model,
-                                        children: [
-                                          OpenRdv(
-                                            model: model,
-                                            rdv: tmp[index],
-                                            doctor: doctor,
-                                          ),
-                                          DeleteRdv(
-                                            updataData: updateDate,
-                                            model: model,
-                                            id: tmp[index]['id']!.toString(),
-                                          ),
-                                          ModifyRdv(
-                                            id: tmp[index]['id']!.toString(),
-                                            updataData: updateDate,
-                                            model: model,
-                                          )
-                                        ],
-                                      );
-                                    },
+                                        rdv: tmp[index],
+                                        doctor: doctor,
+                                      ),
+                                      DeleteRdv(
+                                        updataData: updateDate,
+                                        model: model,
+                                        id: tmp[index]['id']!.toString(),
+                                      ),
+                                      ModifyRdv(
+                                        id: tmp[index]['id']!.toString(),
+                                        updataData: updateDate,
+                                        model: model,
+                                      )
+                                    ],
                                   );
                                 },
                               );
                             },
-                            status: status == RdvStatus.done
-                                ? AppointementStatus.done
-                                : AppointementStatus.waiting);
-                      },
-                      itemCount: tmp.length);
+                          );
+                        },
+                        status: status == RdvStatus.done
+                            ? AppointementStatus.done
+                            : AppointementStatus.waiting,
+                      );
+                    },
+                    itemCount: tmp.length,
+                  );
                 }
               }),
         ),
@@ -338,26 +341,30 @@ class _OpenRdvState extends State<OpenRdv> {
           ],
         ),
         const SizedBox(height: 16),
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Modifier'),
-          onPressed: () async {
-            widget.model.changePage(2);
-          },
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Buttons(
-          variant: Variant.delete,
-          size: SizeButton.md,
-          msg: const Text('Supprimer'),
-          onPressed: () {
-            widget.model.changePage(1);
-          },
-        ),
       ],
+      footer: Column(
+        children: [
+          Buttons(
+            variant: Variant.primary,
+            size: SizeButton.md,
+            msg: const Text('Modifier'),
+            onPressed: () async {
+              widget.model.changePage(2);
+            },
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.delete,
+            size: SizeButton.md,
+            msg: const Text('Supprimer'),
+            onPressed: () {
+              widget.model.changePage(1);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

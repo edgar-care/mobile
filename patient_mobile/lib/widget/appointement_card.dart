@@ -15,7 +15,8 @@ class AppoitementCard extends StatefulWidget {
       required this.startDate,
       required this.endDate,
       required this.doctor,
-      required this.onTap, required this.status});
+      required this.onTap,
+      required this.status});
 
   @override
   State<AppoitementCard> createState() => _AppoitementCardState();
@@ -39,8 +40,10 @@ class _AppoitementCardState extends State<AppoitementCard> {
         child: Row(children: [
           Container(
             width: 4,
-            decoration:  BoxDecoration(
-              color: widget.status == AppointementStatus.done ? AppColors.blue200 : AppColors.green500,
+            decoration: BoxDecoration(
+              color: widget.status == AppointementStatus.done
+                  ? AppColors.blue200
+                  : AppColors.green500,
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
           ),
@@ -62,7 +65,7 @@ class _AppoitementCardState extends State<AppoitementCard> {
                   Text(
                     "${widget.startDate.day.toString().padLeft(2, '0')}/${widget.startDate.month.toString().padLeft(2, '0')}/${widget.startDate.year} - ${widget.startDate.hour.toString().padLeft(2, '0')}h${widget.startDate.minute.toString().padLeft(2, '0')}",
                     style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         fontFamily: "Poppins"),
                   ),
@@ -73,7 +76,7 @@ class _AppoitementCardState extends State<AppoitementCard> {
                   Text(
                     "${widget.endDate.hour.toString().padLeft(2, '0')}h${widget.endDate.minute.toString().padLeft(2, '0')}",
                     style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         fontFamily: "Poppins"),
                   ),
