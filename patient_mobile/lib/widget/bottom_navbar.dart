@@ -145,25 +145,24 @@ class NavBarItem extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            width: 24,
-            height: 24,
-
+            width: 20,
+            height: 20,
             child: SvgPicture.asset(
-            icon,
-            // ignore: deprecated_member_use
-            color: color,
-            height: 24,
-            width: 24,
-          ),
+              icon,
+              // ignore: deprecated_member_use
+              color: color,
+              height: 20,
+              width: 20,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             text,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color: color,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
