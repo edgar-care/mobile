@@ -55,9 +55,6 @@ Future<List<Map<String, dynamic>>> getAppoitementPatient() async {
     headers: {'Authorization': 'Bearer $token'},
   );
 
-  Logger().i('response: ${response.body}');
-  Logger().i('response: ${response.statusCode}');
-
   if (response.statusCode == 200) {
     final body = response.body;
     return List<Map<String, dynamic>>.from(jsonDecode(body));
