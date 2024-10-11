@@ -338,6 +338,31 @@ class _ModalLoginState extends State<ModalLogin> {
         type: ModalType.info,
       ),
       body: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.red200,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+              color: AppColors.red400,
+              width: 2,
+            ),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: const Flexible(
+            child: Text(
+              "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 24,
+        ),
         const Text(
           "Addresse mail",
           style: TextStyle(
@@ -385,22 +410,21 @@ class _ModalLoginState extends State<ModalLogin> {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            final model =
-            Provider.of<BottomSheetModel>(context, listen: false);
-        model.resetCurrentIndex();
-        showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (context) {
-              return Consumer<BottomSheetModel>(
-                builder: (context, model, child) {
-                  return ListModal(model: model, children: [
-                    modalForgotPassword(context),
-                  ]);
-                },
-              );
-            });
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalForgotPassword(context),
+                      ]);
+                    },
+                  );
+                });
           },
           child: const Text(
             "Mot de passe oublié ?",
@@ -517,6 +541,31 @@ class _ModalRegisterState extends State<ModalRegister> {
         type: ModalType.info,
       ),
       body: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.red200,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+              color: AppColors.red400,
+              width: 2,
+            ),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: const Flexible(
+            child: Text(
+              "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+              style: TextStyle(
+                color: AppColors.black,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 24,
+        ),
         const Text(
           "Addresse mail",
           style: TextStyle(
@@ -825,16 +874,16 @@ Widget modalForgotPassword(BuildContext context) {
       ),
     ],
     footer: Buttons(
-            variant: Variant.primary,
-            size: SizeButton.md,
-            msg: const Text('Réinitialiser le mot de passe'),
-            onPressed: () {
-              missingPassword(email).then((value) {
-                Navigator.pop(context);
-              });
-            },
-          ),
-    );
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Réinitialiser le mot de passe'),
+      onPressed: () {
+        missingPassword(email).then((value) {
+          Navigator.pop(context);
+        });
+      },
+    ),
+  );
 }
 
 class ModalEmailLogin extends StatefulWidget {
@@ -1075,28 +1124,29 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
         ),
         type: ModalType.info,
       ),
-    footer:Column(
-      children: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Valider le code'),
-          onPressed: () {
-            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
-            });
-          }
-        ),
-        const SizedBox(height: 8,),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Revenir en arrière'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
+      footer: Column(
+        children: [
+          Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Valider le code'),
+              onPressed: () {
+                checkBackUpCode(widget.email, widget.password, code, context)
+                    .then((value) {});
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Revenir en arrière'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
