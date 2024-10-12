@@ -285,31 +285,16 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/MedicalFolder.svg',
+                                        'assets/images/utils/proches.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Dossier médical',
+                                      title: 'Mes proches',
                                       onTap: () {
-                                        widget.onItemTapped(4);
                                         Navigator.pop(context);
                                       },
                                       type: 'Middle',
-                                    ),
-                                    NavbarPLusTab(
-                                      icon: SvgPicture.asset(
-                                        'assets/images/utils/Messagerie.svg',
-                                        // ignore: deprecated_member_use
-                                        color: AppColors.black,
-                                        height: 18,
-                                      ),
-                                      title: 'Messagerie',
-                                      onTap: () {
-                                        widget.onItemTapped(5);
-                                        Navigator.pop(context);
-                                      },
-                                      type: 'Bottom',
                                     ),
                                   ],
                                 ),
