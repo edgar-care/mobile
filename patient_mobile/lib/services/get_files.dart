@@ -112,7 +112,7 @@ Future<Object?> deleteDocument(String id) async {
   }
 }
 
-Future<Object?> modifyDocument(String id, String name) async { 
+Future<Object?> modifyDocument(String id, String name) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   await dotenv.load();

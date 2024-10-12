@@ -1,4 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:animations/animations.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_app/main.dart';
 import 'package:edgar_app/screens/dashboard/traitement_page.dart';
 import 'package:edgar_app/services/websocket.dart';
@@ -11,6 +16,8 @@ import 'package:edgar_app/screens/dashboard/gestion_rendez_vous.dart';
 import 'package:edgar_app/screens/dashboard/file_page.dart';
 import 'package:edgar_app/screens/dashboard/chat_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -127,10 +134,23 @@ class DashBoardPageState extends State<DashBoardPage>
       onAskMobileConnection: (data) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
-        _webSocketService?.responseMobileConnection(
-          token!,
-          data['uuid'],
-        );
+        final model =
+          Provider.of<BottomSheetModel>(context, listen: false);
+      model.resetCurrentIndex();
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) {
+          return Consumer<BottomSheetModel>(
+            builder: (context, model, child) {
+              return ListModal(model: model, children: [
+                faWSModal(_webSocketService!, token!, data, context),
+              ]);
+            },
+          );
+        },
+      );
       },
 
       onResponseMobileConnection: (data) {
@@ -147,7 +167,6 @@ class DashBoardPageState extends State<DashBoardPage>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     if (token == null) {
-      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/');
     }
   }
@@ -236,6 +255,46 @@ class DashBoardPageState extends State<DashBoardPage>
   }
 }
 
-
 // ignore: must_be_immutable
-
+Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, BuildContext context) {
+  return ModalContainer(
+    title: 'Tentative de connexion',
+    subtitle: 'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
+    icon: const Icon(
+        BootstrapIcons.shield_lock_fill,
+        color: AppColors.blue700,
+        size: 17,
+      ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text('Autoriser'),
+          onPressed: () {
+            ws.responseMobileConnection(
+              token,
+              data['uuid'],
+              true
+            );
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(height: 8),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Refuser'),
+          onPressed: () {
+            ws.responseMobileConnection(
+              token,
+              data['uuid'],
+              false
+            );
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}

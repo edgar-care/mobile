@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/screens/2fa/authentication_page.dart';
+import 'package:edgar_app/screens/2fa/reset_password_pages.dart';
 import 'package:edgar_app/services/account.dart';
 import 'package:edgar_app/services/multiplefa.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
@@ -35,6 +36,12 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
     getEmail();
     getInfo();
+  }
+
+  void refresh() {
+    getInfo();
+    setState(() {
+    });
   }
 
   Future<bool> getInfo() async {
@@ -198,6 +205,7 @@ class _AccountPageState extends State<AccountPage> {
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: "Poppins",
                                               ),
+
                                             ),
                                             if (widget.infoMedical['sex'] ==
                                                     "MALE" ||
@@ -273,11 +281,20 @@ class _AccountPageState extends State<AccountPage> {
                                   Container(
                                     height: 1,
                                     color: AppColors.blue100,
+
                                   ),
                                   NavbarPLusTab(
                                     title: 'Mot de passe',
                                     onTap: () {
-                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          PageRouteBuilder<void>(
+                                            opaque: false,
+                                            pageBuilder: (BuildContext context, _, __) {
+                                              return const ResetPasswordPage();
+                                            },
+                                          ),
+                                        );
                                     },
                                     type: 'Only',
                                     outlineIcon: SvgPicture.asset(
@@ -318,7 +335,8 @@ class _AccountPageState extends State<AccountPage> {
                                           opaque: false,
                                           pageBuilder:
                                               (BuildContext context, _, __) {
-                                            return const DoubleAuthentication();
+
+                                            return DoubleAuthentication(refreshAccount: refresh,);
                                           },
                                         ),
                                       );
@@ -351,7 +369,7 @@ class _AccountPageState extends State<AccountPage> {
                                                   children: [
                                                     enable2fa['methods'].isEmpty
                                                         ? modalRedirect2FA(
-                                                            context)
+                                                            context, refresh)
                                                         : modalReNewBackup(
                                                             context),
                                                   ]);
@@ -657,29 +675,15 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   ],
                 ),
               ],
-              footer: Column(
-                children: [
+              footer:
                   Buttons(
                     variant: Variant.primary,
                     size: SizeButton.md,
-                    msg: const Text('Activer l\'authentification'),
+                    msg: const Text('Confirmer'),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Buttons(
-                    variant: Variant.secondary,
-                    size: SizeButton.md,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -688,7 +692,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   }
 }
 
-Widget modalRedirect2FA(BuildContext context) {
+Widget modalRedirect2FA(BuildContext context, Function refreshAccount) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle:
@@ -711,7 +715,7 @@ Widget modalRedirect2FA(BuildContext context) {
           PageRouteBuilder<void>(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) {
-              return const DoubleAuthentication();
+              return DoubleAuthentication(refreshAccount: refreshAccount,);
             },
           ),
         );

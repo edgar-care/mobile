@@ -45,6 +45,7 @@ class WebSocketService {
       _handleMessage(message);
     }, onError: (error) {
     }, onDone: () {
+      connect();
     });
 
     sendReadyAction();
@@ -121,12 +122,12 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
-  void responseMobileConnection(String patientAuthTokenWS, String uuid) {
+  void responseMobileConnection(String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
-      'action': 'responseMobileConnection ',
+      'action': 'responseMobileConnection',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
-      "response": true,
+      "response": response,
     });
     _channel?.sink.add(responseMobileConnection);
   }
@@ -153,6 +154,7 @@ class WebSocketService {
       case 'read_message':
         onReadMessage?.call(decodedMessage);
         break;
+      default:
     }
   }
 }
