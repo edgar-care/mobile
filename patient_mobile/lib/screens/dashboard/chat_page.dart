@@ -270,9 +270,20 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
     });
   }
 
-  void updateFilter(String value) {
+  void filterDoctors(String filter) {
     setState(() {
-      nameFilter = value;
+      nameFilter = filter;
+      filtereddoctors = doctors
+          .where((element) =>
+              element['name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(filter.toLowerCase()) ||
+              element['firstname']
+                  .toString()
+                  .toLowerCase()
+                  .contains(filter.toLowerCase()))
+          .toList();
     });
   }
 
@@ -304,26 +315,23 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
           label: 'Docteur Edgar',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
-          onValidate: (value) {
-            updateFilter(value);
-          },
+          onValidate: (value) {},
         ),
         const SizedBox(height: 8),
-        FutureBuilder(
-          future: fetchData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Expanded(
-                child: Center(
+        SizedBox(
+          height: 400,
+          child: FutureBuilder(
+            future: fetchData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
                   child: CircularProgressIndicator(
                     color: AppColors.blue700,
                     strokeWidth: 2,
                   ),
-                ),
-              );
-            } else {
-              return Expanded(
-                child: ListView.separated(
+                );
+              } else {
+                return ListView.separated(
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
                   itemCount: filtereddoctors.length,
@@ -397,38 +405,37 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                       ),
                     );
                   },
-                ),
-              );
-            }
-          },
+                );
+              }
+            },
+          ),
         ),
-        const SizedBox(height: 24),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Buttons(
-              variant: Variant.primary,
-              size: SizeButton.md,
-              msg: const Text('Suivant'),
-              onPressed: () {
-                if (doctorIdSelected.isEmpty) {
-                  return;
-                }
-                widget.model.changePage(1);
-              },
-            ),
-            const SizedBox(height: 8),
-            Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.md,
-              msg: const Text('Annuler'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        )
       ],
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Buttons(
+            variant: Variant.primary,
+            size: SizeButton.md,
+            msg: const Text('Suivant'),
+            onPressed: () {
+              if (doctorIdSelected.isEmpty) {
+                return;
+              }
+              widget.model.changePage(1);
+            },
+          ),
+          const SizedBox(height: 8),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Annuler'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -473,7 +480,7 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
     return ModalContainer(
         title: "Commencer une conversation",
         subtitle:
-            "Ecriver votre message pour commencer la conversation avec ce médecin.",
+            "Ecrive votre message pour commencer la conversation avec ce médecin.",
         icon: const IconModal(
           icon: Icon(
             BootstrapIcons.chat_dots_fill,
@@ -510,6 +517,9 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
               size: SizeButton.md,
               msg: const Text('Envoyer'),
               onPressed: () {
+                if (message.isEmpty) {
+                  return;
+                }
                 updateData(message);
               },
             ),
