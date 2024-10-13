@@ -70,47 +70,71 @@ class _OnboardingState extends State<Onboarding> {
     });
   }
 
+  Widget _buildWarningBox() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.red200,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.red400, width: 2),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.all(16),
+      child: const Text(
+        "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l'anonymisation de vos données de santé, nous vous demandons de ne pas saisir d'informations personnelles ou médicales sensibles.",
+        style: TextStyle(
+          color: AppColors.black,
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-            decoration: const BoxDecoration(
-              color: AppColors.blue700,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(48),
-                bottomRight: Radius.circular(48),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+              decoration: const BoxDecoration(
+                color: AppColors.blue700,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(48),
+                  bottomRight: Radius.circular(48),
+                ),
               ),
-            ),
-            child: IntrinsicWidth(
-              child: Row(
-                children: [
-                  SvgPicture.asset("assets/images/logo/edgar_staying.svg"),
-                  const SizedBox(width: 16),
-                  const Expanded(
-                    child: Text(
-                      'J’ai besoin de vos informations personnelles afin de remplir votre espace patient',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+              child: IntrinsicWidth(
+                child: Row(
+                  children: [
+                    SvgPicture.asset("assets/images/logo/edgar_staying.svg"),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Text(
+                        'J’ai besoin de vos informations personnelles afin de remplir votre espace patient',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 600),
-            child: pages[_selectedIndex],
-          ),
-        ],
+            _buildWarningBox(),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 600),
+              child: pages[_selectedIndex],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -126,18 +150,13 @@ class Onboarding1 extends StatefulWidget {
 }
 
 class _Onboarding1State extends State<Onboarding1> {
-  ValueNotifier<String> selected = ValueNotifier('Masculin');
-
-  ValueNotifier<bool> isHealth = ValueNotifier(isHealths);
-
-  void updateSelection(
-    String value,
-  ) {
-    setState(() {
-      selected.value = value;
-      birthdate = birthdate;
-    });
-  }
+  final ValueNotifier<String> _selected = ValueNotifier('MALE');
+  final ValueNotifier<bool> _isHealth = ValueNotifier(false);
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
+  final TextEditingController _birthdateController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
 
   @override
   void initState() {
@@ -145,292 +164,259 @@ class _Onboarding1State extends State<Onboarding1> {
     initializeDateFormatting('fr', null);
   }
 
-  final DateTime today = DateTime.now();
+  @override
+  void dispose() {
+    _selected.dispose();
+    _isHealth.dispose();
+    _nameController.dispose();
+    _lastnameController.dispose();
+    _birthdateController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 172,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 24,
-          right: 24,
-          bottom: 24,
-          top: 16,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
-              child: Row(
-                children: [
-                  Flexible(
-                      child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.blue700,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  )),
-                  const SizedBox(width: 8),
-                  Flexible(
-                      child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.blue200,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  )),
-                  const SizedBox(width: 8),
-                  Flexible(
-                      child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.blue200,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  )),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Votre prénom',
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            CustomField(
-              label: 'Edgar',
-              value: name,
-              action: TextInputAction.next,
-              onChanged: (value) => name = value.trim(),
-              keyboardType: TextInputType.name,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Votre nom',
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            CustomField(
-              label: "L'assistant numerique",
-              value: lastname,
-              action: TextInputAction.next,
-              onChanged: (value) {
-                lastname = value.trim();
-              },
-              keyboardType: TextInputType.name,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Votre date de naissance',
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            CustomDatePiker(
-              onChanged: (value) => birthdate = value,
-              value: birthdate != "" ? birthdate : null,
-              placeHolder: "26/09/2022",
-              endDate: today,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Votre sexe',
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            ValueListenableBuilder<String>(
-              valueListenable: selected,
-              builder: (context, value, child) {
-                return Row(
-                  children: [
-                    AddButtonSpe(
-                        onTap: () {
-                          updateSelection('MALE');
-                          setState(() {
-                            sexe = "MALE";
-                          });
-                        },
-                        label: "Masculin",
-                        background: value == 'MALE'
-                            ? AppColors.blue700
-                            : AppColors.white,
-                        color: value == "MALE"
-                            ? AppColors.white
-                            : AppColors.grey400),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    AddButtonSpe(
-                        onTap: () {
-                          updateSelection('FEMALE');
-                          setState(() {
-                            sexe = "FEMALE";
-                          });
-                        },
-                        label: "Féminin",
-                        background: value == 'FEMALE'
-                            ? AppColors.blue700
-                            : AppColors.white,
-                        color: value == "FEMALE"
-                            ? AppColors.white
-                            : AppColors.grey400),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    AddButtonSpe(
-                        onTap: () {
-                          updateSelection('OTHER');
-                          setState(() {
-                            sexe = "OTHER";
-                          });
-                        },
-                        label: "Autre",
-                        background: value == 'OTHER'
-                            ? AppColors.blue700
-                            : AppColors.white,
-                        color: value == "OTHER"
-                            ? AppColors.white
-                            : AppColors.grey400),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Votre taille',
-                        style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 8),
-                      CustomField(
-                        label: '183cm',
-                        action: TextInputAction.next,
-                        value: height,
-                        onChanged: (value) => height = value.trim(),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Votre poids',
-                        style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 8),
-                      CustomField(
-                        label: '75kg',
-                        value: weight,
-                        action: TextInputAction.next,
-                        onChanged: (value) => weight = value.trim(),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Avez-vous des antécédents médicaux ou sujets de santé ?',
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.left,
-            ),
-            const SizedBox(height: 8),
-            ValueListenableBuilder<bool>(
-              valueListenable: isHealth,
-              builder: (context, value, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    AddButtonSpeHealth(
-                        onTap: (() {
-                          setState(() {
-                            isHealth.value = true;
-                          });
-                        }),
-                        label: "Oui",
-                        color:
-                            value == true ? AppColors.white : AppColors.blue700,
-                        background: value == true
-                            ? AppColors.blue700
-                            : AppColors.white),
-                    const SizedBox(width: 16),
-                    AddButtonSpeHealth(
-                        onTap: (() {
-                          setState(() {
-                            isHealth.value = false;
-                          });
-                        }),
-                        label: "Non",
-                        color:
-                            value == false ? Colors.white : AppColors.blue700,
-                        background: value == false
-                            ? AppColors.blue700
-                            : AppColors.white),
-                  ],
-                );
-              },
-            ),
-            Expanded(child: Container()),
-            const SizedBox(height: 8),
-            Buttons(
-              variant: Variant.primary,
-              size: SizeButton.md,
-              msg: const Text("Continuer"),
-              onPressed: () async {
-                if (name != "" &&
-                    lastname != "" &&
-                    birthdate != "" &&
-                    height != "" &&
-                    weight != "") {
-                  isHealths = isHealth.value;
-                  widget.updateSelectedIndex(1);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Compléter tous les champs", context: context));
-                }
-              },
-            )
-          ],
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildProgressIndicator(),
+              const SizedBox(height: 16),
+              _buildInputField('Votre prénom', 'Edgar', _nameController),
+              _buildInputField(
+                  'Votre nom', "L'assistant numerique", _lastnameController),
+              _buildDatePicker(),
+              _buildGenderSelection(),
+              _buildHeightWeightRow(),
+              _buildHealthQuestion(),
+              const SizedBox(height: 24),
+              _buildContinueButton(),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.blue700,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.blue200,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.blue200,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputField(
+      String label, String hint, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        CustomField(
+          label: hint,
+          onChanged: (value) => controller.text = value,
+          action: TextInputAction.next,
+          keyboardType: TextInputType.name,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Votre date de naissance',
+          style: TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        CustomDatePiker(
+          onChanged: (value) => _birthdateController.text = value,
+          value: _birthdateController.text.isNotEmpty
+              ? _birthdateController.text
+              : null,
+          placeHolder: "26/09/2022",
+          endDate: DateTime.now(),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildGenderSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Votre sexe',
+          style: TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ValueListenableBuilder<String>(
+          valueListenable: _selected,
+          builder: (context, value, child) {
+            return Row(
+              children: [
+                _buildGenderButton('MALE', 'Masculin', value),
+                const SizedBox(width: 16),
+                _buildGenderButton('FEMALE', 'Féminin', value),
+                const SizedBox(width: 16),
+                _buildGenderButton('OTHER', 'Autre', value),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildGenderButton(String gender, String label, String selectedValue) {
+    return AddButtonSpe(
+      onTap: () => _selected.value = gender,
+      label: label,
+      background: selectedValue == gender ? AppColors.blue700 : AppColors.white,
+      color: selectedValue == gender ? AppColors.white : AppColors.grey400,
+    );
+  }
+
+  Widget _buildHeightWeightRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildInputField('Votre taille', '183cm', _heightController),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildInputField('Votre poids', '75kg', _weightController),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHealthQuestion() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Avez-vous des antécédents médicaux ou sujets de santé ?',
+          style: TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ValueListenableBuilder<bool>(
+          valueListenable: _isHealth,
+          builder: (context, value, child) {
+            return Row(
+              children: [
+                _buildHealthButton(true, 'Oui', value),
+                const SizedBox(width: 16),
+                _buildHealthButton(false, 'Non', value),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHealthButton(bool isYes, String label, bool currentValue) {
+    return AddButtonSpeHealth(
+      onTap: () => _isHealth.value = isYes,
+      label: label,
+      color: currentValue == isYes ? AppColors.white : AppColors.blue700,
+      background: currentValue == isYes ? AppColors.blue700 : AppColors.white,
+    );
+  }
+
+  Widget _buildContinueButton() {
+    return Buttons(
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text("Continuer"),
+      onPressed: _validateAndContinue,
+    );
+  }
+
+  void _validateAndContinue() {
+    if (_nameController.text.isNotEmpty &&
+        _lastnameController.text.isNotEmpty &&
+        _birthdateController.text.isNotEmpty &&
+        _heightController.text.isNotEmpty &&
+        _weightController.text.isNotEmpty) {
+      // Update global variables if needed
+      name = _nameController.text.trim();
+      lastname = _lastnameController.text.trim();
+      birthdate = _birthdateController.text.trim();
+      sexe = _selected.value;
+      height = _heightController.text.trim();
+      weight = _weightController.text.trim();
+      isHealths = _isHealth.value;
+
+      widget.updateSelectedIndex(1);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        ErrorSnackBar(message: "Compléter tous les champs", context: context),
+      );
+    }
   }
 }
 
