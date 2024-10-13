@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
+
 class FilterCard extends StatefulWidget {
   final Widget header;
   final Function onTap;

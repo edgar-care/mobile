@@ -30,6 +30,11 @@ class _AccountPageState extends State<AccountPage> {
     getInfo();
   }
 
+  void refresh() {
+    getInfo();
+    setState(() {});
+  }
+
   void getInfo() async {
     var tmp = await getEnable2fa();
     setState(() {
@@ -229,7 +234,7 @@ class _AccountPageState extends State<AccountPage> {
                                             opaque: false,
                                             pageBuilder:
                                                 (BuildContext context, _, __) {
-                                              return const DoubleAuthentication();
+                                              return DoubleAuthentication(refreshAccount: refresh,);
                                             },
                                           ),
                                         );
@@ -264,7 +269,7 @@ class _AccountPageState extends State<AccountPage> {
                                                       enable2fa['methods']
                                                               .isEmpty
                                                           ? modalRedirect2FA(
-                                                              context)
+                                                              context, refresh)
                                                           : modalReNewBackup(
                                                               context),
                                                     ]);
@@ -472,29 +477,15 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   ],
                 ),
               ],
-              footer: Column(
-                children: [
+              footer:
                   Buttons(
                     variant: Variant.primary,
                     size: SizeButton.md,
-                    msg: const Text('Activer l\'authentification'),
+                    msg: const Text('Confirmer'),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Buttons(
-                    variant: Variant.secondary,
-                    size: SizeButton.md,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -503,7 +494,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   }
 }
 
-Widget modalRedirect2FA(BuildContext context) {
+Widget modalRedirect2FA(BuildContext context, Function refresh2fa) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle:
@@ -526,7 +517,7 @@ Widget modalRedirect2FA(BuildContext context) {
           PageRouteBuilder<void>(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) {
-              return const DoubleAuthentication();
+              return DoubleAuthentication(refreshAccount: refresh2fa,);
             },
           ),
         );

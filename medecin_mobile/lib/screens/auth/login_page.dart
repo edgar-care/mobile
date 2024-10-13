@@ -208,7 +208,7 @@ class _LoginState extends State<Login> {
                         msg: const Text("Créer un compte"),
                         size: SizeButton.md,
                         onPressed: () {
-                        widget.callback(1);
+                          widget.callback(1);
                         },
                       ),
                     ],
@@ -305,7 +305,6 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                   NavbarPLusTab(
                     title: 'Code envoyé par email',
                     onTap: () {
-                      sendEmailCode(widget.email).then((value) {
                         final model = Provider.of<BottomSheetModel>(context, listen: false);
                         model.resetCurrentIndex();
                         showModalBottomSheet(
@@ -322,7 +321,6 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                               );
                             },
                           );
-                      });
                     },
                     type: 'Top',
                     icon: SvgPicture.asset(
@@ -365,6 +363,12 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                   'assets/images/utils/chevron-right.svg',
                 ),
               ),
+              if(i < widget.methods.length && i > 0)
+                Container(
+                  height: 1,
+                  color: AppColors.blue100,
+                ),
+              ],
               NavbarPLusTab(
                 title: 'Code de sauvegarde',
                 onTap: () {
@@ -395,12 +399,6 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
                   'assets/images/utils/chevron-right.svg',
                 ),
               ),
-              if(i < widget.methods.length && i > 0)
-                Container(
-                  height: 1,
-                  color: AppColors.blue100,
-                ),
-              ],
             ],
           )
           )
@@ -419,68 +417,122 @@ class _ModalChoose2FAState extends State<ModalChoose2FA> {
 class ModalEmailLogin extends StatefulWidget {
   final String email;
   final String password;
-  const ModalEmailLogin({super.key, required this.email, required this.password});
+  const ModalEmailLogin(
+      {super.key, required this.email, required this.password});
 
   @override
   State<ModalEmailLogin> createState() => _ModalEmailLoginState();
 }
 
 class _ModalEmailLoginState extends State<ModalEmailLogin> {
-  String code = '';
-
-  void setCode(String action, String code) {
-    if (action == 'ADD') {
-      setState(() {
-        code += code;
-      });
-  }
-  else if (action == 'DELETE') {
-    setState(() {
-      code = code.substring(0, code.length - 1);
-    });
-  }
-  }
-
   @override
   Widget build(BuildContext context) {
+    String code = '';
 
-  return ModalContainer(
-    title: "Vérifier votre identité",
-    subtitle: 'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
-    body: [
-        FieldNumberList2FA(addCode: setCode,)
-    ],
-    icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.shield_lock_fill,
-          color: AppColors.blue700,
-          size: 17,
-        ),
-        type: ModalType.info,
-      ),
-    footer: Column(
-      children: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Valider le code'),
-          onPressed: () {
-            checkEmailCode(widget.email, widget.password, code, context).then((value) {
-            });
+    void setCode(String action, String code) {
+      if (action == 'ADD') {
+        setState(() {
+          code += code;
+        });
+      } else if (action == 'DELETE') {
+        setState(() {
+          code = code.substring(0, code.length - 1);
+        });
+      }
+    }
+
+    Future<bool> sendEmail() async {
+      await sendEmailCode(widget.email);
+      return true;
+    }
+
+    return FutureBuilder(
+        future: sendEmail(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  CircularProgressIndicator(
+                    color: AppColors.white,
+                    semanticsValue: 'Loading...',
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        width: 120,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          } else {
+            return ModalContainer(
+              title: "Vérifier votre identité",
+              subtitle:
+                  'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
+              body: [
+                FieldNumberList2FA(
+                  addCode: setCode,
+                )
+              ],
+              icon: const IconModal(
+                icon: Icon(
+                  BootstrapIcons.shield_lock_fill,
+                  color: AppColors.blue700,
+                  size: 17,
+                ),
+                type: ModalType.info,
+              ),
+              footer: Column(
+                children: [
+                  Buttons(
+                      variant: Variant.primary,
+                      size: SizeButton.md,
+                      msg: const Text('Valider le code'),
+                      onPressed: () {
+                        checkEmailCode(
+                                widget.email, widget.password, code, context)
+                            .then((value) {});
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Buttons(
+                    variant: Variant.secondary,
+                    size: SizeButton.md,
+                    msg: const Text('Revenir en arrière'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
           }
-        ),
-        const SizedBox(height: 8,),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Revenir en arrière'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
+        });
   }
 }
 

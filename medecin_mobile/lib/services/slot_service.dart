@@ -27,9 +27,9 @@ Future<Object?> postSlot(DateTime date) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   final url = '${dotenv.env['URL']}doctor/slot';
-  final start = date.toUtc().millisecondsSinceEpoch ~/ 1000;
+  final start = date.millisecondsSinceEpoch ~/ 1000;
   final end =
-      ((date.add(const Duration(minutes: 30))).toUtc().millisecondsSinceEpoch ~/
+      ((date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/
           1000);
   final response = await http.post(
     Uri.parse(url),
