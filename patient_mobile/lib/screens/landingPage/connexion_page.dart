@@ -348,15 +348,13 @@ class _ModalLoginState extends State<ModalLogin> {
             ),
           ),
           padding: const EdgeInsets.all(16),
-          child: const Flexible(
-            child: Text(
-              "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
-              style: TextStyle(
-                color: AppColors.black,
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+          child: const Text(
+            "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+            style: TextStyle(
+              color: AppColors.black,
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -551,15 +549,13 @@ class _ModalRegisterState extends State<ModalRegister> {
             ),
           ),
           padding: const EdgeInsets.all(16),
-          child: const Flexible(
-            child: Text(
-              "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
-              style: TextStyle(
-                color: AppColors.black,
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+          child: const Text(
+            "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+            style: TextStyle(
+              color: AppColors.black,
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
