@@ -1,3 +1,4 @@
+import 'package:edgar_pro/screens/auth/register_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/screens/auth/login_page.dart';
 import 'package:edgar_pro/screens/auth/register_page.dart';
@@ -13,12 +14,23 @@ class Auth extends StatefulWidget {
 }
 
 class _AuthState extends State<Auth> {
+  String authEmail = '';
+  String authPassword = '';
   int _selectedIndex = 0;
 
   void updateSelectedIndex(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void registerCallback(String email, String password) {
+    setState(() {
+      authEmail = email;
+      authPassword = password;
+      _selectedIndex = 2;
+    });
+
   }
 
   @override
@@ -41,7 +53,8 @@ class _AuthState extends State<Auth> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       Login(callback: updateSelectedIndex),
-      Register(callback: updateSelectedIndex),
+      Register(callback: updateSelectedIndex, registerCallback: registerCallback),
+      Register2(updateSelectedIndex: updateSelectedIndex, email: authEmail, password: authPassword),
     ];
     return Scaffold(
       body: AnimatedSwitcher(
