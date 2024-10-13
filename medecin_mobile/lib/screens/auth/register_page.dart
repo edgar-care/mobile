@@ -117,6 +117,7 @@ class _RegisterState extends State<Register> {
                           label: "Minimum 8 caractères",
                           keyboardType: TextInputType.text,
                           isPassword: true,
+                          isNotCapitalize: true,
                           onChanged: (value) {
                             setState(() {
                               password = value.trim();

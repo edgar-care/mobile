@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
 
@@ -151,7 +152,7 @@ Future checkThirdPartyCode(String email, String password, String code, BuildCont
 
 Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/register';
+  String url = '${dotenv.env['URL']}/auth/d/register';
   ScaffoldMessenger.of(context).showSnackBar(
       InfoSnackBar(message: "Connexion à l'application ...", context: context));
   final response = await http.post(
@@ -170,6 +171,9 @@ Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
       }
     }),
   );
+
+  Logger().d(response.statusCode);
+  Logger().d(response.body);
 
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
