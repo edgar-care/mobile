@@ -172,9 +172,6 @@ Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
     }),
   );
 
-  Logger().d(response.statusCode);
-  Logger().d(response.body);
-
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
     if ( jsonDecode(response.body)['token'] != null) {
