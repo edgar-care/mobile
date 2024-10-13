@@ -115,7 +115,7 @@ class _Register2State extends State<Register2> {
             const SizedBox(height: 8),
             CustomField(
               label: "1 rue du medecin",
-              value: lastname,
+              value: adress,
               action: TextInputAction.next,
               onChanged: (value) {
                 adress = value.trim();
@@ -189,7 +189,7 @@ class _Register2State extends State<Register2> {
             const SizedBox(height: 8),
             CustomField(
               label: "France",
-              value: lastname,
+              value: country,
               action: TextInputAction.next,
               onChanged: (value) {
                 country = value.trim();

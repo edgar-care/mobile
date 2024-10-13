@@ -14,8 +14,8 @@ class Auth extends StatefulWidget {
 }
 
 class _AuthState extends State<Auth> {
-  String email = '';
-  String password = '';
+  String authEmail = '';
+  String authPassword = '';
   int _selectedIndex = 0;
 
   void updateSelectedIndex(int index) {
@@ -26,9 +26,9 @@ class _AuthState extends State<Auth> {
 
   void registerCallback(String email, String password) {
     setState(() {
+      authEmail = email;
+      authPassword = password;
       _selectedIndex = 2;
-      email = email;
-      password = password;
     });
 
   }
@@ -54,7 +54,7 @@ class _AuthState extends State<Auth> {
     final List<Widget> pages = <Widget>[
       Login(callback: updateSelectedIndex),
       Register(callback: updateSelectedIndex, registerCallback: registerCallback),
-      Register2(updateSelectedIndex: updateSelectedIndex, email: email, password: password),
+      Register2(updateSelectedIndex: updateSelectedIndex, email: authEmail, password: authPassword),
     ];
     return Scaffold(
       body: AnimatedSwitcher(
