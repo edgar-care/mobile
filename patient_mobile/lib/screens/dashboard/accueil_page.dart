@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: BoringAvatars(
                         name:
-                            "${infoMedical['firstname'] ?? 'Ne fonctionne'} ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'Pas'}",
+                            "${infoMedical['name'] ?? 'Ne fonctionne'} ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'Pas'}",
                         colors: const [
                           AppColors.blue700,
                           AppColors.blue200,
@@ -123,8 +123,8 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 DateTime.now().hour > 18
-                    ? 'Bonsoir, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !'
-                    : 'Bonjour, ${infoMedical['firstname'] != null ? infoMedical["firstname"].toUpperCase() : 'medical Folder Doesnt work'} !',
+                    ? 'Bonsoir, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !'
+                    : 'Bonjour, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !',
                 style: const TextStyle(
                   fontSize: 20,
                   fontFamily: 'Poppins',

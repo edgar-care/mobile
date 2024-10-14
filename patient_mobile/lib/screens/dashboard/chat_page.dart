@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/screens/dashboard/conversation_patient.dart';
 import 'package:edgar_app/services/doctor.dart';
@@ -83,8 +82,7 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
-    } else {
-    }
+    } else {}
   }
 
   String getDoctorName(Chat chat) {
@@ -98,7 +96,7 @@ class _ChatPageState extends State<ChatPage> {
       return 'Dr. Edgard Test';
     }
 
-    return 'Dr. ${doctor1['firstname']} ${doctor1['name'].toUpperCase()}';
+    return 'Dr. ${doctor1['name']} ${doctor1['firstname'].toUpperCase()}';
   }
 
   Future<void> getAllDoctorName() async {
@@ -113,7 +111,7 @@ class _ChatPageState extends State<ChatPage> {
         doctorName.add('Dr. Edgard Test');
       } else {
         doctorName.add(
-            'Dr. ${doctor1['firstname']} ${doctor1['name'].toUpperCase()}');
+            'Dr. ${doctor1['name']} ${doctor1['firstname'].toUpperCase()}');
       }
     }
   }
