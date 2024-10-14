@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/appointement.dart';
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';
@@ -391,11 +390,12 @@ class _DeleteRdvState extends State<DeleteRdv> {
       title: 'Annuler votre rendez-vous',
       subtitle:
           'Vous êtes sur le point d’annuler votre rendez-vous. Si vous annulez ce rendez-vous, vous ne pourrez plus y assister. ',
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.x,
-          color: AppColors.red700,
-          size: 18,
+      icon: IconModal(
+        icon: SvgPicture.asset(
+          "assets/images/utils/crossAppoitement.svg",
+          width: 18,
+          // ignore: deprecated_member_use
+          color: AppColors.red500,
         ),
         type: ModalType.error,
       ),
