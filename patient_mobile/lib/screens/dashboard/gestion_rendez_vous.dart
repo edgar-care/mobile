@@ -6,6 +6,7 @@ import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';
 import 'package:edgar_app/widget/appointement_card.dart';
 import 'package:edgar_app/widget/card_doctor_appoitement.dart';
+import 'package:edgar_app/widget/field_custom_perso.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -55,6 +56,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
 
   Future<void> updateDate(BuildContext context) async {
     fetchData();
+    setState(() {});
   }
 
   List<Map<String, dynamic>> getPastAppointments() {
@@ -608,13 +610,11 @@ class _ModifyRdvState extends State<ModifyRdv> {
           type: ModalType.info,
         ),
         body: [
-          CustomFieldSearch(
+          CustomFieldSearchPerso(
             label: "Rechercher par le nom du médecin",
             icon: SvgPicture.asset("assets/images/utils/search.svg"),
             keyboardType: TextInputType.text,
-            onValidate: (value) {
-              filterDoctors(value);
-            },
+            onChange: filterDoctors,
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -634,7 +634,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
                         idSelected: selectedId,
                       );
                     },
-
                   ),
           ),
           Pagination(
