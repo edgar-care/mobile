@@ -65,8 +65,8 @@ class ChatCard extends StatelessWidget {
                               AppColors.green500,
                             ],
                           ),
-                          
                           type: BoringAvatarType.beam,
+                          shape: CircleBorder(),
                         )),
                     const SizedBox(width: 8),
                     Column(

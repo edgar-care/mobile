@@ -6,6 +6,7 @@ import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:edgar_app/widget/card_conversation.dart';
+import 'package:edgar_app/widget/field_custom_perso.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -180,7 +181,7 @@ class _ChatPageState extends State<ChatPage> {
                           return ListModal(
                             model: model,
                             children: [
-                              CreateDiscusion(
+                              CreateDiscussion(
                                 model: model,
                                 webSocketService: widget.webSocketService,
                               ),
@@ -241,39 +242,42 @@ class _ChatPageState extends State<ChatPage> {
 String doctorIdSelected = '';
 
 // ignore: must_be_immutable
-class CreateDiscusion extends StatefulWidget {
+class CreateDiscussion extends StatefulWidget {
   WebSocketService? webSocketService;
   BottomSheetModel model;
-  CreateDiscusion({
+  CreateDiscussion({
     super.key,
     required this.model,
     required this.webSocketService,
   });
 
   @override
-  State<CreateDiscusion> createState() => _CreateDiscusionState();
+  State<CreateDiscussion> createState() => _CreateDiscussionState();
 }
 
-class _CreateDiscusionState extends State<CreateDiscusion> {
+class _CreateDiscussionState extends State<CreateDiscussion> {
   List<dynamic> doctors = [];
-  List<dynamic> filtereddoctors = [];
+  List<dynamic> filteredDoctors = [];
   String nameFilter = '';
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
+    final value = await getAllDoctor();
+    setState(() {
       doctors = value;
-      filtereddoctors = value
-          .where((element) =>
-              element['name'].toString().contains(nameFilter) ||
-              element['firstname'].toString().contains(nameFilter))
-          .toList();
+      filteredDoctors = value;
     });
   }
 
   void filterDoctors(String filter) {
     setState(() {
       nameFilter = filter;
-      filtereddoctors = doctors
+      filteredDoctors = doctors
           .where((element) =>
               element['name']
                   .toString()
@@ -311,37 +315,33 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
           ),
         ),
         const SizedBox(height: 4),
-        CustomFieldSearch(
+        CustomFieldSearchPerso(
           label: 'Docteur Edgar',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
-          onValidate: (value) {},
+          onChange: filterDoctors,
         ),
         const SizedBox(height: 8),
         SizedBox(
           height: 400,
-          child: FutureBuilder(
-            future: fetchData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
+          child: doctors.isEmpty
+              ? const Center(
                   child: CircularProgressIndicator(
                     color: AppColors.blue700,
                     strokeWidth: 2,
                   ),
-                );
-              } else {
-                return ListView.separated(
+                )
+              : ListView.separated(
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
-                  itemCount: filtereddoctors.length,
+                  itemCount: filteredDoctors.length,
                   padding: const EdgeInsets.all(0),
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          doctorIdSelected = filtereddoctors[index]['id'];
+                          doctorIdSelected = filteredDoctors[index]['id'];
                         });
                       },
                       child: Container(
@@ -349,7 +349,7 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color:
-                              doctorIdSelected == filtereddoctors[index]['id']
+                              doctorIdSelected == filteredDoctors[index]['id']
                                   ? AppColors.blue700
                                   : AppColors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -364,26 +364,26 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
+                                  'Dr. ${filteredDoctors[index]['name']} ${filteredDoctors[index]['firstname'].toUpperCase()}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
                                     color: doctorIdSelected ==
-                                            filtereddoctors[index]['id']
+                                            filteredDoctors[index]['id']
                                         ? AppColors.white
                                         : AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
+                                  '${filteredDoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filteredDoctors[index]['address']['street']}, ${filteredDoctors[index]['address']['zip_code'].isEmpty ? '69000' : filteredDoctors[index]['address']['zip_code']} - ${filteredDoctors[index]['address']['city'].isEmpty ? 'Lyon' : filteredDoctors[index]['address']['city']}',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
                                     color: doctorIdSelected ==
-                                            filtereddoctors[index]['id']
+                                            filteredDoctors[index]['id']
                                         ? AppColors.white
                                         : AppColors.black,
                                   ),
@@ -396,7 +396,7 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                               BootstrapIcons.chevron_right,
                               size: 16,
                               color: doctorIdSelected ==
-                                      filtereddoctors[index]['id']
+                                      filteredDoctors[index]['id']
                                   ? AppColors.white
                                   : AppColors.black,
                             ),
@@ -405,10 +405,7 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                       ),
                     );
                   },
-                );
-              }
-            },
-          ),
+                ),
         ),
       ],
       footer: Column(
@@ -480,7 +477,7 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
     return ModalContainer(
         title: "Commencer une conversation",
         subtitle:
-            "Ecrive votre message pour commencer la conversation avec ce médecin.",
+            "Ecriver votre message pour commencer la conversation avec ce médecin.",
         icon: const IconModal(
           icon: Icon(
             BootstrapIcons.chat_dots_fill,

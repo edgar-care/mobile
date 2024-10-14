@@ -216,6 +216,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                   ],
                                                 ),
                                                 type: BoringAvatarType.beam,
+                                                shape: CircleBorder(),
                                               )),
                                           const SizedBox(width: 16),
                                           Column(

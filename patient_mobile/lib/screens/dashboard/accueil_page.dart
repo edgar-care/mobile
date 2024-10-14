@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         type: BoringAvatarType.beam,
+                        shape: CircleBorder(),
                       )),
                 ],
               ),
