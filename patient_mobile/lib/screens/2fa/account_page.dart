@@ -40,8 +40,7 @@ class _AccountPageState extends State<AccountPage> {
 
   void refresh() {
     getInfo();
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<bool> getInfo() async {
@@ -172,24 +171,23 @@ class _AccountPageState extends State<AccountPage> {
                                   } else {
                                     return Row(
                                       children: [
-                                        Container(
-                                            width: 48,
-                                            height: 48,
-                                            decoration: const BoxDecoration(
-                                              color: AppColors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(50)),
-                                            ),
-                                            child: BoringAvatars(
-                                              name:
-                                                  "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
-                                              colors: const [
+                                        SizedBox(
+                                          width: 48,
+                                          height: 48,
+                                          child: BoringAvatar(
+                                            name:
+                                                "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
+                                            palette: BoringAvatarPalette(
+                                              [
                                                 AppColors.blue700,
                                                 AppColors.blue200,
                                                 AppColors.blue500
                                               ],
-                                              type: BoringAvatarsType.beam,
-                                            )),
+                                            ),
+                                            type: BoringAvatarType.beam,
+                                            shape: CircleBorder(),
+                                          ),
+                                        ),
                                         const SizedBox(width: 16),
                                         Column(
                                           crossAxisAlignment:
@@ -283,14 +281,15 @@ class _AccountPageState extends State<AccountPage> {
                                     title: 'Mot de passe',
                                     onTap: () {
                                       Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
-                                              return const ResetPasswordPage();
-                                            },
-                                          ),
-                                        );
+                                        context,
+                                        PageRouteBuilder<void>(
+                                          opaque: false,
+                                          pageBuilder:
+                                              (BuildContext context, _, __) {
+                                            return const ResetPasswordPage();
+                                          },
+                                        ),
+                                      );
                                     },
                                     type: 'Only',
                                     outlineIcon: SvgPicture.asset(
@@ -331,7 +330,9 @@ class _AccountPageState extends State<AccountPage> {
                                           opaque: false,
                                           pageBuilder:
                                               (BuildContext context, _, __) {
-                                            return DoubleAuthentication(refreshAccount: refresh,);
+                                            return DoubleAuthentication(
+                                              refreshAccount: refresh,
+                                            );
                                           },
                                         ),
                                       );
@@ -670,15 +671,14 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   ],
                 ),
               ],
-              footer:
-                  Buttons(
-                    variant: Variant.primary,
-                    size: SizeButton.md,
-                    msg: const Text('Confirmer'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+              footer: Buttons(
+                variant: Variant.primary,
+                size: SizeButton.md,
+                msg: const Text('Confirmer'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -710,7 +710,9 @@ Widget modalRedirect2FA(BuildContext context, Function refreshAccount) {
           PageRouteBuilder<void>(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) {
-              return DoubleAuthentication(refreshAccount: refreshAccount,);
+              return DoubleAuthentication(
+                refreshAccount: refreshAccount,
+              );
             },
           ),
         );
