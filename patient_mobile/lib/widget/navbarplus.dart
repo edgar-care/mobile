@@ -207,7 +207,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                               ),
                                               child: BoringAvatars(
                                                 name:
-                                                    "${infoMedical['name']} ${infoMedical['firstname'].toUpperCase()}",
+                                                    "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 colors: const [
                                                   AppColors.blue700,
                                                   AppColors.blue200,
@@ -221,7 +221,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "${infoMedical['name']} ${infoMedical['firstname'].toUpperCase()}",
+                                                "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   color: AppColors.white,

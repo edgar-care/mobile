@@ -123,8 +123,8 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 DateTime.now().hour > 18
-                    ? 'Bonsoir, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !'
-                    : 'Bonjour, ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !',
+                    ? 'Bonsoir, ${infoMedical['firstname'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !'
+                    : 'Bonjour, ${infoMedical['firstname'] != null ? infoMedical["name"].toUpperCase() : 'medical Folder Doesnt work'} !',
                 style: const TextStyle(
                   fontSize: 20,
                   fontFamily: 'Poppins',

@@ -181,7 +181,7 @@ class _AccountPageState extends State<AccountPage> {
                                             ),
                                             child: BoringAvatars(
                                               name:
-                                                  "${widget.infoMedical['name']} ${widget.infoMedical['firstname'].toUpperCase()}",
+                                                  "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
                                               colors: const [
                                                 AppColors.blue700,
                                                 AppColors.blue200,
