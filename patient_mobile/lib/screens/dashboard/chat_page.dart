@@ -477,7 +477,7 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
     return ModalContainer(
         title: "Commencer une conversation",
         subtitle:
-            "Ecriver votre message pour commencer la conversation avec ce médecin.",
+            "Ecrire votre message pour commencer la conversation avec ce médecin.",
         icon: const IconModal(
           icon: Icon(
             BootstrapIcons.chat_dots_fill,
