@@ -393,7 +393,7 @@ class _DeleteRdvState extends State<DeleteRdv> {
       icon: IconModal(
         icon: SvgPicture.asset(
           "assets/images/utils/crossAppoitement.svg",
-          width: 18,
+          width: 14,
           // ignore: deprecated_member_use
           color: AppColors.red500,
         ),
@@ -628,10 +628,12 @@ class _ModifyRdvState extends State<ModifyRdv> {
                 : ListView.builder(
                     itemCount: appointments.length,
                     itemBuilder: (context, index) {
-                      return CardAppointementDoctorHour(
+                      return CardAppointementDoctorHourModify(
                         appointements: appointments[index],
                         updateId: updateSelectedAppointment,
                         idSelected: selectedId,
+                        oldId: widget.id,
+                        updateData: widget.updataData,
                       );
                     },
                   ),
