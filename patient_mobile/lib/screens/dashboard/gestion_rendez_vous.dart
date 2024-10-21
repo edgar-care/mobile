@@ -391,11 +391,15 @@ class _DeleteRdvState extends State<DeleteRdv> {
       subtitle:
           'Vous êtes sur le point d’annuler votre rendez-vous. Si vous annulez ce rendez-vous, vous ne pourrez plus y assister. ',
       icon: IconModal(
-        icon: SvgPicture.asset(
-          "assets/images/utils/crossAppoitement.svg",
-          width: 14,
-          // ignore: deprecated_member_use
-          color: AppColors.red500,
+        icon: SizedBox(
+          height: 16,
+          width: 16,
+          child: SvgPicture.asset(
+            "assets/images/utils/crossAppoitement.svg",
+            width: 16,
+            // ignore: deprecated_member_use
+            color: AppColors.red500,
+          ),
         ),
         type: ModalType.error,
       ),
