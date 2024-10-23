@@ -49,8 +49,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
     doctorName = await getNameDoctor();
@@ -70,13 +69,11 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
         return 'test';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          ErrorSnackBar(message: "Error on fetching name", context: context));
+      TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       return 'test';
     }
     return 'Dr.Edgar'; // default return value if no doctor matches
@@ -227,12 +224,9 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                     info['birthdate'] == "" ||
                     info['weight'] == "" ||
                     info['height'] == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tous les champs",
+                  ).show(context);
                 } else {
                   switch (selected.value) {
                     case 0:
@@ -362,12 +356,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 info['birthdate'] = date;
               },
               endDate: DateTime.now(),
-              value: DateFormat('dd/MM/yyyy')
-                  .format(
-                    DateTime.fromMillisecondsSinceEpoch(
-                        info['birthdate'] * 1000),
-                  )
-                  .toString(),
             ),
             const SizedBox(
               height: 16,
@@ -893,12 +881,9 @@ class PatientAdd2State extends State<PatientAdd2> {
                 if (getDoctor() != -1) {
                   widget.model.changePage(2);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez selectionner un médecin traitant",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Veuillez selectionner un médecin traitant",
+                  ).show(context);
                 }
               },
             ),
@@ -1431,8 +1416,9 @@ class _AddTreatmentState extends State<AddTreatment> {
               msg: const Text("Ajouter"),
               onPressed: () {
                 if (name == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Ajoutez un nom", context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez renseigner le nom du traitement",
+                  ).show(context);
                   return;
                 }
                 widget.addNewTraitement(name, treatments, stillRelevant);
@@ -1667,18 +1653,17 @@ class _AddMedicamentState extends State<AddMedicament> {
                 msg: const Text("Ajouter"),
                 onPressed: () {
                   if (medicament['medicine_id'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message:
-                            "Veuillez choisir un médicament ou entrer un medicament valide",
-                        context: context));
+                    TopErrorSnackBar(
+                      message: "Veuillez selectionner un médicament",
+                    ).show(context);
                     return;
                   }
                   if (medicament['quantity'] == 0 ||
                       medicament['day'].isEmpty ||
                       medicament['period'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Veuillez remplir tous les champs",
-                        context: context));
+                    TopErrorSnackBar(
+                      message: "Veuillez renseigner tout les champs",
+                    ).show(context);
                     return;
                   }
                   setState(() {

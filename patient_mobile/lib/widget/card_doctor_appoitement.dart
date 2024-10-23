@@ -355,13 +355,9 @@ class _SeeMoreState extends State<SeeMore> {
         msg: const Text("Valider le rendez-vous"),
         onPressed: () async {
           if (idselected.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              ErrorSnackBar(
-                message:
-                    "Veuillez sélectionner un rendez-vous avant de continuer.",
-                context: context,
-              ),
-            );
+            TopErrorSnackBar(
+              message: "Veuillez sélectionner un rendez-vous.",
+            ).show(context);
           } else {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String? sessionId = prefs.getString('sessionId');
@@ -376,14 +372,10 @@ class _SeeMoreState extends State<SeeMore> {
                   );
                 } else {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message:
-                          "Une erreur s'est produite lors de la validation du rendez-vous.",
-                      // ignore: use_build_context_synchronously
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message:
+                        "Une erreur s'est produite lors de la validation du rendez-vous.",
+                  ).show(context);
                 }
               },
             );

@@ -910,27 +910,20 @@ class _ModifyRdvState extends State<ModifyRdv> {
       footer: GestureDetector(
         onTap: () async {
           if (selectedId.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              ErrorSnackBar(
-                message:
-                    "Veuillez sélectionner un rendez-vous avant de continuer.",
-                context: context,
-              ),
-            );
+            TopErrorSnackBar(
+                    message:
+                        "Veuillez sélectionner un rendez-vous avant de continuer.")
+                .show(context);
           } else {
-
             await putAppoitement(widget.id, selectedId).whenComplete(
               () {
                 // ignore: use_build_context_synchronously
                 widget.updataData(context);
                 // ignore: use_build_context_synchronously
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SuccessSnackBar(
-                    message: "Rendez-vous validé avec succès.",
-                    // ignore: use_build_context_synchronously
-                    context: context,
-                  ),
-                );
+                TopSuccessSnackBar(
+                  message: "Rendez-vous validé avec succès.",
+                ).show(context);
+
                 widget.model.changePage(0);
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);

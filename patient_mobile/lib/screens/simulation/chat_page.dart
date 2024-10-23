@@ -46,8 +46,8 @@ class _ChatPageState extends State<ChatPage> {
     });
     await getDiagnostic(sessionId, message).then((value) {
       if (value.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Erreur lors de l'envoie", context: context));
+        TopErrorSnackBar(message: 'Erreur lors de la récupération des données')
+            .show(context);
         return;
       }
       if (value['done'] == true) {

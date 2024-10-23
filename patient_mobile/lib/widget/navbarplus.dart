@@ -64,8 +64,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Erreur lors de la récupération des données")
+            .show(context);
       }
     });
   }
