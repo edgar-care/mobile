@@ -83,7 +83,8 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
-    } else {}
+
+    }
   }
 
   String getDoctorName(Chat chat) {

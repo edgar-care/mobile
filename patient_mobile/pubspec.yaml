@@ -17,7 +17,7 @@ dependencies:
   dart_jsonwebtoken: ^2.11.0
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
-  edgar: ^0.2.4
+  edgar: ^0.2.5
   qr_flutter: ^4.1.0
   http: ^1.1.0
   path_provider: ^2.0.5
