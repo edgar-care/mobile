@@ -205,15 +205,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child: BoringAvatar(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                colors: const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
-                                                ],
-                                                type: BoringAvatarsType.beam,
+                                                palette: BoringAvatarPalette(
+                                                  const [
+                                                    AppColors.blue700,
+                                                    AppColors.blue200,
+                                                    AppColors.blue500
+                                                  ],
+                                                ),
+                                                type: BoringAvatarType.beam,
+                                                shape: CircleBorder(),
                                               )),
                                           const SizedBox(width: 16),
                                           Column(

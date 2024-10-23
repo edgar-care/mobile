@@ -6,6 +6,7 @@ import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:edgar_app/widget/card_conversation.dart';
+import 'package:edgar_app/widget/field_custom_perso.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -82,6 +83,7 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
+
     }
   }
 
@@ -180,7 +182,7 @@ class _ChatPageState extends State<ChatPage> {
                           return ListModal(
                             model: model,
                             children: [
-                              CreateDiscusion(
+                              CreateDiscussion(
                                 model: model,
                                 webSocketService: widget.webSocketService,
                               ),
@@ -241,46 +243,61 @@ class _ChatPageState extends State<ChatPage> {
 String doctorIdSelected = '';
 
 // ignore: must_be_immutable
-class CreateDiscusion extends StatefulWidget {
+class CreateDiscussion extends StatefulWidget {
   WebSocketService? webSocketService;
   BottomSheetModel model;
-  CreateDiscusion({
+  CreateDiscussion({
     super.key,
     required this.model,
     required this.webSocketService,
   });
 
   @override
-  State<CreateDiscusion> createState() => _CreateDiscusionState();
+  State<CreateDiscussion> createState() => _CreateDiscussionState();
 }
 
-class _CreateDiscusionState extends State<CreateDiscusion> {
+class _CreateDiscussionState extends State<CreateDiscussion> {
   List<dynamic> doctors = [];
-  List<dynamic> filtereddoctors = [];
+  List<dynamic> filteredDoctors = [];
   String nameFilter = '';
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
+    final value = await getAllDoctor();
+    setState(() {
       doctors = value;
-      filtereddoctors = value
-          .where((element) =>
-              element['name'].toString().contains(nameFilter) ||
-              element['firstname'].toString().contains(nameFilter))
-          .toList();
+      filteredDoctors = value;
     });
   }
 
-  void updateFilter(String value) {
+  void filterDoctors(String filter) {
     setState(() {
-      nameFilter = value;
+      nameFilter = filter;
+      filteredDoctors = doctors
+          .where((element) =>
+              element['name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(filter.toLowerCase()) ||
+              element['firstname']
+                  .toString()
+                  .toLowerCase()
+                  .contains(filter.toLowerCase()))
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "'Démarrez une nouvelle conversation'",
-      subtitle: "Séléctionner un Docteur",
+      title: "Commencer une conversation",
+      subtitle:
+          "Commencer une nouvelle conversation en sélectionnant un médecin.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.chat_dots_fill,
@@ -290,49 +307,52 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
         type: ModalType.success,
       ),
       body: [
-        CustomFieldSearch(
-          label: 'Docteur edgar_app',
+        const Text(
+          'Le nom du médecin',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 4),
+        CustomFieldSearchPerso(
+          label: 'Docteur Edgar',
           icon: SvgPicture.asset("assets/images/utils/search.svg"),
           keyboardType: TextInputType.name,
-          onValidate: (value) {
-            updateFilter(value);
-          },
+          onChange: filterDoctors,
         ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: FutureBuilder(
-            future: fetchData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.blue700,
-                      strokeWidth: 2,
-                    ),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 400,
+          child: doctors.isEmpty
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.blue700,
+                    strokeWidth: 2,
                   ),
-                );
-              } else {
-                return ListView.separated(
+                )
+              : ListView.separated(
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
-                  itemCount: filtereddoctors.length,
+                  itemCount: filteredDoctors.length,
                   padding: const EdgeInsets.all(0),
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        // ignore: unused_label
                         setState(() {
-                          doctorIdSelected = filtereddoctors[index]['id'];
+                          doctorIdSelected = filteredDoctors[index]['id'];
                         });
-                        widget.model.changePage(1);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color:
+                              doctorIdSelected == filteredDoctors[index]['id']
+                                  ? AppColors.blue700
+                                  : AppColors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: AppColors.blue200,
@@ -345,49 +365,74 @@ class _CreateDiscusionState extends State<CreateDiscusion> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Dr. ${filtereddoctors[index]['name']} ${filtereddoctors[index]['firstname'].toUpperCase()}',
-                                  style: const TextStyle(
+                                  'Dr. ${filteredDoctors[index]['name']} ${filteredDoctors[index]['firstname'].toUpperCase()}',
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
+                                    color: doctorIdSelected ==
+                                            filteredDoctors[index]['id']
+                                        ? AppColors.white
+                                        : AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${filtereddoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filtereddoctors[index]['address']['street']}, ${filtereddoctors[index]['address']['zip_code'].isEmpty ? '69000' : filtereddoctors[index]['address']['zip_code']} - ${filtereddoctors[index]['address']['city'].isEmpty ? 'Lyon' : filtereddoctors[index]['address']['city']}',
-                                  style: const TextStyle(
+                                  '${filteredDoctors[index]['address']['street'].isEmpty ? '1 rue de la france' : filteredDoctors[index]['address']['street']}, ${filteredDoctors[index]['address']['zip_code'].isEmpty ? '69000' : filteredDoctors[index]['address']['zip_code']} - ${filteredDoctors[index]['address']['city'].isEmpty ? 'Lyon' : filteredDoctors[index]['address']['city']}',
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
-                                    color: AppColors.black,
+                                    color: doctorIdSelected ==
+                                            filteredDoctors[index]['id']
+                                        ? AppColors.white
+                                        : AppColors.black,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
                             const Spacer(),
-                            const Icon(
+                            Icon(
                               BootstrapIcons.chevron_right,
                               size: 16,
+                              color: doctorIdSelected ==
+                                      filteredDoctors[index]['id']
+                                  ? AppColors.white
+                                  : AppColors.black,
                             ),
                           ],
                         ),
                       ),
                     );
                   },
-                );
-              }
-            },
-          ),
+                ),
         ),
       ],
-      footer: Buttons(
-        variant: Variant.secondary,
-        size: SizeButton.md,
-        msg: const Text('Annuler'),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Buttons(
+            variant: Variant.primary,
+            size: SizeButton.md,
+            msg: const Text('Suivant'),
+            onPressed: () {
+              if (doctorIdSelected.isEmpty) {
+                return;
+              }
+              widget.model.changePage(1);
+            },
+          ),
+          const SizedBox(height: 8),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Annuler'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -431,39 +476,61 @@ class _CreateDiscusion2State extends State<CreateDiscusion2> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "Démarrez une nouvelle conversation",
-      subtitle: "Veuiller rentrer votre message",
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.chat_dots_fill,
-          color: AppColors.green700,
-          size: 18,
-        ),
-        type: ModalType.success,
-      ),
-      body: [
-        CustomFieldSearchMaxLines(
-          label: 'Votre message',
-          maxLines: 5,
-          keyboardType: TextInputType.name,
-          icon: const Icon(
-            BootstrapIcons.send_fill,
+        title: "Commencer une conversation",
+        subtitle:
+            "Ecrire votre message pour commencer la conversation avec ce médecin.",
+        icon: const IconModal(
+          icon: Icon(
+            BootstrapIcons.chat_dots_fill,
+            color: AppColors.green700,
             size: 18,
           ),
-          onlyOnValidate: true,
-          onValidate: (value) {
-            updateData(value);
-          },
+          type: ModalType.success,
         ),
-      ],
-      footer: Buttons(
-        variant: Variant.secondary,
-        size: SizeButton.md,
-        msg: const Text('Annuler'),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    );
+        body: [
+          const Text(
+            'Votre message',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(height: 4),
+          CustomField(
+            label: "Docteur Edgar",
+            onChanged: (value) {
+              setState(() {
+                message = value;
+              });
+            },
+            action: TextInputAction.done,
+            maxLines: 5,
+          ),
+        ],
+        footer: Column(
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Envoyer'),
+              onPressed: () {
+                if (message.isEmpty) {
+                  return;
+                }
+                updateData(message);
+              },
+            ),
+            const SizedBox(height: 8),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.md,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ));
   }
 }

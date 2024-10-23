@@ -171,24 +171,23 @@ class _AccountPageState extends State<AccountPage> {
                                   } else {
                                     return Row(
                                       children: [
-                                        Container(
-                                            width: 48,
-                                            height: 48,
-                                            decoration: const BoxDecoration(
-                                              color: AppColors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(50)),
-                                            ),
-                                            child: BoringAvatars(
-                                              name:
-                                                  "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
-                                              colors: const [
+                                        SizedBox(
+                                          width: 48,
+                                          height: 48,
+                                          child: BoringAvatar(
+                                            name:
+                                                "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
+                                            palette: BoringAvatarPalette(
+                                              [
                                                 AppColors.blue700,
                                                 AppColors.blue200,
                                                 AppColors.blue500
                                               ],
-                                              type: BoringAvatarsType.beam,
-                                            )),
+                                            ),
+                                            type: BoringAvatarType.beam,
+                                            shape: CircleBorder(),
+                                          ),
+                                        ),
                                         const SizedBox(width: 16),
                                         Column(
                                           crossAxisAlignment:
