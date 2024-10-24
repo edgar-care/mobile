@@ -121,6 +121,7 @@ class _LoginState extends State<Login> {
                           label: "Minimum 8 caractères",
                           keyboardType: TextInputType.text,
                           isPassword: true,
+                          isNotCapitalize: true,
                           onChanged: (value) {
                             setState(() {
                               password = value.trim();
