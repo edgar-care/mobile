@@ -200,11 +200,6 @@ class _DashBoardState extends State<DashBoard> {
           chats: chats,
           webSocketService: _webSocketService,
           scrollController: _scrollController),
-      const Text('Aide',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
       PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
       PatientPageRdv(
         id: getId(),
