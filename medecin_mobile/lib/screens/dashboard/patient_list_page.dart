@@ -294,6 +294,7 @@ class _PatientPageState extends State<PatientPage> {
                                               context: context,
                                               tmpInfo: tmpInfo),
                                           PatientAdd3(
+                                            updateData: updateData,
                                               model: model,
                                               context: context,
                                               traitments: tmpTraitments,
@@ -921,9 +922,11 @@ class PatientAdd3 extends StatefulWidget {
   final BuildContext context;
   final List<Map<String, dynamic>> traitments;
   Map<String, dynamic> tmpInfo;
+  Function updateData;
 
   PatientAdd3(
       {super.key,
+      required this.updateData,
       required this.model,
       required this.context,
       required this.traitments,
@@ -1222,6 +1225,7 @@ class PatientAdd3State extends State<PatientAdd3> {
                   "weight": poids,
                   "height": taille,
                   "primary_doctor_id": widget.tmpInfo['medecin_traitant'],
+                  "family_members_med_info_id": [],
                   "medical_antecedents": widget.tmpInfo['medical_antecedents'],
                 };
                 putInformationPatient(context, body, widget.tmpInfo['id'])
@@ -1234,6 +1238,7 @@ class PatientAdd3State extends State<PatientAdd3> {
                                           "Informations mises à jour avec succès",
                                       context: context)),
                               Navigator.pop(context),
+                              widget.updateData(),
                             }
                           else
                             {
