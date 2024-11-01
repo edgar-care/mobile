@@ -23,6 +23,27 @@ String weight = "";
 String primaryDoctorId = "";
 bool isHealths = false;
 
+Widget _buildWarningBox() {
+  return Container(
+    decoration: BoxDecoration(
+      color: AppColors.red200,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: AppColors.red400, width: 2),
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+    padding: const EdgeInsets.all(16),
+    child: const Text(
+      "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l'anonymisation de vos données de santé, nous vous demandons de ne pas saisir d'informations personnelles ou médicales sensibles.",
+      style: TextStyle(
+        color: AppColors.black,
+        fontFamily: 'Poppins',
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+}
+
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
 
@@ -32,7 +53,6 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   late final List<Widget> pages;
-
   int _selectedIndex = 0;
 
   @override
@@ -70,71 +90,49 @@ class _OnboardingState extends State<Onboarding> {
     });
   }
 
-  Widget _buildWarningBox() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.red200,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.red400, width: 2),
-      ),
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      padding: const EdgeInsets.all(16),
-      child: const Text(
-        "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l'anonymisation de vos données de santé, nous vous demandons de ne pas saisir d'informations personnelles ou médicales sensibles.",
-        style: TextStyle(
-          color: AppColors.black,
-          fontFamily: 'Poppins',
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-              decoration: const BoxDecoration(
-                color: AppColors.blue700,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(48),
-                  bottomRight: Radius.circular(48),
-                ),
-              ),
-              child: IntrinsicWidth(
-                child: Row(
-                  children: [
-                    SvgPicture.asset("assets/images/logo/edgar_staying.svg"),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        'J’ai besoin de vos informations personnelles afin de remplir votre espace patient',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+      body: Column(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+            decoration: const BoxDecoration(
+              color: AppColors.blue700,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(48),
+                bottomRight: Radius.circular(48),
               ),
             ),
-            _buildWarningBox(),
-            AnimatedSwitcher(
+            child: IntrinsicWidth(
+              child: Row(
+                children: [
+                  SvgPicture.asset("assets/images/logo/edgar_staying.svg"),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Text(
+                      "J'ai besoin de vos informations personnelles afin de remplir votre espace patient",
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 600),
               child: pages[_selectedIndex],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -178,27 +176,26 @@ class _Onboarding1State extends State<Onboarding1> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              _buildProgressIndicator(),
-              const SizedBox(height: 16),
-              _buildInputField('Votre prénom', 'Edgar', _nameController),
-              _buildInputField(
-                  'Votre nom', "L'assistant numerique", _lastnameController),
-              _buildDatePicker(),
-              _buildGenderSelection(),
-              _buildHeightWeightRow(),
-              _buildHealthQuestion(),
-              const SizedBox(height: 24),
-              _buildContinueButton(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildWarningBox(),
+            const SizedBox(height: 16),
+            _buildProgressIndicator(),
+            const SizedBox(height: 16),
+            _buildInputField('Votre prénom', 'Edgar', _nameController),
+            _buildInputField(
+                'Votre nom', "L'assistant numerique", _lastnameController),
+            _buildDatePicker(),
+            _buildGenderSelection(),
+            _buildHeightWeightRow(),
+            _buildHealthQuestion(),
+            const SizedBox(height: 24),
+            _buildContinueButton(),
+          ],
         ),
       ),
     );
@@ -458,9 +455,7 @@ class _onboarding2State extends State<Onboarding2> {
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 172,
+    return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
           left: 24,
@@ -470,6 +465,7 @@ class _onboarding2State extends State<Onboarding2> {
         ),
         child: Column(
           children: [
+            _buildWarningBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48),
               child: Row(
@@ -528,7 +524,8 @@ class _onboarding2State extends State<Onboarding2> {
                 });
               },
             ),
-            Expanded(
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
               child: FutureBuilder(
                 future: _fetchDocsFuture,
                 builder: (context, snapshot) {
@@ -696,260 +693,261 @@ class _Onboarding3State extends State<Onboarding3> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height - 172,
       child: Padding(
-          padding: const EdgeInsets.only(
-            left: 24,
-            right: 24,
-            bottom: 12,
-            top: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 48),
-                child: Row(
-                  children: [
-                    Flexible(
-                        child: Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue700,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    )),
-                    const SizedBox(width: 8),
-                    Flexible(
-                        child: Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue700,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    )),
-                    const SizedBox(width: 8),
-                    Flexible(
+        padding: const EdgeInsets.only(
+          left: 24,
+          right: 24,
+          bottom: 12,
+          top: 16,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildWarningBox(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: Row(
+                children: [
+                  Flexible(
                       child: Container(
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.blue700,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: AppColors.blue700,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  )),
+                  const SizedBox(width: 8),
+                  Flexible(
+                      child: Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: AppColors.blue700,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  )),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.blue700,
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              "Vos antécédents médicaux et sujets de santé",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: AppColors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                final model =
+                    Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(
+                          model: model,
+                          children: [
+                            AddTreatment(addNewTraitement: addNewTraitement)
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.blue500, width: 2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Renseigner vos informations",
+                      style: TextStyle(
+                        color: AppColors.grey400,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SvgPicture.asset(
+                      "assets/images/utils/plus-lg.svg",
+                      // ignore: deprecated_member_use
+                      color: AppColors.blue700,
+                      width: 16,
+                      height: 16,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
-              const Text(
-                "Vos antécédents médicaux et sujets de santé",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Vos antécédénts médicaux et sujets de santé renseignés",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: AppColors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
               ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  final model =
-                      Provider.of<BottomSheetModel>(context, listen: false);
-                  model.resetCurrentIndex();
+            ),
+            Expanded(
+              child: FutureBuilder(
+                future: Future.delayed(const Duration(seconds: 0), () => true),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 100, // Adjust this height as needed
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          backgroundColor: AppColors.white,
+                        ),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Erreur: ${snapshot.error}');
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: [
+                          if (traitments.isNotEmpty)
+                            for (var i = 0; i < traitments.length; i++)
+                              if (i < 3)
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return IntrinsicWidth(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (traitments[i]['treatments']
+                                              .isNotEmpty) {
+                                            final model =
+                                                Provider.of<BottomSheetModel>(
+                                              context,
+                                              listen: false,
+                                            );
+                                            model.resetCurrentIndex();
 
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) {
-                      return Consumer<BottomSheetModel>(
-                        builder: (context, model, child) {
-                          return ListModal(
-                            model: model,
-                            children: [
-                              AddTreatment(addNewTraitement: addNewTraitement)
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.blue500, width: 2),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Renseigner vos informations",
-                        style: TextStyle(
-                          color: AppColors.grey400,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SvgPicture.asset(
-                        "assets/images/utils/plus-lg.svg",
-                        // ignore: deprecated_member_use
-                        color: AppColors.blue700,
-                        width: 16,
-                        height: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Vos antécédénts médicaux et sujets de santé renseignés",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.429,
-                child: FutureBuilder(
-                  future: Future.delayed(const Duration(seconds: 0), () {
-                    return true;
-                  }),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Expanded(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            backgroundColor: AppColors.white,
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Erreur: ${snapshot.error}');
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: [
-                            if (traitments.isNotEmpty)
-                              for (var i = 0; i < traitments.length; i++)
-                                if (i < 3)
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return IntrinsicWidth(
-                                        child: GestureDetector(
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              builder: (context) {
+                                                return Consumer<
+                                                    BottomSheetModel>(
+                                                  builder:
+                                                      (context, model, child) {
+                                                    return ListModal(
+                                                      model: model,
+                                                      children: [
+                                                        InfoTreatment(
+                                                          traitement:
+                                                              traitments[i],
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: CardTraitementSmall(
+                                          name: traitments[i]['Name'],
+                                          isEnCours: traitments[i]['treatments']
+                                                  .isEmpty
+                                              ? false
+                                              : true,
                                           onTap: () {
-                                            if (traitments[i]['treatments']
-                                                .isNotEmpty) {
-                                              final model =
-                                                  Provider.of<BottomSheetModel>(
-                                                      context,
-                                                      listen: false);
-                                              model.resetCurrentIndex();
-
-                                              showModalBottomSheet(
-                                                context: context,
-                                                isScrollControlled: true,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                builder: (context) {
-                                                  return Consumer<
-                                                      BottomSheetModel>(
-                                                    builder: (context, model,
-                                                        child) {
-                                                      return ListModal(
-                                                        model: model,
-                                                        children: [
-                                                          InfoTreatment(
-                                                              traitement:
-                                                                  traitments[i])
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            }
+                                            setState(() {
+                                              traitments.removeAt(i);
+                                            });
                                           },
-                                          child: CardTraitementSmall(
-                                            name: traitments[i]['Name'],
-                                            isEnCours: traitments[i]
-                                                        ['treatments']
-                                                    .isEmpty
-                                                ? false
-                                                : true,
-                                            onTap: () {
-                                              setState(() {
-                                                traitments.removeAt(i);
-                                              });
-                                            },
-                                          ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              Buttons(
-                variant: Variant.validate,
-                size: SizeButton.md,
-                msg: const Text("Valider"),
-                onPressed: () async {
-                  if (traitments.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Ajouter des informations", context: context));
-                    return;
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ],
+                      ),
+                    );
                   }
-                  List<String> parts = birthdate.split('/');
-                  String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
-                  final birth = DateTime.parse(americanDate);
-                  final integerDate =
-                      (birth.millisecondsSinceEpoch / 1000).round();
-
-                  final Map<String, Object> body = {
-                    "name": name,
-                    "firstName": lastname,
-                    "birthdate": integerDate,
-                    "sex": sexe,
-                    "weight": int.parse(weight) * 100,
-                    "height": int.parse(height),
-                    "primary_doctor_id": primaryDoctorId,
-                    "family_members_med_info_id": [],
-                    "medical_antecedents": traitments,
-                  };
-
-                  var reponse = await postMedicalInfo(body);
-                  if (reponse == true) {
-                    widget.updateSelectedIndex(3);
-                  } else {}
-
-                  widget.updateSelectedIndex(3);
                 },
               ),
-              const SizedBox(height: 8),
-              Buttons(
-                  variant: Variant.secondary,
-                  size: SizeButton.md,
-                  msg: const Text("Précédent"),
-                  onPressed: () {
-                    widget.updateSelectedIndex(1);
-                  }),
-            ],
-          )),
+            ),
+            const SizedBox(height: 16),
+            Buttons(
+              variant: Variant.validate,
+              size: SizeButton.md,
+              msg: const Text("Valider"),
+              onPressed: () async {
+                if (traitments.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+                      message: "Ajouter des informations", context: context));
+                  return;
+                }
+                List<String> parts = birthdate.split('/');
+                String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+                final birth = DateTime.parse(americanDate);
+                final integerDate =
+                    (birth.millisecondsSinceEpoch / 1000).round();
+
+                final Map<String, Object> body = {
+                  "name": name,
+                  "firstName": lastname,
+                  "birthdate": integerDate,
+                  "sex": sexe,
+                  "weight": int.parse(weight) * 100,
+                  "height": int.parse(height),
+                  "primary_doctor_id": primaryDoctorId,
+                  "family_members_med_info_id": [],
+                  "medical_antecedents": traitments,
+                };
+
+                var reponse = await postMedicalInfo(body);
+                if (reponse == true) {
+                  widget.updateSelectedIndex(3);
+                } else {}
+
+                widget.updateSelectedIndex(3);
+              },
+            ),
+            const SizedBox(height: 8),
+            Buttons(
+                variant: Variant.secondary,
+                size: SizeButton.md,
+                msg: const Text("Précédent"),
+                onPressed: () {
+                  widget.updateSelectedIndex(1);
+                }),
+          ],
+        ),
+      ),
     );
   }
 }
