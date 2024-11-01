@@ -70,15 +70,38 @@ class _NavbarPLusState extends State<NavbarPLus> {
     });
   }
 
+  void handleBack() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return const DashBoardPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const curve = Curves.easeInOut;
+          return FadeTransition(
+            opacity: Tween<double>(begin: 0.0, end: 1.0)
+                .animate(CurvedAnimation(parent: animation, curve: curve)),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      home: Scaffold(
+    return PopScope(
+      // Utilisation de PopScope au lieu de WillPopScope
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        handleBack();
+      },
+      child: Scaffold(
+        // Retiré MaterialApp, gardé uniquement Scaffold
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -86,27 +109,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<void>(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoardPage();
-                            },
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const curve = Curves.easeInOut;
-                              return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                    .animate(CurvedAnimation(
-                                        parent: animation, curve: curve)),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
+                      onTap: handleBack,
                       child: Row(
                         children: [
                           SvgPicture.asset(
