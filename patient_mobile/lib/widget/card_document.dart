@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar_app/services/get_files.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 enum TypeDeDocument {
