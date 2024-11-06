@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllDocument() async {
@@ -123,6 +124,9 @@ Future<Object?> modifyDocument(String id, String name) async {
     body: jsonEncode({'name': name}),
     headers: {'Authorization': 'Bearer $token'},
   );
+  Logger().d(name);
+  Logger().d(response.statusCode);
+  Logger().d(response.body);
   if (response.statusCode == 201) {
     final body = response.body;
     return jsonDecode(body);

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar_app/services/get_files.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 enum TypeDeDocument {
@@ -307,6 +308,8 @@ class ModifyPatient extends StatefulWidget {
 }
 
 class _ModifyPatientState extends State<ModifyPatient> {
+  String tmp = '';
+
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
@@ -318,7 +321,7 @@ class _ModifyPatientState extends State<ModifyPatient> {
           color: AppColors.blue700,
           size: 18,
         ),
-        type: ModalType.success,
+        type: ModalType.info,
       ),
       body: [
         const Text('Le nouveau nom de votre document'),
@@ -329,7 +332,9 @@ class _ModifyPatientState extends State<ModifyPatient> {
           label: 'Mon document de santé',
           value: widget.name,
           onChanged: (value) {
-            widget.name = value;
+            setState(() {
+              tmp = value;
+            });
           },
           action: TextInputAction.done,
         ),
@@ -341,7 +346,7 @@ class _ModifyPatientState extends State<ModifyPatient> {
             size: SizeButton.sm,
             msg: const Text('Valider'),
             onPressed: () async {
-              modifyDocument(widget.id, widget.name).then((value) {
+              modifyDocument(widget.id, tmp).then((value) {
                 widget.updatedata();
                 Navigator.pop(context);
               });
@@ -375,7 +380,7 @@ class DeletePatient extends StatelessWidget {
       subtitle: 'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x,
+          BootstrapIcons.x_lg ,
           color: AppColors.red700,
           size: 18,
         ),
