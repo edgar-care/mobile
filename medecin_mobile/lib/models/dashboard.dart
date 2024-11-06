@@ -267,6 +267,21 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, B
         color: AppColors.blue700,
         size: 17,
       ),
+    body: [
+      Row(
+        children: [
+          const Icon(BootstrapIcons.phone_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data['os'] . data['browser']}")
+        ]),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          const Icon(BootstrapIcons.geo_alt_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data['location']}")
+        ]),
+    ],
     footer: Column(
       children: [
         Buttons(
