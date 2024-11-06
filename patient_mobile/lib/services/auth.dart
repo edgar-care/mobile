@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -41,6 +42,8 @@ Future<List<dynamic>> login(
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email, 'password': password}),
   );
+  Logger().d(response.statusCode);
+  Logger().d(response.body);
   if (response.statusCode == 200) {
     if (jsonDecode(response.body)['token'] != null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -58,7 +61,7 @@ Future<List<dynamic>> login(
       return [];
     } else {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      return jsonDecode(response.body)['2fa_methods'];
+      return jsonDecode(response.body)['Methods'];
     }
   } else {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -93,12 +96,13 @@ String url = '${dotenv.env['URL']}/auth/sending_email';
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email}),
   );
+  return true;
 }
 
 Future checkEmailCode(
     String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/email_2fa';
+  String url = '${dotenv.env['URL']}/auth/p/email_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -117,7 +121,7 @@ Future checkEmailCode(
 Future checkBackUpCode(
     String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/backup_code_2fa';
+  String url = '${dotenv.env['URL']}/auth/p/backup_code_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -137,7 +141,7 @@ Future checkBackUpCode(
 Future checkThirdPartyCode(
     String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = '${dotenv.env['URL']}/auth/third_party_2fa';
+  String url = '${dotenv.env['URL']}/auth/p/third_party_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},

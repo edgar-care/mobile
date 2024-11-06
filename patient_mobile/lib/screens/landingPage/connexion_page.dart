@@ -742,11 +742,15 @@ class ModalEmailLogin extends StatefulWidget {
 }
 
 class _ModalEmailLoginState extends State<ModalEmailLogin> {
-  @override
-  Widget build(BuildContext context) {
-    String code = '';
+  String code = '';
 
-    void setCode(String action, String code) {
+  Future sendEmail() async {
+    await sendEmailCode(widget.email).then((value) {
+      return true;
+    });
+  }
+
+  void setCode(String action, String code) {
       if (action == 'ADD') {
         setState(() {
           code += code;
@@ -758,11 +762,8 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
       }
     }
 
-    Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email);
-      return true;
-    }
-
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
         future: sendEmail(),
         builder: (context, snapshot) {
@@ -811,9 +812,9 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
               subtitle:
                   'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
               body: [
-                FieldNumberList2FA(
-                  addCode: setCode,
-                )
+                // FieldNumberList2FA(
+                //   addCode: setCode,
+                // )
               ],
               icon: const IconModal(
                 icon: Icon(
@@ -885,9 +886,9 @@ class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
       subtitle:
           'Rouvrer votre application d\'authentification et renseigner le code à 6 chiffres fournis.',
       body: [
-        FieldNumberList2FA(
-          addCode: setCode,
-        )
+        // FieldNumberList2FA(
+        //   addCode: setCode,
+        // )
       ],
       icon: const IconModal(
         icon: Icon(
