@@ -211,6 +211,7 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex,
         setId: updateId,
       ),
+      const Text("oui"),
       ChatPatient(
           id: getId(),
           setPages: updateSelectedIndex,

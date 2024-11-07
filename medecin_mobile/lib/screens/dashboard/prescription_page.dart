@@ -1,89 +1,47 @@
-import 'dart:convert';
+// ignore_for_file: must_be_immutable
 
-import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:edgar_pro/services/patient_info_service.dart';
-import 'package:edgar_pro/services/web_socket_services.dart';
-import 'package:edgar/colors.dart';
-import 'package:edgar_pro/widgets/Chat/chat_page_patient.dart';
-import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
-import 'package:edgar/widget.dart';
-import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
+import "package:bootstrap_icons/bootstrap_icons.dart";
+import "package:edgar/colors.dart";
+import "package:edgar/widget.dart";
+import "package:edgar_pro/services/patient_info_service.dart";
+import "package:edgar_pro/widgets/custom_nav_patient_card.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
-// ignore: must_be_immutable
-class ChatPatient extends StatefulWidget {
+class PrescriptionPage extends StatefulWidget {
   String id;
-  final Function setPages;
-  final Function setId;
-  WebSocketService? webSocketService;
-  // ignore: prefer_final_fields
-  ScrollController scrollController;
-  final List<Chat> chats;
-  ChatPatient({
-    super.key,
-    required this.id,
-    required this.setPages,
-    required this.setId,
-    required this.chats,
-    required this.webSocketService,
-    required this.scrollController,
-  });
+  Function setPages;
+  Function setId;
+  PrescriptionPage({
+      super.key,
+      required this.id,
+      required this.setPages,
+      required this.setId});
 
   @override
-  // ignore: library_private_types_in_public_api
-  ChatPatientState createState() => ChatPatientState();
+  State<PrescriptionPage> createState() => _PrescriptionPageState();
 }
 
-class ChatPatientState extends State<ChatPatient> {
+class _PrescriptionPageState extends State<PrescriptionPage> {
   Map<String, dynamic> patientInfo = {};
-  String idDoctor = '';
-  String id = "";
 
-  @override
-  void initState() {
-    super.initState();
-    _loadInfo();
-  }
-
-  Future<void> _loadInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    getPatientById(widget.id).then((value) => setState(() {
-          patientInfo = value;
-        }));
-    String? token = prefs.getString('token');
-    if (token != null && token.isNotEmpty) {
-      try {
-        String encodedPayload = token.split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
-        setState(() {
-          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
-        });
-      } catch (e) {
-        // catch clauses
-      }
-    } else {
-    }
-  }
-
-  Future<bool> checkData() async {
-    if (widget.chats.isNotEmpty && patientInfo.isNotEmpty) {
-      return true;
-    }
-    return false;
+  Future loadInfo() async {
+    await getPatientById(widget.id).then((value) {
+      setState(() {
+        patientInfo = value;
+      });
+      
+    },);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: checkData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.data == true) {
-            return Column(children: [
+      future: loadInfo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Column(
+            children: [
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.blue100,
@@ -166,30 +124,13 @@ class ChatPatientState extends State<ChatPatient> {
               const SizedBox(
                 height: 16,
               ),
-              Expanded(
-                child: ChatPagePatient(
-                  controller: widget.scrollController,
-                  webSocketService: widget.webSocketService,
-                  chat: widget.chats.firstWhere(
-                    (chat) => (chat.recipientIds.first.id == widget.id ||
-                        chat.recipientIds.first.id == idDoctor &&
-                            (chat.recipientIds.last.id == widget.id ||
-                                chat.recipientIds.last.id == idDoctor)),
-                  ),
-                  patientName: '${patientInfo['Prenom']} ${patientInfo['Nom']}',
-                  doctorId: idDoctor,
-                ),
-              ),
-            ]);
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
-  }
-
-  Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
+            ],
+          );
+        }
+      },
+    );
+        }
+        Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
       Function setPages, Function setId) {
     return ModalContainer(
       title: '${patient['Prenom']} ${patient['Nom']}',
@@ -258,4 +199,4 @@ class ChatPatientState extends State<ChatPatient> {
           }),
     );
   }
-}
+  }
