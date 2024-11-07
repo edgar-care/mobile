@@ -166,7 +166,6 @@ class _PatientState extends State<Patient> {
                       weight = "";
                       primaryDoctorId = "";
                       isHealths = false;
-
                       final model =
                           Provider.of<BottomSheetModel>(context, listen: false);
                       model.resetCurrentIndex();

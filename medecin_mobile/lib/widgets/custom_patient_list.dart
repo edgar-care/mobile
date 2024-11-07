@@ -51,7 +51,6 @@ class _CustomListState extends State<CustomList> {
                   final model =
                       Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
-
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,
@@ -110,10 +109,18 @@ class _CustomListState extends State<CustomList> {
             setId: setId),
         const SizedBox(height: 4),
         CustomNavPatientCard(
+            text: 'Ordonnance',
+            icon: BootstrapIcons.capsule,
+            setPages: setPages,
+            pageTo: 9,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
             text: 'Messagerie',
             icon: BootstrapIcons.chat_dots_fill,
             setPages: setPages,
-            pageTo: 9,
+            pageTo: 10,
             id: patient['id'],
             setId: setId),
         const SizedBox(height: 12),

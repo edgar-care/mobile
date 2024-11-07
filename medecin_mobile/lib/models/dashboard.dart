@@ -12,6 +12,7 @@ import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
 import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
+import 'package:edgar_pro/screens/dashboard/prescription_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
@@ -211,7 +212,10 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex,
         setId: updateId,
       ),
-      const Text("oui"),
+      PrescriptionPage(
+        id: _id,
+        setPages: updateSelectedIndex,
+        setId: updateId),
       ChatPatient(
           id: getId(),
           setPages: updateSelectedIndex,

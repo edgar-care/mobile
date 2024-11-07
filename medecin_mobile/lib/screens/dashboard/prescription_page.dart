@@ -4,8 +4,10 @@ import "package:bootstrap_icons/bootstrap_icons.dart";
 import "package:edgar/colors.dart";
 import "package:edgar/widget.dart";
 import "package:edgar_pro/services/patient_info_service.dart";
+import "package:edgar_pro/services/prescription_services.dart";
 import "package:edgar_pro/widgets/custom_nav_patient_card.dart";
 import "package:flutter/material.dart";
+import "package:logger/logger.dart";
 import "package:provider/provider.dart";
 
 class PrescriptionPage extends StatefulWidget {
@@ -24,13 +26,20 @@ class PrescriptionPage extends StatefulWidget {
 
 class _PrescriptionPageState extends State<PrescriptionPage> {
   Map<String, dynamic> patientInfo = {};
+  List<Map<String, dynamic>> prescriptionList = [];
 
   Future loadInfo() async {
+    Logger().d(widget.id);
     await getPatientById(widget.id).then((value) {
       setState(() {
         patientInfo = value;
       });
-      
+    },);
+    await getAllPrescription().then((value) {
+      setState(() {
+        prescriptionList = value;
+      });
+      return true;
     },);
   }
 
@@ -125,6 +134,10 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                 height: 16,
               ),
             ],
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         }
       },
