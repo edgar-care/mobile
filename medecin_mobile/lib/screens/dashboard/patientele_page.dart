@@ -393,7 +393,7 @@ class _PatientState extends State<Patient> {
               height: 4,
             ),
             CustomDatePiker(
-              value: birthdate == ""
+              initialValue: birthdate == ""
                   ? "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}"
                   : birthdate,
               onChanged: (value) {

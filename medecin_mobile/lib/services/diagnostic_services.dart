@@ -57,7 +57,7 @@ Future<void> postDiagValidation(BuildContext context, String id,
     ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
         message: "Réponse envoyée avec succes", context: context));
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-        message: "Une erreur est survenue", context: context));
+    ScaffoldMessenger.of(context).showSnackBar(
+        ErrorSnackBar(message: "Une erreur est survenue", context: context));
   }
 }

@@ -1,12 +1,17 @@
 // ignore_for_file: must_be_immutable
-
 import "package:bootstrap_icons/bootstrap_icons.dart";
 import "package:edgar/colors.dart";
 import "package:edgar/widget.dart";
+import "package:edgar_pro/services/custom_treatment_card.dart";
+import "package:edgar_pro/services/medicines_services.dart";
 import "package:edgar_pro/services/patient_info_service.dart";
 import "package:edgar_pro/services/prescription_services.dart";
+import "package:edgar_pro/utils/mapper_unit_medicine.dart";
+import "package:edgar_pro/utils/medicine_type.dart";
 import "package:edgar_pro/widgets/custom_nav_patient_card.dart";
+import "package:edgar_pro/widgets/prescription_card.dart";
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
 import "package:logger/logger.dart";
 import "package:provider/provider.dart";
 
@@ -14,8 +19,8 @@ class PrescriptionPage extends StatefulWidget {
   String id;
   Function setPages;
   Function setId;
-  PrescriptionPage({
-      super.key,
+  PrescriptionPage(
+      {super.key,
       required this.id,
       required this.setPages,
       required this.setId});
@@ -28,19 +33,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
   Map<String, dynamic> patientInfo = {};
   List<Map<String, dynamic>> prescriptionList = [];
 
-  Future loadInfo() async {
-    Logger().d(widget.id);
-    await getPatientById(widget.id).then((value) {
-      setState(() {
-        patientInfo = value;
-      });
-    },);
-    await getAllPrescription().then((value) {
-      setState(() {
-        prescriptionList = value;
-      });
-      return true;
-    },);
+  Future<void> loadInfo() async {
+    prescriptionList = await getAllPrescription(widget.id);
+    patientInfo = await getPatientById(widget.id);
   }
 
   @override
@@ -51,6 +46,38 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: [
+              Container(
+                key: const ValueKey("Header"),
+                decoration: BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(children: [
+                    Image.asset(
+                      "assets/images/logo/edgar-high-five.png",
+                      height: 40,
+                      width: 37,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    const Text(
+                      "Mes Patients",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white),
+                    ),
+                  ]),
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.blue100,
@@ -65,7 +92,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                     final model =
                         Provider.of<BottomSheetModel>(context, listen: false);
                     model.resetCurrentIndex();
-
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -133,6 +159,53 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
               const SizedBox(
                 height: 16,
               ),
+              Expanded(
+                  child: ListView.separated(
+                      itemCount: prescriptionList.length,
+                      separatorBuilder: (context, index) => const SizedBox(
+                            height: 4,
+                          ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return PrescriptionCard(
+                          date: DateFormat.yMd('fr')
+                              .format(DateTime.fromMillisecondsSinceEpoch(
+                                  prescriptionList[index]['prescription']
+                                          ['createdAt'] *
+                                      1000))
+                              .toString(),
+                          name: "Ordonnance",
+                          url: prescriptionList[index]['url_prescription'],
+                        );
+                      })),
+              Buttons(
+                variant: Variant.primary,
+                size: SizeButton.md,
+                msg: const Text('Ajouter un document'),
+                onPressed: () {
+                  final model =
+                      Provider.of<BottomSheetModel>(context, listen: false);
+                  model.resetCurrentIndex();
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(
+                            model: model,
+                            children: [
+                              AddPrescriptionModal(
+                                  firstname: patientInfo['Prenom'],
+                                  lastname: patientInfo['Nom'])
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           );
         } else {
@@ -142,8 +215,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
         }
       },
     );
-        }
-        Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
+  }
+
+  Widget navigationPatient(BuildContext context, Map<String, dynamic> patient,
       Function setPages, Function setId) {
     return ModalContainer(
       title: '${patient['Prenom']} ${patient['Nom']}',
@@ -212,4 +286,137 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
           }),
     );
   }
+}
+
+class AddPrescriptionModal extends StatefulWidget {
+  String firstname;
+  String lastname;
+  AddPrescriptionModal(
+      {super.key, required this.firstname, required this.lastname});
+
+  @override
+  State<AddPrescriptionModal> createState() => _AddPrescriptionModalState();
+}
+
+class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
+  List<Map<String, dynamic>> medicines = [];
+  List<String> suggestions = [];
+  Future<void> loadInfo() async {
+    await getAllMedicines().then((value) {
+      medicines = value;
+    });
+    for (int i = 0; i < medicines.length; i++) {
+      suggestions.add(
+          "${medicines[i]['name']} ${convertMedicineUnit(medicines[i]['dosage_form'])}");
+    }
   }
+
+  @override
+  void initState() {
+    loadInfo();
+    super.initState();
+  }
+
+  List<Medicine> medicineList = [];
+  void addMedicine(String id) {
+    setState(() {
+      medicineList.add(Medicine(
+        medicineId: id,
+        qsp: 1,
+        qspUnit: "Jours",
+        comment: "",
+        periods: [
+          Period(
+            quantity: 1,
+            frequency: 1,
+            frequencyRatio: 1,
+            frequencyUnit: "Jours",
+            periodLength: 1,
+            periodUnit: "Jours",
+          )
+        ],
+      ));
+    });
+  }
+
+  void removeMedicine(int index) {
+    setState(() {
+      medicineList.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Création d'une ordonnance",
+      subtitle:
+          "Créer une ordonnance pour votre patient: ${widget.firstname} ${widget.lastname}",
+      body: [
+        CustomAutoComplete(
+            label: 'Nom du médicament',
+            icon: BootstrapIcons.search,
+            keyboardType: TextInputType.text,
+            onValidate: (value) {
+              for (int i = 0; i < medicines.length; i++) {
+                if ("${medicines[i]['name']} ${convertMedicineUnit(medicines[i]['dosage_form'])}" ==
+                    value) {
+                  addMedicine(medicines[i]['id']);
+                }
+              }
+            },
+            suggestions: suggestions),
+        const SizedBox(height: 12),
+        Expanded(
+          child: ListView.separated(
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemCount: medicineList.length,
+            itemBuilder: (context, index) {
+              return TreatementCard(
+                index: index,
+                medicine: medicineList[index],
+                medicineName: medicines
+                    .where((element) =>
+                        element['id'] == medicineList[index].medicineId)
+                    .first['name'],
+                dosageForm: medicines
+                    .where((element) =>
+                        element['id'] == medicineList[index].medicineId)
+                    .first['dosage_form'],
+                removeMedicine: removeMedicine,
+              );
+            },
+          ),
+        ),
+        Column(
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Ajouter le document'),
+              onPressed: () {
+                Logger().d(medicineList.length);
+              },
+            ),
+            const SizedBox(height: 8),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.md,
+              msg: const Text('Annuler'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ],
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.capsule,
+          size: 18,
+          color: AppColors.blue700,
+        ),
+        type: ModalType.info,
+      ),
+    );
+  }
+}

@@ -30,7 +30,6 @@ class _AuthState extends State<Auth> {
       authPassword = password;
       _selectedIndex = 2;
     });
-
   }
 
   @override
@@ -53,8 +52,12 @@ class _AuthState extends State<Auth> {
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
       Login(callback: updateSelectedIndex),
-      Register(callback: updateSelectedIndex, registerCallback: registerCallback),
-      Register2(updateSelectedIndex: updateSelectedIndex, email: authEmail, password: authPassword),
+      Register(
+          callback: updateSelectedIndex, registerCallback: registerCallback),
+      Register2(
+          updateSelectedIndex: updateSelectedIndex,
+          email: authEmail,
+          password: authPassword),
     ];
     return Scaffold(
       body: AnimatedSwitcher(

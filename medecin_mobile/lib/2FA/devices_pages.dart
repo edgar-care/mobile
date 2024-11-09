@@ -150,7 +150,8 @@ class _DevicesPageState extends State<DevicesPage> {
                                                                   'Android'
                                                           ? 'PHONE'
                                                           : 'PC',
-                                                      context, getDevices)
+                                                      context,
+                                                      getDevices)
                                                 ]);
                                           },
                                         );
@@ -176,7 +177,6 @@ class _DevicesPageState extends State<DevicesPage> {
     );
   }
 }
-
 
 Widget modalInfoDevices(String name, String date, String location, String id,
     String type, BuildContext context, Function load2fa) {

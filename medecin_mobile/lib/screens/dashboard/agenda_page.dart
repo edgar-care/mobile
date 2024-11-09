@@ -330,7 +330,7 @@ class _SlotAddState extends State<SlotAdd> {
           height: 4,
         ),
         CustomDatePiker(
-            value: DateFormat("yMd", "fr").format(date),
+            initialValue: DateFormat("yMd", "fr").format(date),
             startDate: DateTime.now(),
             onChanged: (value) {
               setState(() {

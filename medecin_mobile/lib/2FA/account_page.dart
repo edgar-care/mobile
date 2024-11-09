@@ -185,11 +185,12 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
                                       onTap: () {
-                                         Navigator.push(
+                                        Navigator.push(
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
                                               return const ResetPasswordPage();
                                             },
                                           ),
@@ -234,7 +235,9 @@ class _AccountPageState extends State<AccountPage> {
                                             opaque: false,
                                             pageBuilder:
                                                 (BuildContext context, _, __) {
-                                              return DoubleAuthentication(refreshAccount: refresh,);
+                                              return DoubleAuthentication(
+                                                refreshAccount: refresh,
+                                              );
                                             },
                                           ),
                                         );
@@ -352,7 +355,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
 
   Future<bool> getbackupcode() async {
     var tmp = await generateBackupCode();
-      backupCodes = tmp;
+    backupCodes = tmp;
     return true;
   }
 
@@ -477,15 +480,14 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   ],
                 ),
               ],
-              footer:
-                  Buttons(
-                    variant: Variant.primary,
-                    size: SizeButton.md,
-                    msg: const Text('Confirmer'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+              footer: Buttons(
+                variant: Variant.primary,
+                size: SizeButton.md,
+                msg: const Text('Confirmer'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -517,7 +519,9 @@ Widget modalRedirect2FA(BuildContext context, Function refresh2fa) {
           PageRouteBuilder<void>(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) {
-              return DoubleAuthentication(refreshAccount: refresh2fa,);
+              return DoubleAuthentication(
+                refreshAccount: refresh2fa,
+              );
             },
           ),
         );

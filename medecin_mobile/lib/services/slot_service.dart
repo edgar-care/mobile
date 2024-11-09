@@ -29,8 +29,7 @@ Future<Object?> postSlot(DateTime date) async {
   final url = '${dotenv.env['URL']}doctor/slot';
   final start = date.millisecondsSinceEpoch ~/ 1000;
   final end =
-      ((date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/
-          1000);
+      ((date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/ 1000);
   final response = await http.post(
     Uri.parse(url),
     headers: {

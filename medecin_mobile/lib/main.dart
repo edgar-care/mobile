@@ -94,7 +94,6 @@ Future<void> showNotification(
       platformChannelSpecifics,
       payload: 'Notification Payload', // Optional payload
     );
-
   } catch (e) {
     // catch clauses
   }

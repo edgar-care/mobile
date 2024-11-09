@@ -7,7 +7,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
 
-Future<List<dynamic>> login(String email, String password, BuildContext context) async {
+Future<List<dynamic>> login(
+    String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/d/login';
   ScaffoldMessenger.of(context).showSnackBar(
@@ -19,20 +20,20 @@ Future<List<dynamic>> login(String email, String password, BuildContext context)
   );
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
-    if ( jsonDecode(response.body)['token'] != null) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    prefs.setString('token', jsonDecode(response.body)['token']);
-    String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-    prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-      message: 'Connecté à l\'application',
-      context: context,
-    ));
-    await Future.delayed(const Duration(seconds: 2));
-    Navigator.pushNamed(context, '/dashboard');
-    return [];
+    if (jsonDecode(response.body)['token'] != null) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      prefs.setString('token', jsonDecode(response.body)['token']);
+      String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
+      String decodedPayload =
+          utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+      prefs.setString('id', jsonDecode(decodedPayload)["id"]);
+      ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+        message: 'Connecté à l\'application',
+        context: context,
+      ));
+      await Future.delayed(const Duration(seconds: 2));
+      Navigator.pushNamed(context, '/dashboard');
+      return [];
     } else {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       return jsonDecode(response.body)['2fa_methods'];
@@ -66,7 +67,9 @@ Future resetPassword(String password) async {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
-    body: jsonEncode({{"new_password": password}}),
+    body: jsonEncode({
+      {"new_password": password}
+    }),
   );
   if (response.statusCode == 200) {
     return jsonDecode(response.body)['devices'];
@@ -75,7 +78,7 @@ Future resetPassword(String password) async {
 }
 
 Future sendEmailCode(String email) async {
-String url = '${dotenv.env['URL']}/auth/sending_email';
+  String url = '${dotenv.env['URL']}/auth/sending_email';
   await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -83,73 +86,65 @@ String url = '${dotenv.env['URL']}/auth/sending_email';
   );
 }
 
-Future checkEmailCode(String email, String password, String code, BuildContext context) async {
+Future checkEmailCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/email_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'token_2fa': code
-    }),
+    body: jsonEncode({'email': email, 'password': password, 'token_2fa': code}),
   );
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }
 }
 
-Future checkBackUpCode(String email, String password, String code, BuildContext context) async {
+Future checkBackUpCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/backup_code_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'backup_code': code
-    }),
+    body:
+        jsonEncode({'email': email, 'password': password, 'backup_code': code}),
   );
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }
 }
 
-Future checkThirdPartyCode(String email, String password, String code, BuildContext context)async {
+Future checkThirdPartyCode(
+    String email, String password, String code, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/third_party_2fa';
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email' : email,
-      'password': password,
-      'token_2fa': code
-    }),
+    body: jsonEncode({'email': email, 'password': password, 'token_2fa': code}),
   );
   if (response.statusCode == 200) {
     prefs.setString('token', jsonDecode(response.body)['token']);
     String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+    String decodedPayload =
+        utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
   }
 }
 
-Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
+Future<void> register(Map<String, dynamic> dInfo, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}/auth/d/register';
   ScaffoldMessenger.of(context).showSnackBar(
@@ -158,13 +153,13 @@ Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
-      "email": dInfo["email"], 
+      "email": dInfo["email"],
       "password": dInfo["password"],
       "name": dInfo["name"],
       "firstname": dInfo["firstname"],
       "address": {
-        "street": dInfo["adress"], 
-        "zip_code": dInfo["postalCode"], 
+        "street": dInfo["adress"],
+        "zip_code": dInfo["postalCode"],
         "country": dInfo["country"],
         "city": dInfo["city"]
       }
@@ -173,19 +168,19 @@ Future<void> register(Map<String , dynamic> dInfo, BuildContext context) async {
 
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
   if (response.statusCode == 200) {
-    if ( jsonDecode(response.body)['token'] != null) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    prefs.setString('token', jsonDecode(response.body)['token']);
-    String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
-        String decodedPayload =
-            utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-    prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-      message: 'Connecté à l\'application',
-      context: context,
-    ));
-    await Future.delayed(const Duration(seconds: 2));
-    Navigator.pushNamed(context, '/dashboard');
+    if (jsonDecode(response.body)['token'] != null) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      prefs.setString('token', jsonDecode(response.body)['token']);
+      String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
+      String decodedPayload =
+          utf8.decode(base64.decode(base64.normalize(encodedPayload)));
+      prefs.setString('id', jsonDecode(decodedPayload)["id"]);
+      ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+        message: 'Connecté à l\'application',
+        context: context,
+      ));
+      await Future.delayed(const Duration(seconds: 2));
+      Navigator.pushNamed(context, '/dashboard');
     } else {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       return jsonDecode(response.body)['2fa_methods'];

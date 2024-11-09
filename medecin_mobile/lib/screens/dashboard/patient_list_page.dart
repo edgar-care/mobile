@@ -101,6 +101,38 @@ class _PatientPageState extends State<PatientPage> {
             return Column(
               children: [
                 Container(
+                  key: const ValueKey("Header"),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue700,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(children: [
+                      Image.asset(
+                        "assets/images/logo/edgar-high-five.png",
+                        height: 40,
+                        width: 37,
+                      ),
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      const Text(
+                        "Mes Patients",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.white),
+                      ),
+                    ]),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Container(
                   decoration: BoxDecoration(
                     color: AppColors.blue100,
                     borderRadius: BorderRadius.circular(8),
@@ -294,7 +326,7 @@ class _PatientPageState extends State<PatientPage> {
                                               context: context,
                                               tmpInfo: tmpInfo),
                                           PatientAdd3(
-                                            updateData: updateData,
+                                              updateData: updateData,
                                               model: model,
                                               context: context,
                                               traitments: tmpTraitments,
@@ -559,7 +591,7 @@ class _PatientPageState extends State<PatientPage> {
             CustomDatePiker(
               onChanged: (value) => info['date_de_naissance'] = value,
               endDate: DateTime.now(),
-              value: info['date_de_naissance'],
+              initialValue: info['date_de_naissance'],
             ),
             const SizedBox(
               height: 16,
