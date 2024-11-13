@@ -37,7 +37,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       left: 16,
       right: 16,
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(left: 26, right: 26, top: 16, bottom: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -52,43 +52,42 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           children: <Widget>[
             NavBarItem(
               color: widget.selectedIndex == 0
-                  ? AppColors.blue200
-                  : Colors.transparent,
+                  ? AppColors.blue800
+                  : AppColors.grey500,
               icon: "assets/images/utils/Home.svg",
               onTap: () {
                 widget.onItemTapped(0);
               },
+              text: 'Accueil',
             ),
             NavBarItem(
               color: widget.selectedIndex == 1
-                  ? AppColors.blue200
-                  : Colors.transparent,
+                  ? AppColors.blue800
+                  : AppColors.grey500,
               icon: "assets/images/utils/Agenda.svg",
               onTap: () {
                 widget.onItemTapped(1);
               },
+              text: 'Agenda',
             ),
             NavBarItem(
-              color: widget.selectedIndex == 2
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/Medic.svg",
+              color: widget.selectedIndex == 2 ||
+                      widget.selectedIndex == 5 ||
+                      widget.selectedIndex == 6 ||
+                      widget.selectedIndex == 3 ||
+                      widget.selectedIndex == 4
+                  ? AppColors.blue800
+                  : AppColors.grey500,
+              icon: "assets/images/utils/sante.svg",
               onTap: () {
                 widget.onItemTapped(2);
               },
+              text: 'Santé',
             ),
             NavBarItem(
-              color: widget.selectedIndex == 3
-                  ? AppColors.blue200
-                  : Colors.transparent,
-              icon: "assets/images/utils/Document.svg",
-              onTap: () {
-                widget.onItemTapped(3);
-              },
-            ),
-            NavBarItem(
-              color: Colors.transparent,
-              icon: "assets/images/utils/More.svg",
+              color: AppColors.grey500,
+              icon: "assets/images/utils/profil.svg",
+              text: 'Profil',
               onTap: () {
                 Navigator.push(
                   context,
@@ -129,33 +128,45 @@ class NavBarItem extends StatelessWidget {
   final Color color;
   final String icon;
   final VoidCallback onTap;
+  final String text;
 
   const NavBarItem({
     super.key,
     required this.color,
     required this.icon,
     required this.onTap,
+    required this.text,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-          width: 48,
-          height: 48,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
+      child: Column(
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: SvgPicture.asset(
+              icon,
+              // ignore: deprecated_member_use
+              color: color,
+              height: 20,
+              width: 20,
+            ),
           ),
-          child: SvgPicture.asset(
-            icon,
-            // ignore: deprecated_member_use
-            color: AppColors.blue800,
-            height: 24,
-            width: 24,
-          )),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 10,
+              color: color,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

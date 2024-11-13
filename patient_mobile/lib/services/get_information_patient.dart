@@ -66,32 +66,15 @@ Map<String, Object> populateInfoMedical(Map<String, dynamic>? data) {
 }
 
 Future<Map<String, Object>?> putInformationPatient(
-    BuildContext context, Map<String, Object>? info) async {
+    BuildContext context, Map<String, Object>? info, tmpInfo) async {
   await dotenv.load();
   final url = '${dotenv.env['URL']}dashboard/medical-info';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
-  final body = {
-    'onboarding_info': {
-      'name': info?['Prenom'],
-      'surname': info?['Nom'],
-      'birthdate': info?['Anniversaire'],
-      'sex': info?['Sex'],
-      'height': info?['Taille'],
-      'weight': info?['Poids'],
-    },
-    'onboarding_health': {
-      'patients_primary_doctor': info?['Medecin_traitant'],
-      'patients_illness': info?['Traitement_en_cours'],
-      'patients_allergies': info?['Allergies'],
-      'patients_treatment': info?['Maladies_connues'],
-    },
-  };
-
   final response = await http.put(
     Uri.parse(url),
-    body: jsonEncode(body),
+    body: jsonEncode(info),
     headers: {'Authorization': 'Bearer $token'},
   );
   if (response.statusCode == 200) {

@@ -45,9 +45,7 @@ class WebSocketService {
     // Listen for incoming messages
     _channel?.stream.listen((message) {
       _handleMessage(message);
-    }, onError: (error) {
-    }, onDone: () {
-    });
+    }, onError: (error) {}, onDone: () {});
 
     sendReadyAction();
   }
@@ -123,7 +121,8 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
-  void responseMobileConnection(String patientAuthTokenWS, String uuid, bool response) {
+  void responseMobileConnection(
+      String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
       'action': 'responseMobileConnection ',
       'authToken': patientAuthTokenWS,

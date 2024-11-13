@@ -609,8 +609,8 @@ class _onboarding2State extends State<Onboarding2> {
                       final integerDate =
                           (birth.millisecondsSinceEpoch / 1000).round();
                       final Map<String, Object> body = {
-                        "name": name,
-                        "firstName": lastname,
+                        "name": lastname,
+                        "firstName": name,
                         "birthdate": integerDate,
                         "sex": sexe,
                         "weight": int.parse(weight) * 100,
@@ -897,6 +897,30 @@ class _Onboarding3State extends State<Onboarding3> {
                       ),
                     );
                   }
+                  List<String> parts = birthdate.split('/');
+                  String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+                  final birth = DateTime.parse(americanDate);
+                  final integerDate =
+                      (birth.millisecondsSinceEpoch / 1000).round();
+
+                  final Map<String, Object> body = {
+                    "name": lastname,
+                    "firstName": name,
+                    "birthdate": integerDate,
+                    "sex": sexe,
+                    "weight": int.parse(weight) * 100,
+                    "height": int.parse(height),
+                    "primary_doctor_id": primaryDoctorId,
+                    "family_members_med_info_id": [],
+                    "medical_antecedents": traitments,
+                  };
+
+                  var reponse = await postMedicalInfo(body);
+                  if (reponse == true) {
+                    widget.updateSelectedIndex(3);
+                  } else {}
+
+                  widget.updateSelectedIndex(3);
                 },
               ),
             ),

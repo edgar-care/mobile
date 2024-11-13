@@ -205,15 +205,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child: BoringAvatar(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                colors: const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
-                                                ],
-                                                type: BoringAvatarsType.beam,
+                                                palette: BoringAvatarPalette(
+                                                  const [
+                                                    AppColors.blue700,
+                                                    AppColors.blue200,
+                                                    AppColors.blue500
+                                                  ],
+                                                ),
+                                                type: BoringAvatarType.beam,
+                                                shape: CircleBorder(),
                                               )),
                                           const SizedBox(width: 16),
                                           Column(
@@ -283,31 +286,16 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                   children: [
                                     NavbarPLusTab(
                                       icon: SvgPicture.asset(
-                                        'assets/images/utils/MedicalFolder.svg',
+                                        'assets/images/utils/proches.svg',
                                         // ignore: deprecated_member_use
                                         color: AppColors.black,
                                         height: 18,
                                       ),
-                                      title: 'Dossier médical',
+                                      title: 'Mes proches',
                                       onTap: () {
-                                        widget.onItemTapped(4);
                                         Navigator.pop(context);
                                       },
                                       type: 'Middle',
-                                    ),
-                                    NavbarPLusTab(
-                                      icon: SvgPicture.asset(
-                                        'assets/images/utils/Messagerie.svg',
-                                        // ignore: deprecated_member_use
-                                        color: AppColors.black,
-                                        height: 18,
-                                      ),
-                                      title: 'Messagerie',
-                                      onTap: () {
-                                        widget.onItemTapped(5);
-                                        Navigator.pop(context);
-                                      },
-                                      type: 'Bottom',
                                     ),
                                   ],
                                 ),

@@ -38,7 +38,7 @@ class ProgressBarDisease extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.08,
+          width: MediaQuery.of(context).size.width * 0.09,
           child: Text(
             '$value %',
             style: TextStyle(
@@ -50,7 +50,7 @@ class ProgressBarDisease extends StatelessWidget {
         ),
         const SizedBox(width: 16),
         SizedBox(
-            width: MediaQuery.of(context).size.height * 0.155,
+            width: MediaQuery.of(context).size.height * 0.14,
             child: Text(
               disease,
               style: const TextStyle(
