@@ -627,8 +627,7 @@ class _AddDocumentState extends State<AddDocument> {
       setState(() {
         fileSelected = File(file.files.single.path!);
       });
-    } else {
-    }
+    } else {}
   }
 
   @override

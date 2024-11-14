@@ -13,7 +13,7 @@ class ChatPageDashBoard extends StatefulWidget {
   // ignore: prefer_final_fields
   ScrollController scrollController;
   final List<Chat> chats;
-  
+
   ChatPageDashBoard({
     super.key,
     required this.chats,
@@ -30,7 +30,6 @@ class ChatState extends State<ChatPageDashBoard> {
   String idDoctor = '';
   String id = "";
   String patientName = "";
-
 
   @override
   void initState() {
@@ -54,8 +53,7 @@ class ChatState extends State<ChatPageDashBoard> {
       } catch (e) {
         // catch clauses
       }
-    } else {
-    }
+    } else {}
   }
 
   ValueNotifier<int> selected = ValueNotifier(0);

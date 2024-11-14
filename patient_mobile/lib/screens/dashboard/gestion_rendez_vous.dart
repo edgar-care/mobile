@@ -918,7 +918,6 @@ class _ModifyRdvState extends State<ModifyRdv> {
               ),
             );
           } else {
-
             await putAppoitement(widget.id, selectedId).whenComplete(
               () {
                 // ignore: use_build_context_synchronously

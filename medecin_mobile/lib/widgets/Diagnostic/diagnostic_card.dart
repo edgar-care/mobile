@@ -573,7 +573,8 @@ class ModalDiagnosticState extends State<ModalDiagnostic> {
     }
     return ModalContainer(
       title: "Diagnostic du rendez-vous",
-      subtitle: "Consulter le diagnostic créé par Edgar lors de l’échange avec le patient.",
+      subtitle:
+          "Consulter le diagnostic créé par Edgar lors de l’échange avec le patient.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.heart_pulse_fill,

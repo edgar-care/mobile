@@ -83,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
-
     }
   }
 

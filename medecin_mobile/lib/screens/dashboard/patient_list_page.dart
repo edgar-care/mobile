@@ -294,7 +294,7 @@ class _PatientPageState extends State<PatientPage> {
                                               context: context,
                                               tmpInfo: tmpInfo),
                                           PatientAdd3(
-                                            updateData: updateData,
+                                              updateData: updateData,
                                               model: model,
                                               context: context,
                                               traitments: tmpTraitments,

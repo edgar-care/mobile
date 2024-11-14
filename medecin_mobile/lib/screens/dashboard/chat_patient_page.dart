@@ -65,8 +65,7 @@ class ChatPatientState extends State<ChatPatient> {
       } catch (e) {
         // catch clauses
       }
-    } else {
-    }
+    } else {}
   }
 
   Future<bool> checkData() async {

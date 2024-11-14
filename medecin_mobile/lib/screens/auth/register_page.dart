@@ -14,7 +14,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   String email = '';
   String password = '';
 
@@ -132,8 +131,7 @@ class _RegisterState extends State<Register> {
                           onPressed: () {
                             if (email.isNotEmpty && password.isNotEmpty) {
                               widget.registerCallback(email, password);
-                            }
-                            else {
+                            } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 ErrorSnackBar(
                                   message: 'Veuillez remplir tous les champs',

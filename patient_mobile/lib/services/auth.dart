@@ -90,7 +90,7 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
 }
 
 Future sendEmailCode(String email) async {
-String url = '${dotenv.env['URL']}/auth/sending_email';
+  String url = '${dotenv.env['URL']}/auth/sending_email';
   await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -159,7 +159,7 @@ Future checkThirdPartyCode(
 
 Future missingPassword(String email) async {
   String url = '${dotenv.env['URL']}/auth/missing-password';
-   await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email}),
