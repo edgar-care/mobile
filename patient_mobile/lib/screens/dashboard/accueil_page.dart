@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> allDoctor = [];
 
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
+    await getAllDoctor(context).then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
       } else {
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {

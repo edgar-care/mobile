@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getDoctors() async {
-    await getAllDoctor().then((value) {
+    await getAllDoctor(context).then((value) {
       setState(() {
         doctors = value;
       });
@@ -268,7 +268,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> {
   }
 
   Future<void> fetchData() async {
-    final value = await getAllDoctor();
+    final value = await getAllDoctor(context);
     setState(() {
       doctors = value;
       filteredDoctors = value;

@@ -46,7 +46,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
         await getAppointement(context).whenComplete(() {
       setState(() {});
     });
-    doctor = await getAllDoctor().whenComplete(() {
+    doctor = await getAllDoctor(context).whenComplete(() {
       setState(() {});
     });
     if (rdvs != null) {
@@ -680,7 +680,7 @@ class _DeleteRdvState extends State<DeleteRdv> {
               size: SizeButton.sm,
               msg: const Text('Supprimer'),
               onPressed: () async {
-                await deleteAppointementId(widget.id);
+                await deleteAppointementId(widget.id, context);
                 widget.updataData(context);
                 Navigator.pop(context);
               },
@@ -728,7 +728,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
       setState(() {
         isLoading = true;
       });
-      var value = await getAllDoctor();
+      var value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         setState(() {
           doctorsTemp = value;
@@ -783,7 +783,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
 
   Future<void> fetchDoctorAppointment(String id) async {
     try {
-      var value = await getAppoitementDoctorById(id);
+      var value = await getAppoitementDoctorById(id, context);
       if (value.isEmpty) {
         addEmptyAppointment(id);
       } else if (value.containsKey('rdv')) {
@@ -919,7 +919,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
             );
           } else {
 
-            await putAppoitement(widget.id, selectedId).whenComplete(
+            await putAppoitement(widget.id, selectedId, context).whenComplete(
               () {
                 // ignore: use_build_context_synchronously
                 widget.updataData(context);

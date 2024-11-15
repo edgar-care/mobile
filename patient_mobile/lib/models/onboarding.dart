@@ -239,8 +239,8 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomDatePiker(
               onChanged: (value) => birthdate = value,
-              value: birthdate != "" ? birthdate : null,
-              placeHolder: "26/09/2022",
+              label: birthdate != "" ? birthdate : null,
+              placeholder: "26/09/2022",
               endDate: today,
             ),
             const SizedBox(height: 16),
@@ -457,7 +457,7 @@ class _onboarding2State extends State<Onboarding2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -638,7 +638,7 @@ class _onboarding2State extends State<Onboarding2> {
                       };
 
                       // ignore: unused_local_variable
-                      bool medicalinfo = await postMedicalInfo(body);
+                      bool medicalinfo = await postMedicalInfo(body, context);
                       if (!medicalinfo) {
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -946,7 +946,7 @@ class _Onboarding3State extends State<Onboarding3> {
                     "medical_antecedents": traitments,
                   };
 
-                  var reponse = await postMedicalInfo(body);
+                  var reponse = await postMedicalInfo(body, context);
                   if (reponse == true) {
                     widget.updateSelectedIndex(3);
                   } else {}
@@ -1100,7 +1100,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['treatments'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -1245,7 +1245,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in medicines['treatments']) {
@@ -1483,7 +1483,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }

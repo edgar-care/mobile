@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_app/services/medecine.dart';
@@ -32,9 +34,9 @@ class _DailyMedicamentCardState extends State<DailyMedicamentCard> {
   }
 
   Future<void> fetchData() async {
-    var tmp3 = await getMedecines();
-    followUp = await getFollowUp();
-    allTreatments = await getTraitement();
+    var tmp3 = await getMedecines(context);
+    followUp = await getFollowUp(context);
+    allTreatments = await getTraitement(context);
     treatmentsMorning = await getTreatmentsByDayAndPeriod(
         allTreatments, getDayEnum(), Period.MORNING);
     treatmentsAfterNoon = await getTreatmentsByDayAndPeriod(
@@ -71,7 +73,7 @@ class _DailyMedicamentCardState extends State<DailyMedicamentCard> {
   }
 
   void updateData() {
-    getFollowUp().then(
+    getFollowUp(context).then(
       (value) => {
         setState(() {
           followUp = value;
@@ -288,7 +290,7 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                       "period": [
                         widget.period.toString().trim().split('.').last
                       ],
-                    }).then(
+                    }, context).then(
                       (value) => {
                         widget.updateData(),
                       },
@@ -300,7 +302,7 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                               filteredTreatments[index].id &&
                           element['period'].contains(
                               widget.period.toString().trim().split('.').last),
-                    )['id'])
+                    )['id'], context)
                         .then(
                       (value) => {
                         widget.updateData(),

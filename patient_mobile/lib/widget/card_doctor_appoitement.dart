@@ -366,7 +366,7 @@ class _SeeMoreState extends State<SeeMore> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String? sessionId = prefs.getString('sessionId');
 
-            await postAppointementId(idselected, sessionId!).then(
+            await postAppointementId(idselected, sessionId!, context).then(
               (value) {
                 if (value) {
                   Navigator.pushNamed(

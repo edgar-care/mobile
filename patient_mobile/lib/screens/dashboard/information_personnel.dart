@@ -38,7 +38,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = {
           ...value,
@@ -58,7 +58,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
 
   Future<String> getNameDoctor() async {
     try {
-      final value = await getAllDoctor();
+      final value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         for (var doctor in value) {
           if (doctor['id'] == infoMedical['primary_doctor_id']) {
@@ -362,7 +362,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 info['birthdate'] = date;
               },
               endDate: DateTime.now(),
-              value: DateFormat('dd/MM/yyyy')
+              initialValue: DateFormat('dd/MM/yyyy')
                   .format(
                     DateTime.fromMillisecondsSinceEpoch(
                         info['birthdate'] * 1000),
@@ -650,7 +650,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['medicines'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -835,7 +835,7 @@ class PatientAdd2State extends State<PatientAdd2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -1376,7 +1376,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in treatments['treatments']) {
@@ -1626,7 +1626,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }

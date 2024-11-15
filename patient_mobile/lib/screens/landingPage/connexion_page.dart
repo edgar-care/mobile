@@ -279,22 +279,21 @@ class _ModalLoginState extends State<ModalLogin> {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            final model =
-            Provider.of<BottomSheetModel>(context, listen: false);
-        model.resetCurrentIndex();
-        showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (context) {
-              return Consumer<BottomSheetModel>(
-                builder: (context, model, child) {
-                  return ListModal(model: model, children: [
-                    modalForgotPassword(context),
-                  ]);
-                },
-              );
-            });
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalForgotPassword(context),
+                      ]);
+                    },
+                  );
+                });
           },
           child: const Text(
             "Mot de passe oublié ?",
@@ -483,7 +482,7 @@ class _ModalRegisterState extends State<ModalRegister> {
                   message: "Adresse mail invalide", context: context));
               return;
             }
-            var reponse = await RegisterUser(email, password);
+            var reponse = await registerUser(email, password, context);
             if (reponse) {
               ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
                   message: "Inscription réussie", context: context));
@@ -719,16 +718,16 @@ Widget modalForgotPassword(BuildContext context) {
       ),
     ],
     footer: Buttons(
-            variant: Variant.primary,
-            size: SizeButton.md,
-            msg: const Text('Réinitialiser le mot de passe'),
-            onPressed: () {
-              missingPassword(email).then((value) {
-                Navigator.pop(context);
-              });
-            },
-          ),
-    );
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Réinitialiser le mot de passe'),
+      onPressed: () {
+        missingPassword(email, context).then((value) {
+          Navigator.pop(context);
+        });
+      },
+    ),
+  );
 }
 
 class ModalEmailLogin extends StatefulWidget {
@@ -759,7 +758,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     }
 
     Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email);
+      await sendEmailCode(widget.email, context);
       return true;
     }
 
@@ -969,28 +968,29 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
         ),
         type: ModalType.info,
       ),
-    footer:Column(
-      children: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Valider le code'),
-          onPressed: () {
-            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
-            });
-          }
-        ),
-        const SizedBox(height: 8,),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Revenir en arrière'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
+      footer: Column(
+        children: [
+          Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Valider le code'),
+              onPressed: () {
+                checkBackUpCode(widget.email, widget.password, code, context)
+                    .then((value) {});
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Revenir en arrière'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

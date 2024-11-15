@@ -44,7 +44,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<bool> getInfo() async {
-    var tmp = await getEnable2fa();
+    var tmp = await getEnable2fa(context);
     enable2fa = tmp;
     birthdate = DateFormat('dd/MM/yyyy').format(
         DateTime.fromMillisecondsSinceEpoch(
@@ -473,7 +473,7 @@ Widget modalDisableAccount(BuildContext context) {
           size: SizeButton.md,
           msg: const Text('Désactiver le compte'),
           onPressed: () {
-            disableAccount().then((value) {
+            disableAccount(context).then((value) {
               Navigator.pop(context);
             });
           },
@@ -545,7 +545,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackupcode() async {
-    var tmp = await generateBackupCode();
+    var tmp = await generateBackupCode(context);
     backupCodes = tmp;
     return true;
   }

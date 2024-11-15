@@ -1,44 +1,33 @@
 // ignore_for_file: file_names, use_build_context_synchronously
-
-import 'dart:convert';
 import "package:flutter/material.dart";
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edgar_app/services/request.dart';
 
-Future<String> initiateConversation() async {
-  final url = '${dotenv.env['URL']}diagnostic/initiate';
-
-  final response = await http.post(
-    Uri.parse(url),
+Future<String> initiateConversation(BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'diagnostic/initiate',
+    needsToken: true,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    final decodedBody = json.decode(body);
-    final sessionId = decodedBody['sessionId'];
-    return sessionId;
+  if (response.statusCode != null) {
+    return response["sessionId"];
   } else {
-    return '';
+    return "";
   }
 }
 
 Future<Object> getResponseMessage(
     BuildContext context, String msg, String idConversation) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}diagnostic/diagnose';
-
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-    body: jsonEncode({
-      'id': idConversation,
-      'sentence': msg,
-    }),
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'diagnostic/diagnose',
+    needsToken: true,
+    body: {"id": idConversation, "sentence": msg},
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return body;
+
+  if (response != null) {
+    return response;
   } else {
     return {};
   }
