@@ -453,7 +453,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     super.initState();
     sendEmail();
   }
-
+  @override
   Widget build(BuildContext context) {
     String code = '';
     void setCode(String action, String code) {
