@@ -1,6 +1,4 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
-import "dart:convert";
-
 import "package:bootstrap_icons/bootstrap_icons.dart";
 import "package:edgar/colors.dart";
 import "package:edgar/widget.dart";
@@ -14,7 +12,6 @@ import "package:edgar_pro/widgets/custom_nav_patient_card.dart";
 import "package:edgar_pro/widgets/prescription_card.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:logger/logger.dart";
 import "package:provider/provider.dart";
 
 class PrescriptionPage extends StatefulWidget {
