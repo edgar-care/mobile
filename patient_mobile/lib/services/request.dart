@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_user_agentx/flutter_user_agent.dart';
+import 'dart:io' show Platform;
 
 enum RequestType { get, post, put, delete }
 
@@ -42,9 +42,8 @@ Future<dynamic> httpRequest({
         headers['Authorization'] = 'Bearer $token';
       }
     }
-    await FlutterUserAgent.init();
-    final userAgent = FlutterUserAgent.userAgent;
-    if (userAgent != null && userAgent.contains('Android')) {
+
+    if (Platform.isAndroid) {
       headers['User-Agent'] = 'Android/Edgar-App';
     } else {
       headers['User-Agent'] = 'iOS/Edgar-App';
