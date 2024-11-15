@@ -1,4 +1,6 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
+import "dart:convert";
+
 import "package:bootstrap_icons/bootstrap_icons.dart";
 import "package:edgar/colors.dart";
 import "package:edgar/widget.dart";
@@ -36,6 +38,12 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
   Future<void> loadInfo() async {
     prescriptionList = await getAllPrescription(widget.id);
     patientInfo = await getPatientById(widget.id);
+  }
+
+  void refresh(){
+    setState(() {
+      loadInfo();
+    });
   }
 
   @override
@@ -197,7 +205,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                             children: [
                               AddPrescriptionModal(
                                   firstname: patientInfo['Prenom'],
-                                  lastname: patientInfo['Nom'])
+                                  lastname: patientInfo['Nom'],
+                                  id: widget.id,
+                                  refresh: refresh),
                             ],
                           );
                         },
@@ -291,8 +301,10 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
 class AddPrescriptionModal extends StatefulWidget {
   String firstname;
   String lastname;
+  String id;
+  Function refresh;
   AddPrescriptionModal(
-      {super.key, required this.firstname, required this.lastname});
+      {super.key, required this.firstname, required this.lastname, required this.id, required this.refresh});
 
   @override
   State<AddPrescriptionModal> createState() => _AddPrescriptionModalState();
@@ -394,8 +406,50 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
               size: SizeButton.md,
               msg: const Text('Ajouter le document'),
               onPressed: () {
-                Logger().d(medicineList.length);
-              },
+                final List<Map<String, dynamic>> prescription = [];
+                for (int i = 0; i < medicineList.length; i++) {
+                  prescription.add({
+                    "medicine_id": medicineList[i].medicineId,
+                    "qsp": medicineList[i].qsp,
+                    "qsp_unit": medicineList[i].qspUnit,
+                    "comment": medicineList[i].comment,
+                    "periods": medicineList[i].periods
+                        .map((e) => {
+                              "quantity": e.quantity,
+                              "frequency": e.frequency,
+                              "frequency_ratio": e.frequencyRatio,
+                              "frequency_unit": e.frequencyUnit,
+                              "period_length": e.periodLength,
+                              "period_unit": e.periodUnit
+                            })
+                        .toList()
+                  });
+                }
+                final Map<String, dynamic> data = {
+                  "patient_id": widget.id,
+                  "medicines": prescription
+                };
+                postPrescription(data).then((value) {
+                  if (value) {
+                    Navigator.pop(context);
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      widget.refresh();
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SuccessSnackBar(
+                        message: 'Ordonnance ajouté avec succès',
+                        context: context,
+                      ));
+                  } else {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      ErrorSnackBar(
+                        message: 'Erreur lors de l\'ajout de l\'ordonnance',
+                        context: context,
+                      ));
+                  }
+                });
+              }
             ),
             const SizedBox(height: 8),
             Buttons(

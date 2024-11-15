@@ -46,3 +46,22 @@ Future<Map<String, dynamic>> getPrescriptionbyId(String id) async {
     return {};
   }
 }
+
+Future<bool> postPrescription(Map<String, dynamic> data) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString('token') ?? '';
+  String url = '${dotenv.env['URL']}/dashboard/prescription';
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(data),
+  );
+  if (response.statusCode == 201) {
+    return true;
+  } else {
+    return false;
+  }
+}
