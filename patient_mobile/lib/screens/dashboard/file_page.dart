@@ -627,8 +627,7 @@ class _AddDocumentState extends State<AddDocument> {
       setState(() {
         fileSelected = File(file.files.single.path!);
       });
-    } else {
-    }
+    } else {}
   }
 
   @override
@@ -867,9 +866,8 @@ class _AddDocumentState extends State<AddDocument> {
                     }
                   });
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez séléctionner un fichiez",
-                      context: context));
+                  TopErrorSnackBar(message: "Veuillez séléctionner un fichier")
+                      .show(context);
                 }
               },
             ),

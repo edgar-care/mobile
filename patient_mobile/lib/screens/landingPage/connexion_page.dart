@@ -279,22 +279,21 @@ class _ModalLoginState extends State<ModalLogin> {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            final model =
-            Provider.of<BottomSheetModel>(context, listen: false);
-        model.resetCurrentIndex();
-        showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (context) {
-              return Consumer<BottomSheetModel>(
-                builder: (context, model, child) {
-                  return ListModal(model: model, children: [
-                    modalForgotPassword(context),
-                  ]);
-                },
-              );
-            });
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalForgotPassword(context),
+                      ]);
+                    },
+                  );
+                });
           },
           child: const Text(
             "Mot de passe oublié ?",
@@ -465,32 +464,30 @@ class _ModalRegisterState extends State<ModalRegister> {
           msg: const Text("Inscription"),
           onPressed: () async {
             if (password == "" || email == "") {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Veuillez remplir tous les champs",
-                  context: context));
+              TopErrorSnackBar(message: "Veuillez remplir tous les champs")
+                  .show(context);
               return;
             }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message:
-                      "Le mot de passe doit contenir au moins 8 caractères",
-                  context: context));
+              TopErrorSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères")
+                  .show(context);
+
               return;
             }
             if (!emailValidityChecker(email)) {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Adresse mail invalide", context: context));
+              TopErrorSnackBar(message: "Adresse mail invalide").show(context);
               return;
             }
             var reponse = await RegisterUser(email, password);
             if (reponse) {
-              ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                  message: "Inscription réussie", context: context));
+              TopSuccessSnackBar(message: "Inscription réussie").show(context);
               Navigator.pushNamed(context, '/onboarding');
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Erreur lors de l'inscription", context: context));
+              TopErrorSnackBar(message: "Erreur lors de l'inscription")
+                  .show(context);
             }
           },
         )
@@ -719,16 +716,16 @@ Widget modalForgotPassword(BuildContext context) {
       ),
     ],
     footer: Buttons(
-            variant: Variant.primary,
-            size: SizeButton.md,
-            msg: const Text('Réinitialiser le mot de passe'),
-            onPressed: () {
-              missingPassword(email).then((value) {
-                Navigator.pop(context);
-              });
-            },
-          ),
-    );
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Réinitialiser le mot de passe'),
+      onPressed: () {
+        missingPassword(email).then((value) {
+          Navigator.pop(context);
+        });
+      },
+    ),
+  );
 }
 
 class ModalEmailLogin extends StatefulWidget {
@@ -969,28 +966,29 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
         ),
         type: ModalType.info,
       ),
-    footer:Column(
-      children: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Valider le code'),
-          onPressed: () {
-            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
-            });
-          }
-        ),
-        const SizedBox(height: 8,),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Revenir en arrière'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
+      footer: Column(
+        children: [
+          Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Valider le code'),
+              onPressed: () {
+                checkBackUpCode(widget.email, widget.password, code, context)
+                    .then((value) {});
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Revenir en arrière'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
