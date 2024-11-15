@@ -49,7 +49,8 @@ class ChatPatientState extends State<ChatPatient> {
 
   Future<void> _loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    getPatientById(widget.id).then((value) => setState(() {
+    // ignore: use_build_context_synchronously
+    getPatientById(widget.id, context).then((value) => setState(() {
           patientInfo = value;
         }));
     String? token = prefs.getString('token');

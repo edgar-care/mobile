@@ -1,109 +1,97 @@
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<Map<String, dynamic>> getEnable2fa() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/dashboard/2fa';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<Map<String, dynamic>> getEnable2fa(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/dashboard/2fa',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['double_auth'];
+  if (response != null) {
+    return response['double_auth'];
   }
   return {};
 }
 
-Future<int> delete2faMethod(String method) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/dashboard/2fa/$method';
-  final response = await http.delete(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<int> delete2faMethod(String method, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.delete,
+    endpoint: '/dashboard/2fa/$method',
+    needsToken: true,
+    context: context,
   );
-  return response.statusCode;
+
+  if (response != null) {
+    return 200;
+  }
+  return 0;
 }
 
-Future<List<dynamic>> generateBackupCode() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/auth/creation_backup_code';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<List<dynamic>> generateBackupCode(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: '/auth/creation_backup_code',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 201) {
-    return jsonDecode(response.body)['double_auth'];
+
+  if (response != null) {
+    return response['double_auth'];
   }
   return [];
 }
 
-Future enable2FAEmail() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/2fa/method/email';
-  await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({'method_2fa': 'EMAIL'}),
+Future enable2FAEmail(BuildContext context) async {
+  await httpRequest(
+    type: RequestType.post,
+    endpoint: '/2fa/method/email',
+    needsToken: true,
+    body: {'method_2fa': 'EMAIL'},
+    context: context,
   );
+
+  return;
 }
 
-Future enable2FAMobile(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/2fa/method/mobile';
-  await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({'method_2fa': 'MOBILE', "trusted_device_id": id}),
+Future enable2FAMobile(String id, BuildContext context) async {
+  await httpRequest(
+    type: RequestType.post,
+    endpoint: '/2fa/method/mobile',
+    needsToken: true,
+    body: {'method_2fa': 'MOBILE', "trusted_device_id": id},
+    context: context,
   );
+
+  return;
 }
 
-Future<Map<String, dynamic>> enable2FA3party() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/2fa/method/third_party/generate';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<Map<String, dynamic>> enable2FA3party(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: '/2fa/method/third_party',
+    needsToken: true,
+    context: context,
   );
-  return jsonDecode(response.body);
+
+  if (response != null) {
+    return response;
+  }
+  return {};
 }
 
-Future<Map<String, dynamic>> checkTierAppCode(String code) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/2fa/method/third_party';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({'token': code}),
+Future<Map<String, dynamic>> checkTierAppCode(
+    String code, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: '/2fa/method/third_party',
+    needsToken: true,
+    body: {'token': code},
+    context: context,
   );
-  return jsonDecode(response.body);
+
+  if (response != null) {
+    return response;
+  }
+  return {};
 }

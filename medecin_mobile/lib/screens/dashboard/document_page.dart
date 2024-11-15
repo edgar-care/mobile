@@ -29,8 +29,9 @@ class _DocumentPageState extends State<DocumentPage> {
   Map<String, dynamic> patientInfo = {};
   List<Map<String, dynamic>> documents = [];
   Future<void> _loadDoc() async {
-    patientInfo = await getPatientById(widget.id);
-    documents = await getDocumentsIds(widget.id);
+    patientInfo = await getPatientById(widget.id, context);
+    // ignore: use_build_context_synchronously
+    documents = await getDocumentsIds(widget.id, context);
   }
 
   Future<void> updateData() async {

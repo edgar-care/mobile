@@ -32,7 +32,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
 
-    List<dynamic> doctorList = await getAllDoctor();
+    List<dynamic> doctorList = await getAllDoctor(context);
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
         infoMedical = doctor;
@@ -158,15 +158,17 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child: BoringAvatar(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                colors: const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
-                                                ],
-                                                type: BoringAvatarsType.beam,
+                                                palette: BoringAvatarPalette(
+                                                  const [
+                                                    AppColors.blue700,
+                                                    AppColors.blue200,
+                                                    AppColors.blue500
+                                                  ],
+                                                ),
+                                                type: BoringAvatarType.beam,
                                               )),
                                           const SizedBox(width: 16),
                                           Column(

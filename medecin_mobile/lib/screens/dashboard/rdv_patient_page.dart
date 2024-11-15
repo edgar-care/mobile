@@ -28,7 +28,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
   Map<String, dynamic> patient = {};
 
   Future<void> _loadInfo() async {
-    patient = await getPatientById(widget.id);
+    patient = await getPatientById(widget.id, context);
   }
 
   void updateSelection(int newSelection) {
