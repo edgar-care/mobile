@@ -12,6 +12,6 @@ Future<Map<String, dynamic>?> getAppointement(BuildContext context) async {
   if (response != null) {
     return response;
   } else {
-    return null;
+    return {};
   }
 }
