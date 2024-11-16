@@ -13,7 +13,6 @@ import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:provider/provider.dart';
 
@@ -247,7 +246,6 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) {
-                  Logger().d(diagnostic);
                   return Consumer<BottomSheetModel>(
                     builder: (context, model, child) {
                       return ListModal(

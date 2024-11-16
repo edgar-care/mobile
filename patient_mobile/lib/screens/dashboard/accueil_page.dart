@@ -197,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                 height: 24,
               ),
               const Text(
-                "Mes médicaments à prendre aujourd'hui",
+                "Mes Traitement en cours",
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Poppins',

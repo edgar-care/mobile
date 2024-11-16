@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -42,8 +41,6 @@ Future<List<dynamic>> login(
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email, 'password': password}),
   );
-  Logger().d(response.statusCode);
-  Logger().d(response.body);
   if (response.statusCode == 200) {
     if (jsonDecode(response.body)['token'] != null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
