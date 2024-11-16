@@ -260,7 +260,7 @@ Widget modalForgotPassword(BuildContext context) {
             size: SizeButton.md,
             msg: const Text('Réinitialiser le mot de passe'),
             onPressed: () {
-              missingPassword(email).then((value) {
+              missingPassword(email, context).then((value) {
                 Navigator.pop(context);
               });
             },
@@ -442,7 +442,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     }
 
     Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email);
+      await sendEmailCode(widget.email, context);
       return true;
     }
 

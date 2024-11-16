@@ -481,7 +481,7 @@ class _ModalRegisterState extends State<ModalRegister> {
               TopErrorSnackBar(message: "Adresse mail invalide").show(context);
               return;
             }
-            var reponse = await RegisterUser(email, password);
+            var reponse = await registerUser(email, password, context);
             if (reponse) {
               TopSuccessSnackBar(message: "Inscription réussie").show(context);
               Navigator.pushNamed(context, '/onboarding');
@@ -720,7 +720,7 @@ Widget modalForgotPassword(BuildContext context) {
       size: SizeButton.md,
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
-        missingPassword(email).then((value) {
+        missingPassword(email, context).then((value) {
           Navigator.pop(context);
         });
       },
@@ -756,7 +756,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     }
 
     Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email);
+      await sendEmailCode(widget.email, context);
       return true;
     }
 

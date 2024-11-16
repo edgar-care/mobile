@@ -46,12 +46,12 @@ class _FilePageState extends State<FilePage> {
   }
 
   Future<void> fetchData() async {
-    files = await getAllDocument();
+    files = await getAllDocument(context);
     return;
   }
 
   void updateData() async {
-    var tmp = await getAllDocument();
+    var tmp = await getAllDocument(context);
     setState(() {
       files = tmp;
       filteredFiles = files;
@@ -857,6 +857,7 @@ class _AddDocumentState extends State<AddDocument> {
                     dropdownValue,
                     dropdownValue2,
                     fileSelected!,
+                    context
                   ).then((value) {
                     clicked = false;
                     if (value == true) {

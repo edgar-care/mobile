@@ -39,7 +39,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
       setState(() {
         isLoading = true;
       });
-      var value = await getAllDoctor();
+      var value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         setState(() {
           doctorsTemp = value;
@@ -97,7 +97,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   Future<void> fetchDoctorAppointment(String id) async {
     try {
-      var value = await getAppoitementDoctorById(id);
+      var value = await getAppoitementDoctorById(id, context);
       if (value.isEmpty) {
         addEmptyAppointment(id);
       } else if (value.containsKey('rdv')) {
@@ -240,7 +240,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           await SharedPreferences.getInstance();
                       String? sessionId = prefs.getString('sessionId');
 
-                      await postAppointementId(selectedId, sessionId!).then(
+                      await postAppointementId(selectedId, sessionId!, context).then(
                         (value) {
                           if (value) {
                             Navigator.pushNamed(

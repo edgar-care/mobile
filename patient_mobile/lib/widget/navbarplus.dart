@@ -57,7 +57,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
   }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
         birthdate = DateFormat('dd/MM/yyyy').format(

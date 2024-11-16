@@ -26,7 +26,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getSessionId() async {
-    await initiateDiagnostic().then((value) {
+    await initiateDiagnostic(context).then((value) {
       setState(() {
         sessionId = value;
       });
@@ -44,7 +44,7 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {
       messages.add([message[0].toUpperCase() + message.substring(1), true]);
     });
-    await getDiagnostic(sessionId, message).then((value) {
+    await getDiagnostic(sessionId, message, context).then((value) {
       if (value.isEmpty) {
         TopErrorSnackBar(message: 'Erreur lors de la récupération des données')
             .show(context);

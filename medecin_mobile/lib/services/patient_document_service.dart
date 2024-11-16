@@ -1,26 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/doctor/patient/$id';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    },
+Future<List<Map<String, dynamic>>> getDocumentsIds(
+    String id, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctor/patient/$id',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
+
+  if (response != null) {
     List<Map<String, dynamic>> documents = [];
-    if (jsonDecode(response.body)['document_ids'] != null) {
-      var tmp = jsonDecode(response.body)['document_ids'];
+    if (response['document_ids'] != null) {
+      var tmp = response['document_ids'];
       for (int i = 0; i < tmp.length; i++) {
-        documents.add(await getDocumentsbyId(tmp[i]));
+        // ignore: use_build_context_synchronously
+        documents.add(await getDocumentsbyId(tmp[i], context));
       }
       return documents;
     } else {
@@ -31,19 +32,17 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(String id) async {
   }
 }
 
-Future<Map<String, dynamic>> getDocumentsbyId(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}/doctor/document/$id';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    },
+Future<Map<String, dynamic>> getDocumentsbyId(
+    String id, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctor/document/$id',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['download'];
+
+  if (response != null) {
+    return response['download'];
   } else {
     return {};
   }

@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   String docteurFirstName = '';
 
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
+    await getAllDoctor(context).then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
       } else {
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     await getAppointement(context).then((value) {
-      if (value.isNotEmpty) {
+      if (value!.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
         TopErrorSnackBar(message: "Error on fetching appoitement")

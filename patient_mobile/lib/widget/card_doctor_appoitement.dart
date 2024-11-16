@@ -362,7 +362,7 @@ class _SeeMoreState extends State<SeeMore> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String? sessionId = prefs.getString('sessionId');
 
-            await postAppointementId(idselected, sessionId!).then(
+            await postAppointementId(idselected, sessionId!, context).then(
               (value) {
                 if (value) {
                   Navigator.pushNamed(
@@ -795,7 +795,7 @@ class _SeeMoreModifyState extends State<SeeMoreModify> {
               ),
             );
           } else {
-            await putAppoitement(widget.oldId, idselected).whenComplete(
+            await putAppoitement(widget.oldId, idselected, context).whenComplete(
               () async {
                 widget.updateData(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -805,7 +805,7 @@ class _SeeMoreModifyState extends State<SeeMoreModify> {
                   ),
                 );
 
-                await putAppoitement(widget.oldId, idselected).whenComplete(
+                await putAppoitement(widget.oldId, idselected, context).whenComplete(
                   () {
                     // ignore: use_build_context_synchronously
                     // ignore: use_build_context_synchronously

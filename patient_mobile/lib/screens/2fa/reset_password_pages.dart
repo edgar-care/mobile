@@ -163,7 +163,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                                 'Les mots de passe ne correspondent pas')
                                         .show(context);
                                   } else {
-                                    resetPassword(newEmail);
+                                    resetPassword(newEmail, context);
                                   }
                                 })
                           ],

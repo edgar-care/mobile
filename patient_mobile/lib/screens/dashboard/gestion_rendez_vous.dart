@@ -42,7 +42,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
 
   Future<void> fetchData() async {
     await getAppointement(context).then((value) {
-      if (value.isNotEmpty) {
+      if (value!.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
@@ -50,7 +50,7 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
       }
     });
 
-    doctor = await getAllDoctor();
+    doctor = await getAllDoctor(context);
   }
 
   Future<void> updateDate(BuildContext context) async {
@@ -409,7 +409,7 @@ class _DeleteRdvState extends State<DeleteRdv> {
             size: SizeButton.md,
             msg: const Text('Oui, annuler le rendez-vous'),
             onPressed: () async {
-              await deleteAppointementId(widget.id);
+              await deleteAppointementId(widget.id, context);
               widget.updataData(context);
               Navigator.pop(context);
             },
@@ -467,7 +467,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
       setState(() {
         isLoading = true;
       });
-      var value = await getAllDoctor();
+      var value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         setState(() {
           doctorsTemp = value;
@@ -522,7 +522,7 @@ class _ModifyRdvState extends State<ModifyRdv> {
 
   Future<void> fetchDoctorAppointment(String id) async {
     try {
-      var value = await getAppoitementDoctorById(id);
+      var value = await getAppoitementDoctorById(id, context);
       if (value.isEmpty) {
         addEmptyAppointment(id);
       } else if (value.containsKey('rdv')) {
@@ -663,7 +663,8 @@ class _ModifyRdvState extends State<ModifyRdv> {
                     ),
                   );
                 } else {
-                  await putAppoitement(widget.id, selectedId).whenComplete(
+                  await putAppoitement(widget.id, selectedId, context)
+                      .whenComplete(
                     () async {
                       widget.updataData(context);
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -674,7 +675,8 @@ class _ModifyRdvState extends State<ModifyRdv> {
                       );
                       widget.model.changePage(0);
 
-                      await putAppoitement(widget.id, selectedId).whenComplete(
+                      await putAppoitement(widget.id, selectedId, context)
+                          .whenComplete(
                         () {
                           // ignore: use_build_context_synchronously
                           widget.updataData(context);
