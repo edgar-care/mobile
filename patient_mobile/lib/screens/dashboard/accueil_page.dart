@@ -30,8 +30,7 @@ class _HomePageState extends State<HomePage> {
       if (value.isNotEmpty) {
         allDoctor = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching doctors", context: context));
+        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       }
     });
 
@@ -39,8 +38,7 @@ class _HomePageState extends State<HomePage> {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
 
@@ -48,8 +46,7 @@ class _HomePageState extends State<HomePage> {
       if (value!.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching appointement", context: context));
+        TopErrorSnackBar(message: "Error on fetching appoitement").show(context);
       }
     });
     return;

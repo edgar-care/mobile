@@ -274,13 +274,10 @@ class PeriodeMedicCheckListeState extends State<PeriodeMedicCheckListe> {
                   if (DateTime.now().year != widget.date.year ||
                       DateTime.now().day != widget.date.day ||
                       DateTime.now().month != widget.date.month) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message:
-                            "Vous ne pouvez pas modifier un suivi pour une date passée ou future",
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message:
+                          "Vous ne pouvez pas modifier un suivi pour une date passée ou future",
+                    ).show(context);
                     return;
                   }
                   if (value == true) {

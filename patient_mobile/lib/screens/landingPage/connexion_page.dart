@@ -464,32 +464,30 @@ class _ModalRegisterState extends State<ModalRegister> {
           msg: const Text("Inscription"),
           onPressed: () async {
             if (password == "" || email == "") {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Veuillez remplir tous les champs",
-                  context: context));
+              TopErrorSnackBar(message: "Veuillez remplir tous les champs")
+                  .show(context);
               return;
             }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message:
-                      "Le mot de passe doit contenir au moins 8 caractères",
-                  context: context));
+              TopErrorSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères")
+                  .show(context);
+
               return;
             }
             if (!emailValidityChecker(email)) {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Adresse mail invalide", context: context));
+              TopErrorSnackBar(message: "Adresse mail invalide").show(context);
               return;
             }
             var reponse = await registerUser(email, password, context);
             if (reponse) {
-              ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                  message: "Inscription réussie", context: context));
+              TopSuccessSnackBar(message: "Inscription réussie").show(context);
               Navigator.pushNamed(context, '/onboarding');
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Erreur lors de l'inscription", context: context));
+              TopErrorSnackBar(message: "Erreur lors de l'inscription")
+                  .show(context);
             }
           },
         )

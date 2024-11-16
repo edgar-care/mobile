@@ -230,13 +230,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
                 GestureDetector(
                   onTap: () async {
                     if (selectedId.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        ErrorSnackBar(
-                          message:
-                              "Veuillez sélectionner un rendez-vous avant de continuer.",
-                          context: context,
-                        ),
-                      );
+                      TopErrorSnackBar(
+                        message:
+                            "Veuillez sélectionner un rendez-vous avant de continuer.",
+                      ).show(context);
                     } else {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
@@ -250,13 +247,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               '/simulation/confirmation',
                             );
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              ErrorSnackBar(
-                                message:
-                                    "Une erreur s'est produite lors de la validation du rendez-vous.",
-                                context: context,
-                              ),
-                            );
+                            TopErrorSnackBar(
+                              message:
+                                  "Une erreur s'est produite lors de la validation du rendez-vous.",
+                            ).show(context);
                           }
                         },
                       );

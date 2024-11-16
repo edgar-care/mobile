@@ -1439,12 +1439,9 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                       Navigator.pop(context);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message: 'Le code est incorrect',
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message: 'Code incorrect',
+                    ).show(context);
                   }
                 });
               },
