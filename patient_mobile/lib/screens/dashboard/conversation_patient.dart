@@ -145,7 +145,7 @@ class _ChatPageState extends State<ChatPageConversation> {
                       curve: Curves.easeOut,
                     );
                   },
-                  label: 'Ecriver votre message ici...',
+                  label: 'Ecrire votre message ici...',
                   onOpen: () {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       widget.controller.animateTo(

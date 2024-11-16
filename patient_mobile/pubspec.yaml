@@ -17,14 +17,14 @@ dependencies:
   dart_jsonwebtoken: ^2.11.0
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
-  edgar: ^0.2.2
+  edgar: ^0.3.1
   qr_flutter: ^4.1.0
   http: ^1.1.0
   path_provider: ^2.0.5
   flutter_pdfview: ^1.0.0
   flutter:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.1
   flutter_local_notifications: ^17.0.0
   flutter_localizations:
     sdk: flutter  
@@ -34,11 +34,11 @@ dependencies:
   logger: ^2.0.2+1
   flutter_datetime_picker: ^1.5.1
   file_picker: ^8.0.0+1
-  confetti: ^0.7.0
+  confetti: ^0.8.0
   flutter_typeahead: ^5.2.0
   easy_autocomplete: ^1.6.0
-  web_socket_channel: ^2.1.0
-  flutter_boring_avatars: ^1.1.0
+  web_socket_channel: ^3.0.1
+  flutter_boring_avatars: ^2.0.1
   permission_handler: ^11.3.1
   download_file: ^1.2.0
   push: ^2.3.0
@@ -47,7 +47,7 @@ dependencies:
   gradient_borders: ^1.0.1
 description: A new Flutter project.
 dev_dependencies:
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 flutter_launcher_icons:

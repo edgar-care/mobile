@@ -64,21 +64,44 @@ class _NavbarPLusState extends State<NavbarPLus> {
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Erreur lors de la récupération des données")
+            .show(context);
       }
     });
   }
 
+  void handleBack() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return const DashBoardPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const curve = Curves.easeInOut;
+          return FadeTransition(
+            opacity: Tween<double>(begin: 0.0, end: 1.0)
+                .animate(CurvedAnimation(parent: animation, curve: curve)),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      home: Scaffold(
+    return PopScope(
+      // Utilisation de PopScope au lieu de WillPopScope
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        handleBack();
+      },
+      child: Scaffold(
+        // Retiré MaterialApp, gardé uniquement Scaffold
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -86,27 +109,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<void>(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoardPage();
-                            },
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const curve = Curves.easeInOut;
-                              return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                    .animate(CurvedAnimation(
-                                        parent: animation, curve: curve)),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
+                      onTap: handleBack,
                       child: Row(
                         children: [
                           SvgPicture.asset(
@@ -205,15 +208,18 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(50)),
                                               ),
-                                              child: BoringAvatars(
+                                              child: BoringAvatar(
                                                 name:
                                                     "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                colors: const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
-                                                ],
-                                                type: BoringAvatarsType.beam,
+                                                palette: BoringAvatarPalette(
+                                                  const [
+                                                    AppColors.blue700,
+                                                    AppColors.blue200,
+                                                    AppColors.blue500
+                                                  ],
+                                                ),
+                                                type: BoringAvatarType.beam,
+                                                shape: CircleBorder(),
                                               )),
                                           const SizedBox(width: 16),
                                           Column(

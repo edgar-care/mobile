@@ -611,6 +611,7 @@ class _AddDocumentState extends State<AddDocument> {
   String dropdownValue = 'Général';
   String dropdownValue2 = 'Ordonnance';
   File? fileSelected;
+  bool clicked = false;
 
   String getFileName(String path) {
     return path.split('/').last;
@@ -626,8 +627,7 @@ class _AddDocumentState extends State<AddDocument> {
       setState(() {
         fileSelected = File(file.files.single.path!);
       });
-    } else {
-    }
+    } else {}
   }
 
   @override
@@ -851,12 +851,14 @@ class _AddDocumentState extends State<AddDocument> {
               size: SizeButton.sm,
               msg: const Text('Ajouter'),
               onPressed: () {
+                clicked = true;
                 if (fileSelected != null) {
                   postDocument(
                     dropdownValue,
                     dropdownValue2,
                     fileSelected!,
                   ).then((value) {
+                    clicked = false;
                     if (value == true) {
                       widget.updateData();
                       // ignore: use_build_context_synchronously
@@ -864,9 +866,8 @@ class _AddDocumentState extends State<AddDocument> {
                     }
                   });
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez séléctionner un fichiez",
-                      context: context));
+                  TopErrorSnackBar(message: "Veuillez séléctionner un fichier")
+                      .show(context);
                 }
               },
             ),

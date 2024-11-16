@@ -34,8 +34,9 @@ Future<List<dynamic>> login(
     String email, String password, BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = '${dotenv.env['URL']}auth/p/login';
-  ScaffoldMessenger.of(context).showSnackBar(
-      InfoSnackBar(message: "Connexion à l'application ...", context: context));
+  TopLoadingSnackBar(
+    onDismissed: () {},
+  ).show(context);
   final response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -43,16 +44,14 @@ Future<List<dynamic>> login(
   );
   if (response.statusCode == 200) {
     if (jsonDecode(response.body)['token'] != null) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
       prefs.setString('token', jsonDecode(response.body)['token']);
       String encodedPayload = jsonDecode(response.body)['token'].split('.')[1];
       String decodedPayload =
           utf8.decode(base64.decode(base64.normalize(encodedPayload)));
       prefs.setString('id', jsonDecode(decodedPayload)["id"]);
-      ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-        message: 'Connecté à l\'application',
-        context: context,
-      ));
+      TopSuccessSnackBar(
+        message: 'Connexion réussie',
+      ).show(context);
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pushNamed(context, '/dashboard');
       return [];
@@ -62,10 +61,9 @@ Future<List<dynamic>> login(
     }
   } else {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-      message: 'Les identifiants ne correspondent pas !',
-      context: context,
-    ));
+    TopErrorSnackBar(
+      message: 'Erreur lors de la connexion',
+    ).show(context);
     return [];
   }
 }
@@ -87,7 +85,7 @@ Future<bool> postMedicalInfo(Map<String, dynamic> traitement) async {
 }
 
 Future sendEmailCode(String email) async {
-String url = '${dotenv.env['URL']}/auth/sending_email';
+  String url = '${dotenv.env['URL']}/auth/sending_email';
   await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
@@ -155,7 +153,7 @@ Future checkThirdPartyCode(
 
 Future missingPassword(String email) async {
   String url = '${dotenv.env['URL']}/auth/missing-password';
-   await http.post(
+  await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'email': email}),

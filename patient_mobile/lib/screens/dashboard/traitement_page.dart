@@ -416,12 +416,9 @@ class DeleteTreatment extends StatefulWidget {
 class _DeleteTreatmentState extends State<DeleteTreatment> {
   onDispose() {
     super.dispose();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SuccessSnackBar(
-        message: "Traitement supprimé avec succès",
-        context: context,
-      ),
-    );
+    TopSuccessSnackBar(
+      message: "Traitement supprimé avec succès",
+    ).show(context);
   }
 
   @override
@@ -849,21 +846,15 @@ class _AddTreatmentState extends State<AddTreatment> {
               msg: const Text("Ajouter"),
               onPressed: () async {
                 if (name.isEmpty && !alreadyExistNotifier.value) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Ajoutez un nom",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Ajoutez un nom de traitement",
+                  ).show(context);
                   return;
                 }
                 if (medicines['treatments'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Ajoutez un médicament",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Ajouter un médicament",
+                  ).show(context);
                   return;
                 }
                 Map<String, dynamic> tmp = {};
@@ -886,23 +877,16 @@ class _AddTreatmentState extends State<AddTreatment> {
                 await postTraitement(tmp).then((value) => {
                       if (value == true)
                         {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SuccessSnackBar(
-                              message: "Traitement modifié avec succès",
-                              context: context,
-                            ),
-                          ),
+                          TopSuccessSnackBar(
+                            message: "Traitement modifié avec succès",
+                          ).show(context),
                           Navigator.pop(context),
                         }
                       else
                         {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorSnackBar(
-                              message:
-                                  "Erreur lors de la modification du traitement",
-                              context: context,
-                            ),
-                          ),
+                          TopErrorSnackBar(
+                            message: "Erreur lors de l'ajout du traitement",
+                          ).show(context),
                           Navigator.pop(context),
                         }
                     });
@@ -1411,18 +1395,18 @@ class _AddMedicamentState extends State<AddMedicament> {
               msg: const Text("Ajouter"),
               onPressed: () {
                 if (medicament['medicine_id'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message:
-                          "Veuillez choisir un médicament ou entrer un medicament valide",
-                      context: context));
+                  TopErrorSnackBar(
+                    message:
+                        "Veuillez choisir un médicament ou entrer un medicament valide",
+                  ).show(context);
                   return;
                 }
                 if (medicament['quantity'] == 0 ||
                     medicament['day'].isEmpty ||
                     medicament['period'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tout les champs",
+                  ).show(context);
                   return;
                 }
                 setState(() {
@@ -1643,12 +1627,9 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
       (value) => {
         if (value == true)
           {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SuccessSnackBar(
-                message: "Traitement supprimé avec succès",
-                context: context,
-              ),
-            ),
+            TopSuccessSnackBar(
+              message: "Traitement supprimé avec succès",
+            ).show(context),
             setState(
               () {
                 widget.treatments['treatments'].removeAt(widget
@@ -1712,12 +1693,10 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                       }).then((value) => {
                             if (value == false)
                               {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(ErrorSnackBar(
+                                TopErrorSnackBar(
                                   message:
                                       "Erreur lors de la modification du traitement",
-                                  context: context,
-                                )),
+                                ).show(context),
                               }
                           });
                     }),
@@ -1738,12 +1717,10 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                       }).then((value) => {
                             if (value == false)
                               {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(ErrorSnackBar(
+                                TopErrorSnackBar(
                                   message:
                                       "Erreur lors de la modification du traitement",
-                                  context: context,
-                                )),
+                                ).show(context),
                               }
                           });
                     }),
@@ -2376,18 +2353,18 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
               msg: const Text("Ajouter"),
               onPressed: () async {
                 if (medicament['medicine_id'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message:
-                          "Veuillez choisir un médicament ou entrer un medicament valide",
-                      context: context));
+                  TopErrorSnackBar(
+                    message:
+                        "Veuillez choisir un médicament ou entrer un medicament valide",
+                  ).show(context);
                   return;
                 }
                 if (medicament['quantity'] == 0 ||
                     medicament['day'].isEmpty ||
                     medicament['period'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tout les champs",
+                  ).show(context);
                   return;
                 }
                 await postTraitement(
@@ -2409,10 +2386,9 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
                   (value) => {
                     if (value == true)
                       {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SuccessSnackBar(
-                                message: "Traitement ajouté avec succès",
-                                context: context)),
+                        TopSuccessSnackBar(
+                          message: "Traitement ajouté avec succès",
+                        ).show(context),
                         setState(() {
                           widget.updateMedicaments(medicament);
                         }),
@@ -2420,11 +2396,9 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
                       }
                     else
                       {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          ErrorSnackBar(
-                              message: "Erreur lors de l'ajout du traitement",
-                              context: context),
-                        ),
+                        TopErrorSnackBar(
+                          message: "Erreur lors de l'ajout du traitement",
+                        ).show(context),
                       }
                   },
                 );
@@ -2755,13 +2729,10 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                   if (DateTime.now().year != widget.date.year ||
                       DateTime.now().day != widget.date.day ||
                       DateTime.now().month != widget.date.month) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message:
-                            "Vous ne pouvez pas modifier un suivi pour une date passée ou future",
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message:
+                          "Vous ne pouvez pas modifier les prises pour une date antérieure",
+                    ).show(context);
                     return;
                   }
                   if (value == true) {

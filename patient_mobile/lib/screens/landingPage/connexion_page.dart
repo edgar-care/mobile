@@ -203,112 +203,6 @@ class _ConnexionPageState extends State<ConnexionPage> {
   }
 }
 
-class ModalContainerTest extends StatelessWidget {
-  /// Tittle of the modal
-  final String title;
-
-  /// Icon de la modal
-  final Widget icon;
-
-  /// Subtittle of the modal
-  final String subtitle;
-
-  /// The body of the modal
-  final List<Widget>? body;
-
-  /// The footer of the modal
-  final Widget? footer;
-
-  /// Required Tittle, subtittle, and Icon
-  const ModalContainerTest({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    this.body,
-    this.footer,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height,
-        ),
-        // padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                icon,
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: Icon(Icons.close),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                height: 1.5,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                fontFamily: "Poppins",
-                color: Colors.black,
-              ),
-              softWrap: true,
-              overflow: TextOverflow.visible,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                height: 1.5,
-                fontSize: 14,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w500,
-                color: AppColors.grey700,
-              ),
-              softWrap: true,
-            ),
-            if (body != null) ...[
-              const SizedBox(height: 24),
-              SingleChildScrollView(
-                physics:
-                    const BouncingScrollPhysics(), // Optional: Add bounce effect
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height -
-                        264, // Adjust as needed
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: body!,
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            if (footer != null) footer!,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ModalLogin extends StatefulWidget {
   final BottomSheetModel model;
   final bool isLogin;
@@ -324,7 +218,7 @@ class _ModalLoginState extends State<ModalLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalContainerTest(
+    return ModalContainer(
       title: "Bon retour sur la plateforme edgar",
       subtitle:
           "Connectez-vous avec votre compte pour accéder à votre espace patient, gérer vos rendez-vous et bien plus.",
@@ -385,22 +279,21 @@ class _ModalLoginState extends State<ModalLogin> {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            final model =
-            Provider.of<BottomSheetModel>(context, listen: false);
-        model.resetCurrentIndex();
-        showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (context) {
-              return Consumer<BottomSheetModel>(
-                builder: (context, model, child) {
-                  return ListModal(model: model, children: [
-                    modalForgotPassword(context),
-                  ]);
-                },
-              );
-            });
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(model: model, children: [
+                        modalForgotPassword(context),
+                      ]);
+                    },
+                  );
+                });
           },
           child: const Text(
             "Mot de passe oublié ?",
@@ -505,7 +398,7 @@ class _ModalRegisterState extends State<ModalRegister> {
       return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email);
     }
 
-    return ModalContainerTest(
+    return ModalContainer(
       title: "Bienvenue sur la plateforme edgar",
       subtitle:
           "Un compte edgar vous permettra de suivre votre santé ainsi que prendre des rendez-vous pour vous et vos proches.",
@@ -571,32 +464,30 @@ class _ModalRegisterState extends State<ModalRegister> {
           msg: const Text("Inscription"),
           onPressed: () async {
             if (password == "" || email == "") {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Veuillez remplir tous les champs",
-                  context: context));
+              TopErrorSnackBar(message: "Veuillez remplir tous les champs")
+                  .show(context);
               return;
             }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message:
-                      "Le mot de passe doit contenir au moins 8 caractères",
-                  context: context));
+              TopErrorSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères")
+                  .show(context);
+
               return;
             }
             if (!emailValidityChecker(email)) {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Adresse mail invalide", context: context));
+              TopErrorSnackBar(message: "Adresse mail invalide").show(context);
               return;
             }
             var reponse = await RegisterUser(email, password);
             if (reponse) {
-              ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                  message: "Inscription réussie", context: context));
+              TopSuccessSnackBar(message: "Inscription réussie").show(context);
               Navigator.pushNamed(context, '/onboarding');
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Erreur lors de l'inscription", context: context));
+              TopErrorSnackBar(message: "Erreur lors de l'inscription")
+                  .show(context);
             }
           },
         )
@@ -825,16 +716,16 @@ Widget modalForgotPassword(BuildContext context) {
       ),
     ],
     footer: Buttons(
-            variant: Variant.primary,
-            size: SizeButton.md,
-            msg: const Text('Réinitialiser le mot de passe'),
-            onPressed: () {
-              missingPassword(email).then((value) {
-                Navigator.pop(context);
-              });
-            },
-          ),
-    );
+      variant: Variant.primary,
+      size: SizeButton.md,
+      msg: const Text('Réinitialiser le mot de passe'),
+      onPressed: () {
+        missingPassword(email).then((value) {
+          Navigator.pop(context);
+        });
+      },
+    ),
+  );
 }
 
 class ModalEmailLogin extends StatefulWidget {
@@ -1075,28 +966,29 @@ class _ModalCheckBackupCodeState extends State<ModalCheckBackupCode> {
         ),
         type: ModalType.info,
       ),
-    footer:Column(
-      children: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Valider le code'),
-          onPressed: () {
-            checkBackUpCode(widget.email, widget.password, code, context).then((value) {
-            });
-          }
-        ),
-        const SizedBox(height: 8,),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Revenir en arrière'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
+      footer: Column(
+        children: [
+          Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Valider le code'),
+              onPressed: () {
+                checkBackUpCode(widget.email, widget.password, code, context)
+                    .then((value) {});
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Revenir en arrière'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

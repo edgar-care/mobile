@@ -239,8 +239,6 @@ class _Onboarding1State extends State<Onboarding1> {
             const SizedBox(height: 8),
             CustomDatePiker(
               onChanged: (value) => birthdate = value,
-              value: birthdate != "" ? birthdate : null,
-              placeHolder: "26/09/2022",
               endDate: today,
             ),
             const SizedBox(height: 16),
@@ -422,8 +420,9 @@ class _Onboarding1State extends State<Onboarding1> {
                   isHealths = isHealth.value;
                   widget.updateSelectedIndex(1);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Compléter tous les champs", context: context));
+                  TopErrorSnackBar(
+                    message: "Compléter tous les champs",
+                  ).show(context);
                 }
               },
             )
@@ -626,8 +625,8 @@ class _onboarding2State extends State<Onboarding2> {
                       final integerDate =
                           (birth.millisecondsSinceEpoch / 1000).round();
                       final Map<String, Object> body = {
-                        "name": name,
-                        "firstName": lastname,
+                        "name": lastname,
+                        "firstName": name,
                         "birthdate": integerDate,
                         "sex": sexe,
                         "weight": int.parse(weight) * 100,
@@ -641,18 +640,17 @@ class _onboarding2State extends State<Onboarding2> {
                       bool medicalinfo = await postMedicalInfo(body);
                       if (!medicalinfo) {
                         // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorSnackBar(
-                                message:
-                                    "Erreur lors de l'ajout des informations",
-                                // ignore: use_build_context_synchronously
-                                context: context));
+                        TopErrorSnackBar(
+                          message: "Erreur lors de l'ajout des informations",
+                          // ignore: use_build_context_synchronously
+                        ).show(context);
                       }
                       widget.updateSelectedIndex(3);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Selectionner un docteur", context: context));
+                    TopErrorSnackBar(
+                      message: "Selectionner un docteur",
+                    ).show(context);
                   }
                 }),
             const SizedBox(height: 8),
@@ -924,8 +922,9 @@ class _Onboarding3State extends State<Onboarding3> {
                 msg: const Text("Valider"),
                 onPressed: () async {
                   if (traitments.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Ajouter des informations", context: context));
+                    TopErrorSnackBar(
+                      message: "Ajouter des informations",
+                    ).show(context);
                     return;
                   }
                   List<String> parts = birthdate.split('/');
@@ -935,8 +934,8 @@ class _Onboarding3State extends State<Onboarding3> {
                       (birth.millisecondsSinceEpoch / 1000).round();
 
                   final Map<String, Object> body = {
-                    "name": name,
-                    "firstName": lastname,
+                    "name": lastname,
+                    "firstName": name,
                     "birthdate": integerDate,
                     "sex": sexe,
                     "weight": int.parse(weight) * 100,
@@ -1441,8 +1440,9 @@ class _AddTreatmentState extends State<AddTreatment> {
                 msg: const Text("Ajouter"),
                 onPressed: () {
                   if (name == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Ajoutez un nom", context: context));
+                    TopErrorSnackBar(
+                      message: "Ajoutez un nom",
+                    ).show(context);
                     return;
                   }
                   widget.addNewTraitement(name, medicines, stillRelevant);
@@ -1951,18 +1951,18 @@ class _AddMedicamentState extends State<AddMedicament> {
                 msg: const Text("Ajouter"),
                 onPressed: () {
                   if (medicament['medicine_id'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message:
-                            "Veuillez choisir un médicament ou entrer un medicament valide",
-                        context: context));
+                    TopErrorSnackBar(
+                      message:
+                          "Veuillez choisir un médicament ou entrer un medicament valide",
+                    ).show(context);
                     return;
                   }
                   if (medicament['quantity'] == 0 ||
                       medicament['day'].isEmpty ||
                       medicament['period'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Veuillez remplir tous les champs",
-                        context: context));
+                    TopErrorSnackBar(
+                      message: "Veuillez remplir tous les champs",
+                    ).show(context);
                     return;
                   }
                   setState(() {
