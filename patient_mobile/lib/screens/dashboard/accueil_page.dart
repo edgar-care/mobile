@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> infoMedical = {};
   List<Map<String, dynamic>> rdv = [];
   List<dynamic> allDoctor = [];
+  String docteurName = '';
+  String docteurFirstName = '';
 
   Future<void> fetchData() async {
     await getAllDoctor().then((value) {
@@ -46,7 +48,8 @@ class _HomePageState extends State<HomePage> {
       if (value.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
-        TopErrorSnackBar(message: "Error on fetching appoitement").show(context);
+        TopErrorSnackBar(message: "Error on fetching appoitement")
+            .show(context);
       }
     });
     return;
@@ -57,9 +60,9 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic>? getNextAppointment() {
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
-      return appointment['appointment_status'] == 'ACCEPTED_DUE_TO_REVIEW' &&
-          DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000)
-              .isAfter(now);
+      return DateTime.fromMillisecondsSinceEpoch(
+              appointment['start_date'] * 1000)
+          .isAfter(now);
     }).toList();
 
     acceptedAppointments.sort((a, b) {
@@ -69,6 +72,14 @@ class _HomePageState extends State<HomePage> {
           DateTime.fromMillisecondsSinceEpoch(b['start_date'] * 1000);
       return dateA.compareTo(dateB);
     });
+
+    Doctor? doc =
+        findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
+
+    if (doc != null) {
+      docteurName = doc.name;
+      docteurFirstName = doc.firstname;
+    }
 
     return acceptedAppointments.isNotEmpty ? acceptedAppointments.first : null;
   }
@@ -155,10 +166,7 @@ class _HomePageState extends State<HomePage> {
                           nextAppointment['start_date'] * 1000),
                       endDate: DateTime.fromMillisecondsSinceEpoch(
                           nextAppointment['end_date'] * 1000),
-                      doctor: findDoctorById(
-                                  allDoctor, nextAppointment['doctor_id'])
-                              ?.name ??
-                          'Docteur inconnu',
+                      doctor: "${docteurName.toUpperCase()} $docteurFirstName",
                       onTap: () {},
                     )
                   : const Text(
