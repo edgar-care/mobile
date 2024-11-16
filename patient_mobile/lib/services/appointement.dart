@@ -32,12 +32,13 @@ Future<Map<String, dynamic>> getAppoitementDoctorById(String id) async {
   final token = prefs.getString("token");
   final url = '${dotenv.env['URL']}doctor/$id/appointments';
 
+
   final response = await http.get(
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
   );
 
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     final body = jsonDecode(response.body);
     return body;
   } else {
@@ -54,7 +55,8 @@ Future<List<Map<String, dynamic>>> getAppoitementPatient() async {
     Uri.parse(url),
     headers: {'Authorization': 'Bearer $token'},
   );
-  if (response.statusCode == 201) {
+
+  if (response.statusCode == 200) {
     final body = response.body;
     return List<Map<String, dynamic>>.from(jsonDecode(body));
   } else {

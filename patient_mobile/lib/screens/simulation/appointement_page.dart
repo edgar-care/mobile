@@ -92,6 +92,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
     setState(() {
       isLoading = false;
     });
+
   }
 
   Future<void> fetchDoctorAppointment(String id) async {
