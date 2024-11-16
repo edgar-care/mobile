@@ -78,8 +78,6 @@ class _AppoitementCardState extends State<AppoitementCard> {
               ),
             ],
           ),
-          const Spacer(),
-          SvgPicture.asset("assets/images/utils/arrowRightIphone.svg"),
         ]),
       ),
     );
