@@ -16,13 +16,30 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   var sessionId = '';
+  bool isLoading = true;
+
+  List<dynamic> messages = [
+    [
+      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
+      false,
+    ]
+  ];
 
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    getSessionId();
+    loadSession();
+  }
+
+  Future<void> loadSession() async {
+    await Future.delayed(
+        const Duration(seconds: 10)); // Délai artificiel de 10s
+    await getSessionId();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> getSessionId() async {
@@ -32,13 +49,6 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
-
-  List<dynamic> messages = [
-    [
-      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
-      false,
-    ]
-  ];
 
   void sendMessage(bool isSender, String message) async {
     setState(() {
@@ -90,6 +100,34 @@ class _ChatPageState extends State<ChatPage> {
 // Controller for the text input field
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: AppColors.blue700,
+                strokeCap: StrokeCap.round,
+                strokeWidth: 2,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Initialisation de votre assistant...',
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Padding(
