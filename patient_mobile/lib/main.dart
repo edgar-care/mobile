@@ -1,5 +1,6 @@
 import 'package:edgar_app/models/onboarding.dart';
 import 'package:edgar_app/models/simulation_intro.dart';
+import 'package:edgar_app/screens/2fa/desactivate_page.dart';
 import 'package:edgar_app/screens/landingPage/connexion_page.dart';
 import 'package:edgar_app/screens/simulation/appointement_page.dart';
 import 'package:edgar_app/screens/simulation/confirmation_page.dart';
@@ -151,7 +152,7 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      initialRoute: "/",
+      initialRoute: "/desactivate",
       routes: {
         '/': (context) => const ConnexionPage(),
         '/warning': (context) => const WarningPage(),
@@ -161,6 +162,7 @@ class _MyAppState extends State<MyApp> {
         '/simulation/intro': (context) => const IntroSimulation(),
         '/simulation/appointement': (context) => const AppointmentPage(),
         '/onboarding': (context) => const Onboarding(),
+        '/desactivate': (context) => const Desactivate(),
       },
     );
   }
