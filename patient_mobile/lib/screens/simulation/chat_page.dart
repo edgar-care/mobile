@@ -8,6 +8,7 @@ import 'package:edgar_app/services/nlp.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
@@ -37,6 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getStatusNlp() async {
+    Logger().i('Getting NLP status');
     await getNlpUp(context).then(
       (value) {
         if (value == true) {
@@ -53,12 +55,14 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> loadSession() async {
     await getSessionId();
     await getStatusNlp();
-    Timer.periodic(
-      Duration(seconds: 8),
-      (timer) async {
-        await getStatusNlp();
-      },
-    );
+    if (isLoading) {
+      Timer.periodic(
+        Duration(seconds: 8),
+        (timer) async {
+          await getStatusNlp();
+        },
+      );
+    }
   }
 
   Future<void> getSessionId() async {
