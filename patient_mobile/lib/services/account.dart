@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 Future disableAccount(BuildContext context) async {
   await httpRequest(
-    type: RequestType.post,
+    type: RequestType.put,
     endpoint: 'auth/disable_account',
     needsToken: true,
     context: context,
@@ -13,7 +13,7 @@ Future disableAccount(BuildContext context) async {
 
 Future enableAccount(BuildContext context) async {
   await httpRequest(
-    type: RequestType.post,
+    type: RequestType.put,
     endpoint: 'auth/enable_account',
     needsToken: true,
     context: context,

@@ -1,17 +1,29 @@
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:edgar_app/services/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Desactivate extends StatelessWidget {
   const Desactivate({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.blue700,
-      body: SafeArea(
-        child: Padding(
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      // Wrapper pour gérer le retour natif
+      onWillPop: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.remove('token');
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, '/');
+        return false; // On retourne false pour empêcher le comportement par défaut
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.blue700,
+        body: SafeArea(
+          child: Padding(
             padding: EdgeInsets.all(8),
             child: Container(
               padding: EdgeInsets.all(16),
@@ -36,7 +48,7 @@ class Desactivate extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    'Afin d’accéder à votre espace patient, vous devez réactiver votre compte.',
+                    "Afin d'accéder à votre espace patient, vous devez réactiver votre compte.",
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: 'Poppins',
@@ -48,8 +60,24 @@ class Desactivate extends StatelessWidget {
                     variant: Variant.primary,
                     size: SizeButton.md,
                     msg: Text("Activer mon compte"),
-                    onPressed: () {
-                      // Navigator.pushNamed(context, '/activation');
+                    onPressed: () async {
+                      await enableAccount(context).then((value) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamed(context, '/dashboard');
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Buttons(
+                    variant: Variant.secondary,
+                    size: SizeButton.md,
+                    msg: Text("Garder mon compte désactivé"),
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.remove('token');
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushNamed(context, '/');
                     },
                   ),
                   Spacer(),
@@ -60,7 +88,9 @@ class Desactivate extends StatelessWidget {
                   )
                 ],
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
