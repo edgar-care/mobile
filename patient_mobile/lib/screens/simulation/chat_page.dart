@@ -52,10 +52,11 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> loadSession() async {
     await getSessionId();
+    await getStatusNlp();
     Timer.periodic(
       Duration(seconds: 8),
-      (timer) {
-        getStatusNlp();
+      (timer) async {
+        await getStatusNlp();
       },
     );
   }
