@@ -39,7 +39,6 @@ class _HomePageState extends State<HomePage> {
 
     await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
-        Logger().i(value);
         infoMedical = value;
       } else {
         TopErrorSnackBar(message: "Error on fetching name").show(context);
