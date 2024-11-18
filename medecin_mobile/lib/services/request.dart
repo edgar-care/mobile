@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -86,18 +87,19 @@ Future<dynamic> httpRequest({
       try {
         return json.decode(response.body);
       } catch (e) {
+        TopErrorSnackBar(
+          message: "Erreur lors de la récupération des données.",
+        ).show(context);
         return null; // Pour les réponses sans body
       }
     } else if (response.statusCode == 401) {
-      const TopErrorSnackBar(
+      TopErrorSnackBar(
         message: "Session expirée. Veuillez vous reconnecter.",
       ).show(context);
       Navigator.pushNamed(context, '/');
       throw Exception("Session expirée. Veuillez vous reconnecter.");
     } else if (response.statusCode == 409) {
-      const TopErrorSnackBar(
-        message: "Compte désactivé.",
-      ).show(context);
+      Navigator.pushNamed(context, '/desactivate');
       throw Exception("Conflit détecté.");
     } else {
       throw Exception("Erreur ${response.statusCode}: ${response.body}");

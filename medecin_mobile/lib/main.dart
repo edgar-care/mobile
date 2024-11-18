@@ -1,4 +1,5 @@
 import 'package:edgar/widget.dart';
+import 'package:edgar_pro/2FA/desactivate_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
@@ -147,6 +148,7 @@ class _MainAppState extends State<MainApp> {
       routes: {
         "/": (context) => const Auth(),
         "/dashboard": (context) => const DashBoard(),
+        "/desactivate": (context) => const Desactivate(),
       },
     );
   }
