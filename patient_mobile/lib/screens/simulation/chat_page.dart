@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/diagnotic.dart';
+import 'package:edgar_app/services/nlp.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -33,13 +36,28 @@ class _ChatPageState extends State<ChatPage> {
     loadSession();
   }
 
+  Future<void> getStatusNlp() async {
+    await getNlpUp(context).then(
+      (value) {
+        if (value == true) {
+          setState(
+            () {
+              isLoading = false;
+            },
+          );
+        }
+      },
+    );
+  }
+
   Future<void> loadSession() async {
-    await Future.delayed(
-        const Duration(seconds: 10)); // Délai artificiel de 10s
     await getSessionId();
-    setState(() {
-      isLoading = false;
-    });
+    Timer.periodic(
+      Duration(seconds: 8),
+      (timer) {
+        getStatusNlp();
+      },
+    );
   }
 
   Future<void> getSessionId() async {
