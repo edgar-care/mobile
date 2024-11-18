@@ -31,13 +31,8 @@ class _NavbarPLusState extends State<NavbarPLus> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
-
-    List<dynamic> doctorList = await getAllDoctor(context);
-    for (var doctor in doctorList) {
-      if (doctor['id'] == id) {
-        infoMedical = doctor;
-      }
-    }
+    infoMedical = await getDoctorById(context, id!);
+    return;
   }
 
   @override
@@ -52,263 +47,263 @@ class _NavbarPLusState extends State<NavbarPLus> {
         backgroundColor: AppColors.blue50,
         body: SafeArea(
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/utils/arrowChat.svg',
-                            // ignore: deprecated_member_use
-                            color: AppColors.black,
-                            height: 16,
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/utils/arrowChat.svg',
+                          // ignore: deprecated_member_use
+                          color: AppColors.black,
+                          height: 16,
+                        ),
+                        const Text(
+                          'Profil et paramètres',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Poppins',
                           ),
-                          const Text(
-                            'Profil et paramètres',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          const SizedBox(),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(),
+                      ],
                     ),
-                    const SizedBox(height: 24),
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                    color: AppColors.blue700,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16))),
-                                child: FutureBuilder(
-                                  future: fetchData(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const SizedBox(
-                                        height: 48,
-                                        child: Row(
-                                          children: [
-                                            CircularProgressIndicator(
-                                              color: AppColors.white,
-                                              semanticsValue: 'Loading...',
-                                            ),
-                                            SizedBox(width: 16),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: 80,
-                                                  height: 4,
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    backgroundColor:
-                                                        AppColors.blue700,
-                                                    minHeight: 2,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            AppColors.white),
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                SizedBox(
-                                                  width: 120,
-                                                  height: 4,
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    backgroundColor:
-                                                        AppColors.blue700,
-                                                    minHeight: 2,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            AppColors.white),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Row(
+                  ),
+                  const SizedBox(height: 24),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                  color: AppColors.blue700,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16))),
+                              child: FutureBuilder(
+                                future: fetchData(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const SizedBox(
+                                      height: 48,
+                                      child: Row(
                                         children: [
-                                          Container(
-                                              width: 48,
-                                              height: 48,
-                                              decoration: const BoxDecoration(
-                                                color: AppColors.orange500,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(50)),
-                                              ),
-                                              child: BoringAvatar(
-                                                name:
-                                                    "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                palette: BoringAvatarPalette(
-                                                  const [
-                                                    AppColors.blue700,
-                                                    AppColors.blue200,
-                                                    AppColors.blue500
-                                                  ],
-                                                ),
-                                                type: BoringAvatarType.beam,
-                                              )),
-                                          const SizedBox(width: 16),
+                                          CircularProgressIndicator(
+                                            color: AppColors.white,
+                                            semanticsValue: 'Loading...',
+                                          ),
+                                          SizedBox(width: 16),
                                           Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Text(
-                                                "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: AppColors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontFamily: "Poppins",
+                                              SizedBox(
+                                                width: 80,
+                                                height: 4,
+                                                child: LinearProgressIndicator(
+                                                  backgroundColor:
+                                                      AppColors.blue700,
+                                                  minHeight: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          AppColors.white),
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              SizedBox(
+                                                width: 120,
+                                                height: 4,
+                                                child: LinearProgressIndicator(
+                                                  backgroundColor:
+                                                      AppColors.blue700,
+                                                  minHeight: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          AppColors.white),
                                                 ),
                                               ),
                                             ],
-                                          ),
+                                          )
                                         ],
+                                      ),
+                                    );
+                                  } else {
+                                    return Row(
+                                      children: [
+                                        Container(
+                                            width: 48,
+                                            height: 48,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors.orange500,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50)),
+                                            ),
+                                            child: BoringAvatar(
+                                              name:
+                                                  "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
+                                              palette: BoringAvatarPalette(
+                                                const [
+                                                  AppColors.blue700,
+                                                  AppColors.blue200,
+                                                  AppColors.blue500
+                                                ],
+                                              ),
+                                              type: BoringAvatarType.beam,
+                                              shape: CircleBorder(),
+                                            )),
+                                        const SizedBox(width: 16),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: AppColors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "Poppins",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Paramètres du compte",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.blue200,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  NavbarPLusTab(
+                                    icon: SvgPicture.asset(
+                                      'assets/images/utils/person-fill.svg',
+                                      // ignore: deprecated_member_use
+                                      color: AppColors.black,
+                                      height: 18,
+                                    ),
+                                    title: 'Compte',
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder<void>(
+                                          opaque: false,
+                                          pageBuilder:
+                                              (BuildContext context, _, __) {
+                                            return AccountPage(
+                                              infoMedical: infoMedical,
+                                            );
+                                          },
+                                        ),
                                       );
-                                    }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                "Paramètres du compte",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.blue200,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    NavbarPLusTab(
-                                      icon: SvgPicture.asset(
-                                        'assets/images/utils/person-fill.svg',
-                                        // ignore: deprecated_member_use
-                                        color: AppColors.black,
-                                        height: 18,
-                                      ),
-                                      title: 'Compte',
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder:
-                                                (BuildContext context, _, __) {
-                                              return AccountPage(
-                                                infoMedical: infoMedical,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      type: 'Top',
-                                      outlineIcon: SvgPicture.asset(
-                                        'assets/images/utils/chevron-right.svg',
-                                      ),
+                                    },
+                                    type: 'Top',
+                                    outlineIcon: SvgPicture.asset(
+                                      'assets/images/utils/chevron-right.svg',
                                     ),
-                                    NavbarPLusTab(
-                                      icon: SvgPicture.asset(
-                                        'assets/images/utils/laptop-fill.svg',
-                                        // ignore: deprecated_member_use
-                                        color: AppColors.black,
-                                        height: 18,
-                                      ),
-                                      title: 'Appareils',
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder<void>(
-                                            opaque: false,
-                                            pageBuilder:
-                                                (BuildContext context, _, __) {
-                                              return const DevicesPage();
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      type: 'Bottom',
-                                      outlineIcon: SvgPicture.asset(
-                                        'assets/images/utils/chevron-right.svg',
-                                      ),
+                                  ),
+                                  NavbarPLusTab(
+                                    icon: SvgPicture.asset(
+                                      'assets/images/utils/laptop-fill.svg',
+                                      // ignore: deprecated_member_use
+                                      color: AppColors.black,
+                                      height: 18,
                                     ),
-                                  ],
+                                    title: 'Appareils',
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder<void>(
+                                          opaque: false,
+                                          pageBuilder:
+                                              (BuildContext context, _, __) {
+                                            return const DevicesPage();
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    type: 'Bottom',
+                                    outlineIcon: SvgPicture.asset(
+                                      'assets/images/utils/chevron-right.svg',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(16)),
+                                border: Border.all(
+                                  color: AppColors.blue200,
+                                  width: 1,
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.white,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(16)),
-                                  border: Border.all(
-                                    color: AppColors.blue200,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    NavbarPLusTab(
-                                      icon: SvgPicture.asset(
-                                        'assets/images/utils/arrow-right-circle-fill.svg',
-                                        // ignore: deprecated_member_use
-                                        color: AppColors.red600,
-                                        height: 18,
-                                      ),
-                                      title: 'Déconnexion',
-                                      onTap: () async {
-                                        logout(context);
-                                      },
-                                      type: 'Only',
+                              child: Column(
+                                children: [
+                                  NavbarPLusTab(
+                                    icon: SvgPicture.asset(
+                                      'assets/images/utils/arrow-right-circle-fill.svg',
+                                      // ignore: deprecated_member_use
                                       color: AppColors.red600,
+                                      height: 18,
                                     ),
-                                  ],
-                                ),
+                                    title: 'Déconnexion',
+                                    onTap: () async {
+                                      logout(context);
+                                    },
+                                    type: 'Only',
+                                    color: AppColors.red600,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

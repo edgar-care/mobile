@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:edgar_app/services/request.dart';
+import 'package:edgar_pro/services/request.dart';
 import 'package:flutter/material.dart';
 
 Future disableAccount(BuildContext context) async {

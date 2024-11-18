@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -78,7 +77,7 @@ Future<Object?> postDocument(
 
   if (response.statusCode == 201) {
     final body = await response.stream.bytesToString();
-    return jsonDecode(body);
+    return body;
   } else {
     await response.stream.bytesToString();
     return null;

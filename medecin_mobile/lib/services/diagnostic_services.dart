@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:edgar/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/services/request.dart';
@@ -26,7 +25,7 @@ Future<Map<String, dynamic>> getSummary(String id, BuildContext context) async {
   );
 
   if (response != null) {
-    mapperDiagnostic(jsonDecode(response));
+    mapperDiagnostic(response);
     return diagnosticInfo;
   }
 

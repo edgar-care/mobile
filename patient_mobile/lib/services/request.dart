@@ -96,9 +96,7 @@ Future<dynamic> httpRequest({
       Navigator.pushNamed(context, '/');
       throw Exception("Session expirée. Veuillez vous reconnecter.");
     } else if (response.statusCode == 409) {
-      TopErrorSnackBar(
-        message: "Compte désactivé.",
-      ).show(context);
+      Navigator.pushNamed(context, '/desactivate');
       throw Exception("Conflit détecté.");
     } else {
       throw Exception("Erreur ${response.statusCode}: ${response.body}");

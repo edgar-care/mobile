@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:edgar_pro/services/request.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +10,7 @@ Future<List<dynamic>> getAllDevices(BuildContext context) async {
   );
 
   if (response != null) {
-    return jsonDecode(response)['devices'];
+    return response['devices'];
   }
   return [];
 }
@@ -25,7 +24,7 @@ Future addTrustDevices(String id, BuildContext context) async {
   );
 
   if (response != null) {
-    return jsonDecode(response);
+    return response;
   }
   return [];
 }
@@ -52,7 +51,7 @@ Future<List<dynamic>> getTrustedDevices(BuildContext context) async {
   );
 
   if (response != null) {
-    return jsonDecode(response)['devices'];
+    return response['devices'];
   }
   return [];
 }
