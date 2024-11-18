@@ -116,21 +116,18 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Initialize notifications
-      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-          await initializeFlutterLocalNotifications();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        // Initialize notifications
+        // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        //     await initializeFlutterLocalNotifications();
 
-      // Initialize push notifications and request permissions
-      await initializePushNotifications();
+        // Initialize push notifications and request permissions
+        await initializePushNotifications();
 
-      fetchData();
-
-      // Show a test notification (optional, remove in production)
-      await Future.delayed(const Duration(seconds: 5));
-      await showNotification(flutterLocalNotificationsPlugin, "Test",
-          "This is a test notification");
-    });
+        fetchData();
+      },
+    );
   }
 
   Future<void> fetchData() async {

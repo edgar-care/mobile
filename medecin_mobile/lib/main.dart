@@ -95,7 +95,6 @@ Future<void> showNotification(
       platformChannelSpecifics,
       payload: 'Notification Payload', // Optional payload
     );
-
   } catch (e) {
     // catch clauses
   }
@@ -115,8 +114,8 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Initialize notifications
-      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-          await initializeFlutterLocalNotifications();
+      // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      //     await initializeFlutterLocalNotifications();
 
       // Initialize push notifications and request permissions
       await initializePushNotifications();
@@ -125,8 +124,8 @@ class _MainAppState extends State<MainApp> {
 
       // Show a test notification (optional, remove in production)
       await Future.delayed(const Duration(seconds: 5));
-      await showNotification(flutterLocalNotificationsPlugin, "Test",
-          "This is a test notification");
+      // await showNotification(flutterLocalNotificationsPlugin, "Test",
+      //     "This is a test notification");
     });
   }
 
