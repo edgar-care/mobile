@@ -8,7 +8,7 @@ Future<String> initiateDiagnostic(BuildContext context) async {
     endpoint: 'diagnostic/initiate',
     needsToken: true,
   );
-  if (response.statusCode != null) {
+  if (response != null) {
     return response["sessionId"];
   } else {
     return "";

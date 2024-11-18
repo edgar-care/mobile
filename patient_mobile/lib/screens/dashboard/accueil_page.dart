@@ -10,6 +10,7 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 
 import '../../services/doctor.dart';
 
@@ -58,12 +59,16 @@ class _HomePageState extends State<HomePage> {
   DateTime now = DateTime.now();
 
   Map<String, dynamic>? getNextAppointment() {
+    if (rdv.isEmpty) return null;
+
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
       return DateTime.fromMillisecondsSinceEpoch(
               appointment['start_date'] * 1000)
           .isAfter(now);
     }).toList();
+
+    if (acceptedAppointments.isEmpty) return null;
 
     acceptedAppointments.sort((a, b) {
       DateTime dateA =
@@ -73,15 +78,24 @@ class _HomePageState extends State<HomePage> {
       return dateA.compareTo(dateB);
     });
 
-    Doctor? doc =
-        findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
-
-    if (doc != null) {
-      docteurName = doc.name;
-      docteurFirstName = doc.firstname;
+    // Safely handle doctor information
+    try {
+      Doctor? doc =
+          findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
+      if (doc != null) {
+        docteurName = doc.name;
+        docteurFirstName = doc.firstname;
+      } else {
+        docteurName = "Unknown";
+        docteurFirstName = "Doctor";
+      }
+    } catch (e) {
+      Logger().e("Error finding doctor: $e");
+      docteurName = "Unknown";
+      docteurFirstName = "Doctor";
     }
 
-    return acceptedAppointments.isNotEmpty ? acceptedAppointments.first : null;
+    return acceptedAppointments.first;
   }
 
   @override

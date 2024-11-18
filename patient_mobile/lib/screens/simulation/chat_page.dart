@@ -1,10 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/diagnotic.dart';
+import 'package:edgar_app/services/nlp.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
@@ -16,13 +20,49 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   var sessionId = '';
+  bool isLoading = true;
+
+  List<dynamic> messages = [
+    [
+      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
+      false,
+    ]
+  ];
 
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    getSessionId();
+    loadSession();
+  }
+
+  Future<void> getStatusNlp() async {
+    Logger().i('Getting NLP status');
+    await getNlpUp(context).then(
+      (value) {
+        if (value == true) {
+          setState(
+            () {
+              isLoading = false;
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> loadSession() async {
+    await getSessionId();
+    await getStatusNlp();
+    if (isLoading) {
+      Timer.periodic(
+        Duration(seconds: 8),
+        (timer) async {
+          await getStatusNlp();
+        },
+      );
+    }
   }
 
   Future<void> getSessionId() async {
@@ -32,13 +72,6 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
-
-  List<dynamic> messages = [
-    [
-      'Bonjour, je m’appel Edgar et je serai votre assistant tout au long de cette simulation. Pour commencer, pouvez-vous me dire où vous avez mal ?',
-      false,
-    ]
-  ];
 
   void sendMessage(bool isSender, String message) async {
     setState(() {
@@ -90,6 +123,34 @@ class _ChatPageState extends State<ChatPage> {
 // Controller for the text input field
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: AppColors.blue700,
+                strokeCap: StrokeCap.round,
+                strokeWidth: 2,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Initialisation de votre assistant...',
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Padding(
