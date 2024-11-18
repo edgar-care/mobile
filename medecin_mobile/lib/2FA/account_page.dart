@@ -460,7 +460,17 @@ Widget modalDeleteAccount(BuildContext context) {
           variant: Variant.delete,
           size: SizeButton.md,
           msg: const Text('Supprimer le compte'),
-          onPressed: () {},
+          onPressed: () async {
+            await deleteAccount(context).then(
+              (value) {
+                Navigator.pop(context);
+                TopSuccessSnackBar(
+                  message:
+                      'Votre compte a bien été supprimé, veuillez consulté vos mails pour plus d\'informations.',
+                ).show(context);
+              },
+            );
+          },
         ),
         const SizedBox(
           height: 8,

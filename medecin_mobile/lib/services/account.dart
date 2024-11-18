@@ -20,6 +20,15 @@ Future enableAccount(BuildContext context) async {
   );
 }
 
+Future deleteAccount(BuildContext context) async {
+  await httpRequest(
+    type: RequestType.post,
+    endpoint: 'auth/delete_account',
+    needsToken: true,
+    context: context,
+  );
+}
+
 Future resetPassword(String password, BuildContext context) async {
   final response = await httpRequest(
       type: RequestType.post,
