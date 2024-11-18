@@ -466,7 +466,7 @@ Widget modalDeleteAccount(BuildContext context) {
                 Navigator.pop(context);
                 TopSuccessSnackBar(
                   message:
-                      'Votre compte a bien été supprimé, veuillez consulté vos mails pour plus d\'informations.',
+                      'Votre compte a bien été supprimé, veuillez consulter vos mails pour plus d\'informations.',
                 ).show(context);
               },
             );
