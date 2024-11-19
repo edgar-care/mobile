@@ -1,6 +1,5 @@
 import 'package:edgar_app/services/request.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 Future disableAccount(BuildContext context) async {
   await httpRequest(
@@ -39,7 +38,6 @@ Future<bool> updatePassword(
     context: context,
   );
   if (response != null) {
-    Logger().i(response);
     return true;
   }
   return false;

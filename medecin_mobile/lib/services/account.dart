@@ -41,3 +41,19 @@ Future resetPassword(String password, BuildContext context) async {
   }
   return response;
 }
+
+
+Future<bool> updatePassword(
+    String oldPassword, String password, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: 'auth/update_password',
+    needsToken: true,
+    body: {"old_password": oldPassword, "new_password": password},
+    context: context,
+  );
+  if (response != null) {
+    return true;
+  }
+  return false;
+}
