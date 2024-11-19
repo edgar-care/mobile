@@ -171,24 +171,26 @@ class _LoginState extends State<Login> {
                                       listen: false);
                                   model.resetCurrentIndex();
                                   showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return Consumer<BottomSheetModel>(
-                                          builder: (context, model, child) {
-                                            return ListModal(
-                                                model: model,
-                                                children: [
-                                                  ModalChoose2FA(
-                                                    methods: value,
-                                                    email: email,
-                                                    password: password,
-                                                  ),
-                                                ]);
-                                          },
-                                        );
-                                      });
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return Consumer<BottomSheetModel>(
+                                        builder: (context, model, child) {
+                                          return ListModal(
+                                            model: model,
+                                            children: [
+                                              ModalChoose2FA(
+                                                methods: value,
+                                                email: email,
+                                                password: password,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
                                 }
                               },
                             );
@@ -270,7 +272,7 @@ Widget modalForgotPassword(BuildContext context) {
       size: SizeButton.md,
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
-        missingPassword(email).then((value) {
+        missingPassword(email, context).then((value) {
           Navigator.pop(context);
         });
       },
@@ -468,47 +470,98 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
       }
     }
 
-    return ModalContainer(
-      title: "Vérifier votre identité",
-      subtitle:
-          'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
-      body: [
-        FieldNumberList2FA(
-          addCode: setCode,
-        )
-      ],
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.shield_lock_fill,
-          color: AppColors.blue700,
-          size: 17,
-        ),
-        type: ModalType.info,
-      ),
-      footer: Column(
-        children: [
-          Buttons(
-              variant: Variant.primary,
-              size: SizeButton.md,
-              msg: const Text('Valider le code'),
-              onPressed: () {
-                checkEmailCode(widget.email, widget.password, code, context)
-                    .then((value) {});
-              }),
-          const SizedBox(
-            height: 8,
-          ),
-          Buttons(
-            variant: Variant.secondary,
-            size: SizeButton.md,
-            msg: const Text('Revenir en arrière'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+    Future<bool> sendEmail() async {
+      await sendEmailCode(widget.email, context);
+      return true;
+    }
+
+    return FutureBuilder(
+        future: sendEmail(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  CircularProgressIndicator(
+                    color: AppColors.white,
+                    semanticsValue: 'Loading...',
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        width: 120,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          } else {
+            return ModalContainer(
+              title: "Vérifier votre identité",
+              subtitle:
+                  'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
+              body: [
+                FieldNumberList2FA(
+                  addCode: setCode,
+                )
+              ],
+              icon: const IconModal(
+                icon: Icon(
+                  BootstrapIcons.shield_lock_fill,
+                  color: AppColors.blue700,
+                  size: 17,
+                ),
+                type: ModalType.info,
+              ),
+              footer: Column(
+                children: [
+                  Buttons(
+                      variant: Variant.primary,
+                      size: SizeButton.md,
+                      msg: const Text('Valider le code'),
+                      onPressed: () {
+                        checkEmailCode(
+                                widget.email, widget.password, code, context)
+                            .then((value) {});
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Buttons(
+                    variant: Variant.secondary,
+                    size: SizeButton.md,
+                    msg: const Text('Revenir en arrière'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        });
   }
 }
 

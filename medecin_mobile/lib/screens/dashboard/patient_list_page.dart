@@ -50,8 +50,8 @@ class _PatientPageState extends State<PatientPage> {
   }
 
   Future<void> _loadInfo() async {
-    patientInfo = await getPatientById(widget.id);
-    docs = await getAllDoctor();
+    patientInfo = await getPatientById(widget.id, context);
+    docs = await getAllDoctor(context);
     tmpInfo = Map.of(patientInfo);
     doctorindex =
         docs.indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
@@ -551,7 +551,7 @@ class _PatientPageState extends State<PatientPage> {
             CustomDatePiker(
               onChanged: (value) => info['date_de_naissance'] = value,
               endDate: DateTime.now(),
-              value: info['date_de_naissance'],
+              label: info['date_de_naissance'],
             ),
             const SizedBox(
               height: 16,
@@ -696,7 +696,7 @@ class PatientAdd2State extends State<PatientAdd2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -1281,7 +1281,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['treatments'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -1425,7 +1425,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in treatments['treatments']) {
@@ -1675,7 +1675,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }

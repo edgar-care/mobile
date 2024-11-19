@@ -62,116 +62,74 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               const SizedBox(),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Mise à jour de votre mot de passe',
-                                  style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Text(
-                                  'Saisiser votre mot de passe actuel ainsi que votre nouveau mot de passe.',
-                                  style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.grey600),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Votre mot de passe actuel',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            const SizedBox(height: 4),
-                            CustomField(
-                              isNotCapitalize: true,
-                              keyboardType: TextInputType.text,
-                              label: '',
-                              onChanged: (value) {
-                                setState(() {
-                                  actualEmail = value;
-                                });
-                              },
-                              action: TextInputAction.none,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Votre nouveau mot de passe actuel',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            CustomField(
-                              isNotCapitalize: true,
-                              keyboardType: TextInputType.text,
-                              label: 'Minimum 8 caractères',
-                              onChanged: (value) {
-                                setState(() {
-                                  newEmail = value;
-                                });
-                              },
-                              action: TextInputAction.none,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Confirmer votre nouveau mot de passe actuel',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            CustomField(
-                              isNotCapitalize: true,
-                              keyboardType: TextInputType.text,
-                              label: 'Minimum 8 caractères',
-                              onChanged: (value) {
-                                setState(() {
-                                  repeatEmail = value;
-                                });
-                              },
-                              action: TextInputAction.none,
-                            ),
-                            const SizedBox(height: 16),
-                            Buttons(
-                                variant: Variant.primary,
-                                size: SizeButton.md,
-                                msg: const Text("Changer le mot de passe"),
-                                onPressed: () {
-                                  if (newEmail != repeatEmail) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      ErrorSnackBar(
-                                        context: context,
-                                        message:
-                                            'Les mots de passe ne correspondent pas',
-                                      ),
-                                    );
-                                  } else {
-                                    resetPassword(newEmail);
-                                  }
-                                })
-                          ],
-                        ),
-                      ],
-                    ))))));
+                          const SizedBox(height: 16),
+                          const Text('Votre mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                          const SizedBox(height: 4),
+                          CustomField(
+                            isNotCapitalize: true,
+                            keyboardType: TextInputType.text,
+                            label: '',
+                            onChanged: (value) {
+                              setState(() {
+                                actualEmail = value;
+                              });
+                            },
+                            action: TextInputAction.none,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('Votre nouveau mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                          const SizedBox(height: 4,),
+                          CustomField(
+                            isNotCapitalize: true,
+                            keyboardType: TextInputType.text,
+                            label: 'Minimum 8 caractères',
+                            onChanged: (value) {
+                              setState(() {
+                                newEmail = value;
+                              });
+                            },
+                            action: TextInputAction.none,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text('Confirmer votre nouveau mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
+                          const SizedBox(height: 4,),
+                          CustomField(
+                            isNotCapitalize: true,
+                            keyboardType: TextInputType.text,
+                            label: 'Minimum 8 caractères',
+                            onChanged: (value) {
+                              setState(() {
+                                repeatEmail = value;
+                              });
+                            },
+                            action: TextInputAction.none,
+                          ),
+                          const SizedBox(height: 16),
+                          Buttons(
+                            variant: Variant.primary,
+                            size: SizeButton.md,
+                            msg: const Text("Changer le mot de passe"),
+                            onPressed: () {
+                              if (newEmail != repeatEmail) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorSnackBar(
+                                    context: context,
+                                    message: 'Les mots de passe ne correspondent pas',
+                                  ),
+                                );
+                              } else {
+                                resetPassword(newEmail, context);
+                              }
+                            }
+                          )
+                        ],
+                      ),
+                  ],
+                )
+              )
+          )
+        )
+      )
+    );
   }
 }

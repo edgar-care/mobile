@@ -1,25 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
-
+import 'package:edgar_app/services/request.dart';
 import "package:flutter/material.dart";
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<Map<String, dynamic>> getMedicalFolder() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}dashboard/medical-info';
-
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future<Map<String, dynamic>> getMedicalFolder(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: 'dashboard/medical-info',
+    context: context,
+    needsToken: true,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return jsonDecode(body)['medical_folder'];
+  if (response != null) {
+    return response['medical_folder'];
   } else {
     return {};
   }
@@ -27,24 +18,22 @@ Future<Map<String, dynamic>> getMedicalFolder() async {
 
 Future<Map<String, Object>?> getInformationPersonnel(
     BuildContext context) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}dashboard/medical-info';
-
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: 'dashboard/medical-info',
+    context: context,
+    needsToken: true,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return populateInfoMedical(jsonDecode(body));
+
+  if (response != null) {
+    return populateInfoMedical(response, context);
   } else {
     return null;
   }
 }
 
-Map<String, Object> populateInfoMedical(Map<String, dynamic>? data) {
+Map<String, Object> populateInfoMedical(
+    Map<String, dynamic>? data, BuildContext context) {
   Map<String, Object> tmp = {};
   if (data != null) {
     tmp = {
@@ -67,20 +56,16 @@ Map<String, Object> populateInfoMedical(Map<String, dynamic>? data) {
 
 Future<Map<String, Object>?> putInformationPatient(
     BuildContext context, Map<String, Object>? info, tmpInfo) async {
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}dashboard/medical-info';
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-
-  final response = await http.put(
-    Uri.parse(url),
-    body: jsonEncode(info),
-    headers: {'Authorization': 'Bearer $token'},
+  final response = await httpRequest(
+    type: RequestType.put,
+    endpoint: 'dashboard/medical-info',
+    context: context,
+    needsToken: true,
+    body: info,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return populateInfoMedical(jsonDecode(body));
+  if (response != null) {
+    return populateInfoMedical(response, context);
   } else {
-    return null;
+    return tmpInfo;
   }
 }

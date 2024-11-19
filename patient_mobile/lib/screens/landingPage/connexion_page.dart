@@ -464,32 +464,30 @@ class _ModalRegisterState extends State<ModalRegister> {
           msg: const Text("Inscription"),
           onPressed: () async {
             if (password == "" || email == "") {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Veuillez remplir tous les champs",
-                  context: context));
+              TopErrorSnackBar(message: "Veuillez remplir tous les champs")
+                  .show(context);
               return;
             }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message:
-                      "Le mot de passe doit contenir au moins 8 caractères",
-                  context: context));
+              TopErrorSnackBar(
+                      message:
+                          "Le mot de passe doit contenir au moins 8 caractères")
+                  .show(context);
+
               return;
             }
             if (!emailValidityChecker(email)) {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Adresse mail invalide", context: context));
+              TopErrorSnackBar(message: "Adresse mail invalide").show(context);
               return;
             }
-            var reponse = await RegisterUser(email, password);
+            var reponse = await registerUser(email, password, context);
             if (reponse) {
-              ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                  message: "Inscription réussie", context: context));
+              TopSuccessSnackBar(message: "Inscription réussie").show(context);
               Navigator.pushNamed(context, '/onboarding');
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                  message: "Erreur lors de l'inscription", context: context));
+              TopErrorSnackBar(message: "Erreur lors de l'inscription")
+                  .show(context);
             }
           },
         )
@@ -722,7 +720,7 @@ Widget modalForgotPassword(BuildContext context) {
       size: SizeButton.md,
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
-        missingPassword(email).then((value) {
+        missingPassword(email, context).then((value) {
           Navigator.pop(context);
         });
       },
@@ -744,7 +742,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
   String code = '';
 
   Future sendEmail() async {
-    await sendEmailCode(widget.email).then((value) {
+    await sendEmailCode(widget.email, context).then((value) {
       return true;
     });
   }
@@ -769,47 +767,112 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalContainer(
-      title: "Vérifier votre identité",
-      subtitle:
-          'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
-      body: [
-        FieldNumberList2FA(
-          addCode: setCode,
-        )
-      ],
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.shield_lock_fill,
-          color: AppColors.blue700,
-          size: 17,
-        ),
-        type: ModalType.info,
-      ),
-      footer: Column(
-        children: [
-          Buttons(
-              variant: Variant.primary,
-              size: SizeButton.md,
-              msg: const Text('Valider le code'),
-              onPressed: () {
-                checkEmailCode(widget.email, widget.password, code, context)
-                    .then((value) {});
-              }),
-          const SizedBox(
-            height: 8,
-          ),
-          Buttons(
-            variant: Variant.secondary,
-            size: SizeButton.md,
-            msg: const Text('Revenir en arrière'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+    String code = '';
+
+    void setCode(String action, String code) {
+      if (action == 'ADD') {
+        setState(() {
+          code += code;
+        });
+      } else if (action == 'DELETE') {
+        setState(() {
+          code = code.substring(0, code.length - 1);
+        });
+      }
+    }
+
+    Future<bool> sendEmail() async {
+      await sendEmailCode(widget.email, context);
+      return true;
+    }
+
+    return FutureBuilder(
+        future: sendEmail(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  CircularProgressIndicator(
+                    color: AppColors.white,
+                    semanticsValue: 'Loading...',
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        width: 120,
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          backgroundColor: AppColors.blue700,
+                          minHeight: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.white),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          } else {
+            return ModalContainer(
+              title: "Vérifier votre identité",
+              subtitle:
+                  'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
+              body: [
+                FieldNumberList2FA(
+                  addCode: setCode,
+                )
+              ],
+              icon: const IconModal(
+                icon: Icon(
+                  BootstrapIcons.shield_lock_fill,
+                  color: AppColors.blue700,
+                  size: 17,
+                ),
+                type: ModalType.info,
+              ),
+              footer: Column(
+                children: [
+                  Buttons(
+                      variant: Variant.primary,
+                      size: SizeButton.md,
+                      msg: const Text('Valider le code'),
+                      onPressed: () {
+                        checkEmailCode(
+                                widget.email, widget.password, code, context)
+                            .then((value) {});
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Buttons(
+                    variant: Variant.secondary,
+                    size: SizeButton.md,
+                    msg: const Text('Revenir en arrière'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        });
   }
 }
 

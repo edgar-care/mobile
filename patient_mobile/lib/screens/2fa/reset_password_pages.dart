@@ -158,15 +158,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 msg: const Text("Changer le mot de passe"),
                                 onPressed: () {
                                   if (newEmail != repeatEmail) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      ErrorSnackBar(
-                                        context: context,
-                                        message:
-                                            'Les mots de passe ne correspondent pas',
-                                      ),
-                                    );
+                                    TopErrorSnackBar(
+                                            message:
+                                                'Les mots de passe ne correspondent pas')
+                                        .show(context);
                                   } else {
-                                    resetPassword(newEmail);
+                                    resetPassword(newEmail, context);
                                   }
                                 })
                           ],

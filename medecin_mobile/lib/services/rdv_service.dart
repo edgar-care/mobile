@@ -1,26 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<List<Map<String, dynamic>>> getDiagnostics(String status) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/appointments';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<List<Map<String, dynamic>>> getDiagnostics(
+    String status, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctor/diagnostics/$status',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
+
+  if (response != null) {
     List<Map<String, dynamic>> bAppointment = [];
-    var temp = jsonDecode(response.body)['appointments'];
+    var temp = response.body['appointments'];
     for (var i = 0; i < temp.length; i++) {
       if (temp[i]['id_patient'].toString().isNotEmpty &&
           temp[i]['appointment_status'] == status) {
@@ -33,60 +28,58 @@ Future<List<Map<String, dynamic>>> getDiagnostics(String status) async {
   }
 }
 
-Future<List<dynamic>> getAppointments() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/appointments';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<List<dynamic>> getAppointments(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctor/appointments',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    var tempAp = jsonDecode(response.body)['appointments'];
 
-    return tempAp;
-  }
-  if (response.statusCode != 200) {
-    return [];
+  if (response != null) {
+    return response['appointments'];
   }
   return [];
 }
 
 Future<void> updateAppointment(
     String appointmentId, String newSlotId, BuildContext context) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/appointments/$appointmentId';
-  await http.put(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({'id': newSlotId}),
+  final response = await httpRequest(
+    type: RequestType.put,
+    endpoint: '/doctor/appointments/$appointmentId',
+    needsToken: true,
+    context: context,
+    body: {'id': newSlotId},
   );
+
+  if (response != null) {
+    const TopSuccessSnackBar(
+      message: 'Votre rendez-vous a bien été modifié',
+    ).show(context);
+  } else {
+    const TopErrorSnackBar(
+      message: 'Une erreur est survenue, veuillez réessayer',
+    ).show(context);
+  }
 }
 
 Future cancelAppointments(
     String id, BuildContext context, String reason) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/appointments/$id';
-  final response = await http.delete(Uri.parse(url),
-      headers: {'Authorization': 'Bearer $token'},
-      body: jsonEncode({'reason': reason}));
-  if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
+  final response = await httpRequest(
+    type: RequestType.delete,
+    endpoint: '/doctor/appointments/$id',
+    needsToken: true,
+    context: context,
+    body: {'reason': reason},
+  );
+
+  if (response != null) {
+    const TopSuccessSnackBar(
       message: 'Votre rendez-vous a bien été annulé',
-      context: context,
-    ));
+    ).show(context);
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+    const TopErrorSnackBar(
       message: 'Une erreur est survenue, veuillez réessayer',
-      context: context,
-    ));
+    ).show(context);
   }
 }

@@ -17,7 +17,7 @@ dependencies:
   dart_jsonwebtoken: ^2.11.0
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.7
-  edgar: ^0.2.5
+  edgar: ^0.3.1
   qr_flutter: ^4.1.0
   http: ^1.1.0
   path_provider: ^2.0.5
@@ -25,7 +25,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.14.1
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^18.0.1
   flutter_localizations:
     sdk: flutter  
   bootstrap_icons: ^1.11.1
@@ -45,6 +45,7 @@ dependencies:
   flutter_native_splash: ^2.4.1
   provider: ^6.1.2
   gradient_borders: ^1.0.1
+  skeletonizer: ^1.4.2
 description: A new Flutter project.
 dev_dependencies:
   flutter_lints: ^5.0.0
