@@ -3,6 +3,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/medecine.dart';
 import 'package:edgar_app/services/traitement.dart';
+import 'package:edgar_app/utils/medecines_utils.dart';
 import 'package:edgar_app/utils/traitement_utils.dart';
 import 'package:edgar_app/widget/AddPatient/add_button.dart';
 import 'package:edgar_app/widget/card_traitement_day.dart';
@@ -929,7 +930,8 @@ class _AddMedicamentState extends State<AddMedicament> {
   Future<void> fetchData() async {
     medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
-      nameMedic.add(medicament['name']);
+      nameMedic.add(
+          "${medicament['name']} - ${displayMedicineUnit(medicament['dosage_form'])}");
     }
   }
 
@@ -1623,7 +1625,9 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
   }
 
   void deleteTraitement(int index) {
-    deleteTraitementRequest(widget.treatments['treatments'][index]['id'], context).then(
+    deleteTraitementRequest(
+            widget.treatments['treatments'][index]['id'], context)
+        .then(
       (value) => {
         if (value == true)
           {
@@ -1690,15 +1694,16 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                         "disease_id": widget.treatments["antedisease"]["id"],
                         "still_relevant": true,
                         'treatments': []
-                      }, context).then((value) => {
-                            if (value == false)
-                              {
-                                TopErrorSnackBar(
-                                  message:
-                                      "Erreur lors de la modification du traitement",
-                                ).show(context),
-                              }
-                          });
+                      }, context)
+                          .then((value) => {
+                                if (value == false)
+                                  {
+                                    TopErrorSnackBar(
+                                      message:
+                                          "Erreur lors de la modification du traitement",
+                                    ).show(context),
+                                  }
+                              });
                     }),
                     label: "Oui",
                     color: value == true ? AppColors.blue700 : AppColors.white),
@@ -1714,15 +1719,16 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                         "disease_id": widget.treatments["antedisease"]["id"],
                         "still_relevant": false,
                         'treatments': []
-                      }, context).then((value) => {
-                            if (value == false)
-                              {
-                                TopErrorSnackBar(
-                                  message:
-                                      "Erreur lors de la modification du traitement",
-                                ).show(context),
-                              }
-                          });
+                      }, context)
+                          .then((value) => {
+                                if (value == false)
+                                  {
+                                    TopErrorSnackBar(
+                                      message:
+                                          "Erreur lors de la modification du traitement",
+                                    ).show(context),
+                                  }
+                              });
                     }),
                     label: "Non",
                     color:
@@ -2367,23 +2373,21 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
                   ).show(context);
                   return;
                 }
-                await postTraitement(
-                  {
-                    "name": widget.traitement['antedisease']['name'],
-                    "disease_id": widget.traitement['antedisease']['id'],
-                    "still_relevant": widget.traitement['antedisease']
-                        ['still_relevant'],
-                    "treatments": [
-                      {
-                        "quantity": medicament['quantity'],
-                        "period": medicament['period'],
-                        "day": medicament['day'],
-                        "medicine_id": medicament['medicine_id']
-                      }
-                    ],
-                  },
-                  context
-                ).then(
+                await postTraitement({
+                  "name": widget.traitement['antedisease']['name'],
+                  "disease_id": widget.traitement['antedisease']['id'],
+                  "still_relevant": widget.traitement['antedisease']
+                      ['still_relevant'],
+                  "treatments": [
+                    {
+                      "quantity": medicament['quantity'],
+                      "period": medicament['period'],
+                      "day": medicament['day'],
+                      "medicine_id": medicament['medicine_id']
+                    }
+                  ],
+                }, context)
+                    .then(
                   (value) => {
                     if (value == true)
                       {
@@ -2743,19 +2747,25 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                       "period": [
                         widget.period.toString().trim().split('.').last
                       ],
-                    }, context).then(
+                    }, context)
+                        .then(
                       (value) => {
                         widget.updateData(),
                       },
                     );
                   } else {
-                    await deleteFollowUpRequest(widget.followUp.firstWhere(
-                      (element) =>
-                          element['treatment_id'] ==
-                              filteredTreatments[index].id &&
-                          element['period'].contains(
-                              widget.period.toString().trim().split('.').last),
-                    )['id'], context)
+                    await deleteFollowUpRequest(
+                            widget.followUp.firstWhere(
+                              (element) =>
+                                  element['treatment_id'] ==
+                                      filteredTreatments[index].id &&
+                                  element['period'].contains(widget.period
+                                      .toString()
+                                      .trim()
+                                      .split('.')
+                                      .last),
+                            )['id'],
+                            context)
                         .then(
                       (value) => {
                         widget.updateData(),

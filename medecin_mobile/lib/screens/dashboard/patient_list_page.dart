@@ -5,6 +5,7 @@ import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/medecines_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_pro/utils/medecines_utils.dart';
 import 'package:edgar_pro/widgets/AddPatient/add_button.dart';
 import 'package:edgar_pro/widgets/AddPatient/custom_preload_field.dart';
 import 'package:edgar_pro/widgets/card_doctor.dart';
@@ -294,7 +295,7 @@ class _PatientPageState extends State<PatientPage> {
                                               context: context,
                                               tmpInfo: tmpInfo),
                                           PatientAdd3(
-                                            updateData: updateData,
+                                              updateData: updateData,
                                               model: model,
                                               context: context,
                                               traitments: tmpTraitments,
@@ -1677,7 +1678,8 @@ class _AddMedicamentState extends State<AddMedicament> {
   Future<void> fetchData() async {
     medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
-      nameMedic.add(medicament['name']);
+      nameMedic.add(
+          "${medicament['name']} - ${displayMedicineUnit(medicament['dosage_form'])}");
     }
   }
 
