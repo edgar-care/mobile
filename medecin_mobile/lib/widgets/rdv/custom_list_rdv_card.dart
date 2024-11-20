@@ -132,7 +132,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   }
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient']).then((value) {
+    getPatientById(widget.rdvInfo['id_patient'], context).then((value) {
       setState(() {
         patientInfo = value;
       });
@@ -322,13 +322,13 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     int doctorindex = -1;
 
     Future<bool> loadInfo() async {
-      diagnostic = await getSummary(rdvInfo["session_id"]);
+      diagnostic = await getSummary(rdvInfo["session_id"], context);
       return true;
     }
 
     // ignore: unused_element
     Future<bool> loadDoctor() async {
-      docs = await getAllDoctor();
+      docs = await getAllDoctor(context);
       doctorindex = docs
           .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;

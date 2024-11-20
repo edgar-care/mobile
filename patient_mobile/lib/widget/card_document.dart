@@ -76,9 +76,9 @@ class _CardDocumentState extends State<CardDocument> {
           GestureDetector(
             onTap: () {
               if (widget.isfavorite) {
-                deleteFavory(widget.id);
+                deleteFavory(widget.id, context);
               } else {
-                changeFavorite(widget.id);
+                changeFavorite(widget.id, context);
               }
               setState(() {
                 widget.isfavorite = !widget.isfavorite;
@@ -341,7 +341,7 @@ class _ModifyPatientState extends State<ModifyPatient> {
             size: SizeButton.sm,
             msg: const Text('Valider'),
             onPressed: () async {
-              modifyDocument(widget.id, widget.name).then((value) {
+              modifyDocument(widget.id, widget.name, context).then((value) {
                 widget.updatedata();
                 Navigator.pop(context);
               });
@@ -389,7 +389,7 @@ class DeletePatient extends StatelessWidget {
               size: SizeButton.sm,
               msg: const Text('Supprimer'),
               onPressed: () async {
-                deleteDocument(id).then(
+                deleteDocument(id, context).then(
                   (value) {
                     updatedata();
                     Navigator.pop(context);

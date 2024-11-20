@@ -53,7 +53,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
       mobileActive = false;
       secret = false;
     });
-    getEnable2fa().then((value) {
+    getEnable2fa(context).then((value) {
       if (value['secret'].isNotEmpty) {
         setState(() {
           secret = true;
@@ -80,7 +80,7 @@ class _DoubleAuthenticationState extends State<DoubleAuthentication> {
   void loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('id');
-    List<dynamic> doctorList = await getAllDoctor();
+    List<dynamic> doctorList = await getAllDoctor(context);
     for (var doctor in doctorList) {
       if (doctor['id'] == id) {
         infoMedical = doctor;
@@ -313,7 +313,7 @@ Widget modal2FAEmail(
           size: SizeButton.md,
           msg: const Text('Activer l\'authentification'),
           onPressed: () {
-            enable2FAEmail().then((value) {
+            enable2FAEmail(context).then((value) {
               load2fa();
               if (secret != true) {
                 Navigator.pop(context);
@@ -379,7 +379,7 @@ Widget modal2FAEmailDesactivate(
           size: SizeButton.md,
           msg: const Text('Désactiver l\'authentification'),
           onPressed: () {
-            delete2faMethod('EMAIL').then((value) {
+            delete2faMethod('EMAIL', context).then((value) {
               if (value == 200) {
                 load2fa();
                 Navigator.pop(context);
@@ -423,7 +423,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getAllDevices();
+    List<dynamic> temp = await getAllDevices(context);
     setState(() {
       devices = temp;
     });
@@ -510,8 +510,8 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
-                enable2FAMobile(devices[selected]['id']).then((value) {
-                  widget.load2fa();
+                enable2FAMobile(devices[selected]['id'], context).then((value) {
+                widget.load2fa();
                   if (widget.secret != true) {
                     Navigator.pop(context);
                     final model =
@@ -567,7 +567,7 @@ class _ModalBackupEmailState extends State<ModalBackupEmail> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackup() async {
-    backupCodes = await generateBackupCode();
+    backupCodes = await generateBackupCode(context);
     widget.load2fa();
     return true;
   }
@@ -723,7 +723,7 @@ class _ModalEdgarApp2State extends State<ModalEdgarApp2> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackup() async {
-    backupCodes = await generateBackupCode();
+    backupCodes = await generateBackupCode(context);
     widget.load2fa();
     return true;
   }
@@ -884,7 +884,7 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getTrustedDevices();
+    List<dynamic> temp = await getTrustedDevices(context);
     setState(() {
       devices = temp;
     });
@@ -1071,7 +1071,7 @@ Widget modalEdgarAppDesactivate(Function load2fa, BuildContext context) {
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
             onPressed: () {
-              delete2faMethod('MOBILE').then((value) {
+              delete2faMethod('MOBILE', context).then((value) {
                 if (value == 200) {
                   load2fa();
                   Navigator.pop(context);
@@ -1111,7 +1111,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getAllDevices();
+    List<dynamic> temp = await getAllDevices(context);
     for (int i = 0; i < temp.length; i++) {
       if (temp[i]['trust_device'] == false) {
         setState(() {
@@ -1202,7 +1202,7 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
-                addTrustDevices(devices[selected]['id']).then((value) {
+                addTrustDevices(devices[selected]['id'], context).then((value) {
                   Navigator.pop(context);
                 });
               },
@@ -1238,7 +1238,7 @@ class _ModalTierAppState extends State<ModalTierApp> {
 
   Future<void> generateThirdParty() async {
     if (skip == 0) {
-      infoGenerate = await enable2FA3party();
+      infoGenerate = await enable2FA3party(context);
       skip = 1;
     }
   }
@@ -1413,7 +1413,7 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
               size: SizeButton.md,
               msg: const Text('Continuer'),
               onPressed: () {
-                checkTierAppCode(_code).then((value) {
+                checkTierAppCode(_code, context).then((value) {
                   if (value['otp_verified'] == true) {
                     widget.load2fa();
                     if (widget.secret != true) {
@@ -1479,7 +1479,7 @@ class _ModalBackupTierAppState extends State<ModalBackupTierApp> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackup() async {
-    backupCodes = await generateBackupCode();
+    backupCodes = await generateBackupCode(context);
     widget.load2fa();
     return true;
   }
@@ -1645,7 +1645,7 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
             size: SizeButton.md,
             msg: const Text('Désactiver l\'authentification'),
             onPressed: () {
-              delete2faMethod('AUTHENTIFICATOR').then((value) {
+              delete2faMethod('AUTHENTIFICATOR', context).then((value) {
                 if (value == 200) {
                   load2fa();
                   Navigator.pop(context);
@@ -1733,7 +1733,7 @@ Widget modalInfoTrustDevices(String name, String date, String location,
         size: SizeButton.md,
         msg: const Text('Déconnecter l\'appareil'),
         onPressed: () {
-          removeTrustDevice(id).then((name) {
+          removeTrustDevice(id, context).then((name) {
             load2fa();
             Navigator.pop(context);
           });

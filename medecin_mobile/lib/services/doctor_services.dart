@@ -1,16 +1,29 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<List<dynamic>> getAllDoctor() async {
-  final url = '${dotenv.env['URL']}doctors';
-  final response = await http.get(
-    Uri.parse(url),
+Future<List<dynamic>> getAllDoctor(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctors',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return jsonDecode(body)["Doctors"];
-  } else {
-    return [];
+
+  if (response != null) {
+    return response['Doctors'];
   }
+  return [];
+}
+
+Future<dynamic> getDoctorById(BuildContext context, String id) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: 'doctor/$id',
+    context: context,
+  );
+
+  if (response != null) {
+    return response['Doctors'];
+  }
+  return {};
 }

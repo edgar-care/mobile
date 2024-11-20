@@ -43,7 +43,7 @@ class _AgendaState extends State<Agenda> {
   }
 
   Future<void> _loadSlots() async {
-    var tempslots = await getSlot();
+    var tempslots = await getSlot(context);
     setState(() {
       tempslot = tempslots;
     });
@@ -230,8 +230,8 @@ class _AgendaState extends State<Agenda> {
   }
 }
 
-Future<List<dynamic>> loadSlots(List<dynamic> slots) async {
-  var tempslots = await getSlot();
+Future<List<dynamic>> loadSlots(List<dynamic> slots, BuildContext context) async {
+  var tempslots = await getSlot(context);
   slots = tempslots;
   return slots;
 }
@@ -330,7 +330,7 @@ class _SlotAddState extends State<SlotAdd> {
           height: 4,
         ),
         CustomDatePiker(
-            initialValue: DateFormat("yMd", "fr").format(date),
+            label: DateFormat("yMd", "fr").format(date),
             startDate: DateTime.now(),
             onChanged: (value) {
               setState(() {
@@ -423,7 +423,7 @@ class _SlotAddState extends State<SlotAdd> {
               onPressed: () {
                 date = DateTime(year, month, day, hour, minute, 0);
                 if (parsing(date, widget.tempslot) == true) {
-                  postSlot(date);
+                  postSlot(date, context);
                   Navigator.pop(context);
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/dashboard');

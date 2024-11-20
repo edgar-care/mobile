@@ -38,7 +38,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = {
           ...value,
@@ -49,8 +49,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
     doctorName = await getNameDoctor();
@@ -58,7 +57,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
 
   Future<String> getNameDoctor() async {
     try {
-      final value = await getAllDoctor();
+      final value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         for (var doctor in value) {
           if (doctor['id'] == infoMedical['primary_doctor_id']) {
@@ -70,13 +69,11 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
         return 'test';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          ErrorSnackBar(message: "Error on fetching name", context: context));
+      TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       return 'test';
     }
     return 'Dr.Edgar'; // default return value if no doctor matches
@@ -227,12 +224,9 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                     info['birthdate'] == "" ||
                     info['weight'] == "" ||
                     info['height'] == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tous les champs",
+                  ).show(context);
                 } else {
                   switch (selected.value) {
                     case 0:
@@ -362,7 +356,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 info['birthdate'] = date;
               },
               endDate: DateTime.now(),
-              value: DateFormat('dd/MM/yyyy')
+              initialValue: DateFormat('dd/MM/yyyy')
                   .format(
                     DateTime.fromMillisecondsSinceEpoch(
                         info['birthdate'] * 1000),
@@ -650,7 +644,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['medicines'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -835,7 +829,7 @@ class PatientAdd2State extends State<PatientAdd2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -893,12 +887,9 @@ class PatientAdd2State extends State<PatientAdd2> {
                 if (getDoctor() != -1) {
                   widget.model.changePage(2);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez selectionner un médecin traitant",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Veuillez selectionner un médecin traitant",
+                  ).show(context);
                 }
               },
             ),
@@ -1376,7 +1367,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in treatments['treatments']) {
@@ -1431,8 +1422,9 @@ class _AddTreatmentState extends State<AddTreatment> {
               msg: const Text("Ajouter"),
               onPressed: () {
                 if (name == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Ajoutez un nom", context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez renseigner le nom du traitement",
+                  ).show(context);
                   return;
                 }
                 widget.addNewTraitement(name, treatments, stillRelevant);
@@ -1626,7 +1618,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
@@ -1667,18 +1659,17 @@ class _AddMedicamentState extends State<AddMedicament> {
                 msg: const Text("Ajouter"),
                 onPressed: () {
                   if (medicament['medicine_id'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message:
-                            "Veuillez choisir un médicament ou entrer un medicament valide",
-                        context: context));
+                    TopErrorSnackBar(
+                      message: "Veuillez selectionner un médicament",
+                    ).show(context);
                     return;
                   }
                   if (medicament['quantity'] == 0 ||
                       medicament['day'].isEmpty ||
                       medicament['period'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Veuillez remplir tous les champs",
-                        context: context));
+                    TopErrorSnackBar(
+                      message: "Veuillez renseigner tout les champs",
+                    ).show(context);
                     return;
                   }
                   setState(() {

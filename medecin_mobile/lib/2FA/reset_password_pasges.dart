@@ -166,7 +166,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       ),
                                     );
                                   } else {
-                                    resetPassword(newEmail);
+                                    resetPassword(newEmail, context);
                                   }
                                 })
                           ],

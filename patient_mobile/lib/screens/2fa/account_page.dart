@@ -44,7 +44,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<bool> getInfo() async {
-    var tmp = await getEnable2fa();
+    var tmp = await getEnable2fa(context);
     enable2fa = tmp;
     birthdate = DateFormat('dd/MM/yyyy').format(
         DateTime.fromMillisecondsSinceEpoch(
@@ -437,8 +437,29 @@ class _AccountPageState extends State<AccountPage> {
                                   ),
                                   NavbarPLusTab(
                                     title: 'Supprimer le compte',
-                                    color: AppColors.grey300,
-                                    onTap: () {},
+                                    color: AppColors.red600,
+                                    onTap: () {
+                                      final model =
+                                          Provider.of<BottomSheetModel>(context,
+                                              listen: false);
+                                      model.resetCurrentIndex();
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return Consumer<BottomSheetModel>(
+                                            builder: (context, model, child) {
+                                              return ListModal(
+                                                  model: model,
+                                                  children: [
+                                                    modalDeleteAccount(context),
+                                                  ]);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
                                     type: 'Only',
                                   ),
                                 ],
@@ -472,10 +493,64 @@ Widget modalDisableAccount(BuildContext context) {
           variant: Variant.delete,
           size: SizeButton.md,
           msg: const Text('Désactiver le compte'),
+          onPressed: () async {
+            await disableAccount(context).then(
+              (value) {
+                Navigator.pop(context);
+              },
+            ).then(
+              (value) {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/desactivate');
+              },
+            );
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
           onPressed: () {
-            disableAccount().then((value) {
-              Navigator.pop(context);
-            });
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget modalDeleteAccount(BuildContext context) {
+  return ModalContainer(
+    title: 'Supprimer le compte',
+    subtitle:
+        'Vous êtes sur le point de supprimer votre compte. Vous ne pourrez plus accéder à votre compte.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.person_x_fill,
+        color: AppColors.red600,
+        size: 17,
+      ),
+      type: ModalType.error,
+    ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Supprimer le compte'),
+          onPressed: () async {
+            await deleteAccount(context).then(
+              (value) {
+                Navigator.pop(context);
+                TopSuccessSnackBar(
+                  message:
+                      'Votre compte a bien été supprimé, veuillez consulter vos mails pour plus d\'informations.',
+                ).show(context);
+              },
+            );
           },
         ),
         const SizedBox(
@@ -545,7 +620,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackupcode() async {
-    var tmp = await generateBackupCode();
+    var tmp = await generateBackupCode(context);
     backupCodes = tmp;
     return true;
   }

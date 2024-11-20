@@ -34,7 +34,7 @@ class _ChatCardState extends State<ChatCard> {
   bool enable = true;
 
   Future<void> loadInfo() async {
-    getPatientById(widget.patientId).then((value) => {
+    getPatientById(widget.patientId, context).then((value) => {
           setState(() {
             patientName = "${value["Prenom"]} ${value["Nom"].toUpperCase()}";
             enable = false;
@@ -84,14 +84,17 @@ class _ChatCardState extends State<ChatCard> {
                       SizedBox(
                           height: 28,
                           width: 28,
-                          child: BoringAvatars(
+                          child: BoringAvatar(
                             name: patientName,
-                            colors: const [
-                              AppColors.blue700,
-                              AppColors.blue200,
-                              AppColors.blue500
-                            ],
-                            type: BoringAvatarsType.beam,
+                            palette: BoringAvatarPalette(
+                              const [
+                                AppColors.blue700,
+                                AppColors.blue200,
+                                AppColors.blue500
+                              ],
+                            ),
+                            type: BoringAvatarType.beam,
+                            shape: CircleBorder(),
                           )),
                       const SizedBox(width: 8),
                       Column(

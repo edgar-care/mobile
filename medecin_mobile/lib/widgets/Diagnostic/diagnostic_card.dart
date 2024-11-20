@@ -36,7 +36,7 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient']).then((value) => setState(() {
+    getPatientById(widget.rdvInfo['id_patient'], context).then((value) => setState(() {
           patientInfo = value;
         }));
   }
@@ -183,12 +183,12 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
     int doctorindex = -1;
 
     Future<bool> loadInfo() async {
-      diagnostic = await getSummary(rdvInfo["session_id"]);
+      diagnostic = await getSummary(rdvInfo["session_id"], context);
       return true;
     }
 
     Future<bool> loadDoctor() async {
-      docs = await getAllDoctor();
+      docs = await getAllDoctor(context);
       doctorindex = docs
           .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;

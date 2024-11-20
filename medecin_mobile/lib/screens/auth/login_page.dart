@@ -171,24 +171,26 @@ class _LoginState extends State<Login> {
                                       listen: false);
                                   model.resetCurrentIndex();
                                   showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return Consumer<BottomSheetModel>(
-                                          builder: (context, model, child) {
-                                            return ListModal(
-                                                model: model,
-                                                children: [
-                                                  ModalChoose2FA(
-                                                    methods: value,
-                                                    email: email,
-                                                    password: password,
-                                                  ),
-                                                ]);
-                                          },
-                                        );
-                                      });
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return Consumer<BottomSheetModel>(
+                                        builder: (context, model, child) {
+                                          return ListModal(
+                                            model: model,
+                                            children: [
+                                              ModalChoose2FA(
+                                                methods: value,
+                                                email: email,
+                                                password: password,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
                                 }
                               },
                             );
@@ -270,7 +272,7 @@ Widget modalForgotPassword(BuildContext context) {
       size: SizeButton.md,
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
-        missingPassword(email).then((value) {
+        missingPassword(email, context).then((value) {
           Navigator.pop(context);
         });
       },
@@ -459,7 +461,7 @@ class _ModalEmailLoginState extends State<ModalEmailLogin> {
     }
 
     Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email);
+      await sendEmailCode(widget.email, context);
       return true;
     }
 

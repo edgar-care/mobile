@@ -1,4 +1,5 @@
 import 'package:edgar/widget.dart';
+import 'package:edgar_pro/2FA/desactivate_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:edgar_pro/models/dashboard.dart';
@@ -113,8 +114,8 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Initialize notifications
-      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-          await initializeFlutterLocalNotifications();
+      // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      //     await initializeFlutterLocalNotifications();
 
       // Initialize push notifications and request permissions
       await initializePushNotifications();
@@ -123,8 +124,8 @@ class _MainAppState extends State<MainApp> {
 
       // Show a test notification (optional, remove in production)
       await Future.delayed(const Duration(seconds: 5));
-      await showNotification(flutterLocalNotificationsPlugin, "Test",
-          "This is a test notification");
+      // await showNotification(flutterLocalNotificationsPlugin, "Test",
+      //     "This is a test notification");
     });
   }
 
@@ -146,6 +147,7 @@ class _MainAppState extends State<MainApp> {
       routes: {
         "/": (context) => const Auth(),
         "/dashboard": (context) => const DashBoard(),
+        "/desactivate": (context) => const Desactivate(),
       },
     );
   }

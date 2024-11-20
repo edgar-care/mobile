@@ -47,7 +47,7 @@ class _PatientState extends State<Patient> {
   List<Map<String, dynamic>> patients = [];
 
   Future<void> _loadInfo() async {
-    patients = await getAllPatientId();
+    patients = await getAllPatientId(context);
   }
 
   void refresh() {
@@ -393,7 +393,7 @@ class _PatientState extends State<Patient> {
               height: 4,
             ),
             CustomDatePiker(
-              initialValue: birthdate == ""
+              label: birthdate == ""
                   ? "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}"
                   : birthdate,
               onChanged: (value) {
@@ -815,7 +815,7 @@ class _onboarding2State extends State<Body2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -1155,7 +1155,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['treatments'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -1304,7 +1304,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in medicines['treatments']) {
@@ -1544,7 +1544,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }

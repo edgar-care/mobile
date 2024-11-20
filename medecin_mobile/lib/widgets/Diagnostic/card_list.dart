@@ -29,7 +29,7 @@ class _DiagnosticListState extends State<DiagnosticList> {
           status = "CANCELED_DUE_TO_REVIEW";
           break;
       }
-      bAppointment = await getDiagnostics(status);
+      bAppointment = await getDiagnostics(status, context);
       bAppointment.sort((a, b) {
         return a['start_date'].compareTo(b['start_date']);
       });

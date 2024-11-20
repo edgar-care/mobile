@@ -26,21 +26,21 @@ class _SlotListState extends State<SlotList> {
   }
 
   Future<void> _loadSlots() async {
-    var tempslots = await getSlot();
+    var tempslots = await getSlot(context);
     setState(() {
       slots = tempslots;
     });
   }
 
   Future<void> _refreshSlots() async {
-    var tempslots = await getSlot();
+    var tempslots = await getSlot(context);
     setState(() {
       slots = tempslots;
     });
   }
 
   Future<void> getName(String id) async {
-    var tempname = await getPatientById(id);
+    var tempname = await getPatientById(id, context);
     setState(() {
       name = tempname['Nom'];
       firstname = tempname['Prenom'];
