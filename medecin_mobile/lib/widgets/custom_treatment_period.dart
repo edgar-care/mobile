@@ -2,6 +2,7 @@
 
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_pro/utils/mapper_unit_medicine.dart';
 import 'package:edgar_pro/utils/medicine_type.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                 borderSide: BorderSide(color: AppColors.blue300, width: 2),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: TextField(
+              child: TextFormField(
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -60,7 +61,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
             const SizedBox(
               width: 4,
             ),
-            Text(widget.form,
+            Text(convertMedicineUsageUnit(widget.form, widget.period.quantity > 1),
                 style:
                     const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
           ],
@@ -74,7 +75,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                 borderSide: BorderSide(color: AppColors.blue300, width: 2),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: TextField(
+              child: TextFormField(
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -108,7 +109,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                 borderSide: BorderSide(color: AppColors.blue300, width: 2),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: TextField(
+              child: TextFormField(
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -174,7 +175,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                 borderSide: BorderSide(color: AppColors.blue300, width: 2),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: TextField(
+              child: TextFormField(
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -239,7 +240,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
               children: [
-                const Icon(BootstrapIcons.clock_fill, color: AppColors.grey500),
+                const Icon(BootstrapIcons.clock_fill, color: AppColors.grey500, size: 20,),
                 const SizedBox(
                   width: 8,
                 ),

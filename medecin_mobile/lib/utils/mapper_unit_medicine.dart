@@ -1,5 +1,7 @@
 String convertMedicineUnit(String unit) {
   switch (unit) {
+    case 'CREME':
+      return 'Crème';
     case 'POMMADE':
       return 'Pommade';
     case 'GELULE':
@@ -39,43 +41,70 @@ String convertMedicineUnit(String unit) {
   }
 }
 
-String convertMedicineUsageUnit(String unit) {
+String convertMedicineUsageUnit(String unit, bool plural) {
   switch (unit) {
+    case 'CREME':
+      return plural ? 'applications' : 'application';
     case 'POMMADE':
-      return 'application';
+      return plural ? 'applications' : 'application';
     case 'GELULE':
-      return 'gélule';
+      return plural ? 'gélules' : 'gélule';
     case 'COMPRIME':
-      return 'comprimé';
+      return plural ? 'comprimés' : 'comprimé';
     case 'GELE':
-      return 'application';
+      return plural ? 'applications' : 'application';
     case 'SOLUTION_BUVABLE':
-      return 'dose';
+      return plural ? 'doses' : 'dose';
     case 'POUDRE':
-      return 'sachet';
+      return plural ? 'sachets' : 'sachet';
     case 'SUPPOSITOIRE':
-      return 'suppositoire';
+      return plural ? 'suppositoires' : 'suppositoire';
     case 'AMPOULE':
-      return 'ampoule';
+      return plural ? 'ampoules' : 'ampoule';
     case 'SUSPENSION_NASALE':
-      return 'utilisation nasale';
+      return plural ? 'pulvérisations' : 'pulvérisation';
     case 'SPRAY':
-      return 'utilisation';
+      return plural ? 'pulvérisations' : 'pulvérisation';
     case 'COLLUTOIRE':
-      return 'utilisation';
+      return plural ? 'utilisations' : 'utilisation';
     case 'SHAMPOOING':
-      return 'application';
+      return plural ? 'applications' : 'application';
     case 'SOLUTION_INJECTABLE':
-      return 'solution injectable';
+      return plural ? 'doses' : 'dose';
     case 'COMPRIMER_EFERVESCENT':
-      return 'comprimé effervescent';
+      return plural ? 'comprimés effervescents' : 'comprimé effervescent';
     case 'GRANULER_EN_SACHET':
-      return 'sachet';
+      return plural ? 'sachets' : 'sachet';
     case 'PASTILLE':
-      return 'pastille';
+      return plural ? 'pastilles' : 'pastille';
     case 'SIROP':
-      return 'dose';
+      return plural ? 'doses' : 'dose';
+    case 'COMPRIME_PELLICULE':
+      return plural ? 'comprimés pelliculés' : 'comprimé pelliculé';
+    case 'COMPRIME_ORODISPERSIBLE':
+      return plural ? 'comprimés orodispersibles' : 'comprimé orodispersible';
+    case 'COMPRIME_ENROBE':
+      return plural ? 'comprimés enrobés' : 'comprimé enrobé';
+    case 'CAPSULE_MOLLE':
+      return plural ? 'capsules molles' : 'capsule molle';
+    case 'SOLUTION_INHALATION':
+      return plural ? 'inhalations' : 'inhalation';
     default:
-      return 'application';
+      return plural ? 'comprimés' : 'comprimé';
+  }
+}
+
+String periodConverter(String day) {
+  switch (day) {
+    case 'Jours':
+      return 'JOUR';
+    case 'Semaines':
+      return 'SEMAINE';
+    case 'Mois':
+      return 'MOIS';
+    case 'Années':
+      return 'ANNEES';
+    default:
+      return 'jour';
   }
 }

@@ -2,7 +2,7 @@
 import "package:bootstrap_icons/bootstrap_icons.dart";
 import "package:edgar/colors.dart";
 import "package:edgar/widget.dart";
-import "package:edgar_pro/services/custom_treatment_card.dart";
+import "package:edgar_pro/widgets/custom_treatment_card.dart";
 import "package:edgar_pro/services/medicines_services.dart";
 import "package:edgar_pro/services/patient_info_service.dart";
 import "package:edgar_pro/services/prescription_services.dart";
@@ -185,7 +185,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
               Buttons(
                 variant: Variant.primary,
                 size: SizeButton.md,
-                msg: const Text('Ajouter un document'),
+                msg: const Text('Ajouter une ordonnance'),
                 onPressed: () {
                   final model =
                       Provider.of<BottomSheetModel>(context, listen: false);
@@ -288,7 +288,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );
@@ -316,7 +316,7 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
     });
     for (int i = 0; i < medicines.length; i++) {
       suggestions.add(
-          "${medicines[i]['name']} ${convertMedicineUnit(medicines[i]['dosage_form'])}");
+          "${medicines[i]['name']} - ${convertMedicineUnit(medicines[i]['dosage_form'])}");
     }
   }
 
@@ -367,7 +367,7 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
             keyboardType: TextInputType.text,
             onValidate: (value) {
               for (int i = 0; i < medicines.length; i++) {
-                if ("${medicines[i]['name']} ${convertMedicineUnit(medicines[i]['dosage_form'])}" ==
+                if ("${medicines[i]['name']} - ${convertMedicineUnit(medicines[i]['dosage_form'])}" ==
                     value) {
                   addMedicine(medicines[i]['id']);
                 }
@@ -408,16 +408,16 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
                   prescription.add({
                     "medicine_id": medicineList[i].medicineId,
                     "qsp": medicineList[i].qsp,
-                    "qsp_unit": medicineList[i].qspUnit,
+                    "qsp_unit": periodConverter(medicineList[i].qspUnit),
                     "comment": medicineList[i].comment,
                     "periods": medicineList[i].periods
                         .map((e) => {
                               "quantity": e.quantity,
                               "frequency": e.frequency,
                               "frequency_ratio": e.frequencyRatio,
-                              "frequency_unit": e.frequencyUnit,
+                              "frequency_unit": periodConverter(e.frequencyUnit),
                               "period_length": e.periodLength,
-                              "period_unit": e.periodUnit
+                              "period_unit": periodConverter(e.periodUnit),
                             })
                         .toList()
                   });

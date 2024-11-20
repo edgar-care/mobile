@@ -3,8 +3,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/services/custom_treatment_period.dart';
-import 'package:edgar_pro/utils/mapper_unit_medicine.dart';
+import 'package:edgar_pro/widgets/custom_treatment_period.dart';
 import 'package:edgar_pro/utils/medicine_type.dart';
 import 'package:flutter/material.dart';
 
@@ -173,7 +172,7 @@ class _TreatementCardState extends State<TreatementCard> {
               for (int i = 0; i < widget.medicine.periods.length; i++)
                 TreatmentPeriodCard(
                     index: i,
-                    form: convertMedicineUsageUnit(widget.dosageForm),
+                    form: widget.dosageForm,
                     period: widget.medicine.periods[i],
                     removePeriod: removePeriod),
               const SizedBox(
@@ -234,6 +233,7 @@ class _TreatementCardState extends State<TreatementCard> {
                     Icon(
                       BootstrapIcons.trash_fill,
                       color: AppColors.grey500,
+                      size: 20,
                     ),
                     SizedBox(width: 8),
                     Text('Supprimer le médicament',
