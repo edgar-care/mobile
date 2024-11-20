@@ -36,9 +36,10 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient'], context).then((value) => setState(() {
-          patientInfo = value;
-        }));
+    getPatientById(widget.rdvInfo['id_patient'], context)
+        .then((value) => setState(() {
+              patientInfo = value;
+            }));
   }
 
   @override
@@ -357,8 +358,8 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               variant: Variant.validate,
               size: SizeButton.sm,
               msg: const Text('Oui, je suis sûr'),
-              onPressed: () {
-                postDiagValidation(context, rdvInfo['id'], true, '', '');
+              onPressed: () async {
+                await postDiagValidation(context, rdvInfo['id'], true, '', '');
                 Navigator.pop(context);
                 widget.refresh();
               },
@@ -415,7 +416,11 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               hintText: 'Renseigner la raison de l\'annulation',
               alignLabelWithHint: true,
             ),
-            onChanged: (value) => cancelreason = value,
+            onChanged: (value) {
+              setState(() {
+                cancelreason = value;
+              });
+            },
           ),
         ),
         const SizedBox(
@@ -438,22 +443,25 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
             border: Border.all(color: AppColors.blue500, width: 2),
           ),
           child: TextFormField(
-            maxLines: 2,
-            minLines: 2,
-            decoration: const InputDecoration(
-              hintStyle: TextStyle(
-                color: AppColors.grey400,
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                textBaseline: TextBaseline.ideographic,
+              maxLines: 2,
+              minLines: 2,
+              decoration: const InputDecoration(
+                hintStyle: TextStyle(
+                  color: AppColors.grey400,
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  textBaseline: TextBaseline.ideographic,
+                ),
+                hintText:
+                    'Renseigner les méthodes de soins pour diminuer les symptômes',
+                alignLabelWithHint: true,
               ),
-              hintText:
-                  'Renseigner les méthodes de soins pour diminuer les symptômes',
-              alignLabelWithHint: true,
-            ),
-            onChanged: (value) => cancelreason = value,
-          ),
+              onChanged: (value) {
+                setState(() {
+                  healthmethod = value;
+                });
+              }),
         ),
       ],
       footer: Row(
@@ -480,10 +488,10 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               msg: const Text('Oui, je suis sûr'),
               onPressed: () {
                 if (cancelreason == '') {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      context: context,
-                      message:
-                          'Veuillez renseigner la raison de l\'annulation'));
+                  TopErrorSnackBar(
+                          message:
+                              'Veuillez renseigner la raison de l\'annulation')
+                      .show(context);
                 } else {
                   postDiagValidation(context, rdvInfo['id'], false,
                       cancelreason, healthmethod);

@@ -47,7 +47,8 @@ Future<void> postDiagValidation(BuildContext context, String id,
   );
 
   if (response != null) {
-    const TopInfoSnackBar(message: "Réponse envoyée avec succes").show(context);
+    const TopSuccessSnackBar(message: "Réponse envoyée avec succes")
+        .show(context);
   } else {
     const TopErrorSnackBar(message: "Une erreur est survenue").show(context);
   }

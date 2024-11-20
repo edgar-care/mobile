@@ -380,7 +380,7 @@ class _PatientPageState extends State<PatientPage> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );

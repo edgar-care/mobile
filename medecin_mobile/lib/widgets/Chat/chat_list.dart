@@ -28,9 +28,11 @@ class _ChatListState extends State<ChatList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     id = prefs.getString('id')!;
     for (var i = 0; i < widget.chats.length; i++) {
-      patientId.add(widget.chats[i].recipientIds
-          .firstWhere((element) => element.id != id)
-          .id);
+      patientId.add(
+        widget.chats[i].recipientIds
+            .firstWhere((element) => element.id != id)
+            .id,
+      );
     }
   }
 

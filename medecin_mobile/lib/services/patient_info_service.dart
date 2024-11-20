@@ -97,7 +97,7 @@ Future<Map<String, dynamic>> getPatientById(
     String id, BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.get,
-    endpoint: '/doctor/patient/$id',
+    endpoint: 'doctor/patient/$id',
     needsToken: true,
     context: context,
   );

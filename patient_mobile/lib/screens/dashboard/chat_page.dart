@@ -9,6 +9,7 @@ import 'package:edgar_app/widget/card_conversation.dart';
 import 'package:edgar_app/widget/field_custom_perso.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -68,7 +69,8 @@ class _ChatPageState extends State<ChatPage> {
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
         setState(() {
-          idPatient = jsonDecode(decodedPayload)['patient']["id"];
+          idPatient = jsonDecode(decodedPayload)["id"];
+          Logger().i('Patient ID: $idPatient');
         });
       } catch (e) {
         // catch clauses

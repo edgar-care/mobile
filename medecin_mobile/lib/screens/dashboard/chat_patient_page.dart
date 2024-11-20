@@ -50,18 +50,22 @@ class ChatPatientState extends State<ChatPatient> {
   Future<void> _loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // ignore: use_build_context_synchronously
-    getPatientById(widget.id, context).then((value) => setState(() {
+    getPatientById(widget.id, context).then(
+      (value) => setState(
+        () {
           patientInfo = value;
-        }));
+        },
+      ),
+    );
     String? token = prefs.getString('token');
     if (token != null && token.isNotEmpty) {
       try {
         String encodedPayload = token.split('.')[1];
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+        prefs.setString('id', jsonDecode(decodedPayload)["id"]);
         setState(() {
-          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+          idDoctor = jsonDecode(decodedPayload)["id"];
         });
       } catch (e) {
         // catch clauses
@@ -137,7 +141,7 @@ class ChatPatientState extends State<ChatPatient> {
                           width: 8,
                         ),
                         Text(
-                          '${patientInfo['Prenom']} ${patientInfo['Nom']}',
+                          '${patientInfo['Prenom']} ${patientInfo['Nom'].toUpperCase()}',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -171,12 +175,14 @@ class ChatPatientState extends State<ChatPatient> {
                   controller: widget.scrollController,
                   webSocketService: widget.webSocketService,
                   chat: widget.chats.firstWhere(
-                    (chat) => (chat.recipientIds.first.id == widget.id ||
-                        chat.recipientIds.first.id == idDoctor &&
-                            (chat.recipientIds.last.id == widget.id ||
-                                chat.recipientIds.last.id == idDoctor)),
+                    (chat) =>
+                        (chat.recipientIds.first.id == widget.id ||
+                            chat.recipientIds.first.id == idDoctor) &&
+                        (chat.recipientIds.last.id == widget.id ||
+                            chat.recipientIds.last.id == idDoctor),
                   ),
-                  patientName: '${patientInfo['Prenom']} ${patientInfo['Nom']}',
+                  patientName:
+                      '${patientInfo['Prenom']} ${patientInfo['Nom'].toUpperCase()}',
                   doctorId: idDoctor,
                 ),
               ),
@@ -245,7 +251,7 @@ class ChatPatientState extends State<ChatPatient> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );
