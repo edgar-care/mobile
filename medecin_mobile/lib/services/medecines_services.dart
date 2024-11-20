@@ -1,15 +1,15 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<List<Map<String, dynamic>>> getMedecines() async {
-  final url = '${dotenv.env['URL']}medicine';
-  final response = await http.get(
-    Uri.parse(url),
+Future<List<Map<String, dynamic>>> getMedecines(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/medicine',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return List<Map<String, dynamic>>.from(jsonDecode(body)["medicament"]);
+  if (response != null) {
+    return List<Map<String, dynamic>>.from(response["medicament"]);
   } else {
     return [];
   }

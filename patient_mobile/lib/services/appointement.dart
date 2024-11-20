@@ -1,97 +1,98 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:edgar_app/services/request.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<bool> postAppointementId(String id, String sessionId) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}appointments/$id';
-  final body = jsonEncode({'session_id': sessionId});
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-    body: body,
-  );
-  if (response.statusCode == 201) {
-    var body = jsonDecode(response.body);
-    prefs.setString('appointment_doctor_id', body['rdv']['doctor_id']);
-    prefs.setString(
-        'appointment_start_date', body['rdv']['start_date'].toString());
-    prefs.setString('appointment_end_date', body['rdv']['end_date'].toString());
-    return true;
-  } else {
+// Créer un rendez-vous
+Future<bool> postAppointementId(
+    String id, String sessionId, BuildContext context) async {
+  try {
+    final response = await httpRequest(
+      type: RequestType.post,
+      endpoint: 'appointments/$id',
+      body: {'session_id': sessionId},
+      context: context,
+    );
+
+    if (response != null) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('appointment_doctor_id', response['rdv']['doctor_id']);
+      prefs.setString(
+          'appointment_start_date', response['rdv']['start_date'].toString());
+      prefs.setString(
+          'appointment_end_date', response['rdv']['end_date'].toString());
+      return true;
+    }
+    return false;
+  } catch (e) {
+    Logger().e('Erreur lors de la création du rendez-vous: $e');
     return false;
   }
 }
 
-Future<Map<String, dynamic>> getAppoitementDoctorById(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}doctor/$id/appointments';
-
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+// Obtenir les rendez-vous d'un docteur
+Future<Map<String, dynamic>> getAppoitementDoctorById(
+    String id, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: 'doctor/$id/appointments',
+    context: context,
   );
 
-  if (response.statusCode == 201) {
-    final body = jsonDecode(response.body);
-    return body;
+  if (response != null) {
+    return response;
   } else {
     return {};
   }
 }
 
-Future<List<Map<String, dynamic>>> getAppoitementPatient() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}patient/appointments';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-  );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return List<Map<String, dynamic>>.from(jsonDecode(body));
-  } else {
+// Obtenir les rendez-vous du patient
+Future<List<Map<String, dynamic>>> getAppoitementPatient(
+    BuildContext context) async {
+  try {
+    final response = await httpRequest(
+      type: RequestType.get,
+      endpoint: 'patient/appointments',
+      context: context,
+    );
+
+    if (response != null) {
+      return List<Map<String, dynamic>>.from(response);
+    }
+    return [];
+  } catch (e) {
+    Logger().e('Erreur lors de la récupération des rendez-vous du patient: $e');
     return [];
   }
 }
 
-Future<bool> deleteAppointementId(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}appointments/$id';
-  final response = await http.delete(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-  );
-  if (response.statusCode == 201) {
+// Supprimer un rendez-vous
+Future<bool> deleteAppointementId(String id, BuildContext context) async {
+  try {
+    await httpRequest(
+      type: RequestType.delete,
+      endpoint: 'appointments/$id',
+      context: context,
+    );
     return true;
-  } else {
+  } catch (e) {
+    Logger().e('Erreur lors de la suppression du rendez-vous: $e');
     return false;
   }
 }
 
-Future<bool> putAppoitement(String idold, String idnew) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}appointments/$idold';
-  var body = jsonEncode({'id': idnew});
-  final response = await http.put(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-    body: body,
-  );
-  if (response.statusCode == 201) {
+// Modifier un rendez-vous
+Future<bool> putAppoitement(
+    String idold, String idnew, BuildContext context) async {
+  try {
+    await httpRequest(
+        type: RequestType.put,
+        endpoint: 'appointments/$idold',
+        body: {'id': idnew},
+        context: context);
     return true;
-  } else {
+  } catch (e) {
+    Logger().e('Erreur lors de la modification du rendez-vous: $e');
     return false;
   }
 }

@@ -41,7 +41,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
   }
 
   Future<bool> getData() async {
-    var tmp2 = await getMedecines();
+    var tmp2 = await getMedecines(context);
     setState(() {
       medicaments = tmp2;
       screenSize = MediaQuery.of(context).size;
@@ -76,7 +76,7 @@ class _TraitmentPageState extends State<TraitmentPage> {
   }
 
   Future<void> getFilterTraitement() async {
-    var traitements = await getTraitement();
+    var traitements = await getTraitement(context);
     if (_encour_ornot.value == 'encours') {
       traitement = traitements.where((element) {
         return element['antedisease']['still_relevant'] == true &&
@@ -416,12 +416,9 @@ class DeleteTreatment extends StatefulWidget {
 class _DeleteTreatmentState extends State<DeleteTreatment> {
   onDispose() {
     super.dispose();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SuccessSnackBar(
-        message: "Traitement supprimé avec succès",
-        context: context,
-      ),
-    );
+    TopSuccessSnackBar(
+      message: "Traitement supprimé avec succès",
+    ).show(context);
   }
 
   @override
@@ -458,7 +455,7 @@ class _DeleteTreatmentState extends State<DeleteTreatment> {
               msg: const Text('Supprimer'),
               onPressed: () async {
                 for (var traitment in widget.traitement['treatments']) {
-                  await deleteTraitementRequest(traitment['id']);
+                  await deleteTraitementRequest(traitment['id'], context);
                 }
                 Navigator.pop(context);
               },
@@ -501,7 +498,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   Future<void> fetchTraitement() async {
     nameTraitement.clear();
     traitement.clear();
-    traitement = await getTraitement();
+    traitement = await getTraitement(context);
     medicines = {"treatments": [], "name": name};
     for (var tmp in traitement) {
       setState(() {
@@ -527,7 +524,7 @@ class _AddTreatmentState extends State<AddTreatment> {
   }
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear();
 
     for (var treatment in medicines['treatments']) {
@@ -849,21 +846,15 @@ class _AddTreatmentState extends State<AddTreatment> {
               msg: const Text("Ajouter"),
               onPressed: () async {
                 if (name.isEmpty && !alreadyExistNotifier.value) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Ajoutez un nom",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Ajoutez un nom de traitement",
+                  ).show(context);
                   return;
                 }
                 if (medicines['treatments'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Ajoutez un médicament",
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message: "Ajouter un médicament",
+                  ).show(context);
                   return;
                 }
                 Map<String, dynamic> tmp = {};
@@ -883,26 +874,19 @@ class _AddTreatmentState extends State<AddTreatment> {
                     "treatments": medicines['treatments']
                   };
                 }
-                await postTraitement(tmp).then((value) => {
+                await postTraitement(tmp, context).then((value) => {
                       if (value == true)
                         {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SuccessSnackBar(
-                              message: "Traitement modifié avec succès",
-                              context: context,
-                            ),
-                          ),
+                          TopSuccessSnackBar(
+                            message: "Traitement modifié avec succès",
+                          ).show(context),
                           Navigator.pop(context),
                         }
                       else
                         {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            ErrorSnackBar(
-                              message:
-                                  "Erreur lors de la modification du traitement",
-                              context: context,
-                            ),
-                          ),
+                          TopErrorSnackBar(
+                            message: "Erreur lors de l'ajout du traitement",
+                          ).show(context),
                           Navigator.pop(context),
                         }
                     });
@@ -943,7 +927,7 @@ class _AddMedicamentState extends State<AddMedicament> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
@@ -1411,18 +1395,18 @@ class _AddMedicamentState extends State<AddMedicament> {
               msg: const Text("Ajouter"),
               onPressed: () {
                 if (medicament['medicine_id'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message:
-                          "Veuillez choisir un médicament ou entrer un medicament valide",
-                      context: context));
+                  TopErrorSnackBar(
+                    message:
+                        "Veuillez choisir un médicament ou entrer un medicament valide",
+                  ).show(context);
                   return;
                 }
                 if (medicament['quantity'] == 0 ||
                     medicament['day'].isEmpty ||
                     medicament['period'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tout les champs",
+                  ).show(context);
                   return;
                 }
                 setState(() {
@@ -1464,7 +1448,7 @@ class _InfoTreatmentState extends State<InfoTreatment> {
 
   Future<bool> fetchData() async {
     try {
-      medicaments = await getMedecines();
+      medicaments = await getMedecines(context);
 
       for (var i = 0; i < widget.traitement['treatments'].length; i++) {
         var medname = medicaments.firstWhere(
@@ -1618,7 +1602,7 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
   List<String> medNames = [];
 
   Future<bool> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     medNames.clear(); // Effacer la liste existante pour éviter les doublons
 
     for (var treatment in widget.treatments['treatments']) {
@@ -1639,16 +1623,13 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
   }
 
   void deleteTraitement(int index) {
-    deleteTraitementRequest(widget.treatments['treatments'][index]['id']).then(
+    deleteTraitementRequest(widget.treatments['treatments'][index]['id'], context).then(
       (value) => {
         if (value == true)
           {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SuccessSnackBar(
-                message: "Traitement supprimé avec succès",
-                context: context,
-              ),
-            ),
+            TopSuccessSnackBar(
+              message: "Traitement supprimé avec succès",
+            ).show(context),
             setState(
               () {
                 widget.treatments['treatments'].removeAt(widget
@@ -1709,15 +1690,13 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                         "disease_id": widget.treatments["antedisease"]["id"],
                         "still_relevant": true,
                         'treatments': []
-                      }).then((value) => {
+                      }, context).then((value) => {
                             if (value == false)
                               {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(ErrorSnackBar(
+                                TopErrorSnackBar(
                                   message:
                                       "Erreur lors de la modification du traitement",
-                                  context: context,
-                                )),
+                                ).show(context),
                               }
                           });
                     }),
@@ -1735,15 +1714,13 @@ class _ModifyTreatmentState extends State<ModifyTreatment> {
                         "disease_id": widget.treatments["antedisease"]["id"],
                         "still_relevant": false,
                         'treatments': []
-                      }).then((value) => {
+                      }, context).then((value) => {
                             if (value == false)
                               {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(ErrorSnackBar(
+                                TopErrorSnackBar(
                                   message:
                                       "Erreur lors de la modification du traitement",
-                                  context: context,
-                                )),
+                                ).show(context),
                               }
                           });
                     }),
@@ -1908,7 +1885,7 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
   List<String> nameMedic = [];
 
   Future<void> fetchData() async {
-    medicaments = await getMedecines();
+    medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
       nameMedic.add(medicament['name']);
     }
@@ -2376,18 +2353,18 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
               msg: const Text("Ajouter"),
               onPressed: () async {
                 if (medicament['medicine_id'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message:
-                          "Veuillez choisir un médicament ou entrer un medicament valide",
-                      context: context));
+                  TopErrorSnackBar(
+                    message:
+                        "Veuillez choisir un médicament ou entrer un medicament valide",
+                  ).show(context);
                   return;
                 }
                 if (medicament['quantity'] == 0 ||
                     medicament['day'].isEmpty ||
                     medicament['period'].isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context));
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tout les champs",
+                  ).show(context);
                   return;
                 }
                 await postTraitement(
@@ -2405,14 +2382,14 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
                       }
                     ],
                   },
+                  context
                 ).then(
                   (value) => {
                     if (value == true)
                       {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SuccessSnackBar(
-                                message: "Traitement ajouté avec succès",
-                                context: context)),
+                        TopSuccessSnackBar(
+                          message: "Traitement ajouté avec succès",
+                        ).show(context),
                         setState(() {
                           widget.updateMedicaments(medicament);
                         }),
@@ -2420,11 +2397,9 @@ class _AddMedicamentModifyState extends State<AddMedicamentModify> {
                       }
                     else
                       {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          ErrorSnackBar(
-                              message: "Erreur lors de l'ajout du traitement",
-                              context: context),
-                        ),
+                        TopErrorSnackBar(
+                          message: "Erreur lors de l'ajout du traitement",
+                        ).show(context),
                       }
                   },
                 );
@@ -2462,7 +2437,7 @@ class _CalendarTreatmentState extends State<CalendarTreatment> {
   }
 
   Future<void> fetchData() async {
-    var tmp3 = await getMedecines();
+    var tmp3 = await getMedecines(context);
 
     setState(() {
       medecines = tmp3;
@@ -2490,8 +2465,8 @@ class _CalendarTreatmentState extends State<CalendarTreatment> {
   }
 
   Future<void> getTraitments() async {
-    followUp = await getFollowUp();
-    allTreatments = await getTraitement().whenComplete(() async {
+    followUp = await getFollowUp(context);
+    allTreatments = await getTraitement(context).whenComplete(() async {
       treatmentsMorning = await getTreatmentsByDayAndPeriod(
           allTreatments, getDayEnum(), Period.MORNING);
       treatmentsAfterNoon = await getTreatmentsByDayAndPeriod(
@@ -2504,7 +2479,7 @@ class _CalendarTreatmentState extends State<CalendarTreatment> {
   }
 
   void updateData() {
-    getFollowUp().then(
+    getFollowUp(context).then(
       (value) => {
         setState(() {
           followUp = value;
@@ -2755,13 +2730,10 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                   if (DateTime.now().year != widget.date.year ||
                       DateTime.now().day != widget.date.day ||
                       DateTime.now().month != widget.date.month) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message:
-                            "Vous ne pouvez pas modifier un suivi pour une date passée ou future",
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message:
+                          "Vous ne pouvez pas modifier les prises pour une date antérieure",
+                    ).show(context);
                     return;
                   }
                   if (value == true) {
@@ -2771,7 +2743,7 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                       "period": [
                         widget.period.toString().trim().split('.').last
                       ],
-                    }).then(
+                    }, context).then(
                       (value) => {
                         widget.updateData(),
                       },
@@ -2783,7 +2755,7 @@ class PeriodeMedicCheckListState extends State<PeriodeMedicCheckList> {
                               filteredTreatments[index].id &&
                           element['period'].contains(
                               widget.period.toString().trim().split('.').last),
-                    )['id'])
+                    )['id'], context)
                         .then(
                       (value) => {
                         widget.updateData(),

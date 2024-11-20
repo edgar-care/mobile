@@ -10,6 +10,7 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 
 import '../../services/doctor.dart';
 
@@ -24,23 +25,23 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> infoMedical = {};
   List<Map<String, dynamic>> rdv = [];
   List<dynamic> allDoctor = [];
+  String docteurName = '';
+  String docteurFirstName = '';
 
   Future<void> fetchData() async {
-    await getAllDoctor().then((value) {
+    await getAllDoctor(context).then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching doctors", context: context));
+        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       }
     });
 
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
 
@@ -48,8 +49,8 @@ class _HomePageState extends State<HomePage> {
       if (value!.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching appointement", context: context));
+        TopErrorSnackBar(message: "Error on fetching appoitement")
+            .show(context);
       }
     });
     return;
@@ -58,12 +59,16 @@ class _HomePageState extends State<HomePage> {
   DateTime now = DateTime.now();
 
   Map<String, dynamic>? getNextAppointment() {
+    if (rdv.isEmpty) return null;
+
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
-      return appointment['appointment_status'] == 'ACCEPTED_DUE_TO_REVIEW' &&
-          DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000)
-              .isAfter(now);
+      return DateTime.fromMillisecondsSinceEpoch(
+              appointment['start_date'] * 1000)
+          .isAfter(now);
     }).toList();
+
+    if (acceptedAppointments.isEmpty) return null;
 
     acceptedAppointments.sort((a, b) {
       DateTime dateA =
@@ -73,7 +78,24 @@ class _HomePageState extends State<HomePage> {
       return dateA.compareTo(dateB);
     });
 
-    return acceptedAppointments.isNotEmpty ? acceptedAppointments.first : null;
+    // Safely handle doctor information
+    try {
+      Doctor? doc =
+          findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
+      if (doc != null) {
+        docteurName = doc.name;
+        docteurFirstName = doc.firstname;
+      } else {
+        docteurName = "Unknown";
+        docteurFirstName = "Doctor";
+      }
+    } catch (e) {
+      Logger().e("Error finding doctor: $e");
+      docteurName = "Unknown";
+      docteurFirstName = "Doctor";
+    }
+
+    return acceptedAppointments.first;
   }
 
   @override
@@ -158,10 +180,7 @@ class _HomePageState extends State<HomePage> {
                           nextAppointment['start_date'] * 1000),
                       endDate: DateTime.fromMillisecondsSinceEpoch(
                           nextAppointment['end_date'] * 1000),
-                      doctor: findDoctorById(
-                                  allDoctor, nextAppointment['doctor_id'])
-                              ?.name ??
-                          'Docteur inconnu',
+                      doctor: "${docteurName.toUpperCase()} $docteurFirstName",
                       onTap: () {},
                     )
                   : const Text(

@@ -48,7 +48,7 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
   }
 
   Future<void> loadSlots() async {
-    var tempslots = await getSlot();
+    var tempslots = await getSlot(context);
     setState(() {
       widget.slots = tempslots;
     });
@@ -125,7 +125,7 @@ class SlotEmpty extends Card {
           : MediaQuery.of(context).size.width * 0.236,
       child: InkWell(
         onTap: () {
-          postSlot(date).then((value) => updateSlotType(SlotType.create));
+          postSlot(date, context).then((value) => updateSlotType(SlotType.create));
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -190,7 +190,7 @@ class SlotCreate extends Card {
       child: InkWell(
         onTap: () {
           id = parsing(date, slots);
-          deleteSlot(id).then((value) => updateSlotType(SlotType.empty));
+          deleteSlot(id,context).then((value) => updateSlotType(SlotType.empty));
         },
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),

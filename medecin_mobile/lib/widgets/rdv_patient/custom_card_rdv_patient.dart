@@ -118,7 +118,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
         .toString();
     Map<String, dynamic> diagnostic = {};
     Future<bool> loadInfo() async {
-      diagnostic = await getSummary(rdvInfo["session_id"]);
+      diagnostic = await getSummary(rdvInfo["session_id"], context);
       return true;
     }
 

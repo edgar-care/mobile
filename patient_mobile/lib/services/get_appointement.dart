@@ -1,24 +1,17 @@
-import 'dart:convert';
-
+import 'package:edgar_app/services/request.dart';
 import "package:flutter/material.dart";
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<Map<String, dynamic>?> getAppointement(BuildContext context) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}patient/appointments';
-
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: 'patient/appointments',
+    context: context,
+    needsToken: true,
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return jsonDecode(body);
+
+  if (response != null) {
+    return response;
   } else {
-    return null;
+    return {};
   }
 }

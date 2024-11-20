@@ -27,7 +27,7 @@ class _ModifListState extends State<ModifList> {
   }
 
   Future<void> _loadAppointment() async {
-    var temp = await getSlot();
+    var temp = await getSlot(context);
     for (var i = 0; i < temp.length; i++) {
       if ((temp[i]['start_date'] * 1000) >
               (DateTime.now().millisecondsSinceEpoch) &&

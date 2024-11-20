@@ -57,7 +57,7 @@ class _AppoitementCardState extends State<AppoitementCard> {
               Row(
                 children: [
                   Text(
-                    "${widget.startDate.day}/${widget.startDate.month}/${widget.startDate.year} - ${widget.startDate.hour}h${widget.startDate.minute}",
+                    "${widget.startDate.day}/${widget.startDate.month}/${widget.startDate.year} - ${widget.startDate.hour.toString().padLeft(2, '0')}h${widget.startDate.minute.toString().padLeft(2, '0')}",
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -68,18 +68,16 @@ class _AppoitementCardState extends State<AppoitementCard> {
                       "assets/images/utils/arrow_appointement.svg"),
                   const SizedBox(width: 4),
                   Text(
-                    "${widget.endDate.hour}h${widget.endDate.minute}",
+                    "${widget.endDate.hour.toString().padLeft(2, '0')}h${widget.endDate.minute.toString().padLeft(2, '0')}",
                     style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         fontFamily: "Poppins"),
                   ),
                 ],
               ),
             ],
           ),
-          const Spacer(),
-          SvgPicture.asset("assets/images/utils/arrowRightIphone.svg"),
         ]),
       ),
     );
