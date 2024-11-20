@@ -446,7 +446,7 @@ class ModalEmailLogin extends StatefulWidget {
 class _ModalEmailLoginState extends State<ModalEmailLogin> {
 
   Future<bool> sendEmail() async {
-    await sendEmailCode(widget.email);
+    await sendEmailCode(widget.email, context);
     return true;
   }
 

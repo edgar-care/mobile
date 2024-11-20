@@ -61,7 +61,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               ),
                               const SizedBox(),
                             ],
-                          ),
+                          ),),
                           const SizedBox(height: 16),
                           const Text('Votre mot de passe actuel', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),),
                           const SizedBox(height: 4),
@@ -124,12 +124,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           )
                         ],
                       ),
-                  ],
                 )
               )
           )
         )
-      )
-    );
+      );
   }
 }

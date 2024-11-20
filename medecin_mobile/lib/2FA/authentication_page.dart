@@ -510,8 +510,6 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               size: SizeButton.md,
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
-                enable2FAMobile(devices[selected]['id']).then((value) {
-                  widget.load2fa();
                 enable2FAMobile(devices[selected]['id'], context).then((value) {
                 widget.load2fa();
                   if (widget.secret != true) {
