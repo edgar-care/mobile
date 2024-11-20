@@ -72,9 +72,8 @@ Future<Map<String, dynamic>> enable2FA3party(BuildContext context) async {
   final response = await httpRequest(
     context: context,
     type: RequestType.post,
-    endpoint: '2fa/method/third_party',
+    endpoint: '2fa/method/third_party/generate',
     needsToken: true,
-    body: {'method_2fa': 'THIRD_PARTY'},
   );
 
   if (response != null) {
