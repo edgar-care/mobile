@@ -34,7 +34,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
 
   Future<void> loadInfo() async {
     prescriptionList = await getAllPrescription(widget.id);
-    patientInfo = await getPatientById(widget.id);
+    patientInfo = await getPatientById(widget.id, context);
   }
 
   void refresh(){
