@@ -32,7 +32,7 @@ Future deleteAccount(BuildContext context) async {
 Future resetPassword(String password, BuildContext context) async {
   final response = await httpRequest(
       type: RequestType.post,
-      endpoint: 'auth/reset_password',
+      endpoint: 'auth/d/reset_password',
       needsToken: true,
       body: {"new_password": password},
       context: context);
@@ -41,7 +41,6 @@ Future resetPassword(String password, BuildContext context) async {
   }
   return response;
 }
-
 
 Future<bool> updatePassword(
     String oldPassword, String password, BuildContext context) async {
