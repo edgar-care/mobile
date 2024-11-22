@@ -2,6 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/auth.dart';
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/utils/medecines_utils.dart';
 import 'package:edgar_app/widget/AddPatient/add_button.dart';
 import 'package:edgar_app/widget/card_traitement_day.dart';
 import 'package:edgar_app/widget/card_traitement_small.dart';
@@ -1487,7 +1488,8 @@ class _AddMedicamentState extends State<AddMedicament> {
   Future<void> fetchData() async {
     medicaments = await getMedecines(context);
     for (var medicament in medicaments) {
-      nameMedic.add(medicament['name']);
+      nameMedic.add(
+          "${medicament['name']} - ${displayMedicineUnit(medicament['dosage_form'])}");
     }
   }
 
@@ -1522,8 +1524,9 @@ class _AddMedicamentState extends State<AddMedicament> {
             keyboardType: TextInputType.name,
             onValidate: (value) {
               var selectedMedicament = medicaments.firstWhere(
-                  (med) => med['name'] == value,
-                  orElse: () => {'id': null});
+                (med) => med['name'] == value,
+                orElse: () => {'id': null},
+              );
 
               if (selectedMedicament['id'] != null) {
                 setState(() {
