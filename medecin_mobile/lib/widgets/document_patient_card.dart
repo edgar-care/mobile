@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:download_file/data/models/download_file_options.dart';
 import 'package:download_file/download_file.dart';
-import 'package:http/http.dart' as http;
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -101,13 +99,6 @@ class DocumentPatientCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<File> downloadFile(String url, String savePath) async {
-    var response = await http.get(Uri.parse(url));
-    var file = File(savePath);
-    await file.writeAsBytes(response.bodyBytes);
-    return file;
   }
 
   Widget modal(BuildContext context, String name, String date, String url) {
