@@ -198,7 +198,9 @@ class DashBoardPageState extends State<DashBoardPage>
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      const HomePage(),
+      HomePage(
+        onItemTapped: _onItemTapped,
+      ),
       const GestionRendezVous(),
       SantePage(
         onItemTapped: _onItemTapped,

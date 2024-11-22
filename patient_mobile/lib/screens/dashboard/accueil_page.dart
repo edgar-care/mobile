@@ -1,20 +1,27 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:edgar_app/screens/dashboard/traitement_page.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/services/medical_antecedent.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/utils/treatement_utils.dart';
 import 'package:edgar_app/widget/appoitement_card.dart';
+import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/doctor.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final void Function(int) onItemTapped;
+  const HomePage({super.key, required this.onItemTapped});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -26,21 +33,49 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> allDoctor = [];
   String docteurName = '';
   String docteurFirstName = '';
+ List<Map<String, dynamic>> medicalAntecedent = [];
+  Map<String, String> medicaments = {};
+  List<Map<String, dynamic>> meds = [];
+
+  void getAllMedicines() async {
+    meds = await getMedecines(context);
+    for (var treatment in meds) {
+      medicaments[treatment['id']] = treatment['name'];
+    }
+  }
+
+  void refresh() {
+    setState(() {
+      fetchData();
+    });
+  }
+
 
   Future<void> fetchData() async {
+    await getMedicalAntecedent(context).then((value) {
+      if (value.isNotEmpty) {
+        medicalAntecedent = value;
+      } else {
+        TopErrorSnackBar(message: "Error on fetching medical antecedent")
+            .show(context);
+      }
+    });
+    await getMedecines(context).then((value) {
+      if (value.isNotEmpty) {
+        meds = value;    
+        for (var treatment in meds) {
+          medicaments[treatment['id']] = treatment['name'];
+        }
+      } else {
+        TopErrorSnackBar(message: "Error on fetching medecine").show(context);
+        return [];
+      }
+    });
     await getAllDoctor(context).then((value) {
       if (value.isNotEmpty) {
         allDoctor = value;
       } else {
         TopErrorSnackBar(message: "Error on fetching doctor").show(context);
-      }
-    });
-
-    await getMedicalFolder(context).then((value) {
-      if (value.isNotEmpty) {
-        infoMedical = value;
-      } else {
-        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
 
@@ -52,7 +87,14 @@ class _HomePageState extends State<HomePage> {
             .show(context);
       }
     });
-    return;
+    await getMedicalFolder(context).then((value) {
+      if (value.isNotEmpty) {
+        infoMedical = value;
+      } else {
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
+      }
+    });
+
   }
 
   DateTime now = DateTime.now();
@@ -97,6 +139,30 @@ class _HomePageState extends State<HomePage> {
     return acceptedAppointments.first;
   }
 
+  List<Map<String, dynamic>> getTraitement() {
+    List<Map<String, dynamic>> traitements = [];
+    for (var disease in medicalAntecedent) {
+      for (var treatment in disease["treatments"]) {
+        if (treatment["endDate"] == null ||
+            treatment["endDate"] == 0 ||
+            treatment["endDate"] >
+                DateTime.now().millisecondsSinceEpoch) {
+          traitements.add({
+            'medId': disease["id"],
+            "medNames": disease["name"],
+            "treatment": Treatment.fromJson(treatment),
+          });
+        }
+      }
+    }
+    return traitements;
+  }
+
+  void deleteTraitement(String id) async {
+    await deleteTraitementRequest(id, context);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -109,8 +175,9 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          Map<String, dynamic>? nextAppointment = getNextAppointment();
-
+          Map<String, dynamic>? nextAppointment = getNextAppointment();  
+          List<Map<String, dynamic>> traitements = getTraitement();
+          Logger().d(traitements);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -231,7 +298,71 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const SizedBox(height: 12),
+              Expanded(child:
+                ListView.separated(
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 8,
+                  ),
+                  itemCount: traitements.length <= 3 ? traitements.length : 3,
+                  padding: const EdgeInsets.all(0),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        final model = Provider.of<BottomSheetModel>(context,
+                            listen: false);
+                        model.resetCurrentIndex();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return Consumer<BottomSheetModel>(
+                              builder: (context, model, child) {
+                                return ListModal(
+                                  model: model,
+                                  children: [
+                                    SubMenu(
+                                        treatment: traitements[index],
+                                        deleteTraitement: deleteTraitement,
+                                        index: index,
+                                        meds: meds,
+                                        medId: traitements[index]["medId"],
+                                        refresh: refresh),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: CardTraitementSimplify(
+                          medicaments: medicaments,
+                          name: traitements[index]["medNames"],
+                          traitement: traitements[index]["treatment"]),
+                    );
+                  },
+                ),
+              ),
+              if (traitements.length > 3) ...[
+                const SizedBox(
+                  height: 8,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onItemTapped(3);
+                  },
+                  child: const Text(
+                    "Voir plus de traitements",
+                    style: TextStyle(
+                      color: AppColors.blue700,
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ]
             ],
           );
         }

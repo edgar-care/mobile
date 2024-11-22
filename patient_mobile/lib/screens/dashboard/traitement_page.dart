@@ -25,7 +25,6 @@ class _TraitmentPageState extends State<TraitmentPage> {
   // ignore: non_constant_identifier_names
   List<Map<String, dynamic>> medicalAntecedent = [];
   Map<String, String> medicaments = {};
-  List<String> medNames = [];
   ValueNotifier<int> isEncours = ValueNotifier(0);
   List<Map<String, dynamic>> traitements = [];
   List<Map<String, dynamic>> meds = [];
