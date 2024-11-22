@@ -14,3 +14,18 @@ Future<List<Map<String, dynamic>>> getMedecines(BuildContext context) async {
     return [];
   }
 }
+
+Future<Map<String, dynamic>> getMedecineById(
+    BuildContext context, String id) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.get,
+    endpoint: 'medicine/$id',
+  );
+
+  if (response != null) {
+    return response["medicament"];
+  } else {
+    return {};
+  }
+}

@@ -23,8 +23,8 @@ class _CustomListRdvState extends State<CustomListRdv> {
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments(context);
     for (var i = 0; i < tempAp.length; i++) {
-      if (tempAp[i]['id_patient'].toString().isNotEmpty &&
-          tempAp[i]['health_method'] == "" &&
+      if (tempAp[i]['id_patient'].isNotEmpty &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" &&
           tempAp[i]['start_date'] >=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         bAppointment.add(tempAp[i]);

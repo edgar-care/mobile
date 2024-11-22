@@ -28,7 +28,7 @@ class _CustomListRdvState extends State<CustomListOld> {
     var tempAp = await getAppointments(context);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].isNotEmpty &&
-          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" &&
           tempAp[i]['start_date'] <=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {
