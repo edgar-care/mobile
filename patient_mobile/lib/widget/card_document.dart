@@ -311,6 +311,8 @@ class ModifyPatient extends StatefulWidget {
 }
 
 class _ModifyPatientState extends State<ModifyPatient> {
+  String tmp = '';
+
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
@@ -322,7 +324,7 @@ class _ModifyPatientState extends State<ModifyPatient> {
           color: AppColors.blue700,
           size: 18,
         ),
-        type: ModalType.success,
+        type: ModalType.info,
       ),
       body: [
         const Text('Le nouveau nom de votre document'),
@@ -333,7 +335,9 @@ class _ModifyPatientState extends State<ModifyPatient> {
           label: 'Mon document de santé',
           value: widget.name,
           onChanged: (value) {
-            widget.name = value;
+            setState(() {
+              tmp = value;
+            });
           },
           action: TextInputAction.done,
         ),
@@ -380,7 +384,7 @@ class DeletePatient extends StatelessWidget {
           'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x,
+          BootstrapIcons.x_lg ,
           color: AppColors.red700,
           size: 18,
         ),

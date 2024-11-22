@@ -851,8 +851,8 @@ class _AddDocumentState extends State<AddDocument> {
               size: SizeButton.sm,
               msg: const Text('Ajouter'),
               onPressed: () {
-                clicked = true;
-                if (fileSelected != null) {
+                if (fileSelected != null && clicked == false) {
+                  clicked = true;
                   postDocument(
                     dropdownValue,
                     dropdownValue2,
