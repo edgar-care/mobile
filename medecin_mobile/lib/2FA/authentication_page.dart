@@ -511,7 +511,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
                 enable2FAMobile(devices[selected]['id'], context).then((value) {
-                widget.load2fa();
+                  widget.load2fa();
                   if (widget.secret != true) {
                     Navigator.pop(context);
                     final model =
@@ -1374,15 +1374,11 @@ class ModalTierApp2 extends StatefulWidget {
 class _ModalTierApp2State extends State<ModalTierApp2> {
   String _code = '';
 
-  void setCode(String action, String code) {
+  void setCode(String action, String cod) {
     if (action == 'ADD') {
-      setState(() {
-        _code += code;
-      });
+      _code += cod;
     } else if (action == 'DELETE') {
-      setState(() {
-        _code = _code.substring(0, _code.length - 1);
-      });
+      _code = _code.substring(0, _code.length - 1);
     }
   }
 
@@ -1439,14 +1435,14 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                       );
                     } else {
                       Navigator.pop(context);
+                      TopSuccessSnackBar(
+                        message: 'La double authentification est activée',
+                      ).show(context);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message: 'Le code est incorrect',
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message: 'Code incorrect',
+                    ).show(context);
                   }
                 });
               },

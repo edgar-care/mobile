@@ -329,9 +329,12 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
 
   Widget updateAppointmentModal(
       Map<String, dynamic> rdvInfo, Function updateAppointment) {
+    DateTime start =
+        DateTime.fromMillisecondsSinceEpoch(rdvInfo['start_date'] * 1000);
     return ModalContainer(
       title: "Modifier le rendez vous",
-      subtitle: "Séléctionner une nouvelle date de rendez vous",
+      subtitle:
+          "Modification du rendez-vous du ${DateFormat('yMMMMEEEEd', 'fr').format(start)}",
       icon: const IconModal(
         type: ModalType.info,
         icon: Icon(BootstrapIcons.pen_fill),
@@ -348,7 +351,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
         icon: Icon(
           BootstrapIcons.file_text_fill,
           color: AppColors.grey600,
-          size: 18,
+          size: 14,
         ),
         type: ModalType.info,
       ),

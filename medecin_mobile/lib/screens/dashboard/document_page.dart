@@ -210,7 +210,10 @@ class _DocumentPageState extends State<DocumentPage> {
           );
         } else {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: AppColors.blue700,
+              strokeWidth: 2,
+            ),
           );
         }
       },
@@ -280,7 +283,7 @@ class _DocumentPageState extends State<DocumentPage> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );
@@ -515,6 +518,9 @@ class _AddDocumentState extends State<AddDocument> {
                       widget.patientInfo["id"],
                       fileSelected!,
                     ).then((value) => widget.updateData());
+                  } else {
+                    TopErrorSnackBar(message: 'Aucun fichier sélectionné')
+                        .show(context);
                   }
                   Navigator.pop(context);
                 },

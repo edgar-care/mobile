@@ -66,4 +66,3 @@ Future removeDevice(String id, BuildContext context) async {
 
   return;
 }
-
