@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:edgar_pro/services/request.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/widget.dart';
 
@@ -29,7 +30,7 @@ Future<List<dynamic>> login(
       Navigator.pushNamed(context, '/dashboard');
       return [];
     } else {
-      return response['2fa_methods'];
+      return response['Methods'];
     }
   } catch (e) {
     const TopErrorSnackBar(message: 'Les identifiants ne correspondent pas !')
@@ -38,14 +39,20 @@ Future<List<dynamic>> login(
   }
 }
 
-Future missingPassword(String email, BuildContext context) async {
-  await httpRequest(
-    type: RequestType.post,
-    endpoint: '/auth/missing-password',
-    body: {'email': email},
-    needsToken: false,
-    context: context,
-  );
+Future<void> missingPassword(String email, BuildContext context) async {
+  try {
+    await httpRequest(
+      type: RequestType.post,
+      endpoint: 'auth/missing-password',
+      needsToken: false,
+      body: {'email': email},
+      context: context,
+    );
+    TopSuccessSnackBar(message: 'Email envoyé veuillez regarder vos mail')
+        .show(context);
+  } catch (e) {
+    Logger().e('Erreur lors de la récupération du mot de passe: $e');
+  }
 }
 
 Future resetPassword(String password, BuildContext context) async {
@@ -74,9 +81,10 @@ Future sendEmailCode(String email, BuildContext context) async {
 
 Future checkEmailCode(
     String email, String password, String code, BuildContext context) async {
+  TopLoadingSnackBar().show(context);
   final response = await httpRequest(
     type: RequestType.post,
-    endpoint: '/auth/email_2fa',
+    endpoint: '/auth/d/email_2fa',
     body: {'email': email, 'password': password, 'token_2fa': code},
     needsToken: false,
     context: context,
@@ -89,6 +97,7 @@ Future checkEmailCode(
         utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
     Navigator.pushNamed(context, '/dashboard');
+    TopSuccessSnackBar(message: 'Connecté à l\'application').show(context);
   }
 }
 
@@ -96,7 +105,7 @@ Future checkBackUpCode(
     String email, String password, String code, BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.post,
-    endpoint: '/auth/backup_code_2fa',
+    endpoint: '/auth/d/backup_code_2fa',
     body: {'email': email, 'password': password, 'backup_code': code},
     needsToken: false,
     context: context,
@@ -114,9 +123,10 @@ Future checkBackUpCode(
 
 Future checkThirdPartyCode(
     String email, String password, String code, BuildContext context) async {
+  TopLoadingSnackBar().show(context);
   final response = await httpRequest(
     type: RequestType.post,
-    endpoint: '/auth/third_party_2fa',
+    endpoint: '/auth/d/third_party_2fa',
     body: {'email': email, 'password': password, 'token_2fa': code},
     needsToken: false,
     context: context,
@@ -128,7 +138,13 @@ Future checkThirdPartyCode(
     final decodedPayload =
         utf8.decode(base64.decode(base64.normalize(encodedPayload)));
     prefs.setString('id', jsonDecode(decodedPayload)["id"]);
+    Navigator.pop(context);
+    Navigator.pop(context);
     Navigator.pushNamed(context, '/dashboard');
+    TopSuccessSnackBar(message: 'Connecté à l\'application').show(context);
+  } else {
+    TopErrorSnackBar(message: 'Code invalide').show(context);
+    return;
   }
 }
 

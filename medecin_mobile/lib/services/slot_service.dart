@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/services/request.dart';
 
@@ -23,11 +22,11 @@ Future<Object?> postSlot(DateTime date, BuildContext context) async {
     endpoint: '/doctor/slot',
     needsToken: true,
     context: context,
-    body: jsonEncode({
+    body: {
       'start_date': date.millisecondsSinceEpoch ~/ 1000,
       'end_date':
           (date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/ 1000
-    }),
+    },
   );
 
   if (response != null) {

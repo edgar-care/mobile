@@ -282,18 +282,19 @@ class _ModalLoginState extends State<ModalLogin> {
             final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
             showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (context) {
-                  return Consumer<BottomSheetModel>(
-                    builder: (context, model, child) {
-                      return ListModal(model: model, children: [
-                        modalForgotPassword(context),
-                      ]);
-                    },
-                  );
-                });
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(model: model, children: [
+                      modalForgotPassword(context),
+                    ]);
+                  },
+                );
+              },
+            );
           },
           child: const Text(
             "Mot de passe oublié ?",
@@ -321,22 +322,23 @@ class _ModalLoginState extends State<ModalLogin> {
                       Provider.of<BottomSheetModel>(context, listen: false);
                   model.resetCurrentIndex();
                   showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      builder: (context) {
-                        return Consumer<BottomSheetModel>(
-                          builder: (context, model, child) {
-                            return ListModal(model: model, children: [
-                              ModalChoose2FA(
-                                methods: value,
-                                email: email,
-                                password: password,
-                              ),
-                            ]);
-                          },
-                        );
-                      });
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Consumer<BottomSheetModel>(
+                        builder: (context, model, child) {
+                          return ListModal(model: model, children: [
+                            ModalChoose2FA(
+                              methods: value,
+                              email: email,
+                              password: password,
+                            ),
+                          ]);
+                        },
+                      );
+                    },
+                  );
                 }
               },
             );
@@ -739,114 +741,75 @@ class ModalEmailLogin extends StatefulWidget {
 }
 
 class _ModalEmailLoginState extends State<ModalEmailLogin> {
+  Future sendEmail() async {
+    await sendEmailCode(widget.email, context).then((value) {
+      return true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    sendEmail();
+  }
+
+  String code = '';
+
+  void setCode(String action, String cod) {
+    if (action == 'ADD') {
+      code += cod;
+    } else if (action == 'DELETE') {
+      code = code.substring(0, code.length - 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String code = '';
-
-    void setCode(String action, String code) {
-      if (action == 'ADD') {
-        setState(() {
-          code += code;
-        });
-      } else if (action == 'DELETE') {
-        setState(() {
-          code = code.substring(0, code.length - 1);
-        });
-      }
-    }
-
-    Future<bool> sendEmail() async {
-      await sendEmailCode(widget.email, context);
-      return true;
-    }
-
-    return FutureBuilder(
-        future: sendEmail(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox(
-              height: 48,
-              child: Row(
-                children: [
-                  CircularProgressIndicator(
-                    color: AppColors.white,
-                    semanticsValue: 'Loading...',
-                  ),
-                  SizedBox(width: 16),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 80,
-                        height: 4,
-                        child: LinearProgressIndicator(
-                          backgroundColor: AppColors.blue700,
-                          minHeight: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColors.white),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      SizedBox(
-                        width: 120,
-                        height: 4,
-                        child: LinearProgressIndicator(
-                          backgroundColor: AppColors.blue700,
-                          minHeight: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(AppColors.white),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            );
-          } else {
-            return ModalContainer(
-              title: "Vérifier votre identité",
-              subtitle:
-                  'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
-              body: [
-                FieldNumberList2FA(
-                  addCode: setCode,
-                )
-              ],
-              icon: const IconModal(
-                icon: Icon(
-                  BootstrapIcons.shield_lock_fill,
-                  color: AppColors.blue700,
-                  size: 17,
-                ),
-                type: ModalType.info,
-              ),
-              footer: Column(
-                children: [
-                  Buttons(
-                      variant: Variant.primary,
-                      size: SizeButton.md,
-                      msg: const Text('Valider le code'),
-                      onPressed: () {
-                        checkEmailCode(
-                                widget.email, widget.password, code, context)
-                            .then((value) {});
-                      }),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Buttons(
-                    variant: Variant.secondary,
-                    size: SizeButton.md,
-                    msg: const Text('Revenir en arrière'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            );
-          }
-        });
+    return ModalContainer(
+      title: "Vérifier votre identité",
+      subtitle:
+          'Renseigner le code que vous avez reçu dans l\'email que nous venons de vous envoyer.',
+      body: [
+        FieldNumberList2FA(
+          addCode: setCode,
+        )
+      ],
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.shield_lock_fill,
+          color: AppColors.blue700,
+          size: 17,
+        ),
+        type: ModalType.info,
+      ),
+      footer: Column(
+        children: [
+          Buttons(
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text('Valider le code'),
+              onPressed: () async {
+                await checkEmailCode(
+                  widget.email,
+                  widget.password,
+                  code,
+                  context,
+                );
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text('Revenir en arrière'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -863,15 +826,11 @@ class ModalThirdPartyLogin extends StatefulWidget {
 class _ModalThirdPartyLoginState extends State<ModalThirdPartyLogin> {
   String _code = '';
 
-  void setCode(String action, String code) {
+  void setCode(String action, String cod) {
     if (action == 'ADD') {
-      setState(() {
-        _code += code;
-      });
+      _code += cod;
     } else if (action == 'DELETE') {
-      setState(() {
-        _code = _code.substring(0, _code.length - 1);
-      });
+      _code = _code.substring(0, _code.length - 1);
     }
   }
 

@@ -68,30 +68,32 @@ Future enable2FAMobile(String id, BuildContext context) async {
 
 Future<Map<String, dynamic>> enable2FA3party(BuildContext context) async {
   final response = await httpRequest(
-    type: RequestType.post,
-    endpoint: '/2fa/method/third_party',
-    needsToken: true,
     context: context,
+    type: RequestType.post,
+    endpoint: '2fa/method/third_party/generate',
+    needsToken: true,
   );
 
   if (response != null) {
     return response;
+  } else {
+    return {};
   }
-  return {};
 }
 
 Future<Map<String, dynamic>> checkTierAppCode(
     String code, BuildContext context) async {
   final response = await httpRequest(
+    context: context,
     type: RequestType.post,
-    endpoint: '/2fa/method/third_party',
+    endpoint: '2fa/method/third_party',
     needsToken: true,
     body: {'token': code},
-    context: context,
   );
 
   if (response != null) {
     return response;
+  } else {
+    return {};
   }
-  return {};
 }

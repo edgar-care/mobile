@@ -8,14 +8,14 @@ Future<List<Map<String, dynamic>>> getDiagnostics(
     String status, BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.get,
-    endpoint: '/doctor/diagnostics/$status',
+    endpoint: '/doctor/appointments',
     needsToken: true,
     context: context,
   );
 
   if (response != null) {
     List<Map<String, dynamic>> bAppointment = [];
-    var temp = response.body['appointments'];
+    var temp = response['appointments'];
     for (var i = 0; i < temp.length; i++) {
       if (temp[i]['id_patient'].toString().isNotEmpty &&
           temp[i]['appointment_status'] == status) {
@@ -28,7 +28,7 @@ Future<List<Map<String, dynamic>>> getDiagnostics(
   }
 }
 
-Future<List<dynamic>> getAppointments(BuildContext context) async {
+Future<List<dynamic>>  getAppointments(BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.get,
     endpoint: '/doctor/appointments',

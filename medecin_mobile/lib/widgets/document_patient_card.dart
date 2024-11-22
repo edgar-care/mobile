@@ -38,61 +38,69 @@ class DocumentPatientCard extends StatelessWidget {
         color = AppColors.blue200;
     }
     return Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppColors.blue200,
-            width: 2,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.blue200,
+          width: 2,
+        ),
+      ),
+      width: double.infinity,
+      child: InkWell(
+        onTap: () {
+          final model = Provider.of<BottomSheetModel>(context, listen: false);
+          model.resetCurrentIndex();
+
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (context) {
+              return Consumer<BottomSheetModel>(
+                builder: (context, model, child) {
+                  return ListModal(model: model, children: [
+                    modal(context, name, date, url),
+                  ]);
+                },
+              );
+            },
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
+          child: Row(
+            children: [
+              Container(
+                height: 35,
+                width: 4,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const Spacer(),
+              const Icon(
+                BootstrapIcons.chevron_right,
+                size: 17,
+              )
+            ],
           ),
         ),
-        child: InkWell(
-          onTap: () {
-            final model = Provider.of<BottomSheetModel>(context, listen: false);
-            model.resetCurrentIndex();
-
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              builder: (context) {
-                return Consumer<BottomSheetModel>(
-                  builder: (context, model, child) {
-                    return ListModal(model: model, children: [
-                      modal(context, name, date, url),
-                    ]);
-                  },
-                );
-              },
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
-            child: Row(
-              children: [
-                Container(
-                  height: 35,
-                  width: 4,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(99),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(name,
-                    style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold)),
-                const Spacer(),
-                const Icon(
-                  BootstrapIcons.chevron_right,
-                  size: 17,
-                )
-              ],
-            ),
-          ),
-        ));
+      ),
+    );
   }
 
   Future<File> downloadFile(String url, String savePath) async {

@@ -238,7 +238,7 @@ class _PatientPageRdvState extends State<PatientPageRdv> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );
