@@ -13,7 +13,6 @@ import 'package:confetti/confetti.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 String name = "";
@@ -1528,8 +1527,6 @@ class _AddMedicamentState extends State<AddMedicament> {
                 (med) => med['name'] == value,
                 orElse: () => {'id': null},
               );
-
-              Logger().i(selectedMedicament);
 
               if (selectedMedicament['id'] != null) {
                 setState(() {
