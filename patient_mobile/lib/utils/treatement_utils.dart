@@ -1,19 +1,17 @@
 // ignore: constant_identifier_names
-enum FrequencyUnit { JOUR, SEMAINE, MOIS }
+enum FrequencyUnit { JOUR, SEMAINE, MOIS, ANNEE }
 
 // ignore: constant_identifier_names
-enum PeriodUnit { JOUR, SEMAINE, MOIS }
+enum PeriodUnit { JOUR, SEMAINE, MOIS, ANNEE }
 
 class Treatment {
-  final String id;
-  final String createdBy;
-  final DateTime startDate;
-  final DateTime endDate;
-  final List<Medicine> medicines;
+  String id;
+  DateTime startDate;
+  DateTime endDate;
+  List<Medicine> medicines;
 
   Treatment({
     required this.id,
-    required this.createdBy,
     required this.startDate,
     required this.endDate,
     required this.medicines,
@@ -22,9 +20,8 @@ class Treatment {
   factory Treatment.fromJson(Map<String, dynamic> json) {
     return Treatment(
       id: json['id'],
-      createdBy: json['created_by'],
-      startDate: DateTime.parse(json['start_date']),
-      endDate: DateTime.parse(json['end_date']),
+      startDate: DateTime.fromMillisecondsSinceEpoch(json['start_date'] * 1000),
+      endDate: DateTime.fromMillisecondsSinceEpoch(json['end_date'] * 1000),
       medicines:
           (json['medicines'] as List).map((x) => Medicine.fromJson(x)).toList(),
     );
@@ -32,7 +29,6 @@ class Treatment {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'created_by': createdBy,
         'start_date': startDate,
         'end_date': endDate,
         'medicines': medicines.map((x) => x.toJson()).toList(),
@@ -40,9 +36,9 @@ class Treatment {
 }
 
 class Medicine {
-  final String medicineId;
-  final String comment;
-  final List<Period> period;
+  String medicineId;
+  String comment;
+  List<Period> period;
 
   Medicine({
     required this.medicineId,
@@ -66,12 +62,12 @@ class Medicine {
 }
 
 class Period {
-  final int quantity;
-  final int frequency;
-  final int frequencyRatio;
-  final FrequencyUnit frequencyUnit;
-  final int? periodLength;
-  final PeriodUnit? periodUnit;
+  int quantity;
+  int frequency;
+  int frequencyRatio;
+  FrequencyUnit frequencyUnit;
+  int? periodLength;
+  PeriodUnit? periodUnit;
 
   Period({
     required this.quantity,

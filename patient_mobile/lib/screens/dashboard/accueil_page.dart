@@ -4,7 +4,6 @@ import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';
 import 'package:edgar_app/widget/appoitement_card.dart';
-import 'package:edgar_app/widget/medicament_day_card.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -232,9 +231,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Expanded(
-                child: DailyMedicamentCard(),
-              ),
               const SizedBox(height: 12),
             ],
           );

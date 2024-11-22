@@ -1,3 +1,5 @@
+import 'package:logger/logger.dart';
+
 String convertMedicineUnit(String unit) {
   switch (unit) {
     case 'CREME':
@@ -95,6 +97,7 @@ String convertMedicineUsageUnit(String unit, bool plural) {
 }
 
 String periodConverter(String day, bool plural) {
+  Logger().d(day);
   switch (day) {
     case 'JOUR':
       return plural ? 'jours' : 'jour';
@@ -105,6 +108,6 @@ String periodConverter(String day, bool plural) {
     case 'ANNEE':
       return plural ? 'années' : 'année';
     default:
-      return 'jours';
+      return 'default';
   }
 }

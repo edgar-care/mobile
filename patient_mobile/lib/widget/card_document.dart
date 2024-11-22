@@ -384,7 +384,7 @@ class DeletePatient extends StatelessWidget {
           'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x_lg ,
+          BootstrapIcons.x_lg,
           color: AppColors.red700,
           size: 18,
         ),
@@ -394,18 +394,18 @@ class DeletePatient extends StatelessWidget {
         spacing: 12,
         children: [
           Buttons(
-              variant: Variant.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () async {
-                deleteDocument(id, context).then(
-                  (value) {
-                    updatedata();
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
+            variant: Variant.delete,
+            size: SizeButton.sm,
+            msg: const Text('Supprimer'),
+            onPressed: () async {
+              deleteDocument(id, context).then(
+                (value) {
+                  updatedata();
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
         ],
       ),
     );

@@ -854,11 +854,8 @@ class _AddDocumentState extends State<AddDocument> {
                 if (fileSelected != null && clicked == false) {
                   clicked = true;
                   postDocument(
-                    dropdownValue,
-                    dropdownValue2,
-                    fileSelected!,
-                    context
-                  ).then((value) {
+                          dropdownValue, dropdownValue2, fileSelected!, context)
+                      .then((value) {
                     clicked = false;
                     if (value == true) {
                       widget.updateData();

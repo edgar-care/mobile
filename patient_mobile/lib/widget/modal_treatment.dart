@@ -10,23 +10,20 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class ModalTreamentInfo extends StatefulWidget {
-  // Changement de StatelessWidget à StatefulWidget
-  const ModalTreamentInfo({super.key});
+  final List<Treatment> treatments;
+  const ModalTreamentInfo({super.key, required this.treatments});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ModalTreamentInfoState createState() =>
-      _ModalTreamentInfoState(); // Création de l'état
+  _ModalTreamentInfoState createState() => _ModalTreamentInfoState();
 }
 
 class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
-  // État associé
-  bool isDelete = false; // Déplacement de la variable ici
+  bool isDelete = false;
 
   List<Treatment> treatments = [
     Treatment(
       id: "1",
-      createdBy: "1",
       startDate: DateTime.now(),
       endDate: DateTime.now().add(Duration(days: 7)),
       medicines: [
@@ -62,7 +59,6 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
     ),
     Treatment(
       id: "2",
-      createdBy: "2",
       startDate: DateTime.now().subtract(Duration(days: 2)),
       endDate: DateTime.now().add(Duration(days: 3)),
       medicines: [
@@ -160,7 +156,6 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
         GestureDetector(
           onTap: () {
             setState(() {
-              // Appel à setState pour mettre à jour l'interface
               isDelete = !isDelete;
             });
           },
@@ -520,13 +515,25 @@ class _ModalInfoTreatmentState extends State<ModalInfoTreatment> {
             ),
             const SizedBox(width: 12),
             Text(
-              "Du ${DateFormat('dd/MM/yyyy').format(widget.treatment.startDate)} au ${DateFormat('dd/MM/yyyy').format(widget.treatment.endDate)}",
+              "Du ${DateFormat('dd/MM/yyyy').format(widget.treatment.startDate)}",
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'Poppins',
               ),
             ),
+            if (widget.treatment.endDate.millisecondsSinceEpoch != 0 &&
+                widget.treatment.endDate.millisecondsSinceEpoch >
+                    DateTime.now().millisecondsSinceEpoch) ...[
+              Text(
+                " au ${DateFormat('dd/MM/yyyy').format(widget.treatment.endDate)}",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                ),
+              )
+            ]
           ],
         ),
         const SizedBox(height: 8),
@@ -556,13 +563,18 @@ class CardMedicineInfo extends StatefulWidget {
 
 class _CardMedicineInfoState extends State<CardMedicineInfo> {
   String medicineName = "Médicament inconnu"; // Déplacement de la variable ici
-
+  String form = "forme inconnu";
   Future<bool> getMedicineName() async {
     final medicine = await getMedecineById(context, widget.medicine.medicineId);
     setState(() {
       medicineName = medicine['name'];
+      form = medicine['dosage_form'];
     });
     return true;
+  }
+
+  getMedicineForm(bool plural) {
+    return convertMedicineUsageUnit(form, plural);
   }
 
   @override
@@ -616,7 +628,7 @@ class _CardMedicineInfoState extends State<CardMedicineInfo> {
           for (final period in widget.medicine.period) ...[
             // Utilisation de widget.medicine
             Text(
-              "${period != widget.medicine.period.first ? 'Puis ' : ''}${period.quantity} ${period.frequency} fois tou${period.frequencyUnit == FrequencyUnit.JOUR || period.frequencyUnit == FrequencyUnit.MOIS ? 's' : 'tes'} les ${period.frequencyRatio > 1 ? "${period.frequencyRatio} " : ""}${periodConverter(period.frequencyUnit.toString(), true)} ${period.periodLength != null && period.periodUnit != null ? 'pendant ${period.periodLength} ${periodConverter(period.periodUnit.toString(), period.periodLength! > 1)}' : ""}",
+              "${period != period ? 'Puis ' : ''}${period.quantity} ${getMedicineForm(period.quantity > 1)} ${period.frequency} fois tou${period.frequencyUnit == FrequencyUnit.JOUR || period.frequencyUnit == FrequencyUnit.MOIS ? 's' : 'tes'} les ${period.frequencyRatio > 1 ? "${period.frequencyRatio} " : ""}${periodConverter(period.frequencyUnit.toString().substring(period.frequencyUnit.toString().indexOf('.') + 1), true)} ${period.periodLength != null && period.periodUnit != null ? 'pendant ${period.periodLength} ${periodConverter(period.periodUnit.toString().substring(period.periodUnit.toString().indexOf('.') + 1), period.periodLength! > 1)}' : ""}",
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
