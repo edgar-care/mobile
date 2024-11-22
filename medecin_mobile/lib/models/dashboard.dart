@@ -133,27 +133,25 @@ class _DashBoardState extends State<DashBoard> {
       onAskMobileConnection: (data) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
-        final model =
-          Provider.of<BottomSheetModel>(context, listen: false);
-      model.resetCurrentIndex();
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (context) {
-          return Consumer<BottomSheetModel>(
-            builder: (context, model, child) {
-              return ListModal(model: model, children: [
-                faWSModal(_webSocketService!, token!, data, context),
-              ]);
-            },
-          );
-        },
-      );
+        final model = Provider.of<BottomSheetModel>(context, listen: false);
+        model.resetCurrentIndex();
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) {
+            return Consumer<BottomSheetModel>(
+              builder: (context, model, child) {
+                return ListModal(model: model, children: [
+                  faWSModal(_webSocketService!, token!, data, context),
+                ]);
+              },
+            );
+          },
+        );
       },
 
-      onResponseMobileConnection: (data) {
-      },
+      onResponseMobileConnection: (data) {},
     );
     await _webSocketService?.connect();
     _webSocketService?.sendReadyAction();
@@ -193,8 +191,10 @@ class _DashBoardState extends State<DashBoard> {
       Services(
         tapped: _onItemTapped,
       ),
-      Patient(setPages: updateSelectedIndex,
-        setId: updateId,),
+      Patient(
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
       const Diagnostic(),
       ChatPageDashBoard(
           chats: chats,
@@ -258,15 +258,17 @@ class _DashBoardState extends State<DashBoard> {
   }
 }
 
-Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, BuildContext context) {
+Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data,
+    BuildContext context) {
   return ModalContainer(
     title: 'Tentative de connexion',
-    subtitle: 'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
+    subtitle:
+        'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
     icon: const Icon(
-        BootstrapIcons.shield_lock_fill,
-        color: AppColors.blue700,
-        size: 17,
-      ),
+      BootstrapIcons.shield_lock_fill,
+      color: AppColors.blue700,
+      size: 17,
+    ),
     footer: Column(
       children: [
         Buttons(
@@ -274,11 +276,7 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, B
           size: SizeButton.md,
           msg: const Text('Autoriser'),
           onPressed: () {
-            ws.responseMobileConnection(
-              token,
-              data['uuid'],
-              true
-            );
+            ws.responseMobileConnection(token, data['uuid'], true);
             Navigator.pop(context);
           },
         ),
@@ -288,11 +286,7 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data, B
           size: SizeButton.md,
           msg: const Text('Refuser'),
           onPressed: () {
-            ws.responseMobileConnection(
-              token,
-              data['uuid'],
-              false
-            );
+            ws.responseMobileConnection(token, data['uuid'], false);
             Navigator.pop(context);
           },
         ),

@@ -24,7 +24,7 @@ class _CustomListRdvState extends State<CustomListRdv> {
     var tempAp = await getAppointments(context);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].toString().isNotEmpty &&
-          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['health_method'] == "" &&
           tempAp[i]['start_date'] >=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         bAppointment.add(tempAp[i]);

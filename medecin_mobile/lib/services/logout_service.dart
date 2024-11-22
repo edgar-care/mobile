@@ -5,7 +5,5 @@ Future logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.remove("token");
   // ignore: use_build_context_synchronously
-  Navigator.pop(context);
-  // ignore: use_build_context_synchronously
-  Navigator.pop(context);
+  Navigator.popUntil(context, (route) => route.isFirst);
 }

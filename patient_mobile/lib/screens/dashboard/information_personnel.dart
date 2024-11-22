@@ -13,7 +13,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class InformationPersonnel extends StatefulWidget {
@@ -501,7 +500,6 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
         x++;
       }
     }
-    Logger().i(widget.infoMedical);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1074,7 +1072,6 @@ class PatientAdd3State extends State<PatientAdd3> {
 
   @override
   Widget build(BuildContext context) {
-    Logger().i(widget.tmpInfo);
     return ModalContainer(
       title: "Mise à jout des informations",
       subtitle: "Mettez à jour les informations du patient",

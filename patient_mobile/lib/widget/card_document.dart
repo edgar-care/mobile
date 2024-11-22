@@ -206,7 +206,11 @@ class _OpenPatientState extends State<OpenPatient> {
   Widget build(BuildContext context) {
     return ModalContainer(
       body: [
-        Text(widget.name, style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),),
+        Text(
+          widget.name,
+          style: const TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 4),
         Container(
           color: AppColors.blue100,
@@ -372,7 +376,8 @@ class DeletePatient extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalContainer(
       title: "Supprimer votre document",
-      subtitle: 'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
+      subtitle:
+          'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.x,

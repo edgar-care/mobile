@@ -327,8 +327,11 @@ Widget modal2FAEmail(
                   builder: (context) {
                     return Consumer<BottomSheetModel>(
                       builder: (context, model, child) {
-                        return ListModal(
-                            model: model, children: [ModalBackupEmail(load2fa: load2fa,)]);
+                        return ListModal(model: model, children: [
+                          ModalBackupEmail(
+                            load2fa: load2fa,
+                          )
+                        ]);
                       },
                     );
                   },
@@ -508,7 +511,7 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
               msg: const Text('Activer l\'authentification'),
               onPressed: () {
                 enable2FAMobile(devices[selected]['id'], context).then((value) {
-                widget.load2fa();
+                  widget.load2fa();
                   if (widget.secret != true) {
                     Navigator.pop(context);
                     final model =
@@ -522,7 +525,9 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                         return Consumer<BottomSheetModel>(
                           builder: (context, model, child) {
                             return ListModal(model: model, children: [
-                              ModalEdgarApp2(load2fa: widget.load2fa,),
+                              ModalEdgarApp2(
+                                load2fa: widget.load2fa,
+                              ),
                             ]);
                           },
                         );
@@ -952,14 +957,16 @@ class _ModalTrustDevicesState extends State<ModalTrustDevices> {
                                       DateFormat('dd/MM/yyyy').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               devices[index]['date'] * 1000)),
-                                      devicesFormatTime(devices[index]['date'] * 1000),
+                                      devicesFormatTime(
+                                          devices[index]['date'] * 1000),
                                       devices[index]['id'],
                                       devices[index]['type'] == 'iPhone' ||
                                               devices[index]['type'] ==
                                                   'Android'
                                           ? 'PHONE'
                                           : 'PC',
-                                      context, widget.load2fa)
+                                      context,
+                                      widget.load2fa)
                                 ]);
                               },
                             );
@@ -1367,15 +1374,11 @@ class ModalTierApp2 extends StatefulWidget {
 class _ModalTierApp2State extends State<ModalTierApp2> {
   String _code = '';
 
-  void setCode(String action, String code) {
+  void setCode(String action, String cod) {
     if (action == 'ADD') {
-      setState(() {
-        _code += code;
-      });
+      _code += cod;
     } else if (action == 'DELETE') {
-      setState(() {
-        _code = _code.substring(0, _code.length - 1);
-      });
+      _code = _code.substring(0, _code.length - 1);
     }
   }
 
@@ -1422,7 +1425,9 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                           return Consumer<BottomSheetModel>(
                             builder: (context, model, child) {
                               return ListModal(model: model, children: [
-                                ModalBackupTierApp(load2fa: widget.load2fa,),
+                                ModalBackupTierApp(
+                                  load2fa: widget.load2fa,
+                                ),
                               ]);
                             },
                           );
@@ -1430,14 +1435,14 @@ class _ModalTierApp2State extends State<ModalTierApp2> {
                       );
                     } else {
                       Navigator.pop(context);
+                      TopSuccessSnackBar(
+                        message: 'La double authentification est activée',
+                      ).show(context);
                     }
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      ErrorSnackBar(
-                        message: 'Le code est incorrect',
-                        context: context,
-                      ),
-                    );
+                    TopErrorSnackBar(
+                      message: 'Code incorrect',
+                    ).show(context);
                   }
                 });
               },
@@ -1659,8 +1664,8 @@ Widget modalDesactivateTierApp(BuildContext context, Function load2fa) {
   );
 }
 
-Widget modalInfoTrustDevices(String name, String date, String location, String id,
-    String type, BuildContext context, Function load2fa) {
+Widget modalInfoTrustDevices(String name, String date, String location,
+    String id, String type, BuildContext context, Function load2fa) {
   return ModalContainer(
       title: name,
       subtitle: 'Connecté à votre compte edgar.',

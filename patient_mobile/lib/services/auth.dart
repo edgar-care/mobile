@@ -68,7 +68,7 @@ Future<List<dynamic>> login(
         Navigator.pushNamed(context, '/dashboard');
         return [];
       } else {
-        return response['2fa_methods'];
+        return response['Methods'];
       }
     }
 
@@ -124,7 +124,7 @@ Future<void> checkEmailCode(
   try {
     final response = await httpRequest(
       type: RequestType.post,
-      endpoint: '/auth/email_2fa',
+      endpoint: 'auth/p/email_2fa',
       needsToken: false,
       body: {'email': email, 'password': password, 'token_2fa': code},
       context: context,
@@ -152,7 +152,7 @@ Future<void> checkBackUpCode(
   try {
     final response = await httpRequest(
       type: RequestType.post,
-      endpoint: '/auth/backup_code_2fa',
+      endpoint: 'auth/p/backup_code_2fa',
       needsToken: false,
       body: {'email': email, 'password': password, 'backup_code': code},
       context: context,
@@ -180,7 +180,7 @@ Future<void> checkThirdPartyCode(
   try {
     final response = await httpRequest(
         type: RequestType.post,
-        endpoint: '/auth/third_party_2fa',
+        endpoint: 'auth/p/third_party_2fa',
         needsToken: false,
         body: {'email': email, 'password': password, 'token_2fa': code},
         context: context);

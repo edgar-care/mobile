@@ -17,6 +17,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   String newPassword = '';
   String repeatPassword = '';
   String actualPassword = '';
+
   List<dynamic> devices = [];
   @override
   void initState() {

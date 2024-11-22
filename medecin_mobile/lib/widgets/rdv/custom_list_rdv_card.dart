@@ -117,17 +117,19 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   Widget updateAppointmentModal(BuildContext context,
       Map<String, dynamic> rdvInfo, Function updateAppointment) {
     return ModalContainer(
-      title: "",
-      subtitle: "",
+      title: "Modifier le rendez-vous",
+      subtitle: "Modifier les informations du rendez-vous",
       icon: const IconModal(
-        type: ModalType.success,
+        type: ModalType.info,
         icon: Icon(
           BootstrapIcons.pen_fill,
-          color: AppColors.grey600,
+          color: AppColors.blue700,
           size: 18,
         ),
       ),
-      body: [ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment)],
+      body: [
+        ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment),
+      ],
     );
   }
 

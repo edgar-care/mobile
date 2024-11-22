@@ -294,7 +294,7 @@ class _PatientPageState extends State<PatientPage> {
                                               context: context,
                                               tmpInfo: tmpInfo),
                                           PatientAdd3(
-                                            updateData: updateData,
+                                              updateData: updateData,
                                               model: model,
                                               context: context,
                                               traitments: tmpTraitments,
@@ -380,7 +380,7 @@ class _PatientPageState extends State<PatientPage> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );
