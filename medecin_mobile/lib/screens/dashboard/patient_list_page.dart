@@ -286,53 +286,54 @@ class _PatientPageState extends State<PatientPage> {
                           const SizedBox(
                             height: 12,
                           ),
-                          if (patientInfo['medical_antecedents'].isNotEmpty)
+                          if (patientInfo['medical_antecedents'].isNotEmpty) ... [
                            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              runAlignment: WrapAlignment.start,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              children: [
-                for (var treatment in patientInfo['medical_antecedents'])
-                  IntrinsicWidth(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (treatment['medicines'] != null) {
-                          final model = Provider.of<BottomSheetModel>(context,
-                              listen: false);
-                          model.resetCurrentIndex();
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                runAlignment: WrapAlignment.start,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                children: [
+                                  for (var treatment in patientInfo['medical_antecedents'])
+                                    IntrinsicWidth(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (treatment['medicines'] != null) {
+                                            final model = Provider.of<BottomSheetModel>(context,
+                                                listen: false);
+                                            model.resetCurrentIndex();
 
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) {
-                              return Consumer<BottomSheetModel>(
-                                builder: (context, model, child) {
-                                  return ListModal(
-                                    model: model,
-                                    children: [
-                                      ModalInfoAntecedent(medicalAntecedent: treatment)
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: CardTraitementSmall(
-                        name: treatment['name'],
-                        isEnCours:
-                            treatment['medicines'] == null ? false : true,
-                        onTap: () {},
-                        withDelete: false,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              backgroundColor: Colors.transparent,
+                                              builder: (context) {
+                                                return Consumer<BottomSheetModel>(
+                                                  builder: (context, model, child) {
+                                                    return ListModal(
+                                                      model: model,
+                                                      children: [
+                                                        ModalInfoAntecedent(medicalAntecedent: treatment)
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: CardTraitementSmall(
+                                          name: treatment['name'],
+                                          isEnCours:
+                                              treatment['medicines'] == null ? false : true,
+                                          onTap: () {},
+                                          withDelete: false,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                          ],
                           const SizedBox(
                             height: 16,
                           ),
@@ -631,7 +632,7 @@ class _PatientPageState extends State<PatientPage> {
             CustomDatePiker(
               onChanged: (value) => info['date_de_naissance'] = value,
               endDate: DateTime.now(),
-              label: info['date_de_naissance'],
+              placeholder: info['date_de_naissance'],
             ),
             const SizedBox(
               height: 16,
