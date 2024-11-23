@@ -654,7 +654,6 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
         const SizedBox(height: 12),
         SizedBox(
             height: MediaQuery.of(context).size.height / 3,
-            child: Expanded(
               child: ListView.separated(
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
@@ -670,7 +669,7 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
                   );
                 },
               ),
-            ))
+            )
       ],
       footer: Column(
         children: [
@@ -926,8 +925,7 @@ class _UpdateTreatmentState extends State<UpdateTreatment> {
         const SizedBox(height: 12),
         SizedBox(
             height: MediaQuery.of(context).size.height / 3,
-            child: Expanded(
-              child: ListView.separated(
+            child: ListView.separated(
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
                 itemCount: widget.treatment.medicines.length,
@@ -942,7 +940,7 @@ class _UpdateTreatmentState extends State<UpdateTreatment> {
                   );
                 },
               ),
-            ))
+            )
       ],
       footer: Column(
         children: [

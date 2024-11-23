@@ -543,6 +543,11 @@ class SubMenuMedicalFolder extends StatelessWidget {
           height: 1,
         ),
         NavbarPLusTab(
+          icon: const Icon(
+            BootstrapIcons.pen_fill,
+            color: AppColors.blue800,
+            size: 16,
+          ),
           title: "Modifier mon sujet de santé",
           onTap: () {
             final model =
@@ -581,15 +586,32 @@ class SubMenuMedicalFolder extends StatelessWidget {
           title: 'Supprimer mon sujet de santé',
           color: AppColors.red700,
           onTap: () {
+            final model =
+              Provider.of<BottomSheetModel>(
+                  context,
+                  listen: false);
+            model.resetCurrentIndex();
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              backgroundColor: Colors.transparent,
+              backgroundColor:
+                  Colors.transparent,
               builder: (context) {
-                return DeleteAntecedentModal(
-                  deleteAntecedent: deleteAntecedent,
-                  refresh: refresh,
-                  antecedentName: medicalAntecedent['name'],
+                return Consumer<
+                    BottomSheetModel>(
+                  builder: (context, model,
+                      child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        DeleteAntecedentModal(
+                          deleteAntecedent: deleteAntecedent,
+                          refresh: refresh,
+                          antecedentName: medicalAntecedent['name'],
+                        )
+                      ],
+                    );
+                  },
                 );
               },
             );
@@ -615,6 +637,14 @@ class UpdateAntecedentNameModal extends StatelessWidget {
   Widget build(BuildContext context) {
     String antecedentName = startName;
     return ModalContainer(
+      icon: IconModal(
+        icon: Icon(
+          BootstrapIcons.capsule_pill,
+          color: AppColors.blue700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
       title: "Modifier un sujet de santé",
       subtitle: "Renseigner les informations de votre sujet de santé.",
       body: [
