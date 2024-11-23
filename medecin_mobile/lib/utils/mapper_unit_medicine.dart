@@ -1,3 +1,18 @@
+String periodConvertertoBack(String day) {
+  switch (day) {
+    case 'Jours':
+      return 'JOUR';
+    case 'Semaines':
+      return 'SEMAINE';
+    case 'Mois':
+      return 'MOIS';
+    case 'Années':
+      return 'ANNEES';
+    default:
+      return 'jour';
+  }
+}
+
 String convertMedicineUnit(String unit) {
   switch (unit) {
     case 'CREME':
@@ -94,17 +109,17 @@ String convertMedicineUsageUnit(String unit, bool plural) {
   }
 }
 
-String periodConverter(String day) {
+String periodConverter(String day, bool plural) {
   switch (day) {
-    case 'Jours':
-      return 'JOUR';
-    case 'Semaines':
-      return 'SEMAINE';
-    case 'Mois':
-      return 'MOIS';
-    case 'Années':
-      return 'ANNEES';
+    case 'JOUR':
+      return plural ? 'jours' : 'jour';
+    case 'SEMAINE':
+      return plural ? 'semaines' : 'semaine';
+    case 'MOIS':
+      return 'mois';
+    case 'ANNEE':
+      return plural ? 'années' : 'année';
     default:
-      return 'jour';
+      return 'default';
   }
 }

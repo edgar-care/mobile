@@ -10,7 +10,7 @@ import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
+import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -827,12 +827,22 @@ class _ModalMedicFolderState extends State<ModalMedicFolder> {
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500)),
             if (widget.patientInfo['medical_antecedents'].isNotEmpty)
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 32,
-                child: PatientInfoCard(
-                    context: context,
-                    tmpTraitments: widget.patientInfo['medical_antecedents']),
-              )
+              Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              runAlignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                for (var treatment in widget.patientInfo['medical_antecedents'])
+                  CardTraitementSmall(
+                        name: treatment['name'],
+                        isEnCours:
+                            treatment['medicines'] == null ? false : true,
+                        onTap: () {},
+                        withDelete: false,
+                      ),
+              ],
+            ),
           ],
         ),
       ],

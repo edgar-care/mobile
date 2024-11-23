@@ -408,16 +408,16 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
                   prescription.add({
                     "medicine_id": medicineList[i].medicineId,
                     "qsp": medicineList[i].qsp,
-                    "qsp_unit": periodConverter(medicineList[i].qspUnit),
+                    "qsp_unit": periodConvertertoBack(medicineList[i].qspUnit),
                     "comment": medicineList[i].comment,
                     "periods": medicineList[i].periods
                         .map((e) => {
                               "quantity": e.quantity,
                               "frequency": e.frequency,
                               "frequency_ratio": e.frequencyRatio,
-                              "frequency_unit": periodConverter(e.frequencyUnit),
+                              "frequency_unit": periodConvertertoBack(e.frequencyUnit),
                               "period_length": e.periodLength,
-                              "period_unit": periodConverter(e.periodUnit),
+                              "period_unit": periodConvertertoBack(e.periodUnit),
                             })
                         .toList()
                   });
