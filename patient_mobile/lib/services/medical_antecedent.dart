@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_app/services/request.dart';
-import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getMedicalAntecedent(
     BuildContext context) async {
@@ -10,8 +9,6 @@ Future<List<Map<String, dynamic>>> getMedicalAntecedent(
     endpoint: '/dashboard/medical-antecedent',
     needsToken: true,
   );
-
-  Logger().d(response);
 
   if (response != null) {
     return [

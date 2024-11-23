@@ -142,10 +142,11 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> getTraitement() {
     List<Map<String, dynamic>> traitements = [];
     for (var disease in medicalAntecedent) {
+      Logger().d(disease);
       for (var treatment in disease["treatments"]) {
-        if (treatment["endDate"] == null ||
-            treatment["endDate"] == 0 ||
-            treatment["endDate"] >
+        if (treatment["end_date"] == null ||
+            treatment["end_date"] == 0 ||
+            treatment["end_date"] >
                 DateTime.now().millisecondsSinceEpoch) {
           traitements.add({
             'medId': disease["id"],
