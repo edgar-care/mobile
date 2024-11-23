@@ -718,40 +718,40 @@ class _Onboarding3State extends State<Onboarding3> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 48),
-                child: Row(
-                  children: [
-                    Flexible(
-                        child: Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue700,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    )),
-                    const SizedBox(width: 8),
-                    Flexible(
-                        child: Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue700,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    )),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Container(
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.blue700,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 48),
+              //   child: Row(
+              //     children: [
+              //       Flexible(
+              //           child: Container(
+              //         height: 8,
+              //         decoration: BoxDecoration(
+              //           color: AppColors.blue700,
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //       )),
+              //       const SizedBox(width: 8),
+              //       Flexible(
+              //           child: Container(
+              //         height: 8,
+              //         decoration: BoxDecoration(
+              //           color: AppColors.blue700,
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //       )),
+              //       const SizedBox(width: 8),
+              //       Flexible(
+              //         child: Container(
+              //           height: 8,
+              //           decoration: BoxDecoration(
+              //             color: AppColors.blue700,
+              //             borderRadius: BorderRadius.circular(8),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 32),
               const Text(
                 "Vos antécédents médicaux et sujets de santé",
@@ -825,98 +825,76 @@ class _Onboarding3State extends State<Onboarding3> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.429,
-                child: FutureBuilder(
-                  future: Future.delayed(const Duration(seconds: 0), () {
-                    return true;
-                  }),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Expanded(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            backgroundColor: AppColors.white,
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Erreur: ${snapshot.error}');
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: [
-                            if (medicalAntecedents.isNotEmpty)
-                              for (var i = 0; i < medicalAntecedents.length; i++)
-                                if (i < 3)
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return IntrinsicWidth(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            if (medicalAntecedents.isNotEmpty) {
-                                              final model =
-                                                  Provider.of<BottomSheetModel>(
-                                                      context,
-                                                      listen: false);
-                                              model.resetCurrentIndex();
-                                              showModalBottomSheet(
-                                                context: context,
-                                                isScrollControlled: true,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                builder: (context) {
-                                                  return Consumer<
-                                                      BottomSheetModel>(
-                                                    builder: (context, model,
-                                                        child) {
-                                                      return ListModal(
-                                                        model: model,
-                                                        children: [
-                                                          SubMenu(medicalAntecedent: medicalAntecedents[i],
-                                                            deleteAntecedent: (){
-                                                              setState(() {
-                                                                medicalAntecedents.removeAt(i);
-                                                              });
-                                                            },
-                                                            refresh: (){
-                                                              setState(() {
-                                                                medicalAntecedents = medicalAntecedents;
-                                                              });
-                                                            },
-                                                          ),                                                         
-                                                        ],
-                                                      );
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    if (medicalAntecedents.isNotEmpty)
+                      for (var i = 0; i < medicalAntecedents.length; i++)
+                        if (i < 3)
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return IntrinsicWidth(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (medicalAntecedents.isNotEmpty) {
+                                      final model =
+                                          Provider.of<BottomSheetModel>(
+                                              context,
+                                              listen: false);
+                                      model.resetCurrentIndex();
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor:
+                                            Colors.transparent,
+                                        builder: (context) {
+                                          return Consumer<
+                                              BottomSheetModel>(
+                                            builder: (context, model,
+                                                child) {
+                                              return ListModal(
+                                                model: model,
+                                                children: [
+                                                  SubMenu(medicalAntecedent: medicalAntecedents[i],
+                                                    deleteAntecedent: (){
+                                                      setState(() {
+                                                        medicalAntecedents.removeAt(i);
+                                                      });
                                                     },
-                                                  );
-                                                },
+                                                    refresh: (){
+                                                      setState(() {
+                                                        medicalAntecedents = medicalAntecedents;
+                                                      });
+                                                    },
+                                                  ),                                                         
+                                                ],
                                               );
-                                            }
-                                          },
-                                          child: CardTraitementSmall(
-                                            name: medicalAntecedents[i]['name'],
-                                            isEnCours: medicalAntecedents[i]
-                                                        ['treatments']
-                                                    .isEmpty
-                                                ? false
-                                                : true,
-                                          ),
-                                        ),
+                                            },
+                                          );
+                                        },
                                       );
-                                    },
+                                    }
+                                  },
+                                  child: CardTraitementSmall(
+                                    name: medicalAntecedents[i]['name'],
+                                    isEnCours: medicalAntecedents[i]
+                                                ['treatments']
+                                            .isEmpty
+                                        ? false
+                                        : true,
                                   ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                                ),
+                              );
+                            },
+                          ),
+                  ],
                 ),
               ),
+              const Spacer(),
               const SizedBox(height: 16),
               Buttons(
                 variant: Variant.primary,

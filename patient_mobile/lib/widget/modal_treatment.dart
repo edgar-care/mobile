@@ -407,7 +407,6 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
         const SizedBox(height: 12),
         SizedBox(
             height: MediaQuery.of(context).size.height / 3,
-            child: Expanded(
               child: ListView.separated(
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
@@ -423,7 +422,7 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
                   );
                 },
               ),
-            ))
+            )
       ],
       footer: Column(
         children: [
