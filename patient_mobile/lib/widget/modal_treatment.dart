@@ -1,17 +1,19 @@
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_app/services/medecine.dart';
 import 'package:edgar_app/utils/mapper_unit_medicine.dart';
 import 'package:edgar_app/utils/treatement_utils.dart';
+import 'package:edgar_app/widget/card_traitement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ModalTreamentInfo extends StatefulWidget {
-  final List<Treatment> treatments;
-  const ModalTreamentInfo({super.key, required this.treatments});
+  final Function addMedicalAntecedents;
+  const ModalTreamentInfo({super.key, required this.addMedicalAntecedents});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -21,88 +23,16 @@ class ModalTreamentInfo extends StatefulWidget {
 class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
   bool isDelete = false;
 
-  List<Treatment> treatments = [
-    Treatment(
-      id: "1",
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(days: 7)),
-      medicines: [
-        Medicine(
-          medicineId: "66ddb27b87cda8934bb5bcf6",
-          comment: "Comment",
-          period: [
-            Period(
-              quantity: 2,
-              frequency: 1,
-              frequencyRatio: 2,
-              frequencyUnit: FrequencyUnit.JOUR,
-              periodLength: 3,
-              periodUnit: PeriodUnit.SEMAINE,
-            ),
-          ],
-        ),
-        Medicine(
-          medicineId: "66ddb27b87cda8934bb5bcf6",
-          comment: "Comment",
-          period: [
-            Period(
-              quantity: 2,
-              frequency: 1,
-              frequencyRatio: 2,
-              frequencyUnit: FrequencyUnit.JOUR,
-              periodLength: 3,
-              periodUnit: PeriodUnit.SEMAINE,
-            ),
-          ],
-        ),
-      ],
-    ),
-    Treatment(
-      id: "2",
-      startDate: DateTime.now().subtract(Duration(days: 2)),
-      endDate: DateTime.now().add(Duration(days: 3)),
-      medicines: [
-        Medicine(
-          medicineId: "66ddb27b87cda8934bb5bcf6",
-          comment: "Coucou",
-          period: [
-            Period(
-              quantity: 2,
-              frequency: 1,
-              frequencyRatio: 2,
-              frequencyUnit: FrequencyUnit.JOUR,
-              periodLength: 3,
-              periodUnit: PeriodUnit.SEMAINE,
-            ),
-          ],
-        ),
-        Medicine(
-          medicineId: "66ddb27b87cda8934bb5bcf6",
-          comment: "Coucou",
-          period: [
-            Period(
-              quantity: 2,
-              frequency: 1,
-              frequencyRatio: 2,
-              frequencyUnit: FrequencyUnit.JOUR,
-              periodLength: 3,
-              periodUnit: PeriodUnit.SEMAINE,
-            ),
-            Period(
-              quantity: 4,
-              frequency: 2,
-              frequencyRatio: 1,
-              frequencyUnit: FrequencyUnit.MOIS,
-              periodLength: 3,
-              periodUnit: PeriodUnit.MOIS,
-            ),
-          ],
-        ),
-      ],
-    ),
-  ];
-
   String nameTreatment = "";
+
+
+  void addTreatment(Treatment treatment) {
+    setState(() {
+      traitements.add(treatment);
+    });
+  }
+
+  List<Treatment> traitements = [];
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +63,30 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+             final model =
+                Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        AddTreatmentModal(
+                          addTreatment: addTreatment,
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
           child: Row(
             children: [
               Text(
@@ -206,13 +159,13 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
                 ),
         ),
         const SizedBox(height: 12),
-        for (final treatment in treatments) ...[
+        for (final treatment in traitements) ...[
           CardTreatmentAdd(
             treatment: treatment,
             isDelete: isDelete,
             onDelete: () {
               setState(() {
-                treatments.remove(treatment);
+                traitements.remove(treatment);
               });
             },
           ),
@@ -224,7 +177,9 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
               variant: Variant.deleteBordered,
               size: SizeButton.sm,
               msg: Text("Supprimer les traitements"),
-              onPressed: () {}),
+              onPressed: () {
+                
+              }),
         ]
       ],
       footer: Column(
@@ -234,7 +189,12 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
             size: SizeButton.md,
             msg: Text("Ajouter le sujet de santé"),
             onPressed: () {
-              Logger().i(nameTreatment);
+              if (nameTreatment.isNotEmpty && traitements.isNotEmpty) {
+                widget.addMedicalAntecedents(nameTreatment, traitements);
+                Navigator.pop(context);
+              }else{
+                TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+              }
             },
           ),
           const SizedBox(height: 8),
@@ -242,6 +202,243 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
             variant: Variant.secondary,
             size: SizeButton.md,
             msg: Text("Revenir en arrière"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AddTreatmentModal extends StatefulWidget {
+  final Function addTreatment;
+  const AddTreatmentModal({super.key, required this.addTreatment});
+
+  @override
+  State<AddTreatmentModal> createState() => _AddTreatmentModalState();
+}
+
+class _AddTreatmentModalState extends State<AddTreatmentModal> {
+  Treatment traitement = Treatment(
+    startDate: DateTime.fromMillisecondsSinceEpoch(0),
+    endDate: DateTime.fromMillisecondsSinceEpoch(0),
+    medicines: [],
+  );
+
+  List<Map<String, dynamic>> medicalAntecedent = [];
+  List<String> medId = [];
+  String dosageform = '';
+  List<Map<String, dynamic>> medicines = [];
+  List<String> medicinesSuggestion = [];
+  @override
+  void initState() {
+    super.initState();
+    loadInfo();
+  }
+
+  Future<void> loadInfo() async {
+    await getMedecines(context).then((value) {
+      medicines = value;
+    });
+    for (int i = 0; i < medicines.length; i++) {
+      medicinesSuggestion.add(
+          "${medicines[i]['name']} - ${convertMedicineUnit(medicines[i]['dosage_form'])}");
+    }
+  }
+
+  getMedicineName(String id) {
+    for (int i = 0; i < medicines.length; i++) {
+      if (medicines[i]['id'] == id) {
+        return "${medicines[i]['name']}";
+      }
+    }
+    return '';
+  }
+
+
+  void addMedicine(String id) {
+    setState(() {
+      traitement.medicines.add(Medicine(
+        medicineId: id,
+        comment: "",
+        period: [
+          Period(
+            quantity: 1,
+            frequency: 1,
+            frequencyRatio: 1,
+            frequencyUnit: FrequencyUnit.JOUR,
+            periodLength: 1,
+            periodUnit: PeriodUnit.JOUR,
+          )
+        ],
+      ));
+    });
+  }
+
+  void removeMedicine(int index) {
+    setState(() {
+      traitement.medicines.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      icon: IconModal(
+        icon: Icon(
+          BootstrapIcons.bandaid_fill,
+          color: AppColors.blue700,
+          size: 18,
+        ),
+        type: ModalType.info,
+      ),
+      title: 'Ajouter un traitement',
+      subtitle: 'Renseigner les informations de votre traitement.',
+      body: [
+        Row(children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Date de début',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width / 2 - 38,
+                  child: CustomDatePiker(
+                    placeholder: '26/09/2022',
+                    onChanged: (value) {
+                      setState(() {
+                        if (value.length == 10 &&
+                            value[2] == '/' &&
+                            value[5] == '/') {
+                          traitement.startDate = DateTime(
+                              int.parse(value.substring(6)),
+                              int.parse(value.substring(3, 5)),
+                              int.parse(value.substring(0, 2)));
+                        } else {}
+                      });
+                    },
+                  )),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Date de fin',
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    '(optionnel)',
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width / 2 - 38,
+                  child: CustomDatePiker(
+                    placeholder: '26/09/2022',
+                    onChanged: (value) {
+                      setState(() {
+                        if (value.length == 10 &&
+                            value[2] == '/' &&
+                            value[5] == '/') {
+                          traitement.startDate = DateTime(
+                              int.parse(value.substring(6)),
+                              int.parse(value.substring(3, 5)),
+                              int.parse(value.substring(0, 2)));
+                        } else {}
+                      });
+                    },
+                  )),
+            ],
+          )
+        ]),
+        const SizedBox(height: 12),
+        CustomAutoComplete(
+            label: 'Nom du médicament',
+            icon: BootstrapIcons.search,
+            keyboardType: TextInputType.text,
+            onValidate: (value) {
+              for (int i = 0; i < medicines.length; i++) {
+                if ("${medicines[i]['name']} - ${convertMedicineUnit(medicines[i]['dosage_form'])}" ==
+                    value) {
+                  dosageform = convertMedicineUnit(medicines[i]['dosage_form']);
+                  addMedicine(medicines[i]['id']);
+                }
+              }
+            },
+            suggestions: medicinesSuggestion),
+        const SizedBox(height: 12),
+        SizedBox(
+            height: MediaQuery.of(context).size.height / 3,
+            child: Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
+                itemCount: traitement.medicines.length,
+                itemBuilder: (context, index) {
+                  return TreatementCard(
+                    index: index,
+                    medicine: traitement.medicines[index],
+                    dosageForm: dosageform,
+                    medicineName: getMedicineName(
+                        traitement.medicines[index].medicineId),
+                    removeMedicine: removeMedicine,
+                  );
+                },
+              ),
+            ))
+      ],
+      footer: Column(
+        children: [
+          Buttons(
+            variant: Variant.primary,
+            size: SizeButton.md,
+            msg: const Text(
+              'Ajouter le traitement',
+              style: TextStyle(color: AppColors.white),
+            ),
+            onPressed: () {
+              if(traitement.medicines.isNotEmpty && traitement.startDate != DateTime.fromMillisecondsSinceEpoch(0)){
+                for(var medicine in traitement.medicines){
+                  if(medicine.comment.isEmpty || medicine.period.isEmpty || medicine.medicineId.isEmpty ){
+                    TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+                    return;
+                  }
+                }
+                widget.addTreatment(traitement);
+                Navigator.pop(context);
+              }else{
+                TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+              }
+            }
+          ),
+          const SizedBox(height: 8),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.md,
+            msg: const Text(
+              'Annuler',
+              style: TextStyle(color: AppColors.white),
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -479,6 +676,42 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
                 color: AppColors.white,
               )
             : null,
+      ),
+    );
+  }
+}
+
+class ModalInfoAntecedent extends StatefulWidget {
+  final Map<String, dynamic> medicalAntecedent;
+  const ModalInfoAntecedent({super.key, required this.medicalAntecedent});
+
+  @override
+  State<ModalInfoAntecedent> createState() => _ModalInfoAntecedentState();
+}
+
+class _ModalInfoAntecedentState extends State<ModalInfoAntecedent> {
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      icon: IconModal(
+        icon: Icon(BootstrapIcons.capsule_pill, color: AppColors.blue700,size: 18,),
+        type: ModalType.info,
+      ),
+      title: "Informations de votre sujet de santé",
+      subtitle: "Vos traitements pour votre sujet de santé: ${widget.medicalAntecedent['name']}",
+      body: [
+        for (final treatment in widget.medicalAntecedent['treatments']) ...[
+          CardTreatmentAdd(
+            treatment: treatment,
+          ),
+          const SizedBox(height: 4),
+        ],
+      ],
+      footer: Buttons(
+        variant: Variant.secondary,
+        size: SizeButton.md,
+        msg: Text("Revenir en arrière"),
+        onPressed: () => Navigator.pop(context),
       ),
     );
   }

@@ -11,7 +11,7 @@ class Treatment {
   List<Medicine> medicines;
 
   Treatment({
-    required this.id,
+    this.id = "0",
     required this.startDate,
     required this.endDate,
     required this.medicines,
@@ -28,7 +28,6 @@ class Treatment {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
         'start_date': startDate,
         'end_date': endDate,
         'medicines': medicines.map((x) => x.toJson()).toList(),

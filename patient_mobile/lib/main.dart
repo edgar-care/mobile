@@ -149,7 +149,7 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.blue,
           useMaterial3: true,
           fontFamily: 'Raleway'),
-      initialRoute: "/",
+      initialRoute: "/onboarding",
       routes: {
         '/': (context) => const ConnexionPage(),
         '/warning': (context) => const WarningPage(),

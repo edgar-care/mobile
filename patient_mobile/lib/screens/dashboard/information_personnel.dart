@@ -604,8 +604,6 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                         name: treatment['name'],
                         isEnCours:
                             treatment['medicines'] == null ? false : true,
-                        onTap: () {},
-                        withDelete: false,
                       ),
                     ),
                   ),
@@ -1268,15 +1266,6 @@ class PatientAdd3State extends State<PatientAdd3> {
                                               .isEmpty
                                           ? false
                                           : true,
-                                      onTap: () {
-                                        setState(
-                                          () {
-                                            widget
-                                                .tmpInfo['medical_antecedents']
-                                                .removeAt(i);
-                                          },
-                                        );
-                                      },
                                     ),
                                   ),
                                 );

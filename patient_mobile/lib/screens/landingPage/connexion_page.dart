@@ -22,7 +22,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
   @override
   void initState() {
     super.initState();
-    checkToken();
+    //checkToken();
   }
 
   void checkToken() async {
