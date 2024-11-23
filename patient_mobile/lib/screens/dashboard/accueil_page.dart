@@ -177,7 +177,6 @@ class _HomePageState extends State<HomePage> {
         } else {
           Map<String, dynamic>? nextAppointment = getNextAppointment();  
           List<Map<String, dynamic>> traitements = getTraitement();
-          Logger().d(traitements);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

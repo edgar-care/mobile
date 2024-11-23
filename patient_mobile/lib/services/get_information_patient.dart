@@ -9,6 +9,7 @@ Future<Map<String, dynamic>> getMedicalFolder(BuildContext context) async {
     context: context,
     needsToken: true,
   );
+
   if (response != null) {
     return response['medical_folder'];
   } else {

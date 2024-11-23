@@ -25,6 +25,7 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
 
   String nameTreatment = "";
 
+  List<Treatment> deleteList = [];
 
   void addTreatment(Treatment treatment) {
     setState(() {
@@ -161,12 +162,24 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
         const SizedBox(height: 12),
         for (final treatment in traitements) ...[
           CardTreatmentAdd(
+            removeDeleteList: () {
+              setState(() {
+                deleteList.remove(treatment);
+              });
+            },
+            addDeleteList: () {
+              setState(() {
+                deleteList.add(treatment);
+              });
+            },
+            antecedentName: nameTreatment,
             treatment: treatment,
             isDelete: isDelete,
             onDelete: () {
               setState(() {
                 traitements.remove(treatment);
               });
+            
             },
           ),
           const SizedBox(height: 4),
@@ -178,7 +191,12 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
               size: SizeButton.sm,
               msg: Text("Supprimer les traitements"),
               onPressed: () {
-                
+                for (final id in deleteList) {
+                  setState(() {
+                    traitements.remove(id);
+                  });
+                }
+                isDelete = false;
               }),
         ]
       ],
@@ -451,14 +469,19 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
 
 class CardTreatmentAdd extends StatefulWidget {
   final Treatment treatment;
+  final String antecedentName;
   final bool isDelete;
   final VoidCallback? onDelete;
-
+  final Function? addDeleteList;
+  final Function? removeDeleteList;
   const CardTreatmentAdd({
     super.key,
     required this.treatment,
     this.isDelete = false,
+    required this.antecedentName,
     this.onDelete,
+    this.addDeleteList,
+    this.removeDeleteList,
   });
 
   @override
@@ -519,7 +542,6 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
               final model =
                   Provider.of<BottomSheetModel>(context, listen: false);
               model.resetCurrentIndex();
-
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -532,7 +554,7 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
                         children: [
                           ModalInfoTreatment(
                             treatment: widget.treatment,
-                            medicalAntecedentName: "Test",
+                            medicalAntecedentName: widget.antecedentName,
                           ),
                         ],
                       );
@@ -555,7 +577,13 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
                 validate: _isChecked,
                 onChanged: () {
                   setState(() {
-                    _isChecked = !_isChecked;
+                    if (_isChecked) {
+                      widget.removeDeleteList!();
+                      _isChecked = false;
+                    } else {
+                      widget.addDeleteList!();
+                      _isChecked = true;
+                    }
                   });
                 },
               ),
@@ -577,6 +605,7 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
                           fontFamily: 'Poppins',
                         ),
                       ),
+                      if(widget.treatment.endDate != DateTime.fromMillisecondsSinceEpoch(0)) ...[
                       const SizedBox(width: _spacing),
                       SvgPicture.asset(
                         'assets/images/utils/arrow_appointement.svg',
@@ -590,6 +619,7 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
                           fontFamily: 'Poppins',
                         ),
                       ),
+                      ]
                     ],
                   ),
                   const SizedBox(height: _spacing),
@@ -702,6 +732,7 @@ class _ModalInfoAntecedentState extends State<ModalInfoAntecedent> {
       body: [
         for (final treatment in widget.medicalAntecedent['treatments']) ...[
           CardTreatmentAdd(
+            antecedentName: widget.medicalAntecedent['name'],
             treatment: treatment,
           ),
           const SizedBox(height: 4),
@@ -733,6 +764,10 @@ class _ModalInfoTreatmentState extends State<ModalInfoTreatment> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
+      icon: IconModal(
+        icon: Icon(BootstrapIcons.capsule_pill, color: AppColors.blue700,size: 18,),
+        type: ModalType.info,
+      ),
       title: "Informations sur votre traitement",
       subtitle:
           "Consulter votre traitement pour le sujet de santé: ${widget.medicalAntecedentName}",
@@ -772,6 +807,7 @@ class _ModalInfoTreatmentState extends State<ModalInfoTreatment> {
         const SizedBox(height: 8),
         for (final medicine in widget.treatment.medicines) ...[
           CardMedicineInfo(
+            medicineName: widget.medicalAntecedentName,
             medicine: medicine,
             context: context,
           ),
@@ -784,10 +820,11 @@ class _ModalInfoTreatmentState extends State<ModalInfoTreatment> {
 
 class CardMedicineInfo extends StatefulWidget {
   // Changement de StatelessWidget à StatefulWidget
+  final String medicineName;
   final Medicine medicine;
   final BuildContext context;
   const CardMedicineInfo(
-      {super.key, required this.medicine, required this.context});
+      {super.key, required this.medicine, required this.context, required this.medicineName});
 
   @override
   State<CardMedicineInfo> createState() =>
@@ -800,7 +837,6 @@ class _CardMedicineInfoState extends State<CardMedicineInfo> {
   Future<bool> getMedicineName() async {
     final medicine = await getMedecineById(context, widget.medicine.medicineId);
     setState(() {
-      medicineName = medicine['name'];
       form = medicine['dosage_form'];
     });
     return true;
