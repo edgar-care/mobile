@@ -38,6 +38,13 @@ class _CustomListRdvState extends State<CustomListOld> {
     }
   }
 
+  void refresh() {
+    setState(() {
+      bAppointment = [];
+      _loadAppointment();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -47,6 +54,7 @@ class _CustomListRdvState extends State<CustomListOld> {
           const SizedBox(height: 4),
       itemBuilder: (context, index) {
         return CustomListRdvCard(
+            refresh: refresh,
             rdvInfo: bAppointment[index],
             delete: () => {deleteAppointmentList(index)},
             old: true);

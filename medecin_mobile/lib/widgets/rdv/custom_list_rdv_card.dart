@@ -6,12 +6,13 @@ import 'package:edgar_pro/services/doctor_services.dart';
 import 'package:edgar_pro/services/patient_info_service.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
 import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/widgets/rdv/modif_list.dart';
+import 'package:edgar_pro/widgets/rdv/custom_modif_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -22,10 +23,12 @@ class CustomListRdvCard extends StatefulWidget {
       {super.key,
       required this.rdvInfo,
       required this.delete,
+      required this.refresh,
       required this.old});
   bool old;
   Function delete;
   Map<String, dynamic> rdvInfo;
+  Function refresh;
 
   @override
   State<CustomListRdvCard> createState() => _CustomListRdvCardState();
@@ -38,15 +41,6 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   initState() {
     super.initState();
     _loadAppointment();
-  }
-
-  void updateAppointment(DateTime start) {
-    setState(() {
-      widget.rdvInfo['start_date'] = (start.millisecondsSinceEpoch ~/ 1000);
-      widget.rdvInfo['end_date'] =
-          (start.add(const Duration(minutes: 30)).millisecondsSinceEpoch ~/
-              1000);
-    });
   }
 
   Widget deleteAppointment(String id) {
@@ -118,25 +112,6 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
     );
   }
 
-  Widget updateAppointmentModal(BuildContext context,
-      Map<String, dynamic> rdvInfo, Function updateAppointment) {
-    return ModalContainer(
-      title: "Modifier le rendez-vous",
-      subtitle: "Modifier les informations du rendez-vous",
-      icon: const IconModal(
-        type: ModalType.info,
-        icon: Icon(
-          BootstrapIcons.pen_fill,
-          color: AppColors.blue700,
-          size: 18,
-        ),
-      ),
-      body: [
-        ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment),
-      ],
-    );
-  }
-
   Future<void> _loadAppointment() async {
     getPatientById(widget.rdvInfo['id_patient'], context).then((value) {
       setState(() {
@@ -163,7 +138,6 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
           onTap: () {
             final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
-
             showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
@@ -292,8 +266,8 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                                   return Consumer<BottomSheetModel>(
                                     builder: (context, model, child) {
                                       return ListModal(model: model, children: [
-                                        updateAppointmentModal(context,
-                                            widget.rdvInfo, updateAppointment)
+                                        UpdateAppointmentModal(
+                                            rdvInfo : widget.rdvInfo, updateAppointment: widget.refresh)
                                       ]);
                                     },
                                   );
@@ -464,6 +438,112 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
   //         doctorindex: doctorindex,
   //       ));
   // }
+}
+
+class UpdateAppointmentModal extends StatefulWidget {
+  final Map<String, dynamic> rdvInfo;
+  final Function updateAppointment;
+  const UpdateAppointmentModal({super.key, required this.rdvInfo, required this.updateAppointment});
+
+  @override
+  State<UpdateAppointmentModal> createState() => _UpdateAppointmentModalState();
+}
+
+class _UpdateAppointmentModalState extends State<UpdateAppointmentModal> {
+
+   List<List<Map<String, dynamic>>> freeslots = [];
+
+  @override
+  initState() {
+    super.initState();
+    _loadAppointment();
+  }
+
+  Future<void> _loadAppointment() async {
+    var temp = await getSlot(context);
+    for (var i = 0; i < temp.length; i++) {
+      if ((temp[i]['start_date'] * 1000) >
+              (DateTime.now().millisecondsSinceEpoch) &&
+          temp[i]["id_patient"] == "") {
+        bool added = false;
+        for (var j = 0; j < freeslots.length; j++) {
+          if (DateUtils.isSameDay(
+              DateTime.fromMillisecondsSinceEpoch(
+                  freeslots[j][0]['start_date'] * 1000),
+              DateTime.fromMillisecondsSinceEpoch(
+                  temp[i]['start_date'] * 1000))) {
+            setState(() {
+              freeslots[j].add(temp[i]);
+              added = true;
+            });
+          }
+        }
+        if (!added) {
+          setState(() {
+            freeslots.add([temp[i]]);
+          });
+        }
+      }
+    }
+    freeslots.sort((a, b) => a[0]['start_date'].compareTo(b[0]['start_date']));
+  }
+
+  Map<String, int> selected = {"first": 400, "second": 400};
+
+  void updateSelection(int first, int second) {
+    setState(() {
+      selected["first"] = first;
+      selected["second"] = second;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime start =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
+    return ModalContainer(
+      title: "Modifier le rendez vous",
+      subtitle:
+          "Modification du rendez-vous du ${DateFormat('yMMMMEEEEd', 'fr').format(start)}",
+      icon: const IconModal(
+        type: ModalType.info,
+        icon: Icon(BootstrapIcons.pen_fill, color: AppColors.blue800, size: 18),
+      ),
+      body: [Column(
+      children: [
+        for (var i = 0; i < freeslots.length; i++) ...[
+          CustomModifCard(
+            dateList: freeslots[i],
+            updateFunc: updateSelection,
+            selected: selected,
+            number: i,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+        ],
+        const SizedBox(
+          height: 16,
+        ),
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text("Valider le changement"),
+          onPressed: () {
+            updateAppointment(
+                    widget.rdvInfo['id'],
+                    freeslots[selected["first"]!][selected["second"]!]['id'],
+                    context)
+                .then((value) => {
+                      widget.updateAppointment(),
+                      Navigator.pop(context),
+                    });
+          },
+        ),
+      ],
+    )],
+    );
+  }
 }
 
 class DiagnosticModal extends StatefulWidget {

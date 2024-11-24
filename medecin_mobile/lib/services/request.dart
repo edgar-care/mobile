@@ -103,7 +103,7 @@ Future<dynamic> httpRequest({
       Navigator.pushNamed(context, '/desactivate');
       throw Exception("Conflit détecté.");
     } else {
-      throw Exception("Erreur ${response.statusCode}: ${response.body}");
+      return null;
     }
   } catch (e) {
     throw Exception(e.toString());

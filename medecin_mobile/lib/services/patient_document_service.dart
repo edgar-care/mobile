@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_pro/services/request.dart';
 
-Future<List<Map<String, dynamic>>> getDocumentsIds(
+Future<List<String>> getDocumentsIds(
     String id, BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.get,
@@ -14,21 +15,11 @@ Future<List<Map<String, dynamic>>> getDocumentsIds(
     context: context,
   );
 
-  if (response != null) {
-    List<Map<String, dynamic>> documents = [];
-    if (response['document_ids'] != null) {
-      var tmp = response['document_ids'];
-      for (int i = 0; i < tmp.length; i++) {
-        // ignore: use_build_context_synchronously
-        documents.add(await getDocumentsbyId(tmp[i], context));
-      }
-      return documents;
+  if (response != null && response['document_ids'] != null) {
+      return response['document_ids'];
     } else {
       return [];
     }
-  } else {
-    return [];
-  }
 }
 
 Future<Map<String, dynamic>> getDocumentsbyId(
@@ -39,6 +30,8 @@ Future<Map<String, dynamic>> getDocumentsbyId(
     needsToken: true,
     context: context,
   );
+
+  Logger().d(response);
 
   if (response != null) {
     return response['download'];

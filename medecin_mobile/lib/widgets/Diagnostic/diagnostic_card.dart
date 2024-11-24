@@ -837,7 +837,7 @@ class _ModalMedicFolderState extends State<ModalMedicFolder> {
                   CardTraitementSmall(
                         name: treatment['name'],
                         isEnCours:
-                            treatment['medicines'] == null ? false : true,
+                            treatment['treatments'] == null ? false : true,
                         onTap: () {},
                         withDelete: false,
                       ),

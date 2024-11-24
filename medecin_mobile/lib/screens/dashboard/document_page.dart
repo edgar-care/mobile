@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/patient_document_service.dart';
@@ -8,6 +10,7 @@ import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
 import 'package:edgar_pro/widgets/document_patient_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -27,12 +30,20 @@ class DocumentPage extends StatefulWidget {
 
 class _DocumentPageState extends State<DocumentPage> {
   Map<String, dynamic> patientInfo = {};
+  List<String> doc = [];
   List<Map<String, dynamic>> documents = [];
   Future<void> _loadDoc() async {
     patientInfo = await getPatientById(widget.id, context);
-    // ignore: use_build_context_synchronously
-    documents = await getDocumentsIds(widget.id, context);
+    doc = await getDocumentsIds(widget.id, context);
+    for (var id in doc) {
+      getDocumentsbyId(id, context).then((value) {
+        setState(() {
+          documents.add(value);
+        });
+      });
+    }
   }
+  
 
   Future<void> updateData() async {
     setState(() {
@@ -45,6 +56,9 @@ class _DocumentPageState extends State<DocumentPage> {
     return FutureBuilder(
       future: _loadDoc(),
       builder: (context, snapshot) {
+        if(snapshot.hasError) {
+          Logger().d(snapshot.error);
+        }
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: [
