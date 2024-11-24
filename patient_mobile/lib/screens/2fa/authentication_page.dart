@@ -478,25 +478,26 @@ class ModalEdgarApp1State extends State<ModalEdgarApp1> {
                 children: [
                   for (var index = 0; index < devices.length; index++) ...[
                     DeviceTab(
-                        icon: devices[index]['type'] == 'iPhone' ||
-                                devices[index]['type'] == 'Android'
-                            ? 'PHONE'
-                            : 'PC',
-                        info: devicesFormatTime(devices[index]['date'] * 1000),
-                        subtitle:
-                            "${devices[index]['city']}, ${devices[index]['country']}",
-                        title:
-                            "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                        onTap: () {
-                          setState(() {
-                            selected = index;
-                          });
-                        },
-                        type: "Only",
-                        selected: selected == index,
-                        outlineIcon: SvgPicture.asset(
-                          'assets/images/utils/chevron-right.svg',
-                        )),
+                      icon: devices[index]['type'] == 'iPhone' ||
+                              devices[index]['type'] == 'Android'
+                          ? 'PHONE'
+                          : 'PC',
+                      info: devicesFormatTime(devices[index]['date'] * 1000),
+                      subtitle:
+                          "${devices[index]['city']}, ${devices[index]['country']}",
+                      title:
+                          "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                      onTap: () {
+                        setState(() {
+                          selected = index;
+                        });
+                      },
+                      type: "Only",
+                      selected: selected == index,
+                      outlineIcon: SvgPicture.asset(
+                        'assets/images/utils/chevron-right.svg',
+                      ),
+                    ),
                   ]
                 ],
               ))
@@ -1157,41 +1158,42 @@ class _ModalAddTrustDeviceState extends State<ModalAddTrustDevice> {
         ),
         body: [
           Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.blue200,
-                  width: 1,
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 400,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppColors.blue200,
+                width: 1,
               ),
-              child: Column(
-                children: [
-                  for (var index = 0; index < devices.length; index++) ...[
-                    DeviceTab(
-                        icon: devices[index]['type'] == 'iPhone' ||
-                                devices[index]['type'] == 'Android'
-                            ? 'PHONE'
-                            : 'PC',
-                        info: devicesFormatTime(devices[index]['date'] * 1000),
-                        subtitle:
-                            "${devices[index]['city']}, ${devices[index]['country']}",
-                        title:
-                            "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                        onTap: () {
-                          setState(() {
-                            selected = index;
-                          });
-                        },
-                        type: "Only",
-                        selected: selected == index,
-                        outlineIcon: SvgPicture.asset(
-                          'assets/images/utils/chevron-right.svg',
-                        )),
-                  ]
-                ],
-              ))
+            ),
+            child: ListView.builder(
+              itemCount: devices.length,
+              itemBuilder: (context, index) {
+                return DeviceTab(
+                    icon: devices[index]['type'] == 'iPhone' ||
+                            devices[index]['type'] == 'Android'
+                        ? 'PHONE'
+                        : 'PC',
+                    info: devicesFormatTime(devices[index]['date'] * 1000),
+                    subtitle:
+                        "${devices[index]['city']}, ${devices[index]['country']}",
+                    title:
+                        "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                    onTap: () {
+                      setState(() {
+                        selected = index;
+                      });
+                    },
+                    type: "Only",
+                    selected: selected == index,
+                    outlineIcon: SvgPicture.asset(
+                      'assets/images/utils/chevron-right.svg',
+                    ));
+              },
+            ),
+          )
         ],
         footer: Column(
           children: [

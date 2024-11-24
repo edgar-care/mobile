@@ -43,9 +43,15 @@ class WebSocketService {
     _channel = WebSocketChannel.connect(Uri.parse(url));
 
     // Listen for incoming messages
-    _channel?.stream.listen((message) {
-      _handleMessage(message);
-    }, onError: (error) {}, onDone: () {});
+    _channel?.stream.listen(
+      (message) {
+        _handleMessage(message);
+      },
+      onError: (error) {},
+      onDone: () {
+        connect();
+      },
+    );
 
     sendReadyAction();
   }
