@@ -470,6 +470,10 @@ class _ModalRegisterState extends State<ModalRegister> {
                   .show(context);
               return;
             }
+          if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+            TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
+            return;
+          }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
               TopErrorSnackBar(
@@ -722,6 +726,14 @@ Widget modalForgotPassword(BuildContext context) {
       size: SizeButton.md,
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
+        if (email.isEmpty) {
+        TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+          return;
+        }
+        if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+          TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
+          return;
+        }
         missingPassword(email, context).then((value) {
           Navigator.pop(context);
         });

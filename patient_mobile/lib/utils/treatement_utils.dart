@@ -28,8 +28,8 @@ class Treatment {
   }
 
   Map<String, dynamic> toJson() => {
-        'start_date': startDate,
-        'end_date': endDate,
+        'start_date': startDate.millisecondsSinceEpoch ~/ 1000,
+        'end_date': endDate.millisecondsSinceEpoch ~/ 1000,
         'medicines': medicines.map((x) => x.toJson()).toList(),
       };
 }

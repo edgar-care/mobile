@@ -323,7 +323,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 400,
+          height: 300,
           child: doctors.isEmpty
               ? const Center(
                   child: CircularProgressIndicator(

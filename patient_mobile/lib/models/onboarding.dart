@@ -718,40 +718,40 @@ class _Onboarding3State extends State<Onboarding3> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 48),
-              //   child: Row(
-              //     children: [
-              //       Flexible(
-              //           child: Container(
-              //         height: 8,
-              //         decoration: BoxDecoration(
-              //           color: AppColors.blue700,
-              //           borderRadius: BorderRadius.circular(8),
-              //         ),
-              //       )),
-              //       const SizedBox(width: 8),
-              //       Flexible(
-              //           child: Container(
-              //         height: 8,
-              //         decoration: BoxDecoration(
-              //           color: AppColors.blue700,
-              //           borderRadius: BorderRadius.circular(8),
-              //         ),
-              //       )),
-              //       const SizedBox(width: 8),
-              //       Flexible(
-              //         child: Container(
-              //           height: 8,
-              //           decoration: BoxDecoration(
-              //             color: AppColors.blue700,
-              //             borderRadius: BorderRadius.circular(8),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48),
+                child: Row(
+                  children: [
+                    Flexible(
+                        child: Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.blue700,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    )),
+                    const SizedBox(width: 8),
+                    Flexible(
+                        child: Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.blue700,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    )),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: AppColors.blue700,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 32),
               const Text(
                 "Vos antécédents médicaux et sujets de santé",
@@ -932,7 +932,6 @@ class _Onboarding3State extends State<Onboarding3> {
                     "family_members_med_info_id": [],
                     "medical_antecedents": medicaljson,
                   };
-
                   var reponse = await postMedicalInfo(body, context);
                   if (reponse == true) {
                     widget.updateSelectedIndex(3);
@@ -940,14 +939,13 @@ class _Onboarding3State extends State<Onboarding3> {
                       message: "Informations ajoutées avec succès",
                     // ignore: use_build_context_synchronously
                     ).show(context);
+                    widget.updateSelectedIndex(3);
                   } else {
                     TopErrorSnackBar(
                       message: "Erreur lors de l'ajout des informations",
                     // ignore: use_build_context_synchronously
                     ).show(context);
                   }
-
-                  widget.updateSelectedIndex(3);
                 },
               ),
               const SizedBox(height: 8),

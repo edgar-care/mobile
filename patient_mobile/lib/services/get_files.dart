@@ -110,7 +110,6 @@ Future<Object?> modifyDocument(
     needsToken: true,
     body: {'name': name},
   );
-
   if (response != null) {
     return response;
   } else {

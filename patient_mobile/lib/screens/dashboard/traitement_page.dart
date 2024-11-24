@@ -9,6 +9,7 @@ import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:edgar_app/widget/modal_treatment.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -49,9 +50,17 @@ class _TraitmentPageState extends State<TraitmentPage> {
   }
 
   void deleteTraitement(String id) async {
-    await deleteTraitementRequest(id, context);
-    getFilteredTraitement();
-    setState(() {});
+    await deleteTraitementRequest(id, context).then((value) {
+      if (value) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        TopSuccessSnackBar(message: 'Traitement supprimé avec succès').show(context);
+        getFilteredTraitement();
+        setState(() {});
+      } else {
+        TopErrorSnackBar(message: 'Erreur lors de la suppression du traitement').show(context);
+      }
+    });
   }
 
   void refresh() {
@@ -274,6 +283,7 @@ class SubMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Logger().d(treatment);
     return ModalContainer(
       body: [
         Text(
@@ -378,7 +388,7 @@ class SubMenu extends StatelessWidget {
                     return ListModal(model: model, children: [
                       DeleteModal(
                         delete: deleteTraitement,
-                        index: index,
+                        index: treatment['treatment'].id,
                       ),
                     ]);
                   },
@@ -387,9 +397,6 @@ class SubMenu extends StatelessWidget {
             );
           },
           type: 'Only',
-          outlineIcon: Icon(
-            BootstrapIcons.chevron_right,
-          ),
         ),
       ],
     );
@@ -397,7 +404,7 @@ class SubMenu extends StatelessWidget {
 }
 
 class DeleteModal extends StatelessWidget {
-  final int index;
+  final String index;
   final Function delete;
   const DeleteModal({super.key, required this.delete, required this.index});
 
@@ -418,7 +425,6 @@ class DeleteModal extends StatelessWidget {
             ),
             onPressed: () {
               delete(index);
-              Navigator.pop(context);
             },
           ),
           const SizedBox(height: 8),
@@ -952,24 +958,13 @@ class _UpdateTreatmentState extends State<UpdateTreatment> {
                 style: TextStyle(color: AppColors.white),
               ),
               onPressed: () {
+                Logger().d(widget.treatment.id);
+                Logger().d(widget.treatment.toJson());
                 if (widget.treatment.id != "" &&
                     widget.treatment.startDate !=
                         DateTime.fromMillisecondsSinceEpoch(0) &&
                     widget.treatment.medicines[0].comment != "") {
-                  putTraitement({
-                    "medical_antecedent_id": widget.treatment.id,
-                    "start_date": widget.treatment.startDate
-                            .toUtc()
-                            .millisecondsSinceEpoch ~/
-                        1000,
-                    "end_date": widget.treatment.endDate
-                            .toUtc()
-                            .millisecondsSinceEpoch ~/
-                        1000,
-                    "medicines": widget.treatment.medicines
-                        .map((e) => e.toJson())
-                        .toList()
-                  }, widget.medId, context)
+                  putTraitement(widget.treatment.toJson(), widget.treatment.id, context)
                       .then((value) {
                     if (value) {
                       widget.refresh();

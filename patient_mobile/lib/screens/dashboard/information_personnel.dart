@@ -14,6 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class InformationPersonnel extends StatefulWidget {
@@ -270,6 +271,7 @@ class AddSubMenu extends StatelessWidget {
                           model: model,
                           info: tmpInfo),
                         PatientAdd2(
+                          refresh: refresh,
                           model: model,
                           context: context,
                           tmpInfo: tmpInfo,
@@ -1007,7 +1009,7 @@ class _PatientAddState extends State<PatientAdd> {
                       ),
                       CustomField(
                         label: "1,52m",
-                        value: (widget.info['height'] / 100).toString(),
+                        value: (widget.info['height']).toString(),
                         onChanged: (value) => widget.info['height'] =
                             (int.parse(value.replaceAll(',', '.')) * 100),
                         keyboardType: TextInputType.number,
@@ -1036,7 +1038,7 @@ class _PatientAddState extends State<PatientAdd> {
                       ),
                       CustomField(
                         label: "45kg",
-                        value: widget.info['weight'].toString(),
+                        value: (widget.info['weight'] ~/ 100).toString(),
                         onChanged: (value) => widget.info['weight'] =
                             int.parse(value.replaceAll(',', '.')) * 100,
                         keyboardType: TextInputType.number,
@@ -1059,12 +1061,14 @@ class PatientAdd2 extends StatefulWidget {
   final BottomSheetModel model;
   final BuildContext context;
   final Map<String, dynamic> tmpInfo;
+  final Function refresh;
 
   const PatientAdd2({
     super.key,
     required this.model,
     required this.context,
     required this.tmpInfo,
+    required this.refresh,
   });
 
   @override
@@ -1137,9 +1141,17 @@ class PatientAdd2State extends State<PatientAdd2> {
             child: Buttons(
               variant: Variant.primary,
               size: SizeButton.sm,
-              msg: const Text('Continuer'),
+              msg: const Text('Valider'),
               onPressed: () {
                 if (getDoctor() != -1) {
+                  List<Map<String, dynamic>>medicaljson = [];
+                  for (var element in widget.tmpInfo['medical_antecedents']) {
+                    medicaljson.add({
+                       "name" : element['name'],
+                      "symptoms" : element['symptoms'],
+                      "treatments" : element['treatments'].map((treatment) => treatment.toJson()).toList()
+                    });
+                  }
                   final Map<String, Object> body = {
                   "name": widget.tmpInfo['name'],
                   "firstname": widget.tmpInfo['firstname'],
@@ -1150,17 +1162,19 @@ class PatientAdd2State extends State<PatientAdd2> {
                   "primary_doctor_id": widget.tmpInfo['primary_doctor_id'],
                   "family_members_med_info_id":
                       widget.tmpInfo['family_members_med_info_id'],
-                  "medical_antecedents": widget.tmpInfo['medical_antecedents'],
+                  "medical_antecedents": medicaljson,
                   "onboarding_status": "DONE",
                 };
+                Logger().d(body);
                 putInformationPatient(context, body, widget.tmpInfo['id']).then(
                   (value) => {
                     if (value != null)
                       {
-                        TopErrorSnackBar(
+                        TopSuccessSnackBar(
                           message: "Informations mises à jour avec succès",
                         ).show(context),
                         Navigator.pop(context),
+                        widget.refresh(),
                       }
                       else
                         {

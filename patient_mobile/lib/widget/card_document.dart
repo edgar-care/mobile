@@ -349,7 +349,19 @@ class _ModifyPatientState extends State<ModifyPatient> {
             size: SizeButton.sm,
             msg: const Text('Valider'),
             onPressed: () async {
-              modifyDocument(widget.id, widget.name, context).then((value) {
+              if (tmp.isEmpty) {
+                TopErrorSnackBar(
+                  message: "veuillez écrire un nom de document valide",
+                ).show(context);
+                return;
+              }
+              if (!RegExp(r"\.").hasMatch(tmp)) {
+                TopErrorSnackBar(
+                  message: "Le nom du document doit contenir une extension",
+                ).show(context);
+                return;
+              }
+              modifyDocument(widget.id, tmp, context).then((value) {
                 widget.updatedata();
                 Navigator.pop(context);
               });

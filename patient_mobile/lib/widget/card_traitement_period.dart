@@ -49,6 +49,21 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
     }
   }
 
+  String stringToEnum(String t) {
+    switch (t) {
+      case 'Jours':
+        return 'JOUR';
+      case 'Semaines':
+        return 'SEMAINE';
+      case 'Mois':
+        return 'MOIS';
+      case 'Années':
+        return 'ANNEE';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -180,7 +195,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                   onChanged: (value) {
                     setState(() {
                       widget.period.frequencyUnit =
-                          FrequencyUnit.values.byName(value.toString());
+                          FrequencyUnit.values.byName(stringToEnum(value.toString()));
                     });
                   },
                   icon: const Icon(Icons.keyboard_arrow_down),
@@ -247,7 +262,7 @@ class _TreatmentPeriodCardState extends State<TreatmentPeriodCard> {
                   onChanged: (value) {
                     setState(() {
                       widget.period.periodUnit =
-                          PeriodUnit.values.byName(value.toString());
+                          PeriodUnit.values.byName(stringToEnum(value.toString()));
                     });
                   },
                   icon: const Icon(Icons.keyboard_arrow_down),
