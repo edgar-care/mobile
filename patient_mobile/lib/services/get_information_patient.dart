@@ -64,6 +64,7 @@ Future<Map<String, Object>?> putInformationPatient(
     needsToken: true,
     body: info,
   );
+
   if (response != null) {
     return populateInfoMedical(response, context);
   } else {

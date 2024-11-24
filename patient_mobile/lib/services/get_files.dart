@@ -14,6 +14,9 @@ Future<List<Map<String, dynamic>>> getAllDocument(BuildContext context) async {
   );
 
   if (response != null) {
+    if (response["document"] == null) {
+      return [];
+    }
     return List<Map<String, dynamic>>.from(response["document"]);
   } else {
     return [];

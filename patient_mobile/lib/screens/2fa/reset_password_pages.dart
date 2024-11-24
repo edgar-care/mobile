@@ -5,6 +5,7 @@ import 'package:edgar/colors.dart';
 import 'package:edgar_app/services/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -159,6 +160,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         size: SizeButton.md,
                         msg: const Text("Changer le mot de passe"),
                         onPressed: () async {
+                          if (actualPassword.isEmpty ||
+                              newPassword.isEmpty ||
+                              repeatPassword.isEmpty) {
+                            TopErrorSnackBar(
+                                    message: 'Veuillez remplir tous les champs')
+                                .show(context);
+                            return;
+                          }
                           if (newPassword.length < 8) {
                             TopErrorSnackBar(
                                     message:
@@ -172,23 +181,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                         'Les mots de passe ne correspondent pas')
                                 .show(context);
                           } else {
-                            await updatePassword(
-                                    actualPassword, newPassword, context)
-                                .then(  
-                              (value) {
-                                if (value == true) {
-                                  Navigator.pop(context);
-                                  TopSuccessSnackBar(
-                                    message:
-                                        'Votre mot de passe a été mis à jour',
-                                  ).show(context);
-                                } else {
-                                  TopErrorSnackBar(
-                                    message: 'Ancien mot de passe incorrect',
-                                  ).show(context);
-                                }
-                              },
-                            );
+                            final response = await updatePassword(
+                                actualPassword, newPassword, context);
+                            Logger().i(response);
+                            if (response == true) {
+                              Navigator.pop(context);
+                              TopSuccessSnackBar(
+                                message: 'Votre mot de passe a été mis à jour',
+                              ).show(context);
+                            }
+                            if (response == false) {
+                              TopErrorSnackBar(
+                                message: 'Ancien mot de passe incorrect',
+                              ).show(context);
+                            }
                           }
                         },
                       )

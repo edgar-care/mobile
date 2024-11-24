@@ -36,10 +36,12 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   Future<void> fetchData() async {
     await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
-        List<Map<String, dynamic>>medicalAntecedent = [];
+        List<Map<String, dynamic>> medicalAntecedent = [];
         List<Treatment> tmpTraitments = [];
         for (var element in value['medical_antecedents']) {
-          if (element['name'] != "" && element['id'] != "" && element['treatments'] != []) {
+          if (element['name'] != "" &&
+              element['id'] != "" &&
+              element['treatments'] != []) {
             for (var treatment in element['treatments']) {
               tmpTraitments.add(Treatment.fromJson(treatment));
             }
@@ -47,13 +49,10 @@ class _InformationPersonnelState extends State<InformationPersonnel>
               "name": element['name'],
               "id": element['id'],
               "treatments": tmpTraitments
-          }); 
+            });
           }
         }
-        infoMedical = {
-          ...value,
-          "medical_antecedents": medicalAntecedent
-        };
+        infoMedical = {...value, "medical_antecedents": medicalAntecedent};
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
@@ -63,6 +62,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
     });
     doctorName = await getNameDoctor();
   }
+
   Future<String> getNameDoctor() async {
     try {
       final value = await getAllDoctor(context);
@@ -87,7 +87,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
     return 'Dr.Edgar'; // default return value if no doctor matches
   }
 
-  void refresh(){
+  void refresh() {
     setState(() {
       fetchData();
     });
@@ -143,7 +143,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             } else {
               return Expanded(
                 child: CardInformationPersonnel(
-                  refresh: refresh,
+                    refresh: refresh,
                     infoMedical: infoMedical,
                     birthdate: birthdate,
                     doctorName: doctorName),
@@ -172,11 +172,13 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                     return ListModal(
                       model: model,
                       children: [
-                        AddSubMenu(tmpInfo: tmpInfo, refresh: () {
-                          setState(() {
-                            fetchData();
-                          });
-                        }),
+                        AddSubMenu(
+                            tmpInfo: tmpInfo,
+                            refresh: () {
+                              setState(() {
+                                fetchData();
+                              });
+                            }),
                       ],
                     );
                   },
@@ -196,6 +198,25 @@ class AddSubMenu extends StatelessWidget {
   final Function refresh;
   AddSubMenu({super.key, required this.tmpInfo, required this.refresh});
 
+  Function postMA =
+      (Map<String, dynamic> antecedent, BuildContext context) async {
+    try {
+      final value = await postMedicalAntecedent(antecedent, context);
+
+      if (value) {
+        TopSuccessSnackBar(message: "Sujet de santé ajouté avec succès")
+            .show(context);
+      } else {
+        TopErrorSnackBar(
+          message: "Erreur lors de l'ajout du sujet de santé",
+        ).show(context);
+      }
+    } catch (e) {
+      TopErrorSnackBar(
+        message: "Erreur lors de l'ajout du sujet de santé",
+      ).show(context);
+    }
+  };
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
@@ -231,16 +252,18 @@ class AddSubMenu extends StatelessWidget {
                     return ListModal(
                       model: model,
                       children: [
-                          ModalTreamentInfo(
-                            addMedicalAntecedents: (String antecedentName, List<Treatment> traitement) {
-                              var antecedent = {
-                                "name": antecedentName,
-                                "symptoms": [],
-                                "treatments": traitement.map((e) => e.toJson()).toList()
-                              };
-                              postMedicalAntecedent(antecedent, context);
-                            },
-                          )
+                        ModalTreamentInfo(
+                          addMedicalAntecedents: (String antecedentName,
+                              List<Treatment> traitement) {
+                            var antecedent = {
+                              "name": antecedentName,
+                              "symptoms": [],
+                              "treatments":
+                                  traitement.map((e) => e.toJson()).toList()
+                            };
+                            postMA(antecedent, context);
+                          },
+                        )
                       ],
                     );
                   },
@@ -275,9 +298,7 @@ class AddSubMenu extends StatelessWidget {
                     return ListModal(
                       model: model,
                       children: [
-                        PatientAdd(
-                          model: model,
-                          info: tmpInfo),
+                        PatientAdd(model: model, info: tmpInfo),
                         PatientAdd2(
                           refresh: refresh,
                           model: model,
@@ -315,11 +336,10 @@ class CardInformationPersonnel extends StatefulWidget {
 }
 
 class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
-
-
   @override
   Widget build(BuildContext context) {
-  List<Map<String, dynamic>> medicalAntecedents = widget.infoMedical['medical_antecedents'];
+    List<Map<String, dynamic>> medicalAntecedents =
+        widget.infoMedical['medical_antecedents'];
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -398,34 +418,35 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                             child: GestureDetector(
                               onTap: () {
                                 if (medicalAntecedents.isNotEmpty) {
-                                  final model =
-                                      Provider.of<BottomSheetModel>(
-                                          context,
-                                          listen: false);
+                                  final model = Provider.of<BottomSheetModel>(
+                                      context,
+                                      listen: false);
                                   model.resetCurrentIndex();
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
-                                    backgroundColor:
-                                        Colors.transparent,
+                                    backgroundColor: Colors.transparent,
                                     builder: (context) {
-                                      return Consumer<
-                                          BottomSheetModel>(
-                                        builder: (context, model,
-                                            child) {
+                                      return Consumer<BottomSheetModel>(
+                                        builder: (context, model, child) {
                                           return ListModal(
                                             model: model,
                                             children: [
-                                              SubMenuMedicalFolder(medicalAntecedent: medicalAntecedents[i],
-                                                deleteAntecedent: (){
+                                              SubMenuMedicalFolder(
+                                                medicalAntecedent:
+                                                    medicalAntecedents[i],
+                                                deleteAntecedent: () {
                                                   setState(() {
-                                                    deleteMedicalAntecedent(medicalAntecedents[i]["id"], context);
+                                                    deleteMedicalAntecedent(
+                                                        medicalAntecedents[i]
+                                                            ["id"],
+                                                        context);
                                                   });
                                                 },
-                                                refresh: (){
+                                                refresh: () {
                                                   widget.refresh();
                                                 },
-                                              ),                                                         
+                                              ),
                                             ],
                                           );
                                         },
@@ -436,11 +457,10 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                               },
                               child: CardTraitementSmall(
                                 name: medicalAntecedents[i]['name'],
-                                isEnCours: medicalAntecedents[i]
-                                            ['treatments']
-                                        .isEmpty
-                                    ? false
-                                    : true,
+                                isEnCours:
+                                    medicalAntecedents[i]['treatments'].isEmpty
+                                        ? false
+                                        : true,
                               ),
                             ),
                           );
@@ -496,7 +516,11 @@ class SubMenuMedicalFolder extends StatelessWidget {
   Map<String, dynamic> medicalAntecedent;
   final Function deleteAntecedent;
   final Function refresh;
-  SubMenuMedicalFolder({super.key, required this.medicalAntecedent, required this.deleteAntecedent, required this.refresh});
+  SubMenuMedicalFolder(
+      {super.key,
+      required this.medicalAntecedent,
+      required this.deleteAntecedent,
+      required this.refresh});
 
   @override
   Widget build(BuildContext context) {
@@ -515,25 +539,20 @@ class SubMenuMedicalFolder extends StatelessWidget {
         NavbarPLusTab(
           title: 'Consulter les traitements',
           onTap: () {
-            final model =
-              Provider.of<BottomSheetModel>(
-                  context,
-                  listen: false);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              backgroundColor:
-                  Colors.transparent,
+              backgroundColor: Colors.transparent,
               builder: (context) {
-                return Consumer<
-                    BottomSheetModel>(
-                  builder: (context, model,
-                      child) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
                     return ListModal(
                       model: model,
                       children: [
-                        ModalInfoAntecedent(medicalAntecedent: medicalAntecedent)                                       
+                        ModalInfoAntecedent(
+                            medicalAntecedent: medicalAntecedent)
                       ],
                     );
                   },
@@ -553,41 +572,39 @@ class SubMenuMedicalFolder extends StatelessWidget {
           height: 1,
         ),
         NavbarPLusTab(
-          icon: const Icon(
-            BootstrapIcons.pen_fill,
-            color: AppColors.blue800,
-            size: 16,
-          ),
-          title: "Modifier mon sujet de santé",
-          onTap: () {
-            final model =
-              Provider.of<BottomSheetModel>(
-                  context,
-                  listen: false);
-            model.resetCurrentIndex();
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor:
-                  Colors.transparent,
-              builder: (context) {
-                return Consumer<
-                    BottomSheetModel>(
-                  builder: (context, model,
-                      child) {
-                    return ListModal(
-                      model: model,
-                      children: [
-                        UpdateAntecedentNameModal(startName: medicalAntecedent['name'], id: medicalAntecedent['id'], refresh: refresh,)
-                      ],
-                    );
-                  },
-                );
-              },
-            );
-          },
-          type: "Only"
-        ),
+            icon: const Icon(
+              BootstrapIcons.pen_fill,
+              color: AppColors.blue800,
+              size: 16,
+            ),
+            title: "Modifier mon sujet de santé",
+            onTap: () {
+              final model =
+                  Provider.of<BottomSheetModel>(context, listen: false);
+              model.resetCurrentIndex();
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                        model: model,
+                        children: [
+                          UpdateAntecedentNameModal(
+                            startName: medicalAntecedent['name'],
+                            id: medicalAntecedent['id'],
+                            refresh: refresh,
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            type: "Only"),
         Container(
           color: AppColors.blue100,
           height: 1,
@@ -596,21 +613,15 @@ class SubMenuMedicalFolder extends StatelessWidget {
           title: 'Supprimer mon sujet de santé',
           color: AppColors.red700,
           onTap: () {
-            final model =
-              Provider.of<BottomSheetModel>(
-                  context,
-                  listen: false);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              backgroundColor:
-                  Colors.transparent,
+              backgroundColor: Colors.transparent,
               builder: (context) {
-                return Consumer<
-                    BottomSheetModel>(
-                  builder: (context, model,
-                      child) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
                     return ListModal(
                       model: model,
                       children: [
@@ -642,90 +653,96 @@ class UpdateAntecedentNameModal extends StatelessWidget {
   final Function refresh;
   final String id;
   final String startName;
-  const UpdateAntecedentNameModal({super.key, required this.startName, required this.id, required this.refresh});
+  const UpdateAntecedentNameModal(
+      {super.key,
+      required this.startName,
+      required this.id,
+      required this.refresh});
 
   @override
   Widget build(BuildContext context) {
     String antecedentName = startName;
     return ModalContainer(
-      icon: IconModal(
-        icon: Icon(
-          BootstrapIcons.capsule_pill,
-          color: AppColors.blue700,
-          size: 18,
+        icon: IconModal(
+          icon: Icon(
+            BootstrapIcons.capsule_pill,
+            color: AppColors.blue700,
+            size: 18,
+          ),
+          type: ModalType.info,
         ),
-        type: ModalType.info,
-      ),
-      title: "Modifier un sujet de santé",
-      subtitle: "Renseigner les informations de votre sujet de santé.",
-      body: [
-        Text("Le nom du votre sujet de santé", style: const TextStyle(
-          fontSize: 14,
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w500,
-        )),
-        const SizedBox(height: 4,),
-        CustomField(
-          label: "Nom du sujet de santé",
-          value: antecedentName,
-          onChanged: (value) {
-            antecedentName = value;
-          },
-          isPassword: false,
-          keyboardType: TextInputType.text,
-          action: TextInputAction.done,
-        ),
-      ],
-      footer: Column(
-        children: [
-          Buttons(
-            variant: Variant.primary,
-            size: SizeButton.sm,
-            msg: const Text('Modifier le sujet de santé'),
-            onPressed: () {
-              if (antecedentName != "") {
-                putMedicalAntecedent(
-                  {
-                    "medical_antecedent":{
+        title: "Modifier un sujet de santé",
+        subtitle: "Renseigner les informations de votre sujet de santé.",
+        body: [
+          Text("Le nom du votre sujet de santé",
+              style: const TextStyle(
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              )),
+          const SizedBox(
+            height: 4,
+          ),
+          CustomField(
+            label: "Nom du sujet de santé",
+            value: antecedentName,
+            onChanged: (value) {
+              antecedentName = value;
+            },
+            isPassword: false,
+            keyboardType: TextInputType.text,
+            action: TextInputAction.done,
+          ),
+        ],
+        footer: Column(
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.sm,
+              msg: const Text('Modifier le sujet de santé'),
+              onPressed: () {
+                if (antecedentName != "") {
+                  putMedicalAntecedent({
+                    "medical_antecedent": {
                       "name": antecedentName,
                       "symptoms": [],
                     }
-                  }, id, 
-                context).then((value) {
-                  if (value) {
-                    TopSuccessSnackBar(
-                      message: "Sujet de santé modifié avec succès",
-                    ).show(context);
-                    refresh();
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  } else {
-                    TopErrorSnackBar(
-                      message: "Erreur lors de la modification du sujet de santé",
-                    ).show(context);
-                  }
-                });
-              }else{
-                TopErrorSnackBar(
-                  message: "Veuillez remplir tous les champs",
-                ).show(context);
-              }
-            },
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Buttons(
-            variant: Variant.secondary,
-            size: SizeButton.sm,
-            msg: const Text("Annuler"),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      )
-    );
+                  }, id, context)
+                      .then((value) {
+                    if (value) {
+                      TopSuccessSnackBar(
+                        message: "Sujet de santé modifié avec succès",
+                      ).show(context);
+                      refresh();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    } else {
+                      TopErrorSnackBar(
+                        message:
+                            "Erreur lors de la modification du sujet de santé",
+                      ).show(context);
+                    }
+                  });
+                } else {
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tous les champs",
+                  ).show(context);
+                }
+              },
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text("Annuler"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ));
   }
 }
 
@@ -733,13 +750,18 @@ class DeleteAntecedentModal extends StatelessWidget {
   final Function deleteAntecedent;
   final Function refresh;
   final String antecedentName;
-  const DeleteAntecedentModal({super.key, required this.deleteAntecedent, required this.refresh, required this.antecedentName});
+  const DeleteAntecedentModal(
+      {super.key,
+      required this.deleteAntecedent,
+      required this.refresh,
+      required this.antecedentName});
 
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
       title: "Supprimer un sujet de santé",
-      subtitle: "Vous êtes sur le point de supprimer votre sujet de santé: $antecedentName. Si vous supprimez ce sujet de santé, vous ne pourrez plus le consulter.",
+      subtitle:
+          "Vous êtes sur le point de supprimer votre sujet de santé: $antecedentName. Si vous supprimez ce sujet de santé, vous ne pourrez plus le consulter.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.x,
@@ -791,7 +813,6 @@ class PatientAdd extends StatefulWidget {
 }
 
 class _PatientAddState extends State<PatientAdd> {
-
   ValueNotifier<int> selected = ValueNotifier(0);
 
   void updateSelection(int newSelection) {
@@ -1163,45 +1184,49 @@ class PatientAdd2State extends State<PatientAdd2> {
               msg: const Text('Valider'),
               onPressed: () {
                 if (getDoctor() != -1) {
-                  List<Map<String, dynamic>>medicaljson = [];
+                  List<Map<String, dynamic>> medicaljson = [];
                   for (var element in widget.tmpInfo['medical_antecedents']) {
                     medicaljson.add({
-                       "name" : element['name'],
-                      "symptoms" : element['symptoms'],
-                      "treatments" : element['treatments'].map((treatment) => treatment.toJson()).toList()
+                      "name": element['name'],
+                      "symptoms": element['symptoms'],
+                      "treatments": element['treatments']
+                          .map((treatment) => treatment.toJson())
+                          .toList()
                     });
                   }
                   final Map<String, Object> body = {
-                  "name": widget.tmpInfo['name'],
-                  "firstname": widget.tmpInfo['firstname'],
-                  "birthdate": widget.tmpInfo['birthdate'],
-                  "sex": widget.tmpInfo['sex'],
-                  "weight": widget.tmpInfo['weight'],
-                  "height": widget.tmpInfo['height'],
-                  "primary_doctor_id": widget.tmpInfo['primary_doctor_id'],
-                  "family_members_med_info_id":
-                      widget.tmpInfo['family_members_med_info_id'],
-                  "medical_antecedents": medicaljson,
-                  "onboarding_status": "DONE",
-                };
-                putInformationPatient(context, body, widget.tmpInfo['id']).then(
-                  (value) => {
-                    if (value != null)
-                      {
-                        TopSuccessSnackBar(
-                          message: "Informations mises à jour avec succès",
-                        ).show(context),
-                        Navigator.pop(context),
-                        widget.refresh(),
-                      }
+                    "name": widget.tmpInfo['name'],
+                    "firstname": widget.tmpInfo['firstname'],
+                    "birthdate": widget.tmpInfo['birthdate'],
+                    "sex": widget.tmpInfo['sex'],
+                    "weight": widget.tmpInfo['weight'],
+                    "height": widget.tmpInfo['height'],
+                    "primary_doctor_id": widget.tmpInfo['primary_doctor_id'],
+                    "family_members_med_info_id":
+                        widget.tmpInfo['family_members_med_info_id'],
+                    "medical_antecedents": medicaljson,
+                    "onboarding_status": "DONE",
+                  };
+                  putInformationPatient(context, body, widget.tmpInfo['id'])
+                      .then(
+                    (value) => {
+                      if (value != null)
+                        {
+                          TopSuccessSnackBar(
+                            message: "Informations mises à jour avec succès",
+                          ).show(context),
+                          Navigator.pop(context),
+                          widget.refresh(),
+                        }
                       else
                         {
                           TopErrorSnackBar(
-                            message: "Erreur lors de la mise à jour des informations",
+                            message:
+                                "Erreur lors de la mise à jour des informations",
                           ).show(context),
                         }
-                  },
-                );
+                    },
+                  );
                 } else {
                   TopErrorSnackBar(
                     message: "Veuillez selectionner un médecin traitant",

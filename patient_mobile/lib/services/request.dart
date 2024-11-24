@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 
@@ -100,7 +101,8 @@ Future<dynamic> httpRequest({
       Navigator.pushNamed(context, '/desactivate');
       throw Exception("Conflit détecté.");
     } else {
-      throw Exception("Erreur ${response.statusCode}: ${response.body}");
+      Logger().e(response.body);
+      return null;
     }
   } catch (e) {
     throw Exception(e.toString());

@@ -571,25 +571,31 @@ class _FilePageState extends State<FilePage> {
                     child: Text('Aucun document trouvé'),
                   );
                 }
-                return ListView.builder(
-                  itemCount: filteredFiles.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: CardDocument(
-                        typeDeDocument: documentTypeMap[filteredFiles[index]
-                                ['document_type']] ??
-                            TypeDeDocument.OTHER,
-                        nomDocument: filteredFiles[index]['name'],
-                        nameDoctor: 'Vous',
-                        isfavorite: filteredFiles[index]['is_favorite'],
-                        id: filteredFiles[index]['id'],
-                        url: filteredFiles[index]['download_url'],
-                        updatedata: updateData,
-                      ),
-                    );
-                  },
-                );
+                if (filteredFiles.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: filteredFiles.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: CardDocument(
+                          typeDeDocument: documentTypeMap[filteredFiles[index]
+                                  ['document_type']] ??
+                              TypeDeDocument.OTHER,
+                          nomDocument: filteredFiles[index]['name'],
+                          nameDoctor: 'Vous',
+                          isfavorite: filteredFiles[index]['is_favorite'],
+                          id: filteredFiles[index]['id'],
+                          url: filteredFiles[index]['download_url'],
+                          updatedata: updateData,
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Aucun document trouvé'),
+                  );
+                }
               }
             },
           ),

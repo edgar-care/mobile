@@ -64,28 +64,33 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  widget.traitement.endDate.millisecondsSinceEpoch != 0
-                      ? "${widget.name} -"
-                      : widget.name,
-                  style: const TextStyle(
-                    color: AppColors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-                if (widget.traitement.endDate.millisecondsSinceEpoch != 0) ...[
-                  Text(
-                    widget.traitement.endDate.millisecondsSinceEpoch.toString(),
-                    style: const TextStyle(
-                      color: AppColors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Poppins',
+                Row(
+                  children: [
+                    Text(
+                      widget.traitement.endDate.millisecondsSinceEpoch != 0
+                          ? "${widget.name} -"
+                          : widget.name,
+                      style: const TextStyle(
+                        color: AppColors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                      ),
                     ),
-                  )
-                ],
+                    if (widget.traitement.endDate.millisecondsSinceEpoch !=
+                        0) ...[
+                      Text(
+                        " ${widget.traitement.endDate.day.toString().padLeft(2, '0')}/${widget.traitement.endDate.month.toString().padLeft(2, '0')}/${widget.traitement.endDate.year.toString().padLeft(4, '0')}",
+                        style: const TextStyle(
+                          color: AppColors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                        ),
+                      )
+                    ],
+                  ],
+                ),
                 const SizedBox(height: 4),
                 LayoutBuilder(
                   builder: (context, constraints) {

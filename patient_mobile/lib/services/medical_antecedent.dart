@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_app/services/request.dart';
+import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getMedicalAntecedent(
     BuildContext context) async {
@@ -100,7 +101,8 @@ Future<bool> putMedicalAntecedent(
   }
 }
 
-Future<bool> postMedicalAntecedent(Map<String, dynamic> antecedents, BuildContext context) async {
+Future<bool> postMedicalAntecedent(
+    Map<String, dynamic> antecedents, BuildContext context) async {
   final response = await httpRequest(
     context: context,
     type: RequestType.post,
@@ -108,6 +110,8 @@ Future<bool> postMedicalAntecedent(Map<String, dynamic> antecedents, BuildContex
     needsToken: true,
     body: antecedents,
   );
+
+  Logger().i(response);
 
   if (response != null) {
     return true;
