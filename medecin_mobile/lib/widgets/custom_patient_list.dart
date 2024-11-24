@@ -147,7 +147,6 @@ class _CustomListState extends State<CustomList> {
           onPressed: () {
             final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
-
             showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,

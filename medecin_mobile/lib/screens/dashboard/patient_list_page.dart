@@ -15,6 +15,7 @@ import 'package:edgar_pro/widgets/treatment_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:edgar/widget.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -298,11 +299,10 @@ class _PatientPageState extends State<PatientPage> {
                                     IntrinsicWidth(
                                       child: GestureDetector(
                                         onTap: () {
-                                          if (treatment['medicines'] != null) {
+                                          if (treatment['treatments'] != null) {
                                             final model = Provider.of<BottomSheetModel>(context,
                                                 listen: false);
                                             model.resetCurrentIndex();
-
                                             showModalBottomSheet(
                                               context: context,
                                               isScrollControlled: true,
@@ -313,7 +313,7 @@ class _PatientPageState extends State<PatientPage> {
                                                     return ListModal(
                                                       model: model,
                                                       children: [
-                                                        ModalInfoAntecedent(medicalAntecedent: treatment)
+                                                        ModalInfoAntecedent(medicalAntecedent: treatment),
                                                       ],
                                                     );
                                                   },
@@ -325,7 +325,7 @@ class _PatientPageState extends State<PatientPage> {
                                         child: CardTraitementSmall(
                                           name: treatment['name'],
                                           isEnCours:
-                                              treatment['medicines'] == null ? false : true,
+                                              treatment['treatments'] == null ? false : true,
                                           onTap: () {},
                                           withDelete: false,
                                         ),
@@ -881,18 +881,6 @@ class PatientAdd2State extends State<PatientAdd2> {
                 height: 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue700,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 16,
-            ),
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
                   color: AppColors.blue200,
                 ),
               ),
@@ -1028,7 +1016,7 @@ class PatientAdd3State extends State<PatientAdd3> {
   
   void addMedicalAntecedents(String name, List<Treatment> treatments) {
     setState(() {
-      widget.tmpInfo['medical_antecedent'].add({
+      widget.tmpInfo['medical_antecedents'].add({
         "name": name,
         "symptoms": [],
         "treatments": treatments,
@@ -1038,6 +1026,7 @@ class PatientAdd3State extends State<PatientAdd3> {
 
   @override
   Widget build(BuildContext context) {
+    Logger().d(widget.tmpInfo);
     return ModalContainer(
       title: "Mise à jout des informations",
       subtitle: "Mettez à jour les informations du patient",
@@ -1217,15 +1206,15 @@ class PatientAdd3State extends State<PatientAdd3> {
                                               return ListModal(
                                                   model: model,
                                                   children: [
-                                                    SubMenu(medicalAntecedent: widget.tmpInfo['medical_antecedent'][i],
+                                                    SubMenu(medicalAntecedent: widget.tmpInfo['medical_antecedents'][i],
                                                       deleteAntecedent: (){
                                                         setState(() {
-                                                          widget.tmpInfo['medical_antecedent'].removeAt(i);
+                                                          widget.tmpInfo['medical_antecedents'].removeAt(i);
                                                         });
                                                       },
                                                       refresh: (){
                                                         setState(() {
-                                                          widget.tmpInfo['medical_antecedent'] = widget.tmpInfo['medical_antecedent'];
+                                                          widget.tmpInfo['medical_antecedents'] = widget.tmpInfo['medical_antecedents'];
                                                         });
                                                       },
                                                     ),       

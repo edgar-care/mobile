@@ -24,6 +24,7 @@ String height = "";
 String weight = "";
 String primaryDoctorId = "";
 bool isHealths = false;
+List<Map<String, dynamic>> medicalAntecedents = [];
 
 // ignore: must_be_immutable
 class Patient extends StatefulWidget {
@@ -65,7 +66,7 @@ class _PatientState extends State<Patient> {
         }
       }
     });
-    Future.delayed(const Duration(milliseconds: 50), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       refresh();
     });
   }
@@ -657,7 +658,6 @@ class _AddPatient3State extends State<AddPatient3> {
     });
   }
 
-  List<Map<String, dynamic>> medicalAntecedents = [];
   void addMedicalAntecedents(String name, List<Treatment> treatments) {
     setState(() {
       medicalAntecedents.add({
@@ -747,8 +747,9 @@ class _AddPatient3State extends State<AddPatient3> {
               size: SizeButton.sm,
               msg: const Text('Confirmer'),
               onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(InfoSnackBar(
-                    message: "Envoi en cours...", context: context));
+                TopInfoSnackBar(
+                  message: "Ajout du patient en cours...",
+                );
                 List<String> parts = birthdate.split('/');
                 String americanDate = '${parts[2]}-${parts[1]}-${parts[0]}';
                 final birth = DateTime.parse(americanDate);
@@ -774,20 +775,20 @@ class _AddPatient3State extends State<AddPatient3> {
                     "primary_doctor_id": primaryDoctorId,
                     "medical_antecedents": medicaljson,
                     "onboarding_status": "DONE",
+                    "family_members_med_info_id": [],
                   },
                 };
                 var reponse = await addPatientService(context, body);
                 if (reponse == true) {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                      message: "Patient ajouté avec succès", context: context));
+                  TopSuccessSnackBar(
+                    message: "Patient ajouté avec succès",
+                  );
                   widget.refresh();
                 } else {
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Erreur lors de l'ajout des informations",
-                      context: context));
+                  TopErrorSnackBar(
+                    message: "Erreur lors de l'ajout du patient",
+                  );
                 }
               },
             ),
@@ -983,7 +984,6 @@ class _Onboarding3State extends State<Body3> {
         onTap: () {
           final model = Provider.of<BottomSheetModel>(context, listen: false);
           model.resetCurrentIndex();
-
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,

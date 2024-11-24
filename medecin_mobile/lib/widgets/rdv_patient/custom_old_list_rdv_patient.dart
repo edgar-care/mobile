@@ -1,6 +1,7 @@
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_card_rdv_patient.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class CustomListOldPatient extends StatefulWidget {
@@ -13,18 +14,7 @@ class CustomListOldPatient extends StatefulWidget {
 
 class _CustomListRdvPatientState extends State<CustomListOldPatient> {
   int pressed = 0;
-  List<Map<String, dynamic>> bAppointment = [
-    {
-      "id": "66007e81f7fcbc4bca6f8df6",
-      "doctor_id": "65fa0ecad0a7067ac5593d29",
-      "id_patient": "65fa06393c449dfabded7f25",
-      "start_date": 1711386000,
-      "end_date": 1711387800,
-      "cancelation_reason": "",
-      "appointment_status": "WAITING_FOR_REVIEW",
-      "session_id": "test"
-    }
-  ];
+  List<Map<String, dynamic>> bAppointment = [];
   @override
   initState() {
     super.initState();
@@ -39,9 +29,10 @@ class _CustomListRdvPatientState extends State<CustomListOldPatient> {
 
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments(context);
+    Logger().d(tempAp);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].toString() == widget.id &&
-          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" && tempAp[i]['appointment_status'] != "CANCELED" &&
           tempAp[i]['start_date'] <=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {
@@ -49,6 +40,13 @@ class _CustomListRdvPatientState extends State<CustomListOldPatient> {
         });
       }
     }
+  }
+
+  void refresh() {
+    setState(() {
+      bAppointment = [];
+      _loadAppointment();
+    });
   }
 
   @override
@@ -60,6 +58,7 @@ class _CustomListRdvPatientState extends State<CustomListOldPatient> {
           const SizedBox(height: 4),
       itemBuilder: (context, index) {
         return CustomCardRdvPatient(
+          refresh: refresh,
           old: true,
           rdvInfo: bAppointment[index],
           delete: () => {deleteAppointmentList(index)},

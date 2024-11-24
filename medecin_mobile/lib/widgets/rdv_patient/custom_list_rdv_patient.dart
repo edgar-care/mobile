@@ -26,11 +26,18 @@ class _CustomListRdvPatientState extends State<CustomListPatient> {
     });
   }
 
+  void refresh() {
+    setState(() {
+      bAppointment = [];
+      _loadAppointment();
+    });
+  }
+
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments(context);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].toString() == widget.id &&
-          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" && tempAp[i]['appointment_status'] != "CANCELED" &&
           tempAp[i]['start_date'] >=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {
@@ -49,6 +56,7 @@ class _CustomListRdvPatientState extends State<CustomListPatient> {
           const SizedBox(height: 4),
       itemBuilder: (context, index) {
         return CustomCardRdvPatient(
+          refresh: refresh,
           old: false,
           rdvInfo: bAppointment[index],
           delete: () => {deleteAppointmentList(index)},

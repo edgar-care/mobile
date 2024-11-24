@@ -403,6 +403,12 @@ class _AddPrescriptionModalState extends State<AddPrescriptionModal> {
               size: SizeButton.md,
               msg: const Text('Ajouter le document'),
               onPressed: () {
+                if (medicineList.isEmpty) {
+                  TopErrorSnackBar(
+                    message: 'Veuillez ajouter au moins un médicament',
+                  ).show(context);
+                  return;
+                }
                 final List<Map<String, dynamic>> prescription = [];
                 for (int i = 0; i < medicineList.length; i++) {
                   prescription.add({

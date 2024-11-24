@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/widget.dart';
@@ -69,26 +68,7 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
       'medecin_traitant':
           data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
       'medical_antecedents':
-          data['medical_folder']['medical_antecedents'] == null
-              ? []
-              : data['medical_folder']['medical_antecedents']
-                  .map((antecedent) => {
-                        'antedisease_id': antecedent['id'],
-                        'name': antecedent['name'],
-                        'treatments': antecedent['medicines'] == null
-                            ? []
-                            : antecedent['medicines']
-                                .map((medicine) => {
-                                      'treatment_id': medicine['id'],
-                                      'quantity': medicine['quantity'],
-                                      'period': medicine['period'],
-                                      'day': medicine['day'],
-                                      'medicine_id': medicine['medicine_id']
-                                    })
-                                .toList(),
-                        'still_relevant': antecedent['still_relevant']
-                      })
-                  .toList(),
+          data['medical_folder']['medical_antecedents'] ?? []
     };
   }
 }

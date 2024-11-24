@@ -733,7 +733,7 @@ class _ModalInfoAntecedentState extends State<ModalInfoAntecedent> {
         for (final treatment in widget.medicalAntecedent['treatments']) ...[
           CardTreatmentAdd(
             antecedentName: widget.medicalAntecedent['name'],
-            treatment: treatment,
+            treatment: Treatment.fromJson(treatment),
           ),
           const SizedBox(height: 4),
         ],

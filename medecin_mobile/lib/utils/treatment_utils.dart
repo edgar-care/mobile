@@ -73,11 +73,19 @@ class Period {
     required this.frequency,
     required this.frequencyRatio,
     required this.frequencyUnit,
-    required this.periodLength,
-    required this.periodUnit,
+    this.periodLength,
+    this.periodUnit,
   });
 
   factory Period.fromJson(Map<String, dynamic> json) {
+    if (json['period_unit'] == null || json['period_length'] == "") {
+      return Period(
+        quantity: json['quantity'],
+        frequency: json['frequency'],
+        frequencyRatio: json['frequency_ratio'],
+        frequencyUnit: FrequencyUnit.values.byName(json['frequency_unit']),
+      );
+    }
     return Period(
       quantity: json['quantity'],
       frequency: json['frequency'],

@@ -83,9 +83,9 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.427,
-            child: Buttons(
+          Flexible(
+            child:
+             Buttons(
               variant: Variant.secondary,
               size: SizeButton.sm,
               msg: const Text('Annuler'),
@@ -97,13 +97,17 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
           const SizedBox(
             width: 12,
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.427,
-            child: Buttons(
+          Flexible(
+            child:
+            Buttons(
               variant: Variant.delete,
               size: SizeButton.sm,
               msg: const Text('Oui, je suis sûr'),
               onPressed: () {
+                if (cancelreason.isEmpty) {
+                  TopErrorSnackBar(message: "Veuillez renseigner une raison d'annulation").show(context);
+                  return;
+                }
                 cancelAppointments(id, context, cancelreason);
                 Navigator.pop(context);
               },
