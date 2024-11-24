@@ -283,7 +283,6 @@ class SubMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger().d(treatment);
     return ModalContainer(
       body: [
         Text(
@@ -958,8 +957,6 @@ class _UpdateTreatmentState extends State<UpdateTreatment> {
                 style: TextStyle(color: AppColors.white),
               ),
               onPressed: () {
-                Logger().d(widget.treatment.id);
-                Logger().d(widget.treatment.toJson());
                 if (widget.treatment.id != "" &&
                     widget.treatment.startDate !=
                         DateTime.fromMillisecondsSinceEpoch(0) &&

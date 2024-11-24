@@ -266,11 +266,29 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data,
     title: 'Tentative de connexion',
     subtitle:
         'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
-    icon: const Icon(
+    icon: IconModal(
+      icon: const Icon(
       BootstrapIcons.shield_lock_fill,
       color: AppColors.blue700,
       size: 17,
     ),
+      type: ModalType.info
+    ),
+    body: [
+      Row(
+        children: [
+          const Icon(BootstrapIcons.phone_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data["os"]} . ${data["browser"]}", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),)
+        ]),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          const Icon(BootstrapIcons.geo_alt_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data["location"]}", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500))
+        ]),
+    ],
     footer: Column(
       children: [
         Buttons(

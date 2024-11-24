@@ -87,6 +87,12 @@ class _InformationPersonnelState extends State<InformationPersonnel>
     return 'Dr.Edgar'; // default return value if no doctor matches
   }
 
+  void refresh(){
+    setState(() {
+      fetchData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,12 +136,14 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 ),
               );
             } else if (snapshot.hasError) {
+              Logger().d(snapshot.error);
               return const Center(
                 child: Text('Erreur lors du chargement des données'),
               );
             } else {
               return Expanded(
                 child: CardInformationPersonnel(
+                  refresh: refresh,
                     infoMedical: infoMedical,
                     birthdate: birthdate,
                     doctorName: doctorName),
@@ -293,9 +301,11 @@ class CardInformationPersonnel extends StatefulWidget {
   final String birthdate;
   final Map<String, dynamic> infoMedical;
   final String doctorName;
+  final Function refresh;
   const CardInformationPersonnel(
       {super.key,
       required this.infoMedical,
+      required this.refresh,
       required this.birthdate,
       required this.doctorName});
 
@@ -413,9 +423,7 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                                                   });
                                                 },
                                                 refresh: (){
-                                                  setState(() {
-                                                    medicalAntecedents = medicalAntecedents;
-                                                  });
+                                                  widget.refresh();
                                                 },
                                               ),                                                         
                                             ],
@@ -570,7 +578,7 @@ class SubMenuMedicalFolder extends StatelessWidget {
                     return ListModal(
                       model: model,
                       children: [
-                        UpdateAntecedentNameModal(startName: medicalAntecedent['name'])
+                        UpdateAntecedentNameModal(startName: medicalAntecedent['name'], id: medicalAntecedent['id'], refresh: refresh,)
                       ],
                     );
                   },
@@ -631,9 +639,10 @@ class SubMenuMedicalFolder extends StatelessWidget {
 }
 
 class UpdateAntecedentNameModal extends StatelessWidget {
+  final Function refresh;
+  final String id;
   final String startName;
-  const UpdateAntecedentNameModal({super.key, required this.startName});
-
+  const UpdateAntecedentNameModal({super.key, required this.startName, required this.id, required this.refresh});
 
   @override
   Widget build(BuildContext context) {
@@ -674,23 +683,33 @@ class UpdateAntecedentNameModal extends StatelessWidget {
             size: SizeButton.sm,
             msg: const Text('Modifier le sujet de santé'),
             onPressed: () {
-              putMedicalAntecedent(
-                {
-                  "name": antecedentName,
-                  "symptoms": [],
-                },
-              context).then((value) {
-                if (value) {
-                  TopSuccessSnackBar(
-                    message: "Sujet de santé modifié avec succès",
-                  ).show(context);
-                  Navigator.pop(context);
-                } else {
-                  TopErrorSnackBar(
-                    message: "Erreur lors de la modification du sujet de santé",
-                  ).show(context);
-                }
-              });
+              if (antecedentName != "") {
+                putMedicalAntecedent(
+                  {
+                    "medical_antecedent":{
+                      "name": antecedentName,
+                      "symptoms": [],
+                    }
+                  }, id, 
+                context).then((value) {
+                  if (value) {
+                    TopSuccessSnackBar(
+                      message: "Sujet de santé modifié avec succès",
+                    ).show(context);
+                    refresh();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else {
+                    TopErrorSnackBar(
+                      message: "Erreur lors de la modification du sujet de santé",
+                    ).show(context);
+                  }
+                });
+              }else{
+                TopErrorSnackBar(
+                  message: "Veuillez remplir tous les champs",
+                ).show(context);
+              }
             },
           ),
           const SizedBox(
@@ -1165,7 +1184,6 @@ class PatientAdd2State extends State<PatientAdd2> {
                   "medical_antecedents": medicaljson,
                   "onboarding_status": "DONE",
                 };
-                Logger().d(body);
                 putInformationPatient(context, body, widget.tmpInfo['id']).then(
                   (value) => {
                     if (value != null)

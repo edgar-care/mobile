@@ -142,7 +142,6 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> getTraitement() {
     List<Map<String, dynamic>> traitements = [];
     for (var disease in medicalAntecedent) {
-      Logger().d(disease);
       for (var treatment in disease["treatments"]) {
         if (treatment["end_date"] == null ||
             treatment["end_date"] == 0 ||
