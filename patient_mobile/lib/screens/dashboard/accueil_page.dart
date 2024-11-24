@@ -17,8 +17,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../services/doctor.dart';
-
 class HomePage extends StatefulWidget {
   final void Function(int) onItemTapped;
   const HomePage({super.key, required this.onItemTapped});
@@ -33,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> allDoctor = [];
   String docteurName = '';
   String docteurFirstName = '';
- List<Map<String, dynamic>> medicalAntecedent = [];
+  List<Map<String, dynamic>> medicalAntecedent = [];
   Map<String, String> medicaments = {};
   List<Map<String, dynamic>> meds = [];
 
@@ -50,8 +48,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
   Future<void> fetchData() async {
+    await getMedicalFolder(context).then((value) {
+      if (value.isNotEmpty) {
+        infoMedical = value;
+      } else {
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
+      }
+    });
+
     await getMedicalAntecedent(context).then((value) {
       if (value.isNotEmpty) {
         medicalAntecedent = value;
@@ -62,20 +67,13 @@ class _HomePageState extends State<HomePage> {
     });
     await getMedecines(context).then((value) {
       if (value.isNotEmpty) {
-        meds = value;    
+        meds = value;
         for (var treatment in meds) {
           medicaments[treatment['id']] = treatment['name'];
         }
       } else {
         TopErrorSnackBar(message: "Error on fetching medecine").show(context);
         return [];
-      }
-    });
-    await getAllDoctor(context).then((value) {
-      if (value.isNotEmpty) {
-        allDoctor = value;
-      } else {
-        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       }
     });
 
@@ -87,14 +85,8 @@ class _HomePageState extends State<HomePage> {
             .show(context);
       }
     });
-    await getMedicalFolder(context).then((value) {
-      if (value.isNotEmpty) {
-        infoMedical = value;
-      } else {
-        TopErrorSnackBar(message: "Error on fetching name").show(context);
-      }
-    });
 
+    return;
   }
 
   DateTime now = DateTime.now();
@@ -145,8 +137,7 @@ class _HomePageState extends State<HomePage> {
       for (var treatment in disease["treatments"]) {
         if (treatment["end_date"] == null ||
             treatment["end_date"] == 0 ||
-            treatment["end_date"] >
-                DateTime.now().millisecondsSinceEpoch) {
+            treatment["end_date"] > DateTime.now().millisecondsSinceEpoch) {
           traitements.add({
             'medId': disease["id"],
             "medNames": disease["name"],
@@ -175,7 +166,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          Map<String, dynamic>? nextAppointment = getNextAppointment();  
+          Map<String, dynamic>? nextAppointment = getNextAppointment();
           List<Map<String, dynamic>> traitements = getTraitement();
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,8 +288,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              Expanded(child:
-                ListView.separated(
+              Expanded(
+                child: ListView.separated(
                   separatorBuilder: (context, index) => const SizedBox(
                     height: 8,
                   ),

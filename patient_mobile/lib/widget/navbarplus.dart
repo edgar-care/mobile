@@ -6,6 +6,7 @@ import 'package:edgar_app/screens/2fa/devices_page.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:edgar_app/services/logout_service.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
@@ -404,12 +405,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Déconnexion',
                                       onTap: () async {
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        prefs.remove('token');
-
-                                        Navigator.pushNamed(context, '/');
+                                        logout(context);
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
