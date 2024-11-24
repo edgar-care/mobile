@@ -9,7 +9,6 @@ import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:edgar_app/widget/modal_treatment.dart';
 import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
