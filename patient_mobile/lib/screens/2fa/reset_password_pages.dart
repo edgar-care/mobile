@@ -5,7 +5,6 @@ import 'package:edgar/colors.dart';
 import 'package:edgar_app/services/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -183,7 +182,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           } else {
                             final response = await updatePassword(
                                 actualPassword, newPassword, context);
-                            Logger().i(response);
                             if (response == true) {
                               Navigator.pop(context);
                               TopSuccessSnackBar(

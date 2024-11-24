@@ -14,7 +14,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class InformationPersonnel extends StatefulWidget {
@@ -39,6 +38,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
         List<Map<String, dynamic>> medicalAntecedent = [];
         List<Treatment> tmpTraitments = [];
         for (var element in value['medical_antecedents']) {
+          tmpTraitments.clear();
           if (element['name'] != "" &&
               element['id'] != "" &&
               element['treatments'] != []) {
@@ -136,7 +136,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 ),
               );
             } else if (snapshot.hasError) {
-              Logger().d(snapshot.error);
               return const Center(
                 child: Text('Erreur lors du chargement des données'),
               );
@@ -173,11 +172,29 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                       model: model,
                       children: [
                         AddSubMenu(
+                            refresh: refresh,
                             tmpInfo: tmpInfo,
-                            refresh: () {
-                              setState(() {
-                                fetchData();
-                              });
+                            addAntecedent: (String nameAntecedent, List<Treatment> treatments) {
+                              var body = {
+                                  "name": nameAntecedent,
+                                  "symptoms": [],
+                                  "treatments": treatments.map((treatment) => treatment.toJson()).toList()
+                              };
+                                postMedicalAntecedent(body, context).then((value) {
+                                  if (value) {
+                                    TopSuccessSnackBar(
+                                      message: "Sujet de santé ajouté avec succès",
+                                    ).show(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    refresh();
+                                  } else {
+                                    TopErrorSnackBar(
+                                      message:
+                                          "Erreur lors de l'ajout du sujet de santé",
+                                    ).show(context);
+                                  }
+                                });
                             }),
                       ],
                     );
@@ -195,28 +212,10 @@ class _InformationPersonnelState extends State<InformationPersonnel>
 // ignore: must_be_immutable
 class AddSubMenu extends StatelessWidget {
   Map<String, dynamic> tmpInfo;
+  final Function addAntecedent;
   final Function refresh;
-  AddSubMenu({super.key, required this.tmpInfo, required this.refresh});
+  AddSubMenu({super.key, required this.tmpInfo, required this.addAntecedent, required this.refresh});
 
-  Function postMA =
-      (Map<String, dynamic> antecedent, BuildContext context) async {
-    try {
-      final value = await postMedicalAntecedent(antecedent, context);
-
-      if (value) {
-        TopSuccessSnackBar(message: "Sujet de santé ajouté avec succès")
-            .show(context);
-      } else {
-        TopErrorSnackBar(
-          message: "Erreur lors de l'ajout du sujet de santé",
-        ).show(context);
-      }
-    } catch (e) {
-      TopErrorSnackBar(
-        message: "Erreur lors de l'ajout du sujet de santé",
-      ).show(context);
-    }
-  };
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
@@ -253,16 +252,7 @@ class AddSubMenu extends StatelessWidget {
                       model: model,
                       children: [
                         ModalTreamentInfo(
-                          addMedicalAntecedents: (String antecedentName,
-                              List<Treatment> traitement) {
-                            var antecedent = {
-                              "name": antecedentName,
-                              "symptoms": [],
-                              "treatments":
-                                  traitement.map((e) => e.toJson()).toList()
-                            };
-                            postMA(antecedent, context);
-                          },
+                          addMedicalAntecedents: addAntecedent
                         )
                       ],
                     );
@@ -411,7 +401,6 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
               children: [
                 if (medicalAntecedents.isNotEmpty)
                   for (var i = 0; i < medicalAntecedents.length; i++)
-                    if (i < 3)
                       LayoutBuilder(
                         builder: (context, constraints) {
                           return IntrinsicWidth(
@@ -436,12 +425,25 @@ class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
                                                 medicalAntecedent:
                                                     medicalAntecedents[i],
                                                 deleteAntecedent: () {
-                                                  setState(() {
                                                     deleteMedicalAntecedent(
                                                         medicalAntecedents[i]
                                                             ["id"],
-                                                        context);
-                                                  });
+                                                        context).then((value) {
+                                                          if (value) {
+                                                            TopSuccessSnackBar(
+                                                              message:
+                                                                  "Sujet de santé supprimé avec succès",
+                                                            ).show(context);
+                                                            Navigator.pop(context);
+                                                            Navigator.pop(context);
+                                                            widget.refresh();
+                                                          } else {
+                                                            TopErrorSnackBar(
+                                                              message:
+                                                                  "Erreur lors de la suppression du sujet de santé",
+                                                            ).show(context);
+                                                          }
+                                                        });
                                                 },
                                                 refresh: () {
                                                   widget.refresh();
@@ -778,11 +780,6 @@ class DeleteAntecedentModal extends StatelessWidget {
             msg: const Text('Oui, supprimer le sujet de santé'),
             onPressed: () {
               deleteAntecedent();
-              refresh();
-              TopSuccessSnackBar(
-                message: "Sujet de santé supprimé avec succès",
-              ).show(context);
-              Navigator.pop(context);
             },
           ),
           const SizedBox(

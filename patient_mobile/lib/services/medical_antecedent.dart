@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_app/services/request.dart';
-import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getMedicalAntecedent(
     BuildContext context) async {
@@ -72,9 +71,10 @@ Future<bool> putTraitement(
 Future<bool> deleteMedicalAntecedent(String id, BuildContext context) async {
   final response = await httpRequest(
     context: context,
-    type: RequestType.put,
-    endpoint: 'dashboard/treatment/$id',
+    type: RequestType.delete,
+    endpoint: 'dashboard/medical-antecedent/$id',
     needsToken: true,
+    body: {"delete" : true},
   );
 
   if (response != null) {
@@ -110,8 +110,6 @@ Future<bool> postMedicalAntecedent(
     needsToken: true,
     body: antecedents,
   );
-
-  Logger().i(response);
 
   if (response != null) {
     return true;

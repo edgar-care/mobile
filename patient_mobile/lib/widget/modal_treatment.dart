@@ -209,7 +209,6 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
             onPressed: () {
               if (nameTreatment.isNotEmpty && traitements.isNotEmpty) {
                 widget.addMedicalAntecedents(nameTreatment, traitements);
-                Navigator.pop(context);
               }else{
                 TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
               }
@@ -834,9 +833,11 @@ class _CardMedicineInfoState extends State<CardMedicineInfo> {
   String medicineName = "Médicament inconnu"; // Déplacement de la variable ici
   String form = "forme inconnu";
   Future<bool> getMedicineName() async {
-    final medicine = await getMedecineById(context, widget.medicine.medicineId);
-    setState(() {
-      form = medicine['dosage_form'];
+    getMedecineById(context, widget.medicine.medicineId).then((medicine) {
+      setState(() {
+        medicineName = medicine['name'];
+        form = medicine['dosage_form'];
+      });
     });
     return true;
   }
