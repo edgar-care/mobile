@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/request.dart';
+import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId(BuildContext context) async {
   final response = await httpRequest(
@@ -108,7 +109,7 @@ void populateInfoMedical(Map<String, dynamic>? data) {
 }
 
 Future putInformationPatient(
-    BuildContext context, Map<String, Object> body, String id) async {
+    BuildContext context, Map<String, dynamic> body, String id) async {
   final response = await httpRequest(
     type: RequestType.put,
     endpoint: '/doctor/patient/$id',
@@ -117,8 +118,9 @@ Future putInformationPatient(
     body: body,
   );
 
+  Logger().d(response);
+
   if (response != null) {
-    populateInfoMedical(response);
     return true;
   }
   return false;
