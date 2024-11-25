@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar/widget.dart';
 import 'package:edgar_pro/main.dart';
 import 'package:edgar_pro/screens/dashboard/agenda_page.dart';
 import 'package:animations/animations.dart';
@@ -7,6 +11,8 @@ import 'package:edgar_pro/screens/dashboard/chat_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/diagnostic_page.dart';
 import 'package:edgar_pro/screens/dashboard/document_page.dart';
 import 'package:edgar_pro/screens/dashboard/patient_list_page.dart';
+import 'package:edgar_pro/screens/dashboard/patientele_page.dart';
+import 'package:edgar_pro/screens/dashboard/prescription_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_page.dart';
 import 'package:edgar_pro/screens/dashboard/rdv_patient_page.dart';
 import 'package:edgar_pro/screens/dashboard/services.dart';
@@ -15,6 +21,8 @@ import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -127,24 +135,29 @@ class _DashBoardState extends State<DashBoard> {
       onAskMobileConnection: (data) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString("token");
-        _webSocketService?.responseMobileConnection(
-          token!,
-          data['uuid'],
+        final model = Provider.of<BottomSheetModel>(context, listen: false);
+        model.resetCurrentIndex();
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) {
+            return Consumer<BottomSheetModel>(
+              builder: (context, model, child) {
+                return ListModal(model: model, children: [
+                  faWSModal(_webSocketService!, token!, data, context),
+                ]);
+              },
+            );
+          },
         );
       },
 
-      onResponseMobileConnection: (data) {
-      },
+      onResponseMobileConnection: (data) {},
     );
     await _webSocketService?.connect();
     _webSocketService?.sendReadyAction();
     _webSocketService?.getMessages();
-  }
-
-  @override
-  void dispose() {
-    _webSocketService?.disconnect();
-    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -180,16 +193,15 @@ class _DashBoardState extends State<DashBoard> {
       Services(
         tapped: _onItemTapped,
       ),
+      Patient(
+        setPages: updateSelectedIndex,
+        setId: updateId,
+      ),
       const Diagnostic(),
       ChatPageDashBoard(
           chats: chats,
           webSocketService: _webSocketService,
           scrollController: _scrollController),
-      const Text('Aide',
-          style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.blue950)),
       PatientPage(id: getId(), setPages: updateSelectedIndex, setId: updateId),
       PatientPageRdv(
         id: getId(),
@@ -201,6 +213,7 @@ class _DashBoardState extends State<DashBoard> {
         setPages: updateSelectedIndex,
         setId: updateId,
       ),
+      PrescriptionPage(id: _id, setPages: updateSelectedIndex, setId: updateId),
       ChatPatient(
           id: getId(),
           setPages: updateSelectedIndex,
@@ -246,4 +259,60 @@ class _DashBoardState extends State<DashBoard> {
       ),
     );
   }
+}
+
+Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data,
+    BuildContext context) {
+      Logger().d(data);
+  return ModalContainer(
+    title: 'Tentative de connexion',
+    subtitle:
+        'Une tentative de connexion à votre compte edgar est en cours. Accepter ou refuser la tentative de connexion.',
+    icon: IconModal(
+      icon: const Icon(
+      BootstrapIcons.shield_lock_fill,
+      color: AppColors.blue700,
+      size: 17,
+    ),
+      type: ModalType.info,
+      ),
+    body: [
+      Row(
+        children: [
+          const Icon(BootstrapIcons.phone_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data["os"]} . ${data["browser"]}", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),)
+        ]),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          const Icon(BootstrapIcons.geo_alt_fill, color: AppColors.black,),
+          const SizedBox(width: 12),
+          Text("${data["location"]}", style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500))
+        ]),
+    ],
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text('Autoriser'),
+          onPressed: () {
+            ws.responseMobileConnection(token, data['uuid'], true);
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(height: 8),
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Refuser'),
+          onPressed: () {
+            ws.responseMobileConnection(token, data['uuid'], false);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
 }

@@ -3,6 +3,7 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/2FA/authentication_page.dart';
 import 'package:edgar_pro/2FA/reset_password_pasges.dart';
+import 'package:edgar_pro/services/account.dart';
 import 'package:edgar_pro/services/multiplefa_services.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
@@ -30,8 +31,13 @@ class _AccountPageState extends State<AccountPage> {
     getInfo();
   }
 
+  void refresh() {
+    getInfo();
+    setState(() {});
+  }
+
   void getInfo() async {
-    var tmp = await getEnable2fa();
+    var tmp = await getEnable2fa(context);
     setState(() {
       enable2fa = tmp;
     });
@@ -105,15 +111,18 @@ class _AccountPageState extends State<AccountPage> {
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(50)),
                                           ),
-                                          child: BoringAvatars(
+                                          child: BoringAvatar(
                                             name:
                                                 "${widget.infoMedical['firstname']} ${widget.infoMedical['name'].toUpperCase()}",
-                                            colors: const [
-                                              AppColors.blue700,
-                                              AppColors.blue200,
-                                              AppColors.blue500
-                                            ],
-                                            type: BoringAvatarsType.beam,
+                                            palette: BoringAvatarPalette(
+                                              const [
+                                                AppColors.blue700,
+                                                AppColors.blue200,
+                                                AppColors.blue500
+                                              ],
+                                            ),
+                                            type: BoringAvatarType.beam,
+                                            shape: CircleBorder(),
                                           )),
                                       const SizedBox(width: 16),
                                       Column(
@@ -180,11 +189,12 @@ class _AccountPageState extends State<AccountPage> {
                                     NavbarPLusTab(
                                       title: 'Mot de passe',
                                       onTap: () {
-                                         Navigator.push(
+                                        Navigator.push(
                                           context,
                                           PageRouteBuilder<void>(
                                             opaque: false,
-                                            pageBuilder: (BuildContext context, _, __) {
+                                            pageBuilder:
+                                                (BuildContext context, _, __) {
                                               return const ResetPasswordPage();
                                             },
                                           ),
@@ -229,7 +239,9 @@ class _AccountPageState extends State<AccountPage> {
                                             opaque: false,
                                             pageBuilder:
                                                 (BuildContext context, _, __) {
-                                              return const DoubleAuthentication();
+                                              return DoubleAuthentication(
+                                                refreshAccount: refresh,
+                                              );
                                             },
                                           ),
                                         );
@@ -264,7 +276,7 @@ class _AccountPageState extends State<AccountPage> {
                                                       enable2fa['methods']
                                                               .isEmpty
                                                           ? modalRedirect2FA(
-                                                              context)
+                                                              context, refresh)
                                                           : modalReNewBackup(
                                                               context),
                                                     ]);
@@ -281,6 +293,92 @@ class _AccountPageState extends State<AccountPage> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Gestion du Compte',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppColors.blue100,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    NavbarPLusTab(
+                                      title: 'Désactiver le compte',
+                                      onTap: () {
+                                        final model =
+                                            Provider.of<BottomSheetModel>(
+                                                context,
+                                                listen: false);
+                                        model.resetCurrentIndex();
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Consumer<BottomSheetModel>(
+                                              builder: (context, model, child) {
+                                                return ListModal(
+                                                    model: model,
+                                                    children: [
+                                                      modalDisableAccount(
+                                                          context),
+                                                    ]);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                      type: 'Only',
+                                    ),
+                                    Container(
+                                      color: AppColors.blue100,
+                                      height: 1,
+                                    ),
+                                    NavbarPLusTab(
+                                      title: 'Supprimer le compte',
+                                      color: AppColors.red600,
+                                      onTap: () {
+                                        final model =
+                                            Provider.of<BottomSheetModel>(
+                                                context,
+                                                listen: false);
+                                        model.resetCurrentIndex();
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          builder: (context) {
+                                            return Consumer<BottomSheetModel>(
+                                              builder: (context, model, child) {
+                                                return ListModal(
+                                                    model: model,
+                                                    children: [
+                                                      modalDeleteAccount(
+                                                          context),
+                                                    ]);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                      type: 'Only',
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -293,6 +391,101 @@ class _AccountPageState extends State<AccountPage> {
       ),
     );
   }
+}
+
+Widget modalDisableAccount(BuildContext context) {
+  return ModalContainer(
+    title: 'Désactiver le compte',
+    subtitle:
+        'Vous êtes sur le point de désactiver votre compte. Vous ne pourrez plus accéder à votre compte.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.person_x_fill,
+        color: AppColors.red600,
+        size: 17,
+      ),
+      type: ModalType.error,
+    ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Désactiver le compte'),
+          onPressed: () async {
+            await disableAccount(context).then(
+              (value) {
+                Navigator.pop(context);
+              },
+            ).then(
+              (value) {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/desactivate');
+              },
+            );
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget modalDeleteAccount(BuildContext context) {
+  return ModalContainer(
+    title: 'Supprimer le compte',
+    subtitle:
+        'Vous êtes sur le point de supprimer votre compte. Vous ne pourrez plus accéder à votre compte.',
+    icon: const IconModal(
+      icon: Icon(
+        BootstrapIcons.person_x_fill,
+        color: AppColors.red600,
+        size: 17,
+      ),
+      type: ModalType.error,
+    ),
+    footer: Column(
+      children: [
+        Buttons(
+          variant: Variant.delete,
+          size: SizeButton.md,
+          msg: const Text('Supprimer le compte'),
+          onPressed: () async {
+            await deleteAccount(context).then(
+              (value) {
+                Navigator.pop(context);
+                TopSuccessSnackBar(
+                  message:
+                      'Votre compte a bien été supprimé, veuillez consulter vos mails pour plus d\'informations.',
+                ).show(context);
+              },
+            );
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Buttons(
+          variant: Variant.secondary,
+          size: SizeButton.md,
+          msg: const Text('Annuler'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
 }
 
 Widget modalReNewBackup(BuildContext context) {
@@ -346,8 +539,8 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   List<dynamic> backupCodes = [];
 
   Future<bool> getbackupcode() async {
-    var tmp = await generateBackupCode();
-      backupCodes = tmp;
+    var tmp = await generateBackupCode(context);
+    backupCodes = tmp;
     return true;
   }
 
@@ -472,28 +665,13 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
                   ],
                 ),
               ],
-              footer: Column(
-                children: [
-                  Buttons(
-                    variant: Variant.primary,
-                    size: SizeButton.md,
-                    msg: const Text('Activer l\'authentification'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Buttons(
-                    variant: Variant.secondary,
-                    size: SizeButton.md,
-                    msg: const Text('Annuler'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+              footer: Buttons(
+                variant: Variant.primary,
+                size: SizeButton.md,
+                msg: const Text('Confirmer'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             );
           } else {
@@ -503,7 +681,7 @@ class _ModalGenerateBackupState extends State<ModalGenerateBackup> {
   }
 }
 
-Widget modalRedirect2FA(BuildContext context) {
+Widget modalRedirect2FA(BuildContext context, Function refresh2fa) {
   return ModalContainer(
     title: 'Vos codes de sauvegarde',
     subtitle:
@@ -526,7 +704,9 @@ Widget modalRedirect2FA(BuildContext context) {
           PageRouteBuilder<void>(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) {
-              return const DoubleAuthentication();
+              return DoubleAuthentication(
+                refreshAccount: refresh2fa,
+              );
             },
           ),
         );

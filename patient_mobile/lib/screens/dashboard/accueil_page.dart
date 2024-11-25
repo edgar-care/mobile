@@ -1,20 +1,25 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:edgar_app/screens/dashboard/traitement_page.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
+import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/services/medical_antecedent.dart';
 import 'package:edgar_app/utils/appoitement_utils.dart';
+import 'package:edgar_app/utils/treatement_utils.dart';
 import 'package:edgar_app/widget/appoitement_card.dart';
-import 'package:edgar_app/widget/medicament_day_card.dart';
+import 'package:edgar_app/widget/card_traitement_info.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../../services/doctor.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final void Function(int) onItemTapped;
+  const HomePage({super.key, required this.onItemTapped});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,25 +29,51 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> infoMedical = {};
   List<Map<String, dynamic>> rdv = [];
   List<dynamic> allDoctor = [];
+  String docteurName = '';
+  String docteurFirstName = '';
+  List<Map<String, dynamic>> medicalAntecedent = [];
+  Map<String, String> medicaments = {};
+  List<Map<String, dynamic>> meds = [];
+
+  void getAllMedicines() async {
+    meds = await getMedecines(context);
+    for (var treatment in meds) {
+      medicaments[treatment['id']] = treatment['name'];
+    }
+  }
+
+  void refresh() {
+    setState(() {
+      fetchData();
+    });
+  }
 
   Future<void> fetchData() async {
-
-    await getAllDoctor().then((value) {
-      if (value.isNotEmpty) {
-        allDoctor = value;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching doctors", context: context));
-      }
-    });
-
-    await getMedicalFolder().then((value) {
-      
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
+      }
+    });
+
+    await getMedicalAntecedent(context).then((value) {
+      if (value.isNotEmpty) {
+        medicalAntecedent = value;
+      } else {
+        TopErrorSnackBar(message: "Error on fetching medical antecedent")
+            .show(context);
+      }
+    });
+    await getMedecines(context).then((value) {
+      if (value.isNotEmpty) {
+        meds = value;
+        for (var treatment in meds) {
+          medicaments[treatment['id']] = treatment['name'];
+        }
+      } else {
+        TopErrorSnackBar(message: "Error on fetching medecine").show(context);
+        return [];
       }
     });
 
@@ -50,22 +81,27 @@ class _HomePageState extends State<HomePage> {
       if (value!.isNotEmpty) {
         rdv = List<Map<String, dynamic>>.from(value['rdv']);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-            message: "Error on fetching appointement", context: context));
+        TopErrorSnackBar(message: "Error on fetching appoitement")
+            .show(context);
       }
     });
+
     return;
   }
 
   DateTime now = DateTime.now();
 
   Map<String, dynamic>? getNextAppointment() {
+    if (rdv.isEmpty) return null;
+
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
-      return appointment['appointment_status'] == 'ACCEPTED_DUE_TO_REVIEW' &&
-          DateTime.fromMillisecondsSinceEpoch(appointment['start_date'] * 1000)
-              .isAfter(now);
+      return DateTime.fromMillisecondsSinceEpoch(
+              appointment['start_date'] * 1000)
+          .isAfter(now);
     }).toList();
+
+    if (acceptedAppointments.isEmpty) return null;
 
     acceptedAppointments.sort((a, b) {
       DateTime dateA =
@@ -75,7 +111,47 @@ class _HomePageState extends State<HomePage> {
       return dateA.compareTo(dateB);
     });
 
-    return acceptedAppointments.isNotEmpty ? acceptedAppointments.first : null;
+    // Safely handle doctor information
+    try {
+      Doctor? doc =
+          findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
+      if (doc != null) {
+        docteurName = doc.name;
+        docteurFirstName = doc.firstname;
+      } else {
+        docteurName = "Unknown";
+        docteurFirstName = "Doctor";
+      }
+    } catch (e) {
+      Logger().e("Error finding doctor: $e");
+      docteurName = "Unknown";
+      docteurFirstName = "Doctor";
+    }
+
+    return acceptedAppointments.first;
+  }
+
+  List<Map<String, dynamic>> getTraitement() {
+    List<Map<String, dynamic>> traitements = [];
+    for (var disease in medicalAntecedent) {
+      for (var treatment in disease["treatments"]) {
+        if (treatment["end_date"] == null ||
+            treatment["end_date"] == 0 ||
+            treatment["end_date"] > DateTime.now().millisecondsSinceEpoch) {
+          traitements.add({
+            'medId': disease["id"],
+            "medNames": disease["name"],
+            "treatment": Treatment.fromJson(treatment),
+          });
+        }
+      }
+    }
+    return traitements;
+  }
+
+  void deleteTraitement(String id) async {
+    await deleteTraitementRequest(id, context);
+    setState(() {});
   }
 
   @override
@@ -91,7 +167,7 @@ class _HomePageState extends State<HomePage> {
           );
         } else {
           Map<String, dynamic>? nextAppointment = getNextAppointment();
-
+          List<Map<String, dynamic>> traitements = getTraitement();
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -108,15 +184,18 @@ class _HomePageState extends State<HomePage> {
                         color: AppColors.white,
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
-                      child: BoringAvatars(
+                      child: BoringAvatar(
                         name:
                             "${infoMedical['firstname'] ?? 'Ne fonctionne'} ${infoMedical['name'] != null ? infoMedical["name"].toUpperCase() : 'Pas'}",
-                        colors: const [
-                          AppColors.blue700,
-                          AppColors.blue200,
-                          AppColors.blue500
-                        ],
-                        type: BoringAvatarsType.beam,
+                        palette: BoringAvatarPalette(
+                          [
+                            AppColors.blue700,
+                            AppColors.blue200,
+                            AppColors.blue500
+                          ],
+                        ),
+                        type: BoringAvatarType.beam,
+                        shape: CircleBorder(),
                       )),
                 ],
               ),
@@ -157,10 +236,7 @@ class _HomePageState extends State<HomePage> {
                           nextAppointment['start_date'] * 1000),
                       endDate: DateTime.fromMillisecondsSinceEpoch(
                           nextAppointment['end_date'] * 1000),
-                      doctor: findDoctorById(
-                                  allDoctor, nextAppointment['doctor_id'])
-                              ?.name ??
-                          'Docteur inconnu',
+                      doctor: "${docteurName.toUpperCase()} $docteurFirstName",
                       onTap: () {},
                     )
                   : const Text(
@@ -196,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                 height: 24,
               ),
               const Text(
-                "Mes médicaments à prendre aujourd'hui",
+                "Mes Traitement en cours",
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Poppins',
@@ -212,10 +288,71 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Expanded(
-                child: DailyMedicamentCard(),
+              Expanded(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 8,
+                  ),
+                  itemCount: traitements.length <= 3 ? traitements.length : 3,
+                  padding: const EdgeInsets.all(0),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        final model = Provider.of<BottomSheetModel>(context,
+                            listen: false);
+                        model.resetCurrentIndex();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return Consumer<BottomSheetModel>(
+                              builder: (context, model, child) {
+                                return ListModal(
+                                  model: model,
+                                  children: [
+                                    SubMenu(
+                                        treatment: traitements[index],
+                                        deleteTraitement: deleteTraitement,
+                                        index: index,
+                                        meds: meds,
+                                        medId: traitements[index]["medId"],
+                                        refresh: refresh),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: CardTraitementSimplify(
+                          medicaments: medicaments,
+                          name: traitements[index]["medNames"],
+                          traitement: traitements[index]["treatment"]),
+                    );
+                  },
+                ),
               ),
-              const SizedBox(height: 12),
+              if (traitements.length > 3) ...[
+                const SizedBox(
+                  height: 8,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onItemTapped(3);
+                  },
+                  child: const Text(
+                    "Voir plus de traitements",
+                    style: TextStyle(
+                      color: AppColors.blue700,
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ]
             ],
           );
         }

@@ -1,40 +1,32 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:edgar_app/services/request.dart';
+import 'package:flutter/material.dart';
 
-Future<String> initiateDiagnostic() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}diagnostic/initiate';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future<String> initiateDiagnostic(BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'diagnostic/initiate',
+    needsToken: true,
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return jsonDecode(body)["sessionId"];
+  if (response != null) {
+    return response["sessionId"];
   } else {
     return "";
   }
 }
 
 Future<Map<String, dynamic>> getDiagnostic(
-    String sessionId, String sentence) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}diagnostic/diagnose';
-  var body = jsonEncode({"id": sessionId, "sentence": sentence});
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
-    body: body,
+    String sessionId, String sentence, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'diagnostic/diagnose',
+    needsToken: true,
+    body: {"id": sessionId, "sentence": sentence},
   );
-  if (response.statusCode == 200) {
-    final body = response.body;
-    return jsonDecode(body);
+
+  if (response != null) {
+    return response;
   } else {
     return {};
   }

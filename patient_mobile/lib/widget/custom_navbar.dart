@@ -1,6 +1,6 @@
+import 'package:edgar_app/services/logout_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar/colors.dart';
 
 class Navbar extends StatefulWidget {
@@ -184,10 +184,7 @@ class CardNavbar extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (isDeconnexion == true) {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.remove('token');
-          // ignore: use_build_context_synchronously
-          Navigator.pushNamed(context, '/');
+          logout(context);
         } else if (isDeconnexion == false || isDeconnexion == null) {
           callback(index);
         }

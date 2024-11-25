@@ -355,18 +355,14 @@ class _SeeMoreState extends State<SeeMore> {
         msg: const Text("Valider le rendez-vous"),
         onPressed: () async {
           if (idselected.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              ErrorSnackBar(
-                message:
-                    "Veuillez sélectionner un rendez-vous avant de continuer.",
-                context: context,
-              ),
-            );
+            TopErrorSnackBar(
+              message: "Veuillez sélectionner un rendez-vous.",
+            ).show(context);
           } else {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             String? sessionId = prefs.getString('sessionId');
 
-            await postAppointementId(idselected, sessionId!).then(
+            await postAppointementId(idselected, sessionId!, context).then(
               (value) {
                 if (value) {
                   Navigator.pushNamed(
@@ -376,14 +372,10 @@ class _SeeMoreState extends State<SeeMore> {
                   );
                 } else {
                   // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message:
-                          "Une erreur s'est produite lors de la validation du rendez-vous.",
-                      // ignore: use_build_context_synchronously
-                      context: context,
-                    ),
-                  );
+                  TopErrorSnackBar(
+                    message:
+                        "Une erreur s'est produite lors de la validation du rendez-vous.",
+                  ).show(context);
                 }
               },
             );
@@ -436,6 +428,404 @@ class _HourItemState extends State<HourItem> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CardAppointementDoctorHourModify extends StatefulWidget {
+  final Appointment appointements;
+  final Function updateId;
+  final String idSelected;
+  final String oldId;
+  final Function updateData;
+
+  const CardAppointementDoctorHourModify({
+    super.key,
+    required this.appointements,
+    required this.updateId,
+    required this.idSelected,
+    required this.oldId,
+    required this.updateData,
+  });
+
+  @override
+  State<CardAppointementDoctorHourModify> createState() =>
+      _CardAppointementDoctorHourModifyState();
+}
+
+class _CardAppointementDoctorHourModifyState
+    extends State<CardAppointementDoctorHourModify> {
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('fr', null);
+  }
+
+  final ValueNotifier<int> pageIndex = ValueNotifier(0);
+
+  String getAbbreviatedWeekday(String weekday) {
+    if (weekday.isEmpty) {
+      return '';
+    }
+    if (weekday.length < 2) {
+      return weekday.toUpperCase();
+    }
+    return (weekday[0].toUpperCase() + weekday.substring(1)).substring(0, 3);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.blue200,
+          width: 2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            widget.appointements.doctor,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+              color: AppColors.black,
+            ),
+          ),
+          Text(
+            widget.appointements.address.street,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
+              color: AppColors.black,
+            ),
+          ),
+          Text(
+            '${widget.appointements.address.zipCode} ${widget.appointements.address.city}',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
+              color: AppColors.black,
+            ),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          const Divider(
+            color: AppColors.blue700,
+            thickness: 1,
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          if (widget.appointements.dates.isEmpty)
+            const Center(
+              child: Text(
+                'Aucun rendez-vous disponible',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                  color: AppColors.black,
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 160, // Adjust the height as needed
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.appointements.dates.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 82,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(
+                          color: index == widget.appointements.dates.length - 1
+                              ? AppColors.white
+                              : AppColors.blue200,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          getAbbreviatedWeekday(
+                            DateFormat('EEEE', 'fr').format(
+                              DateFormat('dd/MM/yyyy').parse(
+                                widget.appointements.dates[index].day,
+                              ),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                            color: AppColors.black,
+                          ),
+                        ),
+                        Text(
+                          DateFormat('dd MMM', 'fr')
+                              .format(
+                                DateFormat('dd/MM/yyyy').parse(
+                                  widget.appointements.dates[index].day,
+                                ),
+                              )
+                              .substring(0,
+                                  6), // Modification to include only the first three letters of the month
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                            color: AppColors.black,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        for (var hour
+                            in widget.appointements.dates[index].hour.take(3))
+                          HourItem(
+                            hour: hour.hour,
+                            onTap: () => widget.updateId(hour.id),
+                            isSelect: hour.id == widget.idSelected,
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          if (widget.appointements.dates.isNotEmpty)
+            const SizedBox(
+              height: 8,
+            ),
+          if (widget.appointements.dates.isNotEmpty)
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text("Voir plus d'horaires"),
+              onPressed: () {
+                final model =
+                    Provider.of<BottomSheetModel>(context, listen: false);
+                model.resetCurrentIndex();
+
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return Consumer<BottomSheetModel>(
+                      builder: (context, model, child) {
+                        return ListModal(
+                          model: model,
+                          children: [
+                            SeeMoreModify(
+                              appointements: widget.appointements,
+                              idSelected: widget.idSelected,
+                              updateId: widget.updateId,
+                              oldId: widget.oldId,
+                              updateData: widget.updateData,
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class SeeMoreModify extends StatefulWidget {
+  final Appointment appointements;
+  final Function updateId;
+  String idSelected;
+  final String oldId;
+  final Function updateData;
+  SeeMoreModify({
+    super.key,
+    required this.appointements,
+    required this.idSelected,
+    required this.updateId,
+    required this.oldId,
+    required this.updateData,
+  });
+
+  @override
+  State<SeeMoreModify> createState() => _SeeMoreModifyState();
+}
+
+class _SeeMoreModifyState extends State<SeeMoreModify> {
+  String idselected = '';
+
+  void updateId(String id) {
+    setState(() {
+      widget.idSelected = id;
+      idselected = id;
+    });
+  }
+
+  String getAbbreviatedWeekday(String weekday) {
+    if (weekday.isEmpty) {
+      return '';
+    }
+    if (weekday.length < 2) {
+      return weekday.toUpperCase();
+    }
+    return (weekday[0].toUpperCase() + weekday.substring(1)).substring(0, 3);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Séléctionner un rendez-vous",
+      subtitle: "Choisissez vos horraire",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.calendar,
+          color: AppColors.green700,
+          size: 18,
+        ),
+        type: ModalType.success,
+      ),
+      body: [
+        Expanded(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.appointements.dates.length,
+            itemBuilder: (context, index) {
+              final date = widget.appointements.dates[index];
+              return Container(
+                width: 100, // Adjust the width as needed
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(
+                      color: index == widget.appointements.dates.length - 1
+                          ? Colors.transparent
+                          : AppColors.blue200,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      getAbbreviatedWeekday(
+                        DateFormat('EEEE', 'fr').format(
+                          DateFormat('dd/MM/yyyy').parse(date.day),
+                        ),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                        color: AppColors.black,
+                      ),
+                    ),
+                    Text(
+                      DateFormat('dd MMMM', 'fr').format(
+                        DateFormat('dd/MM/yyyy').parse(date.day),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                        color: AppColors.black,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    SizedBox(
+                      height: 237,
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        children: date.hour
+                            .map((hour) => HourItem(
+                                  hour: hour.hour,
+                                  onTap: () {
+                                    updateId(hour.id);
+                                    widget.updateId(hour.id);
+                                  },
+                                  isSelect: hour.id == widget.idSelected,
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+      footer: Buttons(
+        variant: Variant.primary,
+        size: SizeButton.sm,
+        msg: const Text("Valider le rendez-vous"),
+        onPressed: () async {
+          if (idselected.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              ErrorSnackBar(
+                message:
+                    "Veuillez sélectionner un rendez-vous avant de continuer.",
+                context: context,
+              ),
+            );
+          } else {
+            await putAppoitement(widget.oldId, idselected, context)
+                .whenComplete(
+              () async {
+                widget.updateData(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SuccessSnackBar(
+                    message: "Rendez-vous validé avec succès.",
+                    context: context,
+                  ),
+                );
+
+                await putAppoitement(widget.oldId, idselected, context)
+                    .whenComplete(
+                  () {
+                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SuccessSnackBar(
+                        message: "Rendez-vous validé avec succès.",
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                      ),
+                    );
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

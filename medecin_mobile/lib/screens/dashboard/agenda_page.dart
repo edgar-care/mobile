@@ -43,7 +43,7 @@ class _AgendaState extends State<Agenda> {
   }
 
   Future<void> _loadSlots() async {
-    var tempslots = await getSlot();
+    var tempslots = await getSlot(context);
     setState(() {
       tempslot = tempslots;
     });
@@ -205,7 +205,6 @@ class _AgendaState extends State<Agenda> {
                           final model = Provider.of<BottomSheetModel>(context,
                               listen: false);
                           model.resetCurrentIndex();
-
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -231,8 +230,9 @@ class _AgendaState extends State<Agenda> {
   }
 }
 
-Future<List<dynamic>> loadSlots(List<dynamic> slots) async {
-  var tempslots = await getSlot();
+Future<List<dynamic>> loadSlots(
+    List<dynamic> slots, BuildContext context) async {
+  var tempslots = await getSlot(context);
   slots = tempslots;
   return slots;
 }
@@ -256,11 +256,11 @@ class SlotAdd extends StatefulWidget {
 
 class _SlotAddState extends State<SlotAdd> {
   DateTime date = DateTime.now();
-  int year = DateTime.now().year;
-  int month = DateTime.now().month;
-  int day = DateTime.now().day;
-  int hour = DateTime.now().hour;
-  int minute = 0;
+  int? year;
+  int? month;
+  int? day;
+  int? hour;
+  int? minute;
 
   String dropdownvalue = DateTime.now().hour.toString().length == 1
       ? "0${DateTime.now().hour + 1}:00"
@@ -331,7 +331,7 @@ class _SlotAddState extends State<SlotAdd> {
           height: 4,
         ),
         CustomDatePiker(
-            value: DateFormat("yMd", "fr").format(date),
+            placeholder: "10/04/2026",
             startDate: DateTime.now(),
             onChanged: (value) {
               setState(() {
@@ -339,7 +339,7 @@ class _SlotAddState extends State<SlotAdd> {
                   year = int.parse(value.substring(6));
                   month = int.parse(value.substring(3, 5));
                   day = int.parse(value.substring(0, 2));
-                  date = DateTime(year, month, day);
+                  date = DateTime(year!, month!, day!);
                 } else {}
               });
             }),
@@ -421,22 +421,26 @@ class _SlotAddState extends State<SlotAdd> {
               variant: Variant.validate,
               size: SizeButton.sm,
               msg: const Text('Ouvrir le créneau'),
-              onPressed: () {
-                date = DateTime(year, month, day, hour, minute, 0);
+              onPressed: () async {
+                if (year == null || month == null || day == null) {
+                  TopErrorSnackBar(
+                    message: 'Veuillez séléctionner une date',
+                  ).show(context);
+                  return;
+                }
+                date = DateTime(year!, month!, day!, hour!, minute!, 0);
                 if (parsing(date, widget.tempslot) == true) {
-                  postSlot(date);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  await postSlot(date, context);
+                  // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, '/dashboard');
-                  ScaffoldMessenger.of(context).showSnackBar(SuccessSnackBar(
-                    message: 'Créneau créé avec succès',
-                    context: context,
-                  ));
+                  TopSuccessSnackBar(
+                    message: 'Créneau ouvert',
+                    // ignore: use_build_context_synchronously
+                  ).show(context);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
+                  TopErrorSnackBar(
                     message: 'Créneau déjà existant',
-                    context: context,
-                  ));
+                  ).show(context);
                 }
               },
             ),

@@ -7,14 +7,10 @@ import 'package:flutter_svg/svg.dart';
 class CardTraitementSmall extends StatefulWidget {
   final String name;
   bool isEnCours;
-  final Function() onTap;
-  bool withDelete;
   CardTraitementSmall(
       {super.key,
       required this.name,
-      required this.isEnCours,
-      required this.onTap,
-      this.withDelete = true});
+      required this.isEnCours,});
 
   @override
   State<CardTraitementSmall> createState() => _CardTraitementSmallState();
@@ -54,18 +50,12 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          if (widget.withDelete) ...[
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: widget.onTap,
-              child: const Icon(
-                BootstrapIcons.x,
-                color: AppColors.black,
-                size: 16,
-              ),
-            ),
-          ],
-        ],
+           const Icon(
+            BootstrapIcons.chevron_right,
+            color: AppColors.black,
+            size: 16,
+          )
+        ]
       ),
     );
   }

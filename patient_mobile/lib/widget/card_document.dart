@@ -3,6 +3,7 @@
 import 'package:download_file/data/models/download_file_options.dart';
 import 'package:download_file/download_file.dart';
 import 'package:edgar/widget.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
@@ -75,9 +76,9 @@ class _CardDocumentState extends State<CardDocument> {
           GestureDetector(
             onTap: () {
               if (widget.isfavorite) {
-                deleteFavory(widget.id);
+                deleteFavory(widget.id, context);
               } else {
-                changeFavorite(widget.id);
+                changeFavorite(widget.id, context);
               }
               setState(() {
                 widget.isfavorite = !widget.isfavorite;
@@ -204,22 +205,20 @@ class _OpenPatientState extends State<OpenPatient> {
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
-      title: "Séléctionner une catégorie",
-      subtitle: "Voulez vous télécharger, modifier, ou supprimer le document",
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.download,
-          size: 18,
-          color: AppColors.blue700,
-        ),
-        type: ModalType.info,
-      ),
       body: [
-        Buttons(
-          variant: Variant.primary,
-          size: SizeButton.md,
-          msg: const Text('Télécharger'),
-          onPressed: () async {
+        Text(
+          widget.name,
+          style: const TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+          title: 'Télécharger',
+          onTap: () {
             DownloadFile.downloadAndSafeFile(
               downloadFileOptions: DownloadFileOptions(
                 downloadUrl: widget.url,
@@ -248,28 +247,45 @@ class _OpenPatientState extends State<OpenPatient> {
               ),
             );
           },
+          type: 'Only',
+          icon: const Icon(
+            BootstrapIcons.download,
+            color: AppColors.blue800,
+            size: 16,
+          ),
         ),
-        const SizedBox(
-          height: 8,
+        Container(
+          color: AppColors.blue100,
+          height: 1,
         ),
-        Buttons(
-          variant: Variant.secondary,
-          size: SizeButton.md,
-          msg: const Text('Modifier'),
-          onPressed: () {
+        NavbarPLusTab(
+          title: 'Modifier',
+          onTap: () {
             widget.model.changePage(1);
           },
+          type: 'Only',
+          icon: const Icon(
+            BootstrapIcons.pen_fill,
+            color: AppColors.blue800,
+            size: 16,
+          ),
         ),
-        const SizedBox(
-          height: 8,
+        Container(
+          color: AppColors.blue100,
+          height: 1,
         ),
-        Buttons(
-          variant: Variant.delete,
-          size: SizeButton.md,
-          msg: const Text('Supprimer'),
-          onPressed: () {
+        NavbarPLusTab(
+          title: 'Supprimer',
+          color: AppColors.red700,
+          onTap: () {
             widget.model.changePage(2);
           },
+          type: 'Only',
+          icon: const Icon(
+            BootstrapIcons.trash_fill,
+            color: AppColors.red700,
+            size: 16,
+          ),
         ),
       ],
     );
@@ -295,18 +311,20 @@ class ModifyPatient extends StatefulWidget {
 }
 
 class _ModifyPatientState extends State<ModifyPatient> {
+  String tmp = '';
+
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
       title: "Modifier votre document",
-      subtitle: "Changer le nom de votre document",
+      subtitle: "Modifier le nom de votre document",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.pen_fill,
-          color: AppColors.green700,
+          color: AppColors.blue700,
           size: 18,
         ),
-        type: ModalType.success,
+        type: ModalType.info,
       ),
       body: [
         const Text('Le nouveau nom de votre document'),
@@ -314,39 +332,49 @@ class _ModifyPatientState extends State<ModifyPatient> {
           width: 8,
         ),
         CustomField(
-          label: 'Nom du document',
+          label: 'Mon document de santé',
           value: widget.name,
           onChanged: (value) {
-            widget.name = value;
+            setState(() {
+              tmp = value;
+            });
           },
           action: TextInputAction.done,
         ),
       ],
-      footer: Wrap(
-        spacing: 12,
+      footer: Column(
         children: [
-          Flexible(
-            child: Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.sm,
-              msg: const Text('Annuler'),
-              onPressed: () {
+          Buttons(
+            variant: Variant.validate,
+            size: SizeButton.sm,
+            msg: const Text('Valider'),
+            onPressed: () async {
+              if (tmp.isEmpty) {
+                TopErrorSnackBar(
+                  message: "veuillez écrire un nom de document valide",
+                ).show(context);
+                return;
+              }
+              if (!RegExp(r"\.").hasMatch(tmp)) {
+                TopErrorSnackBar(
+                  message: "Le nom du document doit contenir une extension",
+                ).show(context);
+                return;
+              }
+              modifyDocument(widget.id, tmp, context).then((value) {
+                widget.updatedata();
                 Navigator.pop(context);
-              },
-            ),
+              });
+            },
           ),
-          Flexible(
-            child: Buttons(
-              variant: Variant.validate,
-              size: SizeButton.sm,
-              msg: const Text('Valider'),
-              onPressed: () async {
-                modifyDocument(widget.id, widget.name).then((value) {
-                  widget.updatedata();
-                  Navigator.pop(context);
-                });
-              },
-            ),
+          const SizedBox(height: 8),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.sm,
+            msg: const Text('Annuler'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -364,10 +392,11 @@ class DeletePatient extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalContainer(
       title: "Supprimer votre document",
-      subtitle: 'Êtes-vous sûr de vouloir supprimer ce document ?',
+      subtitle:
+          'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x,
+          BootstrapIcons.x_lg,
           color: AppColors.red700,
           size: 18,
         ),
@@ -376,30 +405,18 @@ class DeletePatient extends StatelessWidget {
       footer: Wrap(
         spacing: 12,
         children: [
-          Flexible(
-            child: Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.sm,
-              msg: const Text('Annuler'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Flexible(
-            child: Buttons(
-              variant: Variant.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () async {
-                deleteDocument(id).then(
-                  (value) {
-                    updatedata();
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
+          Buttons(
+            variant: Variant.delete,
+            size: SizeButton.sm,
+            msg: const Text('Supprimer'),
+            onPressed: () async {
+              deleteDocument(id, context).then(
+                (value) {
+                  updatedata();
+                  Navigator.pop(context);
+                },
+              );
+            },
           ),
         ],
       ),

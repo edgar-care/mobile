@@ -46,12 +46,12 @@ class _FilePageState extends State<FilePage> {
   }
 
   Future<void> fetchData() async {
-    files = await getAllDocument();
+    files = await getAllDocument(context);
     return;
   }
 
   void updateData() async {
-    var tmp = await getAllDocument();
+    var tmp = await getAllDocument(context);
     setState(() {
       files = tmp;
       filteredFiles = files;
@@ -571,25 +571,31 @@ class _FilePageState extends State<FilePage> {
                     child: Text('Aucun document trouvé'),
                   );
                 }
-                return ListView.builder(
-                  itemCount: filteredFiles.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: CardDocument(
-                        typeDeDocument: documentTypeMap[filteredFiles[index]
-                                ['document_type']] ??
-                            TypeDeDocument.OTHER,
-                        nomDocument: filteredFiles[index]['name'],
-                        nameDoctor: 'Vous',
-                        isfavorite: filteredFiles[index]['is_favorite'],
-                        id: filteredFiles[index]['id'],
-                        url: filteredFiles[index]['download_url'],
-                        updatedata: updateData,
-                      ),
-                    );
-                  },
-                );
+                if (filteredFiles.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: filteredFiles.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: CardDocument(
+                          typeDeDocument: documentTypeMap[filteredFiles[index]
+                                  ['document_type']] ??
+                              TypeDeDocument.OTHER,
+                          nomDocument: filteredFiles[index]['name'],
+                          nameDoctor: 'Vous',
+                          isfavorite: filteredFiles[index]['is_favorite'],
+                          id: filteredFiles[index]['id'],
+                          url: filteredFiles[index]['download_url'],
+                          updatedata: updateData,
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Aucun document trouvé'),
+                  );
+                }
               }
             },
           ),
@@ -611,6 +617,7 @@ class _AddDocumentState extends State<AddDocument> {
   String dropdownValue = 'Général';
   String dropdownValue2 = 'Ordonnance';
   File? fileSelected;
+  bool clicked = false;
 
   String getFileName(String path) {
     return path.split('/').last;
@@ -626,8 +633,7 @@ class _AddDocumentState extends State<AddDocument> {
       setState(() {
         fileSelected = File(file.files.single.path!);
       });
-    } else {
-    }
+    } else {}
   }
 
   @override
@@ -851,12 +857,12 @@ class _AddDocumentState extends State<AddDocument> {
               size: SizeButton.sm,
               msg: const Text('Ajouter'),
               onPressed: () {
-                if (fileSelected != null) {
+                if (fileSelected != null && clicked == false) {
+                  clicked = true;
                   postDocument(
-                    dropdownValue,
-                    dropdownValue2,
-                    fileSelected!,
-                  ).then((value) {
+                          dropdownValue, dropdownValue2, fileSelected!, context)
+                      .then((value) {
+                    clicked = false;
                     if (value == true) {
                       widget.updateData();
                       // ignore: use_build_context_synchronously
@@ -864,9 +870,8 @@ class _AddDocumentState extends State<AddDocument> {
                     }
                   });
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Veuillez séléctionner un fichiez",
-                      context: context));
+                  TopErrorSnackBar(message: "Veuillez séléctionner un fichier")
+                      .show(context);
                 }
               },
             ),

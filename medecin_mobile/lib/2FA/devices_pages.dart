@@ -25,7 +25,7 @@ class _DevicesPageState extends State<DevicesPage> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getAllDevices();
+    List<dynamic> temp = await getAllDevices(context);
     setState(() {
       devices = temp;
     });
@@ -150,7 +150,8 @@ class _DevicesPageState extends State<DevicesPage> {
                                                                   'Android'
                                                           ? 'PHONE'
                                                           : 'PC',
-                                                      context, getDevices)
+                                                      context,
+                                                      getDevices)
                                                 ]);
                                           },
                                         );
@@ -176,7 +177,6 @@ class _DevicesPageState extends State<DevicesPage> {
     );
   }
 }
-
 
 Widget modalInfoDevices(String name, String date, String location, String id,
     String type, BuildContext context, Function load2fa) {
@@ -243,7 +243,7 @@ Widget modalInfoDevices(String name, String date, String location, String id,
         size: SizeButton.md,
         msg: const Text('Déconnecter l\'appareil'),
         onPressed: () {
-          removeDevice(id).then((name) {
+          removeDevice(id, context).then((name) {
             load2fa();
             Navigator.pop(context);
           });

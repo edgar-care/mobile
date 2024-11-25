@@ -43,11 +43,15 @@ class WebSocketService {
     _channel = WebSocketChannel.connect(Uri.parse(url));
 
     // Listen for incoming messages
-    _channel?.stream.listen((message) {
-      _handleMessage(message);
-    }, onError: (error) {
-    }, onDone: () {
-    });
+    _channel?.stream.listen(
+      (message) {
+        _handleMessage(message);
+      },
+      onError: (error) {},
+      onDone: () {
+        connect();
+      },
+    );
 
     sendReadyAction();
   }
@@ -123,12 +127,13 @@ class WebSocketService {
     _channel?.sink.add(readMessage);
   }
 
-  void responseMobileConnection(String patientAuthTokenWS, String uuid) {
+  void responseMobileConnection(
+      String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
       'action': 'responseMobileConnection ',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
-      "response": true,
+      "response": response,
     });
     _channel?.sink.add(responseMobileConnection);
   }

@@ -28,7 +28,8 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   Future<void> fetchdata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    doctors = await getAllDoctor();
+    // ignore: use_build_context_synchronously
+    doctors = await getAllDoctor(context);
     setState(() {
       doctorId = prefs.getString('appointment_doctor_id')!;
       doctorName = doctors

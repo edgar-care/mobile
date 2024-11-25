@@ -131,6 +131,9 @@ class _ChatPageState extends State<ChatPageConversation> {
                 CustomFieldSearch(
                   onlyOnValidate: true,
                   onValidate: (value) {
+                    if (value.isEmpty) {
+                      return;
+                    }
                     widget.webSocketService!.sendMessage(widget.chat.id, value);
                     Future.delayed(const Duration(milliseconds: 200), () {
                       widget.controller.animateTo(
@@ -145,7 +148,7 @@ class _ChatPageState extends State<ChatPageConversation> {
                       curve: Curves.easeOut,
                     );
                   },
-                  label: 'Ecriver votre message ici...',
+                  label: 'Ecrire votre message ici...',
                   onOpen: () {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       widget.controller.animateTo(
