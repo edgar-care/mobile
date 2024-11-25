@@ -1,65 +1,60 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:edgar_app/services/request.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<Map<String, dynamic>>> getAllDocument() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}document/download';
+Future<List<Map<String, dynamic>>> getAllDocument(BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.get,
+    endpoint: 'document/download',
+    needsToken: true,
+  );
 
-  final response = await http
-      .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
-  if (response.statusCode == 200) {
-    final body = response.body;
-    if (jsonDecode(body)["document"] == null) {
+  if (response != null) {
+    if (response["document"] == null) {
       return [];
     }
-    return List<Map<String, dynamic>>.from(jsonDecode(body)["document"]);
+    return List<Map<String, dynamic>>.from(response["document"]);
   } else {
     return [];
   }
 }
 
-Future<Object?> changeFavorite(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}document/favorite/$id';
-
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future<Object?> changeFavorite(String id, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'document/favorite/$id',
+    needsToken: true,
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return jsonDecode(body);
+
+  if (response != null) {
+    return response;
   } else {
     return null;
   }
 }
 
-Future<Object?> deleteFavory(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}document/favorite/$id';
-
-  final response = await http.delete(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future<Object?> deleteFavory(String id, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.delete,
+    endpoint: 'document/favorite/$id',
+    needsToken: true,
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return jsonDecode(body);
+
+  if (response != null) {
+    return response;
   } else {
     return null;
   }
 }
 
-Future<bool> postDocument(
-    String category, String documentType, File file) async {
+Future<bool> postDocument(String category, String documentType, File file,
+    BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   await dotenv.load();
@@ -94,38 +89,32 @@ Future<bool> postDocument(
   }
 }
 
-Future<Object?> deleteDocument(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}document/$id';
-
-  final response = await http.delete(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future<Object?> deleteDocument(String id, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.delete,
+    endpoint: 'document/$id',
+    needsToken: true,
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return jsonDecode(body);
+
+  if (response != null) {
+    return response;
   } else {
     return null;
   }
 }
 
-Future<Object?> modifyDocument(String id, String name) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  await dotenv.load();
-  final url = '${dotenv.env['URL']}document/$id';
-
-  final response = await http.put(
-    Uri.parse(url),
-    body: jsonEncode({'name': name}),
-    headers: {'Authorization': 'Bearer $token'},
+Future<Object?> modifyDocument(
+    String id, String name, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.put,
+    endpoint: 'document/$id',
+    needsToken: true,
+    body: {'name': name},
   );
-  if (response.statusCode == 201) {
-    final body = response.body;
-    return jsonDecode(body);
+  if (response != null) {
+    return response;
   } else {
     return null;
   }

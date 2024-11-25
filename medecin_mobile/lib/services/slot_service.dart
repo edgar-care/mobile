@@ -1,59 +1,47 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:edgar_pro/services/request.dart';
 
-Future<List<dynamic>> getSlot() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/slots';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+Future<List<dynamic>> getSlot(BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/doctor/slots',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['slot'];
+
+  if (response != null) {
+    return response['slot'];
   }
-  if (response.statusCode != 200) {
-    return [];
-  }
+
   return [];
 }
 
-Future<Object?> postSlot(DateTime date) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  final url = '${dotenv.env['URL']}doctor/slot';
-  final start = date.millisecondsSinceEpoch ~/ 1000;
-  final end =
-      ((date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/
-          1000);
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
+Future<Object?> postSlot(DateTime date, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: '/doctor/slot',
+    needsToken: true,
+    context: context,
+    body: {
+      'start_date': date.millisecondsSinceEpoch ~/ 1000,
+      'end_date':
+          (date.add(const Duration(minutes: 30))).millisecondsSinceEpoch ~/ 1000
     },
-    body: jsonEncode({'start_date': start, 'end_date': end}),
   );
-  if (response.statusCode == 201) {
-    return jsonDecode(response.body);
-  }
-  if (response.statusCode != 201) {
-    return null;
+
+  if (response != null) {
+    return response;
   }
   return null;
 }
 
-Future deleteSlot(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token') ?? '';
-  String url = '${dotenv.env['URL']}doctor/slot/$id';
-  await http.delete(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future deleteSlot(String id, BuildContext context) async {
+  await httpRequest(
+    type: RequestType.delete,
+    endpoint: '/doctor/slot/$id',
+    needsToken: true,
+    context: context,
   );
+
+  return;
 }

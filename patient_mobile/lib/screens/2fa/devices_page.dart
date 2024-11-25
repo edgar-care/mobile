@@ -25,7 +25,7 @@ class _DevicesPageState extends State<DevicesPage> {
   }
 
   Future<void> getDevices() async {
-    List<dynamic> temp = await getAllDevices();
+    List<dynamic> temp = await getAllDevices(context);
     setState(() {
       devices = temp;
     });
@@ -65,113 +65,113 @@ class _DevicesPageState extends State<DevicesPage> {
         backgroundColor: AppColors.blue50,
         body: SafeArea(
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/utils/arrowChat.svg',
-                            color: AppColors.black,
-                            height: 16,
-                          ),
-                          const Text(
-                            'Appareils',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          const SizedBox(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppColors.blue200,
-                            width: 1,
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/utils/arrowChat.svg',
+                          color: AppColors.black,
+                          height: 16,
+                        ),
+                        const Text(
+                          'Appareils',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Poppins',
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            for (var index = 0;
-                                index < devices.length;
-                                index++) ...[
-                              DeviceTab(
-                                  icon: devices[index]['type'] == 'iPhone' ||
-                                          devices[index]['type'] == 'Android'
-                                      ? 'PHONE'
-                                      : 'PC',
-                                  info: devicesFormatTime(
-                                      devices[index]['date'] * 1000),
-                                  subtitle:
-                                      "${devices[index]['city']}, ${devices[index]['country']}",
-                                  title:
-                                      "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return Consumer<BottomSheetModel>(
-                                          builder: (context, model, child) {
-                                            return ListModal(
-                                                model: model,
-                                                children: [
-                                                  modalInfoDevices(
-                                                      "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .format(DateTime
-                                                              .fromMillisecondsSinceEpoch(
-                                                                  devices[index]
-                                                                          [
-                                                                          'date'] *
-                                                                      1000)),
-                                                      "${devices[index]['city']}, ${devices[index]['country']}",
-                                                      devices[index]['id'],
-                                                      devices[index]['type'] ==
-                                                                  'iPhone' ||
-                                                              devices[index][
-                                                                      'type'] ==
-                                                                  'Android'
-                                                          ? 'PHONE'
-                                                          : 'PC',
-                                                      context,
-                                                      getDevices)
-                                                ]);
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                  type: devices.length > 1 &&
-                                          index > devices.length - 1
-                                      ? 'Top'
-                                      : 'Only',
-                                  selected: false,
-                                  outlineIcon: SvgPicture.asset(
-                                    'assets/images/utils/chevron-right.svg',
-                                  )),
-                            ],
-                          ],
-                        )),
-                  ],
-                ),
-              )),
+                        const SizedBox(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: AppColors.blue200,
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        for (var index = 0;
+                            index < devices.length;
+                            index++) ...[
+                          DeviceTab(
+                            icon: devices[index]['type'] == 'iPhone' ||
+                                    devices[index]['type'] == 'Android'
+                                ? 'PHONE'
+                                : 'PC',
+                            info: devicesFormatTime(
+                                devices[index]['date'] * 1000),
+                            subtitle:
+                                "${devices[index]['city']}, ${devices[index]['country']}",
+                            title:
+                                "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                            onTap: () {
+                              final model = Provider.of<BottomSheetModel>(
+                                  context,
+                                  listen: false);
+                              model.resetCurrentIndex();
+
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return ListModal(
+                                    model: model,
+                                    children: [
+                                      modalInfoDevices(
+                                        "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                                        DateFormat('dd/MM/yyyy').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                devices[index]['date'] * 1000)),
+                                        "${devices[index]['city']}, ${devices[index]['country']}",
+                                        devices[index]['id'],
+                                        devices[index]['type'] == 'iPhone' ||
+                                                devices[index]['type'] ==
+                                                    'Android'
+                                            ? 'PHONE'
+                                            : 'PC',
+                                        context,
+                                        getDevices,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            type:
+                                devices.length > 1 && index > devices.length - 1
+                                    ? 'Top'
+                                    : 'Only',
+                            selected: false,
+                            outlineIcon: SvgPicture.asset(
+                              'assets/images/utils/chevron-right.svg',
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -181,72 +181,75 @@ class _DevicesPageState extends State<DevicesPage> {
 Widget modalInfoDevices(String name, String date, String location, String id,
     String type, BuildContext context, Function load2fa) {
   return ModalContainer(
-      title: name,
-      subtitle: 'Connecté à votre compte edgar.',
-      icon: IconModal(
-        icon: type == 'Phone'
-            ? SvgPicture.asset(
-                'assets/images/utils/phone-fill.svg',
-                color: AppColors.blue700,
-              )
-            : SvgPicture.asset(
-                'assets/images/utils/laptop-fill.svg',
-                color: AppColors.blue700,
+    title: name,
+    subtitle: 'Connecté à votre compte edgar.',
+    icon: IconModal(
+      icon: type == 'Phone'
+          ? SvgPicture.asset(
+              'assets/images/utils/phone-fill.svg',
+              color: AppColors.blue700,
+            )
+          : SvgPicture.asset(
+              'assets/images/utils/laptop-fill.svg',
+              color: AppColors.blue700,
+            ),
+      type: ModalType.info,
+    ),
+    body: [
+      Column(
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Dernière connexion: ',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
               ),
-        type: ModalType.info,
-      ),
-      body: [
-        Column(
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Dernière connexion: ',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  date,
-                  style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Text(
-                  'Localisation: ',
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  location,
-                  style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          ],
-        )
-      ],
-      footer: Buttons(
-        variant: Variant.deleteBordered,
-        size: SizeButton.md,
-        msg: const Text('Déconnecter l\'appareil'),
-        onPressed: () {
-          removeDevice(id).then((name) {
+              Text(
+                date,
+                style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Text(
+                'Localisation: ',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+              ),
+              Text(
+                location,
+                style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ],
+      )
+    ],
+    footer: Buttons(
+      variant: Variant.deleteBordered,
+      size: SizeButton.md,
+      msg: const Text('Déconnecter l\'appareil'),
+      onPressed: () {
+        removeDevice(id, context).then(
+          (name) {
             load2fa();
             Navigator.pop(context);
-          });
-        },
-      ));
+          },
+        );
+      },
+    ),
+  );
 }

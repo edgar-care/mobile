@@ -1,36 +1,46 @@
-import 'dart:convert';
+import 'package:edgar_app/services/request.dart';
+import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-Future disableAccount() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await dotenv.load();
-  final token = prefs.getString("token");
-  final url = '${dotenv.env['URL']}/auth/disable_account';
-  await http.post(
-    Uri.parse(url),
-    headers: {'Authorization': 'Bearer $token'},
+Future disableAccount(BuildContext context) async {
+  await httpRequest(
+    type: RequestType.put,
+    endpoint: 'auth/disable_account',
+    needsToken: true,
+    context: context,
   );
 }
 
-Future resetPassword(String password) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('token');
-  String url = '${dotenv.env['URL']}/dashboard/devices';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
-    body: jsonEncode({
-      {"new_password": password}
-    }),
+Future enableAccount(BuildContext context) async {
+  await httpRequest(
+    type: RequestType.put,
+    endpoint: 'auth/enable_account',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['devices'];
+}
+
+Future deleteAccount(BuildContext context) async {
+  await httpRequest(
+    type: RequestType.post,
+    endpoint: 'auth/delete_account',
+    needsToken: true,
+    context: context,
+  );
+}
+
+Future<bool> updatePassword(
+    String oldPassword, String password, BuildContext context) async {
+  final response = await httpRequest(
+    type: RequestType.post,
+    endpoint: 'auth/update_password',
+    needsToken: true,
+    body: {"old_password": oldPassword, "new_password": password},
+    context: context,
+  );
+  if (response != null) {
+    return true;
+  } else {
+    false;
   }
-  return [];
+  return false;
 }

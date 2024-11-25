@@ -76,9 +76,9 @@ class _CardDocumentState extends State<CardDocument> {
           GestureDetector(
             onTap: () {
               if (widget.isfavorite) {
-                deleteFavory(widget.id);
+                deleteFavory(widget.id, context);
               } else {
-                changeFavorite(widget.id);
+                changeFavorite(widget.id, context);
               }
               setState(() {
                 widget.isfavorite = !widget.isfavorite;
@@ -206,7 +206,11 @@ class _OpenPatientState extends State<OpenPatient> {
   Widget build(BuildContext context) {
     return ModalContainer(
       body: [
-        Text(widget.name, style: const TextStyle(fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),),
+        Text(
+          widget.name,
+          style: const TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 4),
         Container(
           color: AppColors.blue100,
@@ -307,6 +311,8 @@ class ModifyPatient extends StatefulWidget {
 }
 
 class _ModifyPatientState extends State<ModifyPatient> {
+  String tmp = '';
+
   @override
   Widget build(BuildContext context) {
     return ModalContainer(
@@ -318,7 +324,7 @@ class _ModifyPatientState extends State<ModifyPatient> {
           color: AppColors.blue700,
           size: 18,
         ),
-        type: ModalType.success,
+        type: ModalType.info,
       ),
       body: [
         const Text('Le nouveau nom de votre document'),
@@ -329,7 +335,9 @@ class _ModifyPatientState extends State<ModifyPatient> {
           label: 'Mon document de santé',
           value: widget.name,
           onChanged: (value) {
-            widget.name = value;
+            setState(() {
+              tmp = value;
+            });
           },
           action: TextInputAction.done,
         ),
@@ -341,7 +349,19 @@ class _ModifyPatientState extends State<ModifyPatient> {
             size: SizeButton.sm,
             msg: const Text('Valider'),
             onPressed: () async {
-              modifyDocument(widget.id, widget.name).then((value) {
+              if (tmp.isEmpty) {
+                TopErrorSnackBar(
+                  message: "veuillez écrire un nom de document valide",
+                ).show(context);
+                return;
+              }
+              if (!RegExp(r"\.").hasMatch(tmp)) {
+                TopErrorSnackBar(
+                  message: "Le nom du document doit contenir une extension",
+                ).show(context);
+                return;
+              }
+              modifyDocument(widget.id, tmp, context).then((value) {
                 widget.updatedata();
                 Navigator.pop(context);
               });
@@ -372,10 +392,11 @@ class DeletePatient extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalContainer(
       title: "Supprimer votre document",
-      subtitle: 'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
+      subtitle:
+          'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x,
+          BootstrapIcons.x_lg,
           color: AppColors.red700,
           size: 18,
         ),
@@ -385,18 +406,18 @@ class DeletePatient extends StatelessWidget {
         spacing: 12,
         children: [
           Buttons(
-              variant: Variant.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () async {
-                deleteDocument(id).then(
-                  (value) {
-                    updatedata();
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
+            variant: Variant.delete,
+            size: SizeButton.sm,
+            msg: const Text('Supprimer'),
+            onPressed: () async {
+              deleteDocument(id, context).then(
+                (value) {
+                  updatedata();
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
         ],
       ),
     );

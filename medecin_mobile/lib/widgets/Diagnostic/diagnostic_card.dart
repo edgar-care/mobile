@@ -10,10 +10,9 @@ import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar_pro/widgets/Diagnostic/custom_modal_card.dart';
 import 'package:edgar/widget.dart';
-import 'package:edgar_pro/widgets/custom_patient_card_info.dart';
+import 'package:edgar_pro/widgets/card_traitement_small.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:provider/provider.dart';
 
@@ -37,9 +36,10 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
   Map<String, dynamic> patientInfo = {};
 
   Future<void> _loadAppointment() async {
-    getPatientById(widget.rdvInfo['id_patient']).then((value) => setState(() {
-          patientInfo = value;
-        }));
+    getPatientById(widget.rdvInfo['id_patient'], context)
+        .then((value) => setState(() {
+              patientInfo = value;
+            }));
   }
 
   @override
@@ -184,12 +184,12 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
     int doctorindex = -1;
 
     Future<bool> loadInfo() async {
-      diagnostic = await getSummary(rdvInfo["session_id"]);
+      diagnostic = await getSummary(rdvInfo["session_id"], context);
       return true;
     }
 
     Future<bool> loadDoctor() async {
-      docs = await getAllDoctor();
+      docs = await getAllDoctor(context);
       doctorindex = docs
           .indexWhere((doc) => doc['id'] == patientInfo['medecin_traitant']);
       return true;
@@ -247,7 +247,6 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) {
-                  Logger().d(diagnostic);
                   return Consumer<BottomSheetModel>(
                     builder: (context, model, child) {
                       return ListModal(
@@ -359,8 +358,8 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               variant: Variant.validate,
               size: SizeButton.sm,
               msg: const Text('Oui, je suis sûr'),
-              onPressed: () {
-                postDiagValidation(context, rdvInfo['id'], true, '', '');
+              onPressed: () async {
+                await postDiagValidation(context, rdvInfo['id'], true, '', '');
                 Navigator.pop(context);
                 widget.refresh();
               },
@@ -417,7 +416,11 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               hintText: 'Renseigner la raison de l\'annulation',
               alignLabelWithHint: true,
             ),
-            onChanged: (value) => cancelreason = value,
+            onChanged: (value) {
+              setState(() {
+                cancelreason = value;
+              });
+            },
           ),
         ),
         const SizedBox(
@@ -440,22 +443,25 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
             border: Border.all(color: AppColors.blue500, width: 2),
           ),
           child: TextFormField(
-            maxLines: 2,
-            minLines: 2,
-            decoration: const InputDecoration(
-              hintStyle: TextStyle(
-                color: AppColors.grey400,
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                textBaseline: TextBaseline.ideographic,
+              maxLines: 2,
+              minLines: 2,
+              decoration: const InputDecoration(
+                hintStyle: TextStyle(
+                  color: AppColors.grey400,
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  textBaseline: TextBaseline.ideographic,
+                ),
+                hintText:
+                    'Renseigner les méthodes de soins pour diminuer les symptômes',
+                alignLabelWithHint: true,
               ),
-              hintText:
-                  'Renseigner les méthodes de soins pour diminuer les symptômes',
-              alignLabelWithHint: true,
-            ),
-            onChanged: (value) => cancelreason = value,
-          ),
+              onChanged: (value) {
+                setState(() {
+                  healthmethod = value;
+                });
+              }),
         ),
       ],
       footer: Row(
@@ -482,10 +488,10 @@ class _DiagnosticCardState extends State<DiagnosticCard> {
               msg: const Text('Oui, je suis sûr'),
               onPressed: () {
                 if (cancelreason == '') {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      context: context,
-                      message:
-                          'Veuillez renseigner la raison de l\'annulation'));
+                  TopErrorSnackBar(
+                          message:
+                              'Veuillez renseigner la raison de l\'annulation')
+                      .show(context);
                 } else {
                   postDiagValidation(context, rdvInfo['id'], false,
                       cancelreason, healthmethod);
@@ -573,7 +579,8 @@ class ModalDiagnosticState extends State<ModalDiagnostic> {
     }
     return ModalContainer(
       title: "Diagnostic du rendez-vous",
-      subtitle: "Consulter le diagnostic créé par Edgar lors de l’échange avec le patient.",
+      subtitle:
+          "Consulter le diagnostic créé par Edgar lors de l’échange avec le patient.",
       icon: const IconModal(
         icon: Icon(
           BootstrapIcons.heart_pulse_fill,
@@ -820,12 +827,21 @@ class _ModalMedicFolderState extends State<ModalMedicFolder> {
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500)),
             if (widget.patientInfo['medical_antecedents'].isNotEmpty)
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 32,
-                child: PatientInfoCard(
-                    context: context,
-                    tmpTraitments: widget.patientInfo['medical_antecedents']),
-              )
+              Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              runAlignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                for (var treatment in widget.patientInfo['medical_antecedents'])
+                  CardTraitementSmall(
+                        name: treatment['name'],
+                        isEnCours:
+                            treatment['treatments'] == null ? false : true,
+                        withDelete: false,
+                      ),
+              ],
+            ),
           ],
         ),
       ],

@@ -49,24 +49,28 @@ class ChatPatientState extends State<ChatPatient> {
 
   Future<void> _loadInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    getPatientById(widget.id).then((value) => setState(() {
+    // ignore: use_build_context_synchronously
+    getPatientById(widget.id, context).then(
+      (value) => setState(
+        () {
           patientInfo = value;
-        }));
+        },
+      ),
+    );
     String? token = prefs.getString('token');
     if (token != null && token.isNotEmpty) {
       try {
         String encodedPayload = token.split('.')[1];
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
-        prefs.setString('id', jsonDecode(decodedPayload)['doctor']["id"]);
+        prefs.setString('id', jsonDecode(decodedPayload)["id"]);
         setState(() {
-          idDoctor = jsonDecode(decodedPayload)['doctor']["id"];
+          idDoctor = jsonDecode(decodedPayload)["id"];
         });
       } catch (e) {
         // catch clauses
       }
-    } else {
-    }
+    } else {}
   }
 
   Future<bool> checkData() async {
@@ -84,6 +88,38 @@ class ChatPatientState extends State<ChatPatient> {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.data == true) {
             return Column(children: [
+              Container(
+                key: const ValueKey("Header"),
+                decoration: BoxDecoration(
+                  color: AppColors.blue700,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(children: [
+                    Image.asset(
+                      "assets/images/logo/edgar-high-five.png",
+                      height: 40,
+                      width: 37,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    const Text(
+                      "Mes Patients",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white),
+                    ),
+                  ]),
+                ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.blue100,
@@ -137,7 +173,7 @@ class ChatPatientState extends State<ChatPatient> {
                           width: 8,
                         ),
                         Text(
-                          '${patientInfo['Prenom']} ${patientInfo['Nom']}',
+                          '${patientInfo['Prenom']} ${patientInfo['Nom'].toUpperCase()}',
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -171,12 +207,14 @@ class ChatPatientState extends State<ChatPatient> {
                   controller: widget.scrollController,
                   webSocketService: widget.webSocketService,
                   chat: widget.chats.firstWhere(
-                    (chat) => (chat.recipientIds.first.id == widget.id ||
-                        chat.recipientIds.first.id == idDoctor &&
-                            (chat.recipientIds.last.id == widget.id ||
-                                chat.recipientIds.last.id == idDoctor)),
+                    (chat) =>
+                        (chat.recipientIds.first.id == widget.id ||
+                            chat.recipientIds.first.id == idDoctor) &&
+                        (chat.recipientIds.last.id == widget.id ||
+                            chat.recipientIds.last.id == idDoctor),
                   ),
-                  patientName: '${patientInfo['Prenom']} ${patientInfo['Nom']}',
+                  patientName:
+                      '${patientInfo['Prenom']} ${patientInfo['Nom'].toUpperCase()}',
                   doctorId: idDoctor,
                 ),
               ),
@@ -227,10 +265,18 @@ class ChatPatientState extends State<ChatPatient> {
             setId: setId),
         const SizedBox(height: 4),
         CustomNavPatientCard(
+            text: 'Ordonnance',
+            icon: BootstrapIcons.capsule,
+            setPages: setPages,
+            pageTo: 9,
+            id: patient['id'],
+            setId: setId),
+        const SizedBox(height: 4),
+        CustomNavPatientCard(
             text: 'Messagerie',
             icon: BootstrapIcons.chat_dots_fill,
             setPages: setPages,
-            pageTo: 9,
+            pageTo: 10,
             id: patient['id'],
             setId: setId),
         const SizedBox(height: 12),
@@ -245,7 +291,7 @@ class ChatPatientState extends State<ChatPatient> {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
           onPressed: () {
-            setPages(1);
+            setPages(3);
             Navigator.pop(context);
           }),
     );

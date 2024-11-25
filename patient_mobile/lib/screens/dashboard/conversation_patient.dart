@@ -131,6 +131,9 @@ class _ChatPageState extends State<ChatPageConversation> {
                 CustomFieldSearch(
                   onlyOnValidate: true,
                   onValidate: (value) {
+                    if (value.isEmpty) {
+                      return;
+                    }
                     widget.webSocketService!.sendMessage(widget.chat.id, value);
                     Future.delayed(const Duration(milliseconds: 200), () {
                       widget.controller.animateTo(

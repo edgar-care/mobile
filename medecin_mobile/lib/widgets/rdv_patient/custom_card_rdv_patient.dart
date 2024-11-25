@@ -4,12 +4,13 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_pro/services/diagnostic_services.dart';
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_pro/services/slot_service.dart';
 import 'package:edgar_pro/widgets/Diagnostic/chat_widget.dart';
 import 'package:edgar_pro/widgets/Diagnostic/progress_bar_disease.dart';
 import 'package:edgar_pro/widgets/Diagnostic/symptoms_list.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/widgets/custom_nav_patient_card.dart';
-import 'package:edgar_pro/widgets/rdv/modif_list.dart';
+import 'package:edgar_pro/widgets/rdv/custom_modif_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +20,12 @@ class CustomCardRdvPatient extends StatefulWidget {
   final Map<String, dynamic> rdvInfo;
   bool old = false;
   final Function delete;
+  final Function refresh;
   CustomCardRdvPatient(
       {super.key,
       required this.rdvInfo,
       required this.old,
+      required this.refresh,
       required this.delete});
 
   @override
@@ -30,14 +33,6 @@ class CustomCardRdvPatient extends StatefulWidget {
 }
 
 class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
-  void updateAppointment(DateTime start) {
-    setState(() {
-      widget.rdvInfo['start_date'] = (start.millisecondsSinceEpoch ~/ 1000);
-      widget.rdvInfo['end_date'] =
-          (start.add(const Duration(minutes: 30)).millisecondsSinceEpoch ~/
-              1000);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +113,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
         .toString();
     Map<String, dynamic> diagnostic = {};
     Future<bool> loadInfo() async {
-      diagnostic = await getSummary(rdvInfo["session_id"]);
+      diagnostic = await getSummary(rdvInfo["session_id"], context);
       return true;
     }
 
@@ -216,8 +211,9 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                   return Consumer<BottomSheetModel>(
                     builder: (context, model, child) {
                       return ListModal(model: model, children: [
-                        updateAppointmentModal(
-                            widget.rdvInfo, updateAppointment),
+                        UpdateAppointmentModal(
+                            rdvInfo: widget.rdvInfo,
+                            updateAppointment: widget.refresh),
                       ]);
                     },
                   );
@@ -249,7 +245,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
                   return Consumer<BottomSheetModel>(
                     builder: (context, model, child) {
                       return ListModal(model: model, children: [
-                        deleteAppointment(widget.rdvInfo['id']),
+                        deleteAppointment(widget.rdvInfo['id'], widget.refresh),
                       ]);
                     },
                   );
@@ -262,7 +258,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
     );
   }
 
-  Widget deleteAppointment(String id) {
+  Widget deleteAppointment(String id, final Function refresh) {
     String cancelreason = '';
     return ModalContainer(
       title: "Êtes-vous sûr ?",
@@ -296,9 +292,8 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.427,
-            child: Buttons(
+          Flexible(
+             child: Buttons(
               variant: Variant.secondary,
               size: SizeButton.sm,
               msg: const Text('Annuler'),
@@ -310,33 +305,28 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
           const SizedBox(
             width: 12,
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.427,
+          Flexible(
             child: Buttons(
               variant: Variant.delete,
               size: SizeButton.sm,
               msg: const Text('Oui, je suis sûr'),
               onPressed: () {
-                cancelAppointments(id, context, cancelreason);
-                Navigator.pop(context);
+                if (cancelreason == '') {
+                  TopErrorSnackBar(
+                          message: "Veuillez renseigner la raison de l'annulation")
+                      .show(context);
+                  return;
+                }
+                cancelAppointments(id, context, cancelreason).then((value) {
+                  refresh();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
               },
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget updateAppointmentModal(
-      Map<String, dynamic> rdvInfo, Function updateAppointment) {
-    return ModalContainer(
-      title: "Modifier le rendez vous",
-      subtitle: "Séléctionner une nouvelle date de rendez vous",
-      icon: const IconModal(
-        type: ModalType.info,
-        icon: Icon(BootstrapIcons.pen_fill),
-      ),
-      body: [ModifList(rdvInfo: rdvInfo, updateFunc: updateAppointment)],
     );
   }
 
@@ -348,7 +338,7 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
         icon: Icon(
           BootstrapIcons.file_text_fill,
           color: AppColors.grey600,
-          size: 18,
+          size: 14,
         ),
         type: ModalType.info,
       ),
@@ -370,6 +360,113 @@ class _CustomCardRdvPatientState extends State<CustomCardRdvPatient> {
           Navigator.pop(context);
         },
       ),
+    );
+  }
+}
+
+class UpdateAppointmentModal extends StatefulWidget {
+  final Map<String, dynamic> rdvInfo;
+  final Function updateAppointment;
+  const UpdateAppointmentModal({super.key, required this.rdvInfo, required this.updateAppointment});
+
+  @override
+  State<UpdateAppointmentModal> createState() => _UpdateAppointmentModalState();
+}
+
+class _UpdateAppointmentModalState extends State<UpdateAppointmentModal> {
+
+   List<List<Map<String, dynamic>>> freeslots = [];
+
+  @override
+  initState() {
+    super.initState();
+    _loadAppointment();
+  }
+
+  Future<void> _loadAppointment() async {
+    var temp = await getSlot(context);
+    for (var i = 0; i < temp.length; i++) {
+      if ((temp[i]['start_date'] * 1000) >
+              (DateTime.now().millisecondsSinceEpoch) &&
+          temp[i]["id_patient"] == "") {
+        bool added = false;
+        for (var j = 0; j < freeslots.length; j++) {
+          if (DateUtils.isSameDay(
+              DateTime.fromMillisecondsSinceEpoch(
+                  freeslots[j][0]['start_date'] * 1000),
+              DateTime.fromMillisecondsSinceEpoch(
+                  temp[i]['start_date'] * 1000))) {
+            setState(() {
+              freeslots[j].add(temp[i]);
+              added = true;
+            });
+          }
+        }
+        if (!added) {
+          setState(() {
+            freeslots.add([temp[i]]);
+          });
+        }
+      }
+    }
+    freeslots.sort((a, b) => a[0]['start_date'].compareTo(b[0]['start_date']));
+  }
+
+  Map<String, int> selected = {"first": 400, "second": 400};
+
+  void updateSelection(int first, int second) {
+    setState(() {
+      selected["first"] = first;
+      selected["second"] = second;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime start =
+        DateTime.fromMillisecondsSinceEpoch(widget.rdvInfo['start_date'] * 1000);
+    return ModalContainer(
+      title: "Modifier le rendez vous",
+      subtitle:
+          "Modification du rendez-vous du ${DateFormat('yMMMMEEEEd', 'fr').format(start)}",
+      icon: const IconModal(
+        type: ModalType.info,
+        icon: Icon(BootstrapIcons.pen_fill, color: AppColors.blue800, size: 18),
+      ),
+      body: [Column(
+      children: [
+        for (var i = 0; i < freeslots.length; i++) ...[
+          CustomModifCard(
+            dateList: freeslots[i],
+            updateFunc: updateSelection,
+            selected: selected,
+            number: i,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+        ],
+        const SizedBox(
+          height: 16,
+        ),
+        Buttons(
+          variant: Variant.primary,
+          size: SizeButton.md,
+          msg: const Text("Valider le changement"),
+          onPressed: () {
+            updateAppointment(
+                    widget.rdvInfo['id'],
+                    freeslots[selected["first"]!][selected["second"]!]['id'],
+                    context)
+                .then((value) => {
+                      widget.updateAppointment(),
+                      Navigator.pop(context),
+                      Navigator.pop(context),
+                    });
+          },
+        ),
+      ],
+    )],
     );
   }
 }

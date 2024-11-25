@@ -3,9 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.remove("token");
+  if (prefs.containsKey("token")) {
+    prefs.remove("token");
+  }
   // ignore: use_build_context_synchronously
-  Navigator.pop(context);
-  // ignore: use_build_context_synchronously
-  Navigator.pop(context);
+  Navigator.popUntil(context, (route) => route.isFirst);
 }

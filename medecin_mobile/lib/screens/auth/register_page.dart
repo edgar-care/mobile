@@ -14,7 +14,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   String email = '';
   String password = '';
 
@@ -130,17 +129,19 @@ class _RegisterState extends State<Register> {
                           msg: const Text("Continuer"),
                           size: SizeButton.md,
                           onPressed: () {
-                            if (email.isNotEmpty && password.isNotEmpty) {
-                              widget.registerCallback(email, password);
+                            if (email.isEmpty || password.isEmpty) {
+                              TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+                              return;
                             }
-                            else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                ErrorSnackBar(
-                                  message: 'Veuillez remplir tous les champs',
-                                  context: context,
-                                ),
-                              );
+                            if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+                              TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
+                              return;
                             }
+                            if (password.length < 8){
+                              TopErrorSnackBar(message: "Votre mot de passe doit contenir au minimum 8 caractères",).show(context);
+                              return;
+                            }
+                            widget.registerCallback(email, password);  
                           },
                         ),
                       ],

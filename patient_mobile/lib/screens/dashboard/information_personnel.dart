@@ -1,19 +1,19 @@
 // ignore_for_file: use_build_context_synchronously, duplicate_ignore
-
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
-import 'package:edgar_app/services/medecine.dart';
+import 'package:edgar_app/services/medical_antecedent.dart';
+import 'package:edgar_app/utils/treatement_utils.dart';
 import 'package:edgar_app/widget/AddPatient/add_button.dart';
 import 'package:edgar_app/widget/card_docteur.dart';
-import 'package:edgar_app/widget/card_traitement_day.dart';
 import 'package:edgar_app/widget/card_traitement_small.dart';
+import 'package:edgar_app/widget/modal_treatment.dart';
+import 'package:edgar_app/widget/navbarplus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class InformationPersonnel extends StatefulWidget {
@@ -31,26 +31,33 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   String birthdate = '';
   String doctorName = '';
   var pageIndex = ValueNotifier(0);
-  ValueNotifier<int> selected = ValueNotifier(0);
-
-  void updateSelection(int newSelection) {
-    selected.value = newSelection;
-  }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
-        infoMedical = {
-          ...value,
-          "medical_antecedents": value['medical_antecedents'] ?? []
-        };
-
+        List<Map<String, dynamic>> medicalAntecedent = [];
+        List<Treatment> tmpTraitments = [];
+        for (var element in value['medical_antecedents']) {
+          tmpTraitments.clear();
+          if (element['name'] != "" &&
+              element['id'] != "" &&
+              element['treatments'] != []) {
+            for (var treatment in element['treatments']) {
+              tmpTraitments.add(Treatment.fromJson(treatment));
+            }
+            medicalAntecedent.add({
+              "name": element['name'],
+              "id": element['id'],
+              "treatments": tmpTraitments
+            });
+          }
+        }
+        infoMedical = {...value, "medical_antecedents": medicalAntecedent};
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching name").show(context);
       }
     });
     doctorName = await getNameDoctor();
@@ -58,7 +65,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
 
   Future<String> getNameDoctor() async {
     try {
-      final value = await getAllDoctor();
+      final value = await getAllDoctor(context);
       if (value.isNotEmpty) {
         for (var doctor in value) {
           if (doctor['id'] == infoMedical['primary_doctor_id']) {
@@ -70,16 +77,20 @@ class _InformationPersonnelState extends State<InformationPersonnel>
           }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Error on fetching doctor").show(context);
         return 'test';
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          ErrorSnackBar(message: "Error on fetching name", context: context));
+      TopErrorSnackBar(message: "Error on fetching doctor").show(context);
       return 'test';
     }
     return 'Dr.Edgar'; // default return value if no doctor matches
+  }
+
+  void refresh() {
+    setState(() {
+      fetchData();
+    });
   }
 
   @override
@@ -131,6 +142,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             } else {
               return Expanded(
                 child: CardInformationPersonnel(
+                    refresh: refresh,
                     infoMedical: infoMedical,
                     birthdate: birthdate,
                     doctorName: doctorName),
@@ -148,15 +160,7 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
             tmpInfo = Map.of(infoMedical);
-            tmpTraitments = [];
-            for (var i = 0; i < tmpInfo['medical_antecedents'].length; i++) {
-              tmpInfo['medical_antecedents'][i]['treatments'] =
-                  tmpInfo['medical_antecedents'][i]['medicines'];
-
-              tmpInfo['medical_antecedents'][i].remove('medicines');
-            }
             // selected.value = infoMedical["sex"];
-
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -167,14 +171,31 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                     return ListModal(
                       model: model,
                       children: [
-                        patientAdd(context, model, tmpInfo),
-                        PatientAdd2(
-                            model: model, context: context, tmpInfo: tmpInfo),
-                        PatientAdd3(
-                            model: model,
-                            context: context,
-                            traitments: tmpTraitments,
-                            tmpInfo: tmpInfo)
+                        AddSubMenu(
+                            refresh: refresh,
+                            tmpInfo: tmpInfo,
+                            addAntecedent: (String nameAntecedent, List<Treatment> treatments) {
+                              var body = {
+                                  "name": nameAntecedent,
+                                  "symptoms": [],
+                                  "treatments": treatments.map((treatment) => treatment.toJson()).toList()
+                              };
+                                postMedicalAntecedent(body, context).then((value) {
+                                  if (value) {
+                                    TopSuccessSnackBar(
+                                      message: "Sujet de santé ajouté avec succès",
+                                    ).show(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    refresh();
+                                  } else {
+                                    TopErrorSnackBar(
+                                      message:
+                                          "Erreur lors de l'ajout du sujet de santé",
+                                    ).show(context);
+                                  }
+                                });
+                            }),
                       ],
                     );
                   },
@@ -186,9 +207,617 @@ class _InformationPersonnelState extends State<InformationPersonnel>
       ],
     );
   }
+}
 
-  Widget patientAdd(
-      BuildContext context, BottomSheetModel model, Map<String, dynamic> info) {
+// ignore: must_be_immutable
+class AddSubMenu extends StatelessWidget {
+  Map<String, dynamic> tmpInfo;
+  final Function addAntecedent;
+  final Function refresh;
+  AddSubMenu({super.key, required this.tmpInfo, required this.addAntecedent, required this.refresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      body: [
+        Text(
+          "Ajouter un sujet de santé",
+          style: const TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+          type: "Only",
+          title: 'Ajouter un sujet de santé',
+          icon: const Icon(
+            BootstrapIcons.bandaid_fill,
+            color: AppColors.blue800,
+            size: 16,
+          ),
+          onTap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        ModalTreamentInfo(
+                          addMedicalAntecedents: addAntecedent
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+          type: "Only",
+          title: 'Modifier mes informations',
+          icon: const Icon(
+            BootstrapIcons.postcard_heart_fill,
+            color: AppColors.blue800,
+            size: 16,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        PatientAdd(model: model, info: tmpInfo),
+                        PatientAdd2(
+                          refresh: refresh,
+                          model: model,
+                          context: context,
+                          tmpInfo: tmpInfo,
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class CardInformationPersonnel extends StatefulWidget {
+  final String birthdate;
+  final Map<String, dynamic> infoMedical;
+  final String doctorName;
+  final Function refresh;
+  const CardInformationPersonnel(
+      {super.key,
+      required this.infoMedical,
+      required this.refresh,
+      required this.birthdate,
+      required this.doctorName});
+
+  @override
+  State<CardInformationPersonnel> createState() =>
+      _CardInformationPersonnelState();
+}
+
+class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
+  @override
+  Widget build(BuildContext context) {
+    List<Map<String, dynamic>> medicalAntecedents =
+        widget.infoMedical['medical_antecedents'];
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.blue200,
+          style: BorderStyle.solid,
+          width: 2,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElementInfo(
+              title: 'Prénom: ',
+              value: widget.infoMedical['firstname'],
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Nom: ',
+              value: widget.infoMedical['name'],
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Date de naissance: ',
+              value: widget.birthdate,
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Sexe: ',
+              value: widget.infoMedical['sex'] == 'MALE'
+                  ? 'Homme'
+                  : widget.infoMedical['sex'] == 'FEMALE'
+                      ? 'Femme'
+                      : 'Autres',
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Taille: ',
+              value: '${widget.infoMedical['height'] / 100} m',
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Poids: ',
+              value: '${widget.infoMedical['weight'] / 100} kg',
+            ),
+            const SizedBox(height: 8),
+            ElementInfo(
+              title: 'Médecin traitant: ',
+              value: widget.doctorName,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Antécédants médicaux et sujets de santé:',
+              style: TextStyle(
+                color: AppColors.black,
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 4,
+              runSpacing: 4,
+              children: [
+                if (medicalAntecedents.isNotEmpty)
+                  for (var i = 0; i < medicalAntecedents.length; i++)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return IntrinsicWidth(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (medicalAntecedents.isNotEmpty) {
+                                  final model = Provider.of<BottomSheetModel>(
+                                      context,
+                                      listen: false);
+                                  model.resetCurrentIndex();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) {
+                                      return Consumer<BottomSheetModel>(
+                                        builder: (context, model, child) {
+                                          return ListModal(
+                                            model: model,
+                                            children: [
+                                              SubMenuMedicalFolder(
+                                                medicalAntecedent:
+                                                    medicalAntecedents[i],
+                                                deleteAntecedent: () {
+                                                    deleteMedicalAntecedent(
+                                                        medicalAntecedents[i]
+                                                            ["id"],
+                                                        context).then((value) {
+                                                          if (value) {
+                                                            TopSuccessSnackBar(
+                                                              message:
+                                                                  "Sujet de santé supprimé avec succès",
+                                                            ).show(context);
+                                                            Navigator.pop(context);
+                                                            Navigator.pop(context);
+                                                            widget.refresh();
+                                                          } else {
+                                                            TopErrorSnackBar(
+                                                              message:
+                                                                  "Erreur lors de la suppression du sujet de santé",
+                                                            ).show(context);
+                                                          }
+                                                        });
+                                                },
+                                                refresh: () {
+                                                  widget.refresh();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              child: CardTraitementSmall(
+                                name: medicalAntecedents[i]['name'],
+                                isEnCours:
+                                    medicalAntecedents[i]['treatments'].isEmpty
+                                        ? false
+                                        : true,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ElementInfo extends StatelessWidget {
+  final String title;
+  final String value;
+  const ElementInfo({super.key, required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(
+              color: AppColors.black,
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class SubMenuMedicalFolder extends StatelessWidget {
+  Map<String, dynamic> medicalAntecedent;
+  final Function deleteAntecedent;
+  final Function refresh;
+  SubMenuMedicalFolder(
+      {super.key,
+      required this.medicalAntecedent,
+      required this.deleteAntecedent,
+      required this.refresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      body: [
+        Text(
+          medicalAntecedent['name'],
+          style: const TextStyle(
+              fontSize: 14, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+          title: 'Consulter les traitements',
+          onTap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        ModalInfoAntecedent(
+                            medicalAntecedent: medicalAntecedent)
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+          type: 'Only',
+          icon: const Icon(
+            BootstrapIcons.bandaid_fill,
+            color: AppColors.blue800,
+            size: 16,
+          ),
+        ),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+            icon: const Icon(
+              BootstrapIcons.pen_fill,
+              color: AppColors.blue800,
+              size: 16,
+            ),
+            title: "Modifier mon sujet de santé",
+            onTap: () {
+              final model =
+                  Provider.of<BottomSheetModel>(context, listen: false);
+              model.resetCurrentIndex();
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return Consumer<BottomSheetModel>(
+                    builder: (context, model, child) {
+                      return ListModal(
+                        model: model,
+                        children: [
+                          UpdateAntecedentNameModal(
+                            startName: medicalAntecedent['name'],
+                            id: medicalAntecedent['id'],
+                            refresh: refresh,
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            type: "Only"),
+        Container(
+          color: AppColors.blue100,
+          height: 1,
+        ),
+        NavbarPLusTab(
+          title: 'Supprimer mon sujet de santé',
+          color: AppColors.red700,
+          onTap: () {
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
+            model.resetCurrentIndex();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return Consumer<BottomSheetModel>(
+                  builder: (context, model, child) {
+                    return ListModal(
+                      model: model,
+                      children: [
+                        DeleteAntecedentModal(
+                          deleteAntecedent: deleteAntecedent,
+                          refresh: refresh,
+                          antecedentName: medicalAntecedent['name'],
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+          type: 'Only',
+          icon: const Icon(
+            BootstrapIcons.trash_fill,
+            color: AppColors.red700,
+            size: 16,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class UpdateAntecedentNameModal extends StatelessWidget {
+  final Function refresh;
+  final String id;
+  final String startName;
+  const UpdateAntecedentNameModal(
+      {super.key,
+      required this.startName,
+      required this.id,
+      required this.refresh});
+
+  @override
+  Widget build(BuildContext context) {
+    String antecedentName = startName;
+    return ModalContainer(
+        icon: IconModal(
+          icon: Icon(
+            BootstrapIcons.capsule_pill,
+            color: AppColors.blue700,
+            size: 18,
+          ),
+          type: ModalType.info,
+        ),
+        title: "Modifier un sujet de santé",
+        subtitle: "Renseigner les informations de votre sujet de santé.",
+        body: [
+          Text("Le nom du votre sujet de santé",
+              style: const TextStyle(
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              )),
+          const SizedBox(
+            height: 4,
+          ),
+          CustomField(
+            label: "Nom du sujet de santé",
+            value: antecedentName,
+            onChanged: (value) {
+              antecedentName = value;
+            },
+            isPassword: false,
+            keyboardType: TextInputType.text,
+            action: TextInputAction.done,
+          ),
+        ],
+        footer: Column(
+          children: [
+            Buttons(
+              variant: Variant.primary,
+              size: SizeButton.sm,
+              msg: const Text('Modifier le sujet de santé'),
+              onPressed: () {
+                if (antecedentName != "") {
+                  putMedicalAntecedent({
+                    "medical_antecedent": {
+                      "name": antecedentName,
+                      "symptoms": [],
+                    }
+                  }, id, context)
+                      .then((value) {
+                    if (value) {
+                      TopSuccessSnackBar(
+                        message: "Sujet de santé modifié avec succès",
+                      ).show(context);
+                      refresh();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    } else {
+                      TopErrorSnackBar(
+                        message:
+                            "Erreur lors de la modification du sujet de santé",
+                      ).show(context);
+                    }
+                  });
+                } else {
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tous les champs",
+                  ).show(context);
+                }
+              },
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Buttons(
+              variant: Variant.secondary,
+              size: SizeButton.sm,
+              msg: const Text("Annuler"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ));
+  }
+}
+
+class DeleteAntecedentModal extends StatelessWidget {
+  final Function deleteAntecedent;
+  final Function refresh;
+  final String antecedentName;
+  const DeleteAntecedentModal(
+      {super.key,
+      required this.deleteAntecedent,
+      required this.refresh,
+      required this.antecedentName});
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalContainer(
+      title: "Supprimer un sujet de santé",
+      subtitle:
+          "Vous êtes sur le point de supprimer votre sujet de santé: $antecedentName. Si vous supprimez ce sujet de santé, vous ne pourrez plus le consulter.",
+      icon: const IconModal(
+        icon: Icon(
+          BootstrapIcons.x,
+          color: AppColors.red700,
+          size: 18,
+        ),
+        type: ModalType.error,
+      ),
+      footer: Column(
+        children: [
+          Buttons(
+            variant: Variant.delete,
+            size: SizeButton.sm,
+            msg: const Text('Oui, supprimer le sujet de santé'),
+            onPressed: () {
+              deleteAntecedent();
+            },
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          Buttons(
+            variant: Variant.secondary,
+            size: SizeButton.sm,
+            msg: const Text("Non, garder le sujet de santé"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class PatientAdd extends StatefulWidget {
+  Map<String, dynamic> info;
+  BottomSheetModel model;
+  PatientAdd({super.key, required this.info, required this.model});
+
+  @override
+  State<PatientAdd> createState() => _PatientAddState();
+}
+
+class _PatientAddState extends State<PatientAdd> {
+  ValueNotifier<int> selected = ValueNotifier(0);
+
+  void updateSelection(int newSelection) {
+    selected.value = newSelection;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ModalContainer(
       title: "Mise à jout des informations",
       subtitle: "Mettez à jour les informations du patient",
@@ -208,7 +837,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
               size: SizeButton.sm,
               msg: const Text('Annuler'),
               onPressed: () {
-                tmpInfo = Map.of(infoMedical);
                 Navigator.pop(context);
               },
             ),
@@ -222,31 +850,28 @@ class _InformationPersonnelState extends State<InformationPersonnel>
               size: SizeButton.sm,
               msg: const Text('Continuer'),
               onPressed: () {
-                if (info['name'] == "" ||
-                    info['firstname'] == "" ||
-                    info['birthdate'] == "" ||
-                    info['weight'] == "" ||
-                    info['height'] == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez remplir tous les champs",
-                      context: context,
-                    ),
-                  );
+                if (widget.info['name'] == "" ||
+                    widget.info['firstname'] == "" ||
+                    widget.info['birthdate'] == "" ||
+                    widget.info['weight'] == "" ||
+                    widget.info['height'] == "") {
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tous les champs",
+                  ).show(context);
                 } else {
                   switch (selected.value) {
                     case 0:
-                      info['sex'] = "MALE";
+                      widget.info['sex'] = "MALE";
                       break;
                     case 1:
-                      info['sex'] = "FEMALE";
+                      widget.info['sex'] = "FEMALE";
                       break;
                     case 2:
-                      info['sex'] = "OTHER";
+                      widget.info['sex'] = "OTHER";
                       break;
                     default:
                   }
-                  model.changePage(1);
+                  widget.model.changePage(1);
                 }
               },
             ),
@@ -264,18 +889,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: AppColors.blue700,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 16,
-            ),
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue200,
                 ),
               ),
             ),
@@ -311,8 +924,8 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             ),
             CustomField(
               label: "Prénom",
-              value: info['firstname'],
-              onChanged: (value) => info['firstname'] = value,
+              value: widget.info['firstname'],
+              onChanged: (value) => widget.info['firstname'] = value,
               isPassword: false,
               keyboardType: TextInputType.text,
               action: TextInputAction.next,
@@ -332,8 +945,8 @@ class _InformationPersonnelState extends State<InformationPersonnel>
             ),
             CustomField(
               label: "Nom",
-              value: info['name'],
-              onChanged: (value) => info['name'] = value,
+              value: widget.info['name'],
+              onChanged: (value) => widget.info['name'] = value,
               isPassword: false,
               keyboardType: TextInputType.text,
               action: TextInputAction.next,
@@ -359,13 +972,13 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                 int date = DateTime.parse('$year-$month-$day')
                         .millisecondsSinceEpoch ~/
                     1000;
-                info['birthdate'] = date;
+                widget.info['birthdate'] = date;
               },
               endDate: DateTime.now(),
-              value: DateFormat('dd/MM/yyyy')
+              initialValue: DateFormat('dd/MM/yyyy')
                   .format(
                     DateTime.fromMillisecondsSinceEpoch(
-                        info['birthdate'] * 1000),
+                        widget.info['birthdate'] * 1000),
                   )
                   .toString(),
             ),
@@ -433,8 +1046,8 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                       ),
                       CustomField(
                         label: "1,52m",
-                        value: (info['height'] / 100).toString(),
-                        onChanged: (value) => info['height'] =
+                        value: (widget.info['height']).toString(),
+                        onChanged: (value) => widget.info['height'] =
                             (int.parse(value.replaceAll(',', '.')) * 100),
                         keyboardType: TextInputType.number,
                         isPassword: false,
@@ -462,8 +1075,8 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                       ),
                       CustomField(
                         label: "45kg",
-                        value: info['weight'].toString(),
-                        onChanged: (value) => info['weight'] =
+                        value: (widget.info['weight'] ~/ 100).toString(),
+                        onChanged: (value) => widget.info['weight'] =
                             int.parse(value.replaceAll(',', '.')) * 100,
                         keyboardType: TextInputType.number,
                         isPassword: false,
@@ -481,341 +1094,18 @@ class _InformationPersonnelState extends State<InformationPersonnel>
   }
 }
 
-class CardInformationPersonnel extends StatefulWidget {
-  final String birthdate;
-  final Map<String, dynamic> infoMedical;
-  final String doctorName;
-  const CardInformationPersonnel(
-      {super.key,
-      required this.infoMedical,
-      required this.birthdate,
-      required this.doctorName});
-
-  @override
-  State<CardInformationPersonnel> createState() =>
-      _CardInformationPersonnelState();
-}
-
-class _CardInformationPersonnelState extends State<CardInformationPersonnel> {
-  @override
-  Widget build(BuildContext context) {
-    int x = 0;
-    for (var treatment in widget.infoMedical['medical_antecedents']) {
-      if (treatment.containsKey("treatments")) {
-        widget.infoMedical['medical_antecedents'][x]["medicines"] =
-            treatment["treatments"];
-        x++;
-      }
-    }
-    Logger().i(widget.infoMedical);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.blue200,
-          style: BorderStyle.solid,
-          width: 2,
-        ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ElementInfo(
-              title: 'Prénom: ',
-              value: widget.infoMedical['firstname'],
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Nom: ',
-              value: widget.infoMedical['name'],
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Date de naissance: ',
-              value: widget.birthdate,
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Sexe: ',
-              value: widget.infoMedical['sex'] == 'MALE'
-                  ? 'Homme'
-                  : widget.infoMedical['sex'] == 'FEMALE'
-                      ? 'Femme'
-                      : 'Autres',
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Taille: ',
-              value: '${widget.infoMedical['height'] / 100} m',
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Poids: ',
-              value: '${widget.infoMedical['weight'] / 100} kg',
-            ),
-            const SizedBox(height: 8),
-            ElementInfo(
-              title: 'Médecin traitant: ',
-              value: widget.doctorName,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Antécédants médicaux et sujets de santé:',
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: 14,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              runAlignment: WrapAlignment.start,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              children: [
-                for (var treatment in widget.infoMedical['medical_antecedents'])
-                  IntrinsicWidth(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (treatment['medicines'] != null) {
-                          final model = Provider.of<BottomSheetModel>(context,
-                              listen: false);
-                          model.resetCurrentIndex();
-
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) {
-                              return Consumer<BottomSheetModel>(
-                                builder: (context, model, child) {
-                                  return ListModal(
-                                    model: model,
-                                    children: [
-                                      InfoTreatment(
-                                        traitement: treatment,
-                                      )
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: CardTraitementSmall(
-                        name: treatment['name'],
-                        isEnCours:
-                            treatment['medicines'] == null ? false : true,
-                        onTap: () {},
-                        withDelete: false,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class InfoTreatment extends StatefulWidget {
-  Map<String, dynamic> traitement;
-  InfoTreatment({super.key, required this.traitement});
-
-  @override
-  State<InfoTreatment> createState() => _InfoTreatmentState();
-}
-
-class _InfoTreatmentState extends State<InfoTreatment> {
-  late Future<bool> _futureData;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureData = fetchData();
-  }
-
-  List<Map<String, dynamic>> medicaments = [];
-
-  List<String> medNames = [];
-
-  Future<bool> fetchData() async {
-    try {
-      medicaments = await getMedecines();
-
-      for (var i = 0; i < widget.traitement['medicines'].length; i++) {
-        var medname = medicaments.firstWhere(
-            (med) =>
-                med['id'] == widget.traitement['medicines'][i]['medicine_id'],
-            orElse: () => {'name': ''})['name'];
-        medNames.add(medname);
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ValueNotifier<bool> isHealth =
-        ValueNotifier(widget.traitement['still_relevant']);
-    if (widget.traitement.containsKey("treatments")) {
-      widget.traitement["medicines"] = widget.traitement["treatments"];
-    }
-    return ModalContainer(
-      title: widget.traitement['name'],
-      subtitle: "Voici les informations du traitement",
-      icon: IconModal(
-        icon: SvgPicture.asset(
-          'assets/images/utils/Union.svg',
-          width: 16,
-          height: 16,
-          // ignore: deprecated_member_use
-          color: widget.traitement['medicines'].isEmpty
-              ? AppColors.grey300
-              : AppColors.blue700,
-        ),
-        type: ModalType.info,
-      ),
-      body: [
-        const Text(
-          'Le sujet de santé est toujours en cours ?',
-          style: TextStyle(
-              color: AppColors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Poppins'),
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: isHealth,
-          builder: (context, value, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                AddButton(
-                    onTap: (() {}),
-                    label: "Oui",
-                    color: value == true ? AppColors.blue700 : AppColors.white),
-                const SizedBox(width: 8),
-                AddButton(
-                    onTap: (() {}),
-                    label: "Non",
-                    color:
-                        value == false ? AppColors.blue700 : AppColors.white),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'Les médicaments prescrits',
-          style: TextStyle(
-              color: AppColors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Poppins'),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: FutureBuilder<bool>(
-            future: _futureData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: AppColors.blue700,
-                  strokeWidth: 2,
-                ));
-              } else if (snapshot.hasError) {
-                return Text('Erreur: ${snapshot.error}');
-              } else {
-                return MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: ListView.builder(
-                    itemCount: widget.traitement['medicines'].length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return CardTraitementDay(
-                              isClickable: false,
-                              data: widget.traitement['medicines'][index],
-                              name: medNames[index],
-                              onTap: () {},
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }
-            },
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class ElementInfo extends StatelessWidget {
-  final String title;
-  final String value;
-  const ElementInfo({super.key, required this.title, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.black,
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class PatientAdd2 extends StatefulWidget {
   final BottomSheetModel model;
   final BuildContext context;
   final Map<String, dynamic> tmpInfo;
+  final Function refresh;
 
   const PatientAdd2({
     super.key,
     required this.model,
     required this.context,
     required this.tmpInfo,
+    required this.refresh,
   });
 
   @override
@@ -835,7 +1125,7 @@ class PatientAdd2State extends State<PatientAdd2> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    var tmp = await getAllDoctor();
+    var tmp = await getAllDoctor(context);
     setState(() {
       docs = tmp;
     });
@@ -888,17 +1178,56 @@ class PatientAdd2State extends State<PatientAdd2> {
             child: Buttons(
               variant: Variant.primary,
               size: SizeButton.sm,
-              msg: const Text('Continuer'),
+              msg: const Text('Valider'),
               onPressed: () {
                 if (getDoctor() != -1) {
-                  widget.model.changePage(2);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(
-                      message: "Veuillez selectionner un médecin traitant",
-                      context: context,
-                    ),
+                  List<Map<String, dynamic>> medicaljson = [];
+                  for (var element in widget.tmpInfo['medical_antecedents']) {
+                    medicaljson.add({
+                      "name": element['name'],
+                      "symptoms": element['symptoms'],
+                      "treatments": element['treatments']
+                          .map((treatment) => treatment.toJson())
+                          .toList()
+                    });
+                  }
+                  final Map<String, Object> body = {
+                    "name": widget.tmpInfo['name'],
+                    "firstname": widget.tmpInfo['firstname'],
+                    "birthdate": widget.tmpInfo['birthdate'],
+                    "sex": widget.tmpInfo['sex'],
+                    "weight": widget.tmpInfo['weight'],
+                    "height": widget.tmpInfo['height'],
+                    "primary_doctor_id": widget.tmpInfo['primary_doctor_id'],
+                    "family_members_med_info_id":
+                        widget.tmpInfo['family_members_med_info_id'],
+                    "medical_antecedents": medicaljson,
+                    "onboarding_status": "DONE",
+                  };
+                  putInformationPatient(context, body, widget.tmpInfo['id'])
+                      .then(
+                    (value) => {
+                      if (value != null)
+                        {
+                          TopSuccessSnackBar(
+                            message: "Informations mises à jour avec succès",
+                          ).show(context),
+                          Navigator.pop(context),
+                          widget.refresh(),
+                        }
+                      else
+                        {
+                          TopErrorSnackBar(
+                            message:
+                                "Erreur lors de la mise à jour des informations",
+                          ).show(context),
+                        }
+                    },
                   );
+                } else {
+                  TopErrorSnackBar(
+                    message: "Veuillez selectionner un médecin traitant",
+                  ).show(context);
                 }
               },
             ),
@@ -931,18 +1260,6 @@ class PatientAdd2State extends State<PatientAdd2> {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 16,
-            ),
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue200,
-                ),
-              ),
-            )
           ],
         ),
         const SizedBox(
@@ -1036,1083 +1353,6 @@ class PatientAdd2State extends State<PatientAdd2> {
                 return const Center(child: Text("Aucune donnée disponible"));
               }
             },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class PatientAdd3 extends StatefulWidget {
-  BottomSheetModel model;
-  final BuildContext context;
-  final List<Map<String, dynamic>> traitments;
-  Map<String, dynamic> tmpInfo;
-
-  PatientAdd3(
-      {super.key,
-      required this.model,
-      required this.context,
-      required this.traitments,
-      required this.tmpInfo});
-
-  @override
-  PatientAdd3State createState() => PatientAdd3State();
-}
-
-class PatientAdd3State extends State<PatientAdd3> {
-  final ValueNotifier<int> pageIndex = ValueNotifier(0);
-
-  void updateData(int index) {
-    setState(() {
-      pageIndex.value = index;
-    });
-  }
-
-  void addNewTraitement(
-      String name, Map<String, dynamic> treatments, bool stillRelevant) {
-    setState(() {
-      widget.tmpInfo['medical_antecedents'].add({
-        "name": name,
-        "treatments": treatments["treatments"],
-        "still_relevant": stillRelevant,
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Logger().i(widget.tmpInfo);
-    return ModalContainer(
-      title: "Mise à jout des informations",
-      subtitle: "Mettez à jour les informations du patient",
-      icon: const IconModal(
-        icon: Icon(
-          BootstrapIcons.postcard_heart_fill,
-          color: AppColors.grey700,
-          size: 18,
-        ),
-        type: ModalType.info,
-      ),
-      body: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue700,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 16,
-            ),
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue700,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 16,
-            ),
-            Flexible(
-              child: Container(
-                height: 7,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.blue700,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 32,
-        ),
-        const Text(
-          "Vos antécédents médicaux et sujets de santé",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            final model = Provider.of<BottomSheetModel>(context, listen: false);
-            model.resetCurrentIndex();
-
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              builder: (context) {
-                return Consumer<BottomSheetModel>(
-                  builder: (context, model, child) {
-                    return ListModal(model: model, children: [
-                      AddTreatment(addNewTraitement: addNewTraitement)
-                    ]);
-                  },
-                );
-              },
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.blue500, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Renseigner vos informations",
-                  style: TextStyle(
-                    color: AppColors.grey400,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SvgPicture.asset(
-                  "assets/images/utils/plus-lg.svg",
-                  // ignore: deprecated_member_use
-                  color: AppColors.blue700,
-                  width: 16,
-                  height: 16,
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          "Vos antécédénts médicaux et sujets de santé renseignés",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: FutureBuilder(
-            future: Future.delayed(const Duration(seconds: 0), () {
-              return true;
-            }),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Expanded(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(AppColors.blue700),
-                      strokeWidth: 2,
-                      backgroundColor: AppColors.white,
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Erreur: ${snapshot.error}');
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      runAlignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      children: [
-                        if (widget.tmpInfo['medical_antecedents'].isNotEmpty)
-                          for (var i = 0;
-                              i < widget.tmpInfo['medical_antecedents'].length;
-                              i++)
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                return IntrinsicWidth(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      final model =
-                                          Provider.of<BottomSheetModel>(context,
-                                              listen: false);
-                                      model.resetCurrentIndex();
-
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent,
-                                        isScrollControlled: true,
-                                        builder: (context) {
-                                          return Consumer<BottomSheetModel>(
-                                            builder: (context, model, child) {
-                                              return ListModal(
-                                                  model: model,
-                                                  children: [
-                                                    InfoTreatment(
-                                                        traitement: widget
-                                                                .tmpInfo[
-                                                            'medical_antecedents'][i])
-                                                  ]);
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: CardTraitementSmall(
-                                      name:
-                                          widget.tmpInfo['medical_antecedents']
-                                              [i]['name'],
-                                      isEnCours: widget
-                                              .tmpInfo['medical_antecedents'][i]
-                                                  ['treatments']
-                                              .isEmpty
-                                          ? false
-                                          : true,
-                                      onTap: () {
-                                        setState(
-                                          () {
-                                            widget
-                                                .tmpInfo['medical_antecedents']
-                                                .removeAt(i);
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-        ),
-      ],
-      footer: Row(
-        children: [
-          Flexible(
-            child: Buttons(
-              variant: Variant.secondary,
-              size: SizeButton.sm,
-              msg: const Text('Revenir en arrière'),
-              onPressed: () {
-                widget.model.changePage(1);
-              },
-            ),
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Flexible(
-            child: Buttons(
-              variant: Variant.validate,
-              size: SizeButton.sm,
-              msg: const Text('Confirmer'),
-              onPressed: () {
-                final Map<String, Object> body = {
-                  "name": widget.tmpInfo['name'],
-                  "firstname": widget.tmpInfo['firstname'],
-                  "birthdate": widget.tmpInfo['birthdate'],
-                  "sex": widget.tmpInfo['sex'],
-                  "weight": widget.tmpInfo['weight'],
-                  "height": widget.tmpInfo['height'],
-                  "primary_doctor_id": widget.tmpInfo['primary_doctor_id'],
-                  "family_members_med_info_id":
-                      widget.tmpInfo['family_members_med_info_id'],
-                  "medical_antecedents": widget.tmpInfo['medical_antecedents'],
-                  "onboarding_status": "DONE",
-                };
-                putInformationPatient(context, body, widget.tmpInfo['id']).then(
-                  (value) => {
-                    Navigator.pop(context),
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class AddTreatment extends StatefulWidget {
-  Function addNewTraitement;
-  AddTreatment({super.key, required this.addNewTraitement});
-
-  @override
-  State<AddTreatment> createState() => _AddTreatmentState();
-}
-
-class _AddTreatmentState extends State<AddTreatment> {
-  String name = "";
-  bool stillRelevant = false;
-  List<Map<String, dynamic>> medicaments = [];
-  List<String> medNames = [];
-  Map<String, dynamic> treatments = {"treatments": [], "name": "Parasetamole"};
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      treatments = {"treatments": [], "name": name};
-    });
-  }
-
-  Future<bool> fetchData() async {
-    medicaments = await getMedecines();
-    medNames.clear(); // Effacer la liste existante pour éviter les doublons
-
-    for (var treatment in treatments['treatments']) {
-      var medId = treatment['medicine_id'];
-      var med = medicaments.firstWhere((med) => med['id'] == medId,
-          orElse: () => {'name': ''});
-      var medName = med['name'];
-      medNames.add(medName);
-    }
-    return true;
-  }
-
-  void updateMedicament(Map<String, dynamic> medicament) async {
-    setState(() {
-      treatments['treatments'].add(medicament);
-    });
-    fetchData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ModalContainer(
-      title: "Ajouter un traitement",
-      subtitle: "Compléter tout les champs",
-      icon: IconModal(
-        icon: SvgPicture.asset(
-          'assets/images/utils/Subtract.svg',
-          // ignore: deprecated_member_use
-          color: AppColors.green700,
-          width: 18,
-        ),
-        type: ModalType.success,
-      ),
-      footer: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            child: Buttons(
-                variant: Variant.secondary,
-                size: SizeButton.sm,
-                msg: const Text("Annuler"),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-          ),
-          const SizedBox(width: 12),
-          Flexible(
-            child: Buttons(
-              variant: Variant.validate,
-              size: SizeButton.sm,
-              msg: const Text("Ajouter"),
-              onPressed: () {
-                if (name == "") {
-                  ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                      message: "Ajoutez un nom", context: context));
-                  return;
-                }
-                widget.addNewTraitement(name, treatments, stillRelevant);
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
-      ),
-      body: [
-        const Text(
-          'Nom de votre sujet de santé',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        CustomField(
-          label: 'Rhume',
-          onChanged: (value) {
-            setState(() {
-              name = value.trim();
-            });
-          },
-          keyboardType: TextInputType.name,
-          action: TextInputAction.next,
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Le sujet de santé est-il toujours en cours ?',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        ValueListenableBuilder<bool>(
-          valueListenable: ValueNotifier(stillRelevant),
-          builder: (context, value, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                AddButton(
-                    onTap: (() {
-                      setState(() {
-                        stillRelevant = true;
-                      });
-                    }),
-                    label: "Oui",
-                    color:
-                        value == true ? AppColors.blue700 : Colors.transparent),
-                const SizedBox(width: 8),
-                AddButton(
-                    onTap: (() {
-                      setState(() {
-                        stillRelevant = false;
-                      });
-                    }),
-                    label: "Non",
-                    color: value == false
-                        ? AppColors.blue700
-                        : Colors.transparent),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: () {
-            final model = Provider.of<BottomSheetModel>(context, listen: false);
-            model.resetCurrentIndex();
-
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              builder: (context) {
-                return Consumer<BottomSheetModel>(
-                  builder: (context, model, child) {
-                    return ListModal(model: model, children: [
-                      AddMedicament(
-                          addNewTraitement: widget.addNewTraitement,
-                          updateMedicaments: updateMedicament)
-                    ]);
-                  },
-                );
-              },
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.blue500, width: 2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Ajouter un médicament",
-                  style: TextStyle(
-                    color: AppColors.grey400,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SvgPicture.asset(
-                  "assets/images/utils/plus-lg.svg",
-                  // ignore: deprecated_member_use
-                  color: AppColors.blue700,
-                  width: 14,
-                  height: 14,
-                ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: FutureBuilder(
-            future: fetchData(), // Simulate some async operation
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: treatments['treatments'].length,
-                  itemBuilder: (context, index) {
-                    if (treatments['treatments'].isEmpty) {
-                      return const SizedBox();
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: CardTraitementDay(
-                        isClickable: true,
-                        data: treatments['treatments'][index],
-                        name: medNames[index],
-                        onTap: () {
-                          setState(() {
-                            treatments['treatments'].removeAt(index);
-                            medNames.removeAt(index);
-                          });
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class AddMedicament extends StatefulWidget {
-  Function addNewTraitement;
-  Function(Map<String, dynamic>) updateMedicaments;
-  AddMedicament(
-      {super.key,
-      required this.addNewTraitement,
-      required this.updateMedicaments});
-
-  @override
-  State<AddMedicament> createState() => _AddMedicamentState();
-}
-
-class _AddMedicamentState extends State<AddMedicament> {
-  Map<String, dynamic> medicament = {
-    "quantity": 0,
-    "period": [],
-    "day": [],
-    "medicine_id": ""
-  };
-
-  List<Map<String, dynamic>> medicaments = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  List<String> nameMedic = [];
-
-  Future<void> fetchData() async {
-    medicaments = await getMedecines();
-    for (var medicament in medicaments) {
-      nameMedic.add(medicament['name']);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ModalContainer(
-      title: "Ajouter un médicament",
-      subtitle: "Séléctionner un médicament",
-      icon: IconModal(
-        icon: SvgPicture.asset(
-          'assets/images/utils/Union-lg.svg',
-          // ignore: deprecated_member_use
-          color: AppColors.green700,
-          width: 18,
-        ),
-        type: ModalType.success,
-      ),
-      footer: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            child: Buttons(
-                variant: Variant.secondary,
-                size: SizeButton.sm,
-                msg: const Text("Annuler"),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-          ),
-          const SizedBox(width: 12),
-          Flexible(
-            child: Buttons(
-                variant: Variant.validate,
-                size: SizeButton.sm,
-                msg: const Text("Ajouter"),
-                onPressed: () {
-                  if (medicament['medicine_id'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message:
-                            "Veuillez choisir un médicament ou entrer un medicament valide",
-                        context: context));
-                    return;
-                  }
-                  if (medicament['quantity'] == 0 ||
-                      medicament['day'].isEmpty ||
-                      medicament['period'].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(
-                        message: "Veuillez remplir tous les champs",
-                        context: context));
-                    return;
-                  }
-                  setState(() {
-                    widget.updateMedicaments(medicament);
-                  });
-                  Navigator.pop(context);
-                }),
-          ),
-        ],
-      ),
-      body: [
-        const Text(
-          'Nom de votre médicament',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        CustomAutoComplete(
-            label: 'Rechercher le nom du médicament ',
-            icon: BootstrapIcons.search,
-            keyboardType: TextInputType.name,
-            onValidate: (value) {
-              var selectedMedicament = medicaments.firstWhere(
-                  (med) => med['name'] == value,
-                  orElse: () => {'id': null});
-
-              if (selectedMedicament['id'] != null) {
-                setState(() {
-                  medicament['medicine_id'] = selectedMedicament['id'];
-                });
-              } else {
-                setState(() {
-                  medicament['medicine_id'] = "";
-                });
-              }
-            },
-            suggestions: nameMedic),
-        const SizedBox(height: 16),
-        const Text(
-          'Quantité de comprimés',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: 50,
-          child: CustomField(
-            label: '1',
-            action: TextInputAction.next,
-            onChanged: (value) {
-              setState(() {
-                try {
-                  medicament['quantity'] = int.parse(value);
-                } catch (e) {
-                  value = value.replaceAll(RegExp(r'[^0-9]'), '');
-                  medicament['quantity'] = int.tryParse(value) ?? 0;
-                }
-              });
-            },
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Jour de prise des médicaments',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('MONDAY')) {
-                          medicament['day'].remove('MONDAY');
-                        } else {
-                          medicament['day'].add('MONDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('MONDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Lu',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('TUESDAY')) {
-                          medicament['day'].remove('TUESDAY');
-                        } else {
-                          medicament['day'].add('TUESDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('TUESDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Ma',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('WEDNESDAY')) {
-                          medicament['day'].remove('WEDNESDAY');
-                        } else {
-                          medicament['day'].add('WEDNESDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('WEDNESDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Me',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('THURSDAY')) {
-                          medicament['day'].remove('THURSDAY');
-                        } else {
-                          medicament['day'].add('THURSDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('THURSDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Je',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('FRIDAY')) {
-                          medicament['day'].remove('FRIDAY');
-                        } else {
-                          medicament['day'].add('FRIDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('FRIDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Ve',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('SATURDAY')) {
-                          medicament['day'].remove('SATURDAY');
-                        } else {
-                          medicament['day'].add('SATURDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('SATURDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Sa',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['day'].contains('SUNDAY')) {
-                          medicament['day'].remove('SUNDAY');
-                        } else {
-                          medicament['day'].add('SUNDAY');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['day'].contains('SUNDAY')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Di',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Période de prise de la journée',
-          style: TextStyle(
-            color: AppColors.black,
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['period'].contains('MORNING')) {
-                          medicament['period'].remove('MORNING');
-                        } else {
-                          medicament['period'].add('MORNING');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['period'].contains('MORNING')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Matin',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['period'].contains('NOON')) {
-                          medicament['period'].remove('NOON');
-                        } else {
-                          medicament['period'].add('NOON');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['period'].contains('NOON')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Midi',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['period'].contains('EVENING')) {
-                          medicament['period'].remove('EVENING');
-                        } else {
-                          medicament['period'].add('EVENING');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['period'].contains('EVENING')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Soir',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (medicament['period'].contains('NIGHT')) {
-                          medicament['period'].remove('NIGHT');
-                        } else {
-                          medicament['period'].add('NIGHT');
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: medicament['period'].contains('NIGHT')
-                            ? AppColors.blue700
-                            : AppColors.grey300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('Nuit',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    )),
-              ),
-            ],
           ),
         ),
       ],

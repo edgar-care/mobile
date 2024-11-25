@@ -25,10 +25,10 @@ class _CustomListRdvState extends State<CustomListOld> {
   }
 
   Future<void> _loadAppointment() async {
-    var tempAp = await getAppointments();
+    var tempAp = await getAppointments(context);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].isNotEmpty &&
-          tempAp[i]['cancelation_reason'] == "" &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" && tempAp[i]['appointment_status'] != "CANCELED" &&
           tempAp[i]['start_date'] <=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {
@@ -36,6 +36,13 @@ class _CustomListRdvState extends State<CustomListOld> {
         });
       }
     }
+  }
+
+  void refresh() {
+    setState(() {
+      bAppointment = [];
+      _loadAppointment();
+    });
   }
 
   @override
@@ -47,6 +54,7 @@ class _CustomListRdvState extends State<CustomListOld> {
           const SizedBox(height: 4),
       itemBuilder: (context, index) {
         return CustomListRdvCard(
+            refresh: refresh,
             rdvInfo: bAppointment[index],
             delete: () => {deleteAppointmentList(index)},
             old: true);

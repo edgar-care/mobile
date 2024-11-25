@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getDoctors() async {
-    await getAllDoctor().then((value) {
+    await getAllDoctor(context).then((value) {
       setState(() {
         doctors = value;
       });
@@ -68,7 +68,7 @@ class _ChatPageState extends State<ChatPage> {
         String decodedPayload =
             utf8.decode(base64.decode(base64.normalize(encodedPayload)));
         setState(() {
-          idPatient = jsonDecode(decodedPayload)['patient']["id"];
+          idPatient = jsonDecode(decodedPayload)["id"];
         });
       } catch (e) {
         // catch clauses
@@ -83,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
         chatSelected = chat;
         doctorname = getDoctorName(chat);
       });
-
     }
   }
 
@@ -268,7 +267,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> {
   }
 
   Future<void> fetchData() async {
-    final value = await getAllDoctor();
+    final value = await getAllDoctor(context);
     setState(() {
       doctors = value;
       filteredDoctors = value;
@@ -324,7 +323,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 400,
+          height: 300,
           child: doctors.isEmpty
               ? const Center(
                   child: CircularProgressIndicator(

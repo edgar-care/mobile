@@ -6,6 +6,7 @@ import 'package:edgar_app/screens/2fa/devices_page.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
+import 'package:edgar_app/services/logout_service.dart';
 import 'package:edgar_app/services/websocket.dart';
 import 'package:edgar_app/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
@@ -57,28 +58,51 @@ class _NavbarPLusState extends State<NavbarPLus> {
   }
 
   Future<void> fetchData() async {
-    await getMedicalFolder().then((value) {
+    await getMedicalFolder(context).then((value) {
       if (value.isNotEmpty) {
         infoMedical = value;
         birthdate = DateFormat('dd/MM/yyyy').format(
             DateTime.fromMillisecondsSinceEpoch(
                 infoMedical['birthdate'] * 1000));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            ErrorSnackBar(message: "Error on fetching name", context: context));
+        TopErrorSnackBar(message: "Erreur lors de la récupération des données")
+            .show(context);
       }
     });
   }
 
+  void handleBack() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder<void>(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return const DashBoardPage();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const curve = Curves.easeInOut;
+          return FadeTransition(
+            opacity: Tween<double>(begin: 0.0, end: 1.0)
+                .animate(CurvedAnimation(parent: animation, curve: curve)),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      home: Scaffold(
+    return PopScope(
+      // Utilisation de PopScope au lieu de WillPopScope
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        handleBack();
+      },
+      child: Scaffold(
+        // Retiré MaterialApp, gardé uniquement Scaffold
         body: SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -86,27 +110,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder<void>(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) {
-                              return const DashBoardPage();
-                            },
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const curve = Curves.easeInOut;
-                              return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                    .animate(CurvedAnimation(
-                                        parent: animation, curve: curve)),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
+                      onTap: handleBack,
                       child: Row(
                         children: [
                           SvgPicture.asset(
@@ -401,12 +405,7 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                       ),
                                       title: 'Déconnexion',
                                       onTap: () async {
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        prefs.remove('token');
-
-                                        Navigator.pushNamed(context, '/');
+                                        logout(context);
                                       },
                                       type: 'Only',
                                       color: AppColors.red600,
