@@ -247,7 +247,7 @@ class _ModalLoginState extends State<ModalLogin> {
             style: TextStyle(
               color: AppColors.black,
               fontFamily: 'Poppins',
-              fontSize: 14,
+              fontSize: 8,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -450,7 +450,7 @@ class _ModalRegisterState extends State<ModalRegister> {
             style: TextStyle(
               color: AppColors.black,
               fontFamily: 'Poppins',
-              fontSize: 14,
+              fontSize: 8,
               fontWeight: FontWeight.w500,
             ),
           ),
