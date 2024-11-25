@@ -795,7 +795,8 @@ class _SeeMoreModifyState extends State<SeeMoreModify> {
               ),
             );
           } else {
-            await putAppoitement(widget.oldId, idselected, context).whenComplete(
+            await putAppoitement(widget.oldId, idselected, context)
+                .whenComplete(
               () async {
                 widget.updateData(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -805,7 +806,8 @@ class _SeeMoreModifyState extends State<SeeMoreModify> {
                   ),
                 );
 
-                await putAppoitement(widget.oldId, idselected, context).whenComplete(
+                await putAppoitement(widget.oldId, idselected, context)
+                    .whenComplete(
                   () {
                     // ignore: use_build_context_synchronously
                     // ignore: use_build_context_synchronously

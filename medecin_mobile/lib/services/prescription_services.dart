@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Map<String, dynamic>>> getAllPrescription(String id) async {
@@ -60,11 +59,6 @@ Future<bool> postPrescription(Map<String, dynamic> data) async {
     },
     body: jsonEncode(data),
   );
-
-
-  Logger().d(data);
-  Logger().d(response.statusCode);
-  Logger().d(response.body);
 
   if (response.statusCode == 201) {
     return true;

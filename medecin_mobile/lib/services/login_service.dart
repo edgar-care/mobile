@@ -43,7 +43,7 @@ Future<void> missingPassword(String email, BuildContext context) async {
   try {
     await httpRequest(
       type: RequestType.post,
-      endpoint: 'auth/missing-password',
+      endpoint: 'auth/d/missing-password',
       needsToken: false,
       body: {'email': email},
       context: context,

@@ -1,18 +1,3 @@
-String periodConvertertoBack(String day) {
-  switch (day) {
-    case 'Jours':
-      return 'JOUR';
-    case 'Semaines':
-      return 'SEMAINE';
-    case 'Mois':
-      return 'MOIS';
-    case 'Années':
-      return 'ANNEES';
-    default:
-      return 'jour';
-  }
-}
-
 String convertMedicineUnit(String unit) {
   switch (unit) {
     case 'CREME':

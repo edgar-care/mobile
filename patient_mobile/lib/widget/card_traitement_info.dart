@@ -1,20 +1,29 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:edgar/colors.dart';
+import 'package:edgar_app/utils/treatement_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CardTraitementSimplify extends StatefulWidget {
-  final Map<String, dynamic> traitement;
-  final List<String> medNames;
+  final Treatment traitement;
+  final String name;
+  final Map<String, String> medicaments;
   const CardTraitementSimplify(
-      {super.key, required this.traitement, required this.medNames});
+      {super.key,
+      required this.traitement,
+      required this.name,
+      required this.medicaments});
 
   @override
   State<CardTraitementSimplify> createState() => _CardTraitementSimplifyState();
 }
 
 class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
+  String getMedicineName(String id) {
+    return widget.medicaments.containsKey(id) ? widget.medicaments[id]! : '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +39,9 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
             height: 40,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: widget.traitement['antedisease']['still_relevant'] as bool
+              color: (widget.traitement.endDate.millisecondsSinceEpoch == 0 ||
+                      widget.traitement.endDate.millisecondsSinceEpoch >
+                          DateTime.now().millisecondsSinceEpoch)
                   ? AppColors.blue200
                   : AppColors.grey200,
               borderRadius: const BorderRadius.all(Radius.circular(50)),
@@ -39,10 +50,11 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               child: SvgPicture.asset(
                 'assets/images/utils/Subtract.svg',
                 // ignore: deprecated_member_use
-                color:
-                    widget.traitement['antedisease']['still_relevant'] as bool
-                        ? AppColors.blue700
-                        : AppColors.grey700,
+                color: (widget.traitement.endDate.millisecondsSinceEpoch == 0 ||
+                        widget.traitement.endDate.millisecondsSinceEpoch >
+                            DateTime.now().millisecondsSinceEpoch ~/ 1000)
+                    ? AppColors.blue700
+                    : AppColors.grey700,
               ),
             ),
           ),
@@ -52,14 +64,32 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  widget.traitement['antedisease']['name'] as String,
-                  style: const TextStyle(
-                    color: AppColors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      widget.traitement.endDate.millisecondsSinceEpoch != 0
+                          ? "${widget.name} -"
+                          : widget.name,
+                      style: const TextStyle(
+                        color: AppColors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    if (widget.traitement.endDate.millisecondsSinceEpoch !=
+                        0) ...[
+                      Text(
+                        " ${widget.traitement.endDate.day.toString().padLeft(2, '0')}/${widget.traitement.endDate.month.toString().padLeft(2, '0')}/${widget.traitement.endDate.year.toString().padLeft(4, '0')}",
+                        style: const TextStyle(
+                          color: AppColors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                        ),
+                      )
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 4),
                 LayoutBuilder(
@@ -70,10 +100,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
 
                     List<Widget> treatmentWidgets = [];
                     for (var i = 0;
-                        i < (widget.traitement['treatments'] as List).length;
+                        i < widget.traitement.medicines.length;
                         i++) {
-                      final treatmentName =
-                          widget.medNames[i].split(' ')[0].trim();
                       final treatmentWidget = Container(
                         margin: const EdgeInsets.only(right: 4),
                         padding: const EdgeInsets.symmetric(
@@ -83,7 +111,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                         ),
                         child: Text(
-                          treatmentName,
+                          getMedicineName(
+                              widget.traitement.medicines[i].medicineId),
                           style: const TextStyle(
                             color: AppColors.black,
                             fontSize: 10,
@@ -95,7 +124,8 @@ class _CardTraitementSimplifyState extends State<CardTraitementSimplify> {
 
                       final textPainter = TextPainter(
                         text: TextSpan(
-                          text: treatmentName,
+                          text: getMedicineName(
+                              widget.traitement.medicines[i].medicineId),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

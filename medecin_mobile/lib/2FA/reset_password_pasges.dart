@@ -160,11 +160,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         size: SizeButton.md,
                         msg: const Text("Changer le mot de passe"),
                         onPressed: () async {
-                          if (newPassword != repeatPassword) {
+                          if (actualPassword.isEmpty ||
+                              newPassword.isEmpty ||
+                              repeatPassword.isEmpty) {
                             TopErrorSnackBar(
-                                    message:
-                                        'Les mots de passe ne correspondent pas')
-                                .show(context);
+                              message: 'Veuillez remplir tous les champs',
+                            ).show(context);
+                          } else if (newPassword.length < 8) {
+                            TopErrorSnackBar(
+                              message:
+                                  'Votre mot de passe doit contenir au moins 8 caractères',
+                            ).show(context);
                           } else {
                             await updatePassword(
                                     actualPassword, newPassword, context)

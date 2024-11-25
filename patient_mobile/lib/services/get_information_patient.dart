@@ -9,6 +9,7 @@ Future<Map<String, dynamic>> getMedicalFolder(BuildContext context) async {
     context: context,
     needsToken: true,
   );
+
   if (response != null) {
     return response['medical_folder'];
   } else {
@@ -63,6 +64,7 @@ Future<Map<String, Object>?> putInformationPatient(
     needsToken: true,
     body: info,
   );
+
   if (response != null) {
     return populateInfoMedical(response, context);
   } else {

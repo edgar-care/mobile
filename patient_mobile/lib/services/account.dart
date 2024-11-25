@@ -39,6 +39,8 @@ Future<bool> updatePassword(
   );
   if (response != null) {
     return true;
+  } else {
+    false;
   }
   return false;
 }

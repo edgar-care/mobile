@@ -349,7 +349,19 @@ class _ModifyPatientState extends State<ModifyPatient> {
             size: SizeButton.sm,
             msg: const Text('Valider'),
             onPressed: () async {
-              modifyDocument(widget.id, widget.name, context).then((value) {
+              if (tmp.isEmpty) {
+                TopErrorSnackBar(
+                  message: "veuillez écrire un nom de document valide",
+                ).show(context);
+                return;
+              }
+              if (!RegExp(r"\.").hasMatch(tmp)) {
+                TopErrorSnackBar(
+                  message: "Le nom du document doit contenir une extension",
+                ).show(context);
+                return;
+              }
+              modifyDocument(widget.id, tmp, context).then((value) {
                 widget.updatedata();
                 Navigator.pop(context);
               });
@@ -384,7 +396,7 @@ class DeletePatient extends StatelessWidget {
           'Vous êtes sur le point de supprimer votre document. Si vous supprimez ce document, vous ne pourrez plus y accéder.',
       icon: const IconModal(
         icon: Icon(
-          BootstrapIcons.x_lg ,
+          BootstrapIcons.x_lg,
           color: AppColors.red700,
           size: 18,
         ),
@@ -394,18 +406,18 @@ class DeletePatient extends StatelessWidget {
         spacing: 12,
         children: [
           Buttons(
-              variant: Variant.delete,
-              size: SizeButton.sm,
-              msg: const Text('Supprimer'),
-              onPressed: () async {
-                deleteDocument(id, context).then(
-                  (value) {
-                    updatedata();
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
+            variant: Variant.delete,
+            size: SizeButton.sm,
+            msg: const Text('Supprimer'),
+            onPressed: () async {
+              deleteDocument(id, context).then(
+                (value) {
+                  updatedata();
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
         ],
       ),
     );

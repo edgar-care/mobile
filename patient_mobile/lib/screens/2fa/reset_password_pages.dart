@@ -159,29 +159,40 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         size: SizeButton.md,
                         msg: const Text("Changer le mot de passe"),
                         onPressed: () async {
+                          if (actualPassword.isEmpty ||
+                              newPassword.isEmpty ||
+                              repeatPassword.isEmpty) {
+                            TopErrorSnackBar(
+                                    message: 'Veuillez remplir tous les champs')
+                                .show(context);
+                            return;
+                          }
+                          if (newPassword.length < 8) {
+                            TopErrorSnackBar(
+                                    message:
+                                        'Le nouveau mot de passe doit contenir au moins 8 caractères')
+                                .show(context);
+                            return;
+                          }
                           if (newPassword != repeatPassword) {
                             TopErrorSnackBar(
                                     message:
                                         'Les mots de passe ne correspondent pas')
                                 .show(context);
                           } else {
-                            await updatePassword(
-                                    actualPassword, newPassword, context)
-                                .then(  
-                              (value) {
-                                if (value == true) {
-                                  Navigator.pop(context);
-                                  TopSuccessSnackBar(
-                                    message:
-                                        'Votre mot de passe a été mis à jour',
-                                  ).show(context);
-                                } else {
-                                  TopErrorSnackBar(
-                                    message: 'Ancien mot de passe incorrect',
-                                  ).show(context);
-                                }
-                              },
-                            );
+                            final response = await updatePassword(
+                                actualPassword, newPassword, context);
+                            if (response == true) {
+                              Navigator.pop(context);
+                              TopSuccessSnackBar(
+                                message: 'Votre mot de passe a été mis à jour',
+                              ).show(context);
+                            }
+                            if (response == false) {
+                              TopErrorSnackBar(
+                                message: 'Ancien mot de passe incorrect',
+                              ).show(context);
+                            }
                           }
                         },
                       )

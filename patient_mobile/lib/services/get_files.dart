@@ -14,6 +14,9 @@ Future<List<Map<String, dynamic>>> getAllDocument(BuildContext context) async {
   );
 
   if (response != null) {
+    if (response["document"] == null) {
+      return [];
+    }
     return List<Map<String, dynamic>>.from(response["document"]);
   } else {
     return [];
@@ -110,7 +113,6 @@ Future<Object?> modifyDocument(
     needsToken: true,
     body: {'name': name},
   );
-
   if (response != null) {
     return response;
   } else {

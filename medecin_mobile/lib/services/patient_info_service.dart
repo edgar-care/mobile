@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/request.dart';
+import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId(BuildContext context) async {
   final response = await httpRequest(
@@ -69,26 +69,7 @@ void populatePatientInfobyId(Map<String, dynamic>? data) {
       'medecin_traitant':
           data['medical_folder']['primary_doctor_id'] ?? 'Inconnu',
       'medical_antecedents':
-          data['medical_folder']['medical_antecedents'] == null
-              ? []
-              : data['medical_folder']['medical_antecedents']
-                  .map((antecedent) => {
-                        'antedisease_id': antecedent['id'],
-                        'name': antecedent['name'],
-                        'treatments': antecedent['medicines'] == null
-                            ? []
-                            : antecedent['medicines']
-                                .map((medicine) => {
-                                      'treatment_id': medicine['id'],
-                                      'quantity': medicine['quantity'],
-                                      'period': medicine['period'],
-                                      'day': medicine['day'],
-                                      'medicine_id': medicine['medicine_id']
-                                    })
-                                .toList(),
-                        'still_relevant': antecedent['still_relevant']
-                      })
-                  .toList(),
+          data['medical_folder']['medical_antecedents'] ?? []
     };
   }
 }
@@ -128,7 +109,7 @@ void populateInfoMedical(Map<String, dynamic>? data) {
 }
 
 Future putInformationPatient(
-    BuildContext context, Map<String, Object> body, String id) async {
+    BuildContext context, Map<String, dynamic> body, String id) async {
   final response = await httpRequest(
     type: RequestType.put,
     endpoint: '/doctor/patient/$id',
@@ -137,8 +118,9 @@ Future putInformationPatient(
     body: body,
   );
 
+  Logger().d(response);
+
   if (response != null) {
-    populateInfoMedical(response);
     return true;
   }
   return false;

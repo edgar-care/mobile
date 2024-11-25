@@ -273,9 +273,11 @@ Widget modalForgotPassword(BuildContext context) {
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () async {
         if (email.isEmpty) {
-          const TopErrorSnackBar(
-                  message: 'Veuillez renseigner une adresse mail valide')
-              .show(context);
+          TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+          return;
+        }
+        if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+          TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
           return;
         }
         await missingPassword(email, context).then((value) {

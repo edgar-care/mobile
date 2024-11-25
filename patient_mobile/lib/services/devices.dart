@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:edgar_app/services/request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -36,16 +37,16 @@ Future addTrustDevices(String id, BuildContext context) async {
 }
 
 Future removeTrustDevice(String id, BuildContext context) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('token');
-  String url = '${dotenv.env['URL']}/dashboard/2fa/device/$id';
-  http.delete(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+  final response = await httpRequest(
+    type: RequestType.delete,
+    endpoint: '/dashboard/2fa/device/$id',
+    needsToken: true,
+    context: context,
   );
+
+  if (response != null) {
+    return;
+  }
 }
 
 Future<List<dynamic>> getTrustedDevices(BuildContext context) async {

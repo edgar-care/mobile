@@ -46,8 +46,8 @@ class WebSocketService {
           _handleMessage(message);
         },
         onError: (error) {},
-        onDone: () {
-          connect();
+        onDone: () async {
+          await connect();
         });
 
     sendReadyAction();

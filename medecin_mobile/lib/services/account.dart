@@ -51,6 +51,7 @@ Future<bool> updatePassword(
     body: {"old_password": oldPassword, "new_password": password},
     context: context,
   );
+
   if (response != null) {
     return true;
   }

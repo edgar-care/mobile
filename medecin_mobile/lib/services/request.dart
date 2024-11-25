@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:edgar/widget.dart';
+import 'package:edgar_pro/services/logout_service.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:http/http.dart' as http;
@@ -96,13 +97,13 @@ Future<dynamic> httpRequest({
       TopErrorSnackBar(
         message: "Session expirée. Veuillez vous reconnecter.",
       ).show(context);
-      Navigator.pushNamed(context, '/');
+      logout(context);
       throw Exception("Session expirée. Veuillez vous reconnecter.");
     } else if (response.statusCode == 409) {
       Navigator.pushNamed(context, '/desactivate');
       throw Exception("Conflit détecté.");
     } else {
-      throw Exception("Erreur ${response.statusCode}: ${response.body}");
+      return null;
     }
   } catch (e) {
     throw Exception(e.toString());

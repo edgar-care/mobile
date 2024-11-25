@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:edgar_app/services/request.dart';
 
-Future<List<dynamic>> getTraitement(BuildContext context) async {
+Future<List<Map<String, dynamic>>> getMedicalAntecedent(
+    BuildContext context) async {
   final response = await httpRequest(
     context: context,
     type: RequestType.get,
-    endpoint: 'dashboard/treatments',
+    endpoint: '/dashboard/medical-antecedent',
     needsToken: true,
   );
 
   if (response != null) {
-    return response;
+    return [
+      for (var antecedent in response) antecedent as Map<String, dynamic>
+    ];
   } else {
     return [];
   }
@@ -65,44 +68,47 @@ Future<bool> putTraitement(
   }
 }
 
-Future<List<dynamic>> getFollowUp(BuildContext context) async {
-  final response = await httpRequest(
-    context: context,
-    type: RequestType.get,
-    endpoint: 'dashboard/treatment/follow-up',
-    needsToken: true,
-  );
-
-  if (response != null) {
-    return response;
-  } else {
-    return [];
-  }
-}
-
-Future<List<dynamic>> postFollowUp(
-    Map<String, dynamic> followUp, BuildContext context) async {
-  final response = await httpRequest(
-    context: context,
-    type: RequestType.post,
-    endpoint: 'dashboard/treatment/follow-up',
-    needsToken: true,
-    body: followUp,
-  );
-
-  if (response != null) {
-    return response;
-  } else {
-    return [];
-  }
-}
-
-Future<bool> deleteFollowUpRequest(String id, BuildContext context) async {
+Future<bool> deleteMedicalAntecedent(String id, BuildContext context) async {
   final response = await httpRequest(
     context: context,
     type: RequestType.delete,
-    endpoint: 'dashboard/treatment/follow-up/$id',
+    endpoint: 'dashboard/medical-antecedent/$id',
     needsToken: true,
+    body: {"delete" : true},
+  );
+
+  if (response != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+Future<bool> putMedicalAntecedent(
+    Map<String, dynamic> antecedent, String id, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.put,
+    endpoint: 'dashboard/medical-antecedent/$id',
+    needsToken: true,
+    body: antecedent,
+  );
+
+  if (response != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+Future<bool> postMedicalAntecedent(
+    Map<String, dynamic> antecedents, BuildContext context) async {
+  final response = await httpRequest(
+    context: context,
+    type: RequestType.post,
+    endpoint: 'dashboard/medical-antecedent',
+    needsToken: true,
+    body: antecedents,
   );
 
   if (response != null) {
