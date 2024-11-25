@@ -160,6 +160,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         size: SizeButton.md,
                         msg: const Text("Changer le mot de passe"),
                         onPressed: () async {
+                          if (newPassword != repeatPassword) {
+                            TopErrorSnackBar(
+                              message: 'Les mots de passe ne correspondent pas',
+                            ).show(context);
+                            return;
+                          }
                           if (actualPassword.isEmpty ||
                               newPassword.isEmpty ||
                               repeatPassword.isEmpty) {

@@ -101,7 +101,7 @@ Widget downloadModal(BuildContext context, String name, String url) {
           DownloadFile.downloadAndSafeFile(
             downloadFileOptions: DownloadFileOptions(
               downloadUrl: url,
-              fileName: name,
+              fileName: "$name.pdf",
             ),
             context: context,
             loadingWidget: const Center(
