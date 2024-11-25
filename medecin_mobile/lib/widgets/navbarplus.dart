@@ -156,9 +156,9 @@ class _NavbarPLusState extends State<NavbarPLus> {
                                                   "${infoMedical['firstname']} ${infoMedical['name'].toUpperCase()}",
                                               palette: BoringAvatarPalette(
                                                 const [
-                                                  AppColors.blue700,
-                                                  AppColors.blue200,
-                                                  AppColors.blue500
+                                                  AppColors.green700,
+                                                  AppColors.green200,
+                                                  AppColors.green500
                                                 ],
                                               ),
                                               type: BoringAvatarType.beam,
