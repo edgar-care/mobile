@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_pro/services/request.dart';
 
@@ -31,7 +30,6 @@ Future<Map<String, dynamic>> getDocumentsbyId(
   );
 
   if (response != null) {
-    Logger().i(response);
     return response['download'];
   } else {
     return {};

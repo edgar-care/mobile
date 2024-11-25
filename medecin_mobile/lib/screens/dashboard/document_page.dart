@@ -43,11 +43,9 @@ class _DocumentPageState extends State<DocumentPage> {
   Future<void> _loadDoc() async {
     patientInfo = await getPatientById(widget.id, context);
     doc = await getDocumentsIds(widget.id, context);
-    Logger().d(doc);
 
     documents.clear();
     for (var id in doc) {
-      Logger().d(id);
       final value = await getDocumentsbyId(id, context);
       if (value.isNotEmpty) documents.add(value);
     }

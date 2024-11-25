@@ -21,7 +21,6 @@ import 'package:edgar_pro/widgets/Chat/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:edgar_pro/widgets/appbar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -263,7 +262,6 @@ class _DashBoardState extends State<DashBoard> {
 
 Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data,
     BuildContext context) {
-      Logger().d(data);
   return ModalContainer(
     title: 'Tentative de connexion',
     subtitle:
