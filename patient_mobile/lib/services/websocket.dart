@@ -130,7 +130,7 @@ class WebSocketService {
   void responseMobileConnection(
       String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
-      'action': 'responseMobileConnection ',
+      'action': 'responseMobileConnection',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
       "response": response,
