@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class Hour {
   final String hour;
@@ -129,6 +130,7 @@ Appointment? transformAppointments(
 Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
   for (Map<String, dynamic> doctorMap in doctorsData) {
     String id = doctorMap['id'];
+    Logger().i('Doctor id: $id');
     if (id == doctorId) {
       String firstname = doctorMap['firstname'] ?? "Test";
       String name = doctorMap['name'] ?? "Edgar";
@@ -138,6 +140,7 @@ Doctor? findDoctorById(List<dynamic> doctorsData, String doctorId) {
         country: doctorMap['address']['country'] ?? 'France',
         city: doctorMap['address']['city'] ?? 'Lyon',
       );
+      Logger().i('Doctor found: $firstname $name');
       return Doctor(id: id, firstname: firstname, name: name, address: address);
     }
   }

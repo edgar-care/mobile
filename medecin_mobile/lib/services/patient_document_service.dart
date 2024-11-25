@@ -6,8 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edgar_pro/services/request.dart';
 
-Future<List<String>> getDocumentsIds(
-    String id, BuildContext context) async {
+Future<List<dynamic>> getDocumentsIds(String id, BuildContext context) async {
   final response = await httpRequest(
     type: RequestType.get,
     endpoint: '/doctor/patient/$id',
@@ -16,10 +15,10 @@ Future<List<String>> getDocumentsIds(
   );
 
   if (response != null && response['document_ids'] != null) {
-      return response['document_ids'];
-    } else {
-      return [];
-    }
+    return response['document_ids'];
+  } else {
+    return [];
+  }
 }
 
 Future<Map<String, dynamic>> getDocumentsbyId(
@@ -31,9 +30,8 @@ Future<Map<String, dynamic>> getDocumentsbyId(
     context: context,
   );
 
-  Logger().d(response);
-
   if (response != null) {
+    Logger().i(response);
     return response['download'];
   } else {
     return {};
