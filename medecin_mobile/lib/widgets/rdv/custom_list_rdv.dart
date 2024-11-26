@@ -15,9 +15,7 @@ class _CustomListRdvState extends State<CustomListRdv> {
 
   void deleteAppointmentList(int index) {
     setState(() {
-      bAppointment.removeAt(index);
     });
-    _loadAppointment();
   }
 
   Future<void> _loadAppointment() async {

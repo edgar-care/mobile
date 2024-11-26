@@ -64,8 +64,8 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
       return DateTime.fromMillisecondsSinceEpoch(
                   appointment['start_date'] * 1000)
               .isBefore(now) &&
-          (appointment['appointment_status'] != 'CANCELED' ||
-              appointment['appointment_status'] != 'CANCELED_DUE_TO_REVIEW');
+          appointment['appointment_status'] != 'CANCELED' &&
+          appointment['appointment_status'] != 'CANCELED_DUE_TO_REVIEW';
     }).toList();
   }
 
@@ -75,8 +75,8 @@ class _GestionRendezVousPageState extends State<GestionRendezVous> {
       return DateTime.fromMillisecondsSinceEpoch(
                   appointment['start_date'] * 1000)
               .isAfter(now) &&
-          (appointment['appointment_status'] != 'CANCELED' ||
-              appointment['appointment_status'] != 'CANCELED_DUE_TO_REVIEW');
+          appointment['appointment_status'] != 'CANCELED' &&
+          appointment['appointment_status'] != 'CANCELED_DUE_TO_REVIEW';
     }).toList();
   }
 

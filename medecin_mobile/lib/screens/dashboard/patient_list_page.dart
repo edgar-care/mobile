@@ -351,6 +351,7 @@ class _PatientPageState extends State<PatientPage> {
                                                       patientInfo['medical_antecedents'][i]['treatments'].isEmpty
                                                           ? false
                                                           : true,
+                                                  withArrow: true,
                                                 ),
                                               ),
                                             );

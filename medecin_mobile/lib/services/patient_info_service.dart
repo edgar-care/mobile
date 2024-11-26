@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:edgar/widget.dart';
 import 'package:edgar_pro/services/request.dart';
-import 'package:logger/logger.dart';
 
 Future<List<Map<String, dynamic>>> getAllPatientId(BuildContext context) async {
   final response = await httpRequest(
@@ -117,8 +116,6 @@ Future putInformationPatient(
     context: context,
     body: body,
   );
-
-  Logger().d(response);
 
   if (response != null) {
     return true;

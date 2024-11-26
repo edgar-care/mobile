@@ -839,6 +839,7 @@ class _ModalMedicFolderState extends State<ModalMedicFolder> {
                         isEnCours:
                             treatment['treatments'] == null ? false : true,
                         withDelete: false,
+                        withArrow: false,
                       ),
               ],
             ),

@@ -65,8 +65,7 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
         const SizedBox(height: 16),
         GestureDetector(
           onTap: () {
-             final model =
-                Provider.of<BottomSheetModel>(context, listen: false);
+            final model = Provider.of<BottomSheetModel>(context, listen: false);
             model.resetCurrentIndex();
             showModalBottomSheet(
               context: context,
@@ -179,7 +178,6 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
               setState(() {
                 traitements.remove(treatment);
               });
-            
             },
           ),
           const SizedBox(height: 4),
@@ -209,8 +207,11 @@ class _ModalTreamentInfoState extends State<ModalTreamentInfo> {
             onPressed: () {
               if (nameTreatment.isNotEmpty && traitements.isNotEmpty) {
                 widget.addMedicalAntecedents(nameTreatment, traitements);
-              }else{
-                TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+                Navigator.pop(context);
+              } else {
+                TopErrorSnackBar(
+                  message: "Veuillez remplir tout les champs",
+                ).show(context);
               }
             },
           ),
@@ -273,7 +274,6 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
     }
     return '';
   }
-
 
   void addMedicine(String id) {
     setState(() {
@@ -405,48 +405,54 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
             suggestions: medicinesSuggestion),
         const SizedBox(height: 12),
         SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
-              child: ListView.separated(
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemCount: traitement.medicines.length,
-                itemBuilder: (context, index) {
-                  return TreatementCard(
-                    index: index,
-                    medicine: traitement.medicines[index],
-                    dosageForm: dosageform,
-                    medicineName: getMedicineName(
-                        traitement.medicines[index].medicineId),
-                    removeMedicine: removeMedicine,
-                  );
-                },
-              ),
-            )
+          height: MediaQuery.of(context).size.height / 3,
+          child: ListView.separated(
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemCount: traitement.medicines.length,
+            itemBuilder: (context, index) {
+              return TreatementCard(
+                index: index,
+                medicine: traitement.medicines[index],
+                dosageForm: dosageform,
+                medicineName:
+                    getMedicineName(traitement.medicines[index].medicineId),
+                removeMedicine: removeMedicine,
+              );
+            },
+          ),
+        )
       ],
       footer: Column(
         children: [
           Buttons(
-            variant: Variant.primary,
-            size: SizeButton.md,
-            msg: const Text(
-              'Ajouter le traitement',
-              style: TextStyle(color: AppColors.white),
-            ),
-            onPressed: () {
-              if(traitement.medicines.isNotEmpty && traitement.startDate != DateTime.fromMillisecondsSinceEpoch(0)){
-                for(var medicine in traitement.medicines){
-                  if(medicine.comment.isEmpty || medicine.period.isEmpty || medicine.medicineId.isEmpty ){
-                    TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
-                    return;
+              variant: Variant.primary,
+              size: SizeButton.md,
+              msg: const Text(
+                'Ajouter le traitement',
+                style: TextStyle(color: AppColors.white),
+              ),
+              onPressed: () {
+                if (traitement.medicines.isNotEmpty &&
+                    traitement.startDate !=
+                        DateTime.fromMillisecondsSinceEpoch(0)) {
+                  for (var medicine in traitement.medicines) {
+                    if (medicine.comment.isEmpty ||
+                        medicine.period.isEmpty ||
+                        medicine.medicineId.isEmpty) {
+                      TopErrorSnackBar(
+                        message: "Veuillez remplir tout les champs",
+                      ).show(context);
+                      return;
+                    }
                   }
+                  widget.addTreatment(traitement);
+                  Navigator.pop(context);
+                } else {
+                  TopErrorSnackBar(
+                    message: "Veuillez remplir tout les champs",
+                  ).show(context);
                 }
-                widget.addTreatment(traitement);
-                Navigator.pop(context);
-              }else{
-                TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
-              }
-            }
-          ),
+              }),
           const SizedBox(height: 8),
           Buttons(
             variant: Variant.secondary,
@@ -603,20 +609,21 @@ class _CardTreatmentAddState extends State<CardTreatmentAdd> {
                           fontFamily: 'Poppins',
                         ),
                       ),
-                      if(widget.treatment.endDate != DateTime.fromMillisecondsSinceEpoch(0)) ...[
-                      const SizedBox(width: _spacing),
-                      SvgPicture.asset(
-                        'assets/images/utils/arrow_appointement.svg',
-                      ),
-                      const SizedBox(width: _spacing),
-                      Text(
-                        _dateFormatter.format(widget.treatment.endDate),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins',
+                      if (widget.treatment.endDate !=
+                          DateTime.fromMillisecondsSinceEpoch(0)) ...[
+                        const SizedBox(width: _spacing),
+                        SvgPicture.asset(
+                          'assets/images/utils/arrow_appointement.svg',
                         ),
-                      ),
+                        const SizedBox(width: _spacing),
+                        Text(
+                          _dateFormatter.format(widget.treatment.endDate),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
                       ]
                     ],
                   ),
@@ -722,11 +729,16 @@ class _ModalInfoAntecedentState extends State<ModalInfoAntecedent> {
   Widget build(BuildContext context) {
     return ModalContainer(
       icon: IconModal(
-        icon: Icon(BootstrapIcons.capsule_pill, color: AppColors.blue700,size: 18,),
+        icon: Icon(
+          BootstrapIcons.capsule_pill,
+          color: AppColors.blue700,
+          size: 18,
+        ),
         type: ModalType.info,
       ),
       title: "Informations de votre sujet de santé",
-      subtitle: "Vos traitements pour votre sujet de santé: ${widget.medicalAntecedent['name']}",
+      subtitle:
+          "Vos traitements pour votre sujet de santé: ${widget.medicalAntecedent['name']}",
       body: [
         for (final treatment in widget.medicalAntecedent['treatments']) ...[
           CardTreatmentAdd(
@@ -763,7 +775,11 @@ class _ModalInfoTreatmentState extends State<ModalInfoTreatment> {
   Widget build(BuildContext context) {
     return ModalContainer(
       icon: IconModal(
-        icon: Icon(BootstrapIcons.capsule_pill, color: AppColors.blue700,size: 18,),
+        icon: Icon(
+          BootstrapIcons.capsule_pill,
+          color: AppColors.blue700,
+          size: 18,
+        ),
         type: ModalType.info,
       ),
       title: "Informations sur votre traitement",
@@ -822,7 +838,10 @@ class CardMedicineInfo extends StatefulWidget {
   final Medicine medicine;
   final BuildContext context;
   const CardMedicineInfo(
-      {super.key, required this.medicine, required this.context, required this.medicineName});
+      {super.key,
+      required this.medicine,
+      required this.context,
+      required this.medicineName});
 
   @override
   State<CardMedicineInfo> createState() =>

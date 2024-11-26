@@ -18,12 +18,12 @@ Future<List<dynamic>> getAllDoctor(BuildContext context) async {
 Future<dynamic> getDoctorById(BuildContext context, String id) async {
   final response = await httpRequest(
     type: RequestType.get,
-    endpoint: 'doctors/$id',
+    endpoint: 'doctor/$id',
     context: context,
   );
 
   if (response != null) {
-    return response["Doctor"];
+    return response["Doctors"];
   } else {
     return null;
   }

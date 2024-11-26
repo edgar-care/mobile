@@ -9,12 +9,14 @@ class CardTraitementSmall extends StatefulWidget {
   bool isEnCours;
   final Function() ?onTap;
   bool withDelete;
+  bool withArrow;
   CardTraitementSmall(
       {super.key,
       required this.name,
       required this.isEnCours,
       this.onTap,
-      this.withDelete = false});
+      this.withDelete = false,
+      this.withArrow = false});
 
   @override
   State<CardTraitementSmall> createState() => _CardTraitementSmallState();
@@ -65,7 +67,7 @@ class _CardTraitementSmallState extends State<CardTraitementSmall> {
               ),
             ),
           ],
-          if (!widget.withDelete) ...[
+          if (widget.withArrow) ...[
             const Icon(
             BootstrapIcons.chevron_right,
             color: AppColors.black,
