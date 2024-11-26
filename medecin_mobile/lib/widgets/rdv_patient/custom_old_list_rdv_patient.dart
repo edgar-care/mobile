@@ -1,7 +1,6 @@
 import 'package:edgar_pro/services/rdv_service.dart';
 import 'package:edgar_pro/widgets/rdv_patient/custom_card_rdv_patient.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 // ignore: must_be_immutable
 class CustomListOldPatient extends StatefulWidget {
@@ -29,10 +28,10 @@ class _CustomListRdvPatientState extends State<CustomListOldPatient> {
 
   Future<void> _loadAppointment() async {
     var tempAp = await getAppointments(context);
-    Logger().d(tempAp);
     for (var i = 0; i < tempAp.length; i++) {
       if (tempAp[i]['id_patient'].toString() == widget.id &&
-          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" && tempAp[i]['appointment_status'] != "CANCELED" &&
+          tempAp[i]['appointment_status'] != "CANCELED_DUE_TO_REVIEW" &&
+          tempAp[i]['appointment_status'] != "CANCELED" &&
           tempAp[i]['start_date'] <=
               DateTime.now().millisecondsSinceEpoch ~/ 1000) {
         setState(() {

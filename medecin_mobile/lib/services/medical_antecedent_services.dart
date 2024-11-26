@@ -1,6 +1,5 @@
 import "package:edgar_pro/services/request.dart";
 import "package:flutter/material.dart";
-import "package:logger/logger.dart";
 
 Future<bool> deleteMedicalAntecedent(String id, BuildContext context) async {
   final response = await httpRequest(
@@ -43,8 +42,6 @@ Future<bool> postMedicalAntecedent(
     needsToken: true,
     body: antecedents,
   );
-
-  Logger().i(response);
 
   if (response != null) {
     return true;

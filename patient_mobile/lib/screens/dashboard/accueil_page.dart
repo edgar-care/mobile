@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:edgar_app/screens/dashboard/traitement_page.dart';
+import 'package:edgar_app/services/doctor.dart';
 import 'package:edgar_app/services/get_appointement.dart';
 import 'package:edgar_app/services/get_information_patient.dart';
 import 'package:edgar_app/services/medecine.dart';
 import 'package:edgar_app/services/medical_antecedent.dart';
-import 'package:edgar_app/utils/appoitement_utils.dart';
 import 'package:edgar_app/utils/treatement_utils.dart';
 import 'package:edgar_app/widget/appoitement_card.dart';
 import 'package:edgar_app/widget/card_traitement_info.dart';
@@ -14,7 +14,6 @@ import 'package:edgar/colors.dart';
 import 'package:edgar/widget.dart';
 import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> medicalAntecedent = [];
   Map<String, String> medicaments = {};
   List<Map<String, dynamic>> meds = [];
+  Map<String, dynamic>? nextAppointment;
 
   void getAllMedicines() async {
     meds = await getMedecines(context);
@@ -86,19 +86,24 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
+    final result = await getNextAppointment();
+    nextAppointment = result;
+
     return;
   }
 
   DateTime now = DateTime.now();
 
-  Map<String, dynamic>? getNextAppointment() {
+  Future<Map<String, dynamic>?> getNextAppointment() async {
     if (rdv.isEmpty) return null;
 
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> acceptedAppointments = rdv.where((appointment) {
       return DateTime.fromMillisecondsSinceEpoch(
-              appointment['start_date'] * 1000)
-          .isAfter(now);
+                  appointment['start_date'] * 1000)
+              .isAfter(now) &&
+          appointment['appointment_status'] != 'CANCELED' &&
+          appointment['appointment_status'] != 'CANCELED_DUE_TO_REVIEW';
     }).toList();
 
     if (acceptedAppointments.isEmpty) return null;
@@ -111,24 +116,17 @@ class _HomePageState extends State<HomePage> {
       return dateA.compareTo(dateB);
     });
 
-    // Safely handle doctor information
-    try {
-      Doctor? doc =
-          findDoctorById(allDoctor, acceptedAppointments.first['doctor_id']);
-      if (doc != null) {
-        docteurName = doc.name;
-        docteurFirstName = doc.firstname;
-      } else {
-        docteurName = "Unknown";
-        docteurFirstName = "Doctor";
-      }
-    } catch (e) {
-      Logger().e("Error finding doctor: $e");
-      docteurName = "Unknown";
-      docteurFirstName = "Doctor";
-    }
+    await getMyDoctor(acceptedAppointments.first['doctor_id']);
 
     return acceptedAppointments.first;
+  }
+
+  Future<void> getMyDoctor(String id) async {
+    final doctor = await getDoctorById(context, id);
+    if (doctor != null) {
+      docteurName = doctor['name'];
+      docteurFirstName = doctor['firstname'];
+    }
   }
 
   List<Map<String, dynamic>> getTraitement() {
@@ -166,7 +164,6 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          Map<String, dynamic>? nextAppointment = getNextAppointment();
           List<Map<String, dynamic>> traitements = getTraitement();
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,9 +230,9 @@ class _HomePageState extends State<HomePage> {
               nextAppointment != null
                   ? AppoitementCard(
                       startDate: DateTime.fromMillisecondsSinceEpoch(
-                          nextAppointment['start_date'] * 1000),
+                          nextAppointment?['start_date'] * 1000),
                       endDate: DateTime.fromMillisecondsSinceEpoch(
-                          nextAppointment['end_date'] * 1000),
+                          nextAppointment?['end_date'] * 1000),
                       doctor: "${docteurName.toUpperCase()} $docteurFirstName",
                       onTap: () {},
                     )

@@ -102,8 +102,10 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                   TopErrorSnackBar(message: "Veuillez renseigner une raison d'annulation").show(context);
                   return;
                 }
-                cancelAppointments(id, context, cancelreason);
-                Navigator.pop(context);
+                cancelAppointments(id, context, cancelreason).then((value) => {
+                  widget.delete(),
+                  Navigator.pop(context),
+                });
               },
             ),
           ),
@@ -225,7 +227,6 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                                   context,
                                   listen: false);
                               model.resetCurrentIndex();
-
                               showModalBottomSheet(
                                 context: context,
                                 backgroundColor: Colors.transparent,
@@ -234,7 +235,7 @@ class _CustomListRdvCardState extends State<CustomListRdvCard> {
                                   return Consumer<BottomSheetModel>(
                                     builder: (context, model, child) {
                                       return ListModal(model: model, children: [
-                                        deleteAppointment(widget.rdvInfo['id'])
+                                        deleteAppointment(widget.rdvInfo['id'], )
                                       ]);
                                     },
                                   );

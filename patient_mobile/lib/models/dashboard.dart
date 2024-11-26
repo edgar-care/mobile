@@ -303,7 +303,7 @@ Widget faWSModal(WebSocketService ws, String token, Map<String, dynamic> data,
         ),
         const SizedBox(height: 8),
         Buttons(
-          variant: Variant.secondary,
+          variant: Variant.delete,
           size: SizeButton.md,
           msg: const Text('Refuser'),
           onPressed: () {

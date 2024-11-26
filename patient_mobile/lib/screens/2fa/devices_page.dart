@@ -18,17 +18,11 @@ class DevicesPage extends StatefulWidget {
 
 class _DevicesPageState extends State<DevicesPage> {
   List<dynamic> devices = [];
-  @override
-  void initState() {
-    super.initState();
-    getDevices();
-  }
 
-  Future<void> getDevices() async {
+  Future<bool> getDevices() async {
     List<dynamic> temp = await getAllDevices(context);
-    setState(() {
-      devices = temp;
-    });
+    devices = temp;
+    return true;
   }
 
   String devicesFormatTime(int time) {
@@ -105,67 +99,90 @@ class _DevicesPageState extends State<DevicesPage> {
                         width: 1,
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        for (var index = 0;
-                            index < devices.length;
-                            index++) ...[
-                          DeviceTab(
-                            icon: devices[index]['type'] == 'iPhone' ||
-                                    devices[index]['type'] == 'Android'
-                                ? 'PHONE'
-                                : 'PC',
-                            info: devicesFormatTime(
-                                devices[index]['date'] * 1000),
-                            subtitle:
-                                "${devices[index]['city']}, ${devices[index]['country']}",
-                            title:
-                                "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                            onTap: () {
-                              final model = Provider.of<BottomSheetModel>(
-                                  context,
-                                  listen: false);
-                              model.resetCurrentIndex();
-
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
-                                builder: (context) {
-                                  return ListModal(
-                                    model: model,
-                                    children: [
-                                      modalInfoDevices(
-                                        "${devices[index]['device_type']} - ${devices[index]['browser']}",
-                                        DateFormat('dd/MM/yyyy').format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                devices[index]['date'] * 1000)),
-                                        "${devices[index]['city']}, ${devices[index]['country']}",
-                                        devices[index]['id'],
-                                        devices[index]['type'] == 'iPhone' ||
-                                                devices[index]['type'] ==
-                                                    'Android'
-                                            ? 'PHONE'
-                                            : 'PC',
-                                        context,
-                                        getDevices,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            type:
-                                devices.length > 1 && index > devices.length - 1
-                                    ? 'Top'
-                                    : 'Only',
-                            selected: false,
-                            outlineIcon: SvgPicture.asset(
-                              'assets/images/utils/chevron-right.svg',
+                    child: FutureBuilder(
+                      future: getDevices(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.blue700,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ],
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Erreur de chargement'));
+                        } else {
+                          return Column(
+                            children: [
+                              for (var index = 0;
+                                  index < devices.length;
+                                  index++) ...[
+                                DeviceTab(
+                                  icon: devices[index]['type'] == 'iPhone' ||
+                                          devices[index]['type'] == 'Android'
+                                      ? 'PHONE'
+                                      : 'PC',
+                                  info: devicesFormatTime(
+                                      devices[index]['date'] * 1000),
+                                  subtitle:
+                                      "${devices[index]['city']}, ${devices[index]['country']}",
+                                  title:
+                                      "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                                  onTap: () {
+                                    final model = Provider.of<BottomSheetModel>(
+                                        context,
+                                        listen: false);
+                                    model.resetCurrentIndex();
+
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return ListModal(
+                                          model: model,
+                                          children: [
+                                            modalInfoDevices(
+                                              "${devices[index]['device_type']} - ${devices[index]['browser']}",
+                                              DateFormat('dd/MM/yyyy').format(
+                                                  DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          devices[index]
+                                                                  ['date'] *
+                                                              1000)),
+                                              "${devices[index]['city']}, ${devices[index]['country']}",
+                                              devices[index]['id'],
+                                              devices[index]['type'] ==
+                                                          'iPhone' ||
+                                                      devices[index]['type'] ==
+                                                          'Android'
+                                                  ? 'PHONE'
+                                                  : 'PC',
+                                              context,
+                                              getDevices,
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  type: index < devices.length - 1
+                                      ? 'Top'
+                                      : 'Only',
+                                  selected: false,
+                                  outlineIcon: SvgPicture.asset(
+                                    'assets/images/utils/chevron-right.svg',
+                                  ),
+                                ),
+                              ],
+                            ],
+                          );
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -242,11 +259,11 @@ Widget modalInfoDevices(String name, String date, String location, String id,
       variant: Variant.deleteBordered,
       size: SizeButton.md,
       msg: const Text('Déconnecter l\'appareil'),
-      onPressed: () {
-        removeDevice(id, context).then(
+      onPressed: () async {
+        await removeDevice(id, context).then(
           (name) {
-            load2fa();
             Navigator.pop(context);
+            load2fa();
           },
         );
       },

@@ -837,6 +837,7 @@ class _CardMedicineInfoState extends State<CardMedicineInfo> {
   Future<bool> getMedicineName() async {
     final medicine = await getMedecineById(context, widget.medicine.medicineId);
     setState(() {
+      medicineName = medicine['name'];
       form = medicine['dosage_form'];
     });
     return true;

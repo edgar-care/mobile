@@ -48,8 +48,9 @@ class WebSocketService {
         _handleMessage(message);
       },
       onError: (error) {},
-      onDone: () {
-        connect();
+      onDone: () async {
+        await Future.delayed(Duration(seconds: 3));
+        await connect();
       },
     );
 
@@ -130,7 +131,7 @@ class WebSocketService {
   void responseMobileConnection(
       String patientAuthTokenWS, String uuid, bool response) {
     final responseMobileConnection = jsonEncode({
-      'action': 'responseMobileConnection ',
+      'action': 'responseMobileConnection',
       'authToken': patientAuthTokenWS,
       'uuid': uuid,
       "response": response,

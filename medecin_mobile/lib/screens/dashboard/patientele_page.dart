@@ -1124,6 +1124,7 @@ class _Onboarding3State extends State<Body3> {
                                             onTap: () {
                                               widget.medicalAntecedents.remove(widget.medicalAntecedents[i]);
                                             },
+                                            withArrow: true,
                                           ),
                                         ),
                                       );

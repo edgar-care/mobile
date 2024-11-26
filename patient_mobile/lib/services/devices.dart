@@ -6,19 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<dynamic>> getAllDevices(BuildContext context) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('token');
-  String url = '${dotenv.env['URL']}/dashboard/devices';
-  final response = await http.get(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    },
+  final response = await httpRequest(
+    type: RequestType.get,
+    endpoint: '/dashboard/devices',
+    needsToken: true,
+    context: context,
   );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['devices'];
+  if (response != null) {
+    return response['devices'];
   }
+
   return [];
 }
 
@@ -70,11 +67,12 @@ Future removeDevice(String id, BuildContext context) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('token');
   String url = '${dotenv.env['URL']}/dashboard/device/$id';
-  await http.delete(
+  final response = await http.delete(
     Uri.parse(url),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },
   );
+  return response;
 }

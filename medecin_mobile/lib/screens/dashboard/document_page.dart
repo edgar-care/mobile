@@ -30,33 +30,39 @@ class DocumentPage extends StatefulWidget {
 
 class _DocumentPageState extends State<DocumentPage> {
   Map<String, dynamic> patientInfo = {};
-  List<String> doc = [];
+  List<dynamic> doc = [];
   List<Map<String, dynamic>> documents = [];
+  late Future<void> _loadDocFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDocFuture = _loadDoc();
+  }
+
   Future<void> _loadDoc() async {
     patientInfo = await getPatientById(widget.id, context);
     doc = await getDocumentsIds(widget.id, context);
+
+    documents.clear();
     for (var id in doc) {
-      getDocumentsbyId(id, context).then((value) {
-        setState(() {
-          documents.add(value);
-        });
-      });
+      final value = await getDocumentsbyId(id, context);
+      if (value.isNotEmpty) documents.add(value);
     }
   }
-  
 
   Future<void> updateData() async {
     setState(() {
-      _loadDoc();
+      _loadDocFuture = _loadDoc();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _loadDoc(),
+      future: _loadDocFuture,
       builder: (context, snapshot) {
-        if(snapshot.hasError) {
+        if (snapshot.hasError) {
           Logger().d(snapshot.error);
         }
         if (snapshot.connectionState == ConnectionState.done) {
