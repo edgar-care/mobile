@@ -186,7 +186,6 @@ class _InformationPersonnelState extends State<InformationPersonnel>
                                       message: "Sujet de santé ajouté avec succès",
                                     ).show(context);
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
                                     refresh();
                                   } else {
                                     TopErrorSnackBar(
