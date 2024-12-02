@@ -232,6 +232,29 @@ class _ModalLoginState extends State<ModalLogin> {
         type: ModalType.info,
       ),
       body: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.red200,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+              color: AppColors.red400,
+              width: 2,
+            ),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: const Text(
+            "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+            style: TextStyle(
+              color: AppColors.black,
+              fontFamily: 'Poppins',
+              fontSize: 8,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 24,
+        ),
         const Text(
           "Addresse mail",
           style: TextStyle(
@@ -412,6 +435,29 @@ class _ModalRegisterState extends State<ModalRegister> {
         type: ModalType.info,
       ),
       body: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.red200,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+              color: AppColors.red400,
+              width: 2,
+            ),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: const Text(
+            "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l’anonymisation de vos données de santé, nous vous demandons de ne pas saisir d’informations personnelles ou médicales sensibles.",
+            style: TextStyle(
+              color: AppColors.black,
+              fontFamily: 'Poppins',
+              fontSize: 8,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 24,
+        ),
         const Text(
           "Addresse mail",
           style: TextStyle(
@@ -470,10 +516,14 @@ class _ModalRegisterState extends State<ModalRegister> {
                   .show(context);
               return;
             }
-          if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
-            TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
-            return;
-          }
+            if (!RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                .hasMatch(email)) {
+              TopErrorSnackBar(
+                message: "Adresse mail invalide",
+              ).show(context);
+              return;
+            }
             if (password.length < 8) {
               // ignore: use_build_context_synchronouslyx
               TopErrorSnackBar(
@@ -727,11 +777,17 @@ Widget modalForgotPassword(BuildContext context) {
       msg: const Text('Réinitialiser le mot de passe'),
       onPressed: () {
         if (email.isEmpty) {
-        TopErrorSnackBar(message: "Veuillez remplir tout les champs",).show(context);
+          TopErrorSnackBar(
+            message: "Veuillez remplir tout les champs",
+          ).show(context);
           return;
         }
-        if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
-          TopErrorSnackBar(message: "Adresse mail invalide",).show(context);
+        if (!RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(email)) {
+          TopErrorSnackBar(
+            message: "Adresse mail invalide",
+          ).show(context);
           return;
         }
         missingPassword(email, context).then((value) {

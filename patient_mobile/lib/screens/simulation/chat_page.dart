@@ -118,6 +118,26 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  Widget _buildWarningBox() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.red200,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.red400, width: 2),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: const Text(
+        "Ce projet est uniquement destiné à des fins de démonstration. Ne pouvant garantir la sécurité et l'anonymisation de vos données de santé, nous vous demandons de ne pas saisir d'informations personnelles ou médicales sensibles.",
+        style: TextStyle(
+          color: AppColors.black,
+          fontFamily: 'Poppins',
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
 // Controller for the text input field
   @override
   Widget build(BuildContext context) {
@@ -155,6 +175,7 @@ class _ChatPageState extends State<ChatPage> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
+            _buildWarningBox(),
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
