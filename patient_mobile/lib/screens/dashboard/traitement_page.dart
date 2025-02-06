@@ -657,7 +657,7 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
             suggestions: medicinesSuggestion),
         const SizedBox(height: 12),
         SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
+            height: MediaQuery.of(context).size.height / 4.5,
               child: ListView.separated(
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
@@ -687,8 +687,7 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
             onPressed: () {
               if (traitement["id"] != "" &&
                   traitement["startDate"] != "0" &&
-                  traitement["medicines"].length != 0 &&
-                  traitement["medicines"][0].comment != "") {
+                  traitement["medicines"].length != 0) {
                 postTraitement({
                   "medical_antecedent_id": traitement["id"],
                   "start_date":

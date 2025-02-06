@@ -436,8 +436,7 @@ class _AddTreatmentModalState extends State<AddTreatmentModal> {
                     traitement.startDate !=
                         DateTime.fromMillisecondsSinceEpoch(0)) {
                   for (var medicine in traitement.medicines) {
-                    if (medicine.comment.isEmpty ||
-                        medicine.period.isEmpty ||
+                    if (medicine.period.isEmpty ||
                         medicine.medicineId.isEmpty) {
                       TopErrorSnackBar(
                         message: "Veuillez remplir tout les champs",
