@@ -32,12 +32,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     doctors = await getAllDoctor(context);
     setState(() {
       doctorId = prefs.getString('appointment_doctor_id')!;
-      doctorName = doctors
-              .firstWhere((element) => element['id'] == doctorId)['name'] +
-          ' ' +
-          doctors
-              .firstWhere((element) => element['id'] == doctorId)['firstname']
-              .toUpperCase();
+      doctorName = '${doctors.firstWhere((element) => element['id'] == doctorId)['name']} ${doctors.firstWhere((element) => element['id'] == doctorId)['firstname'].toUpperCase()}';
       startDate = prefs.getString('appointment_start_date')!;
       endDate = prefs.getString('appointment_end_date')!;
       day =
