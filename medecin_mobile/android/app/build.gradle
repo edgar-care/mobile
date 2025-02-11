@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    namespace = "com.edgar.pro"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
