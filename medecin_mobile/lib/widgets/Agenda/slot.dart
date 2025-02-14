@@ -93,8 +93,6 @@ class _SlotState extends State<Slot> with SingleTickerProviderStateMixin {
                 date: widget.date!,
                 slots: widget.slots!,
               );
-            default:
-              return Container(); // ou un autre widget par défaut
           }
         },
       ),

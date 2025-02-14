@@ -47,8 +47,13 @@ class WebSocketService {
       (message) {
         _handleMessage(message);
       },
-      onError: (error) {},
+      onError: (error) async {
+        _channel?.sink.close(status.goingAway);
+        await Future.delayed(Duration(seconds: 3));
+        await connect();
+      },
       onDone: () async {
+        _channel?.sink.close(status.goingAway);
         await Future.delayed(Duration(seconds: 3));
         await connect();
       },

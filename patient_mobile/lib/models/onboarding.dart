@@ -149,7 +149,9 @@ class _Onboarding1State extends State<Onboarding1> {
   final DateTime today = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SingleChildScrollView(
+      child: 
+    SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height - 172,
       child: Padding(
@@ -159,8 +161,8 @@ class _Onboarding1State extends State<Onboarding1> {
           bottom: 24,
           top: 16,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child:ListView(
+          scrollDirection: Axis.vertical,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48),
@@ -431,6 +433,7 @@ class _Onboarding1State extends State<Onboarding1> {
           ],
         ),
       ),
+    ),
     );
   }
 }
